@@ -177,6 +177,88 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-热重启docker" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/11/29/%E7%83%AD%E9%87%8D%E5%90%AFdocker/">热重启docker</a>
+</h1>
+
+
+
+        
+        <a href="/2019/11/29/%E7%83%AD%E9%87%8D%E5%90%AFdocker/" class="archive-article-date">
+  	<time datetime="2019-11-29T03:13:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-29</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>众所周知，由于docker架构原因,docker是有守护进程的。而所有的容器进程父进程都是这个守护进程,如下图:<br><img src="https://i.loli.net/2019/11/29/JrG9j7QxCK1HpAL.png" alt="docker架构"></p>
+<p>这样的蠢架构导致了很多问题:</p>
+<ul>
+<li>生产环境docker内存泄漏无法处理或者处理繁琐</li>
+<li>升级生产docker版本繁琐</li>
+</ul>
+<p>从docker 1.12以后更新了热更新的配置,虽然架构还是不咋地,但是至少解决了以上问题</p>
+<h2 id="热更新配置"><a href="#热更新配置" class="headerlink" title="热更新配置"></a>热更新配置</h2><h3 id="Step-1-使用-docker-live-restore-amp-amp-SIGHU-reload-配置"><a href="#Step-1-使用-docker-live-restore-amp-amp-SIGHU-reload-配置" class="headerlink" title="Step 1. 使用 docker live restore &amp;&amp; SIGHU reload 配置"></a>Step 1. 使用 docker live restore &amp;&amp; SIGHU reload 配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">配置 live restore 到 /etc/docker/daemon.json （注意加逗号）</span><br><span class="line">&#123; &quot;live-restore&quot;: true &#125;</span><br><span class="line">reload  docker 配置【⚠️：要先做这步，才能重启！！】</span><br><span class="line">kill -SIGHUP $(pidof dockerd)</span><br><span class="line">检查配置</span><br><span class="line">docker info | grep -i Live</span><br></pre></td></tr></table></figure>
+<p>应该能看到如下配置</p>
+<p><img src="https://i.loli.net/2019/11/29/sY31qC4miSgWGHF.png" alt="image.png"></p>
+<p>重启 docker<br>systemctl restart docker</p>
+<p>注意 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">重启 docker 后请 disable live-restore ！</span><br></pre></td></tr></table></figure>
+
+<p>设置  /etc/docker/daemon.json 参数 live-restore 为 false， “live-restore”: false<br>reload： kill -SIGHUP $(pidof dockerd)<br>检查：docker info | grep Live，确认是false</p>
+<h3 id="Step-2-重启直接挂载-var-run-docker-sock的容器"><a href="#Step-2-重启直接挂载-var-run-docker-sock的容器" class="headerlink" title="Step 2. 重启直接挂载/var/run/docker.sock的容器"></a>Step 2. 重启直接挂载/var/run/docker.sock的容器</h3><p>查看该主机上直接挂载 docker.sock 的容器   </p>
+<p>docker inspect $(docker ps -q)|grep ‘Source.*docker.sock|Name”: “/‘|grep sock -B1|grep Name<br>重启之</p>
+<p>【理论分析】<br>[原因] 因为挂载了/var/run/docker.sock文件，docker机制是绑定主机上该文件的 inode。当docker-engine热重启，该文件的inode改变，所以容器内部所认的这个inode事实上已经木有用了。 所以跟docker.sock相关的功能：容器控制台/容器日志等都无法工作。（例如你的docker的挂载了一个主机文件，当你删除该主机文件并重建之后，docker内部是看不到新文件的！ 如果挂载的是其目录则不会有这个问题。）</p>
+<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><p>重启完之后，记得把配置再改回去</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/11/29/%E7%83%AD%E9%87%8D%E5%90%AFdocker/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-k8s-v1-17-新特性预告-拓扑感知服务路由" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1325,125 +1407,6 @@
 
 
   
-    <article id="post-用nfs作为k8s持久化存储" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/10/25/%E7%94%A8nfs%E4%BD%9C%E4%B8%BAk8s%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A8/">用nfs作为k8s持久化存储</a>
-</h1>
-
-
-
-        
-        <a href="/2019/10/25/%E7%94%A8nfs%E4%BD%9C%E4%B8%BAk8s%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A8/" class="archive-article-date">
-  	<time datetime="2019-10-25T05:57:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="kubernetes部署NFS持久存储"><a href="#kubernetes部署NFS持久存储" class="headerlink" title="kubernetes部署NFS持久存储"></a>kubernetes部署NFS持久存储</h2><h3 id="NFS简介"><a href="#NFS简介" class="headerlink" title="NFS简介"></a>NFS简介</h3><blockquote>
-<p>NFS是网络文件系统Network File System的缩写，NFS服务器可以让PC将网络中的NFS服务器共享的目录挂载到本地的文件系统中，而在本地的系统中来看，那个远程主机的目录就好像是自己的一个磁盘分区一样。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubernetes使用NFS共享存储有两种方式：</span><br><span class="line">手动方式静态创建所需要的PV和PVC。</span><br><span class="line">通过创建PVC动态地创建对应PV，无需手动创建PV。</span><br><span class="line">这条博客是写的静态创建方法</span><br></pre></td></tr></table></figure>
-</blockquote>
-<h3 id="搭建nfs服务器"><a href="#搭建nfs服务器" class="headerlink" title="搭建nfs服务器"></a>搭建nfs服务器</h3><p>这里作为测试，临时在master节点上部署NFS服务器。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">#master节点安装nfs</span><br><span class="line">yum -y install nfs-utils</span><br><span class="line"></span><br><span class="line">#创建nfs目录</span><br><span class="line">mkdir -p /data/nfs/</span><br><span class="line"></span><br><span class="line">#修改权限</span><br><span class="line">chmod -R 777 /data/nfs</span><br><span class="line"></span><br><span class="line">#编辑export文件</span><br><span class="line">vim /etc/exports</span><br><span class="line">/data/nfs *(rw,no_root_squash,sync)</span><br><span class="line"></span><br><span class="line">#配置生效</span><br><span class="line">exportfs -r</span><br><span class="line">#查看生效</span><br><span class="line">exportfs</span><br><span class="line"></span><br><span class="line">#启动rpcbind、nfs服务</span><br><span class="line">systemctl restart rpcbind &amp;&amp; systemctl enable rpcbind</span><br><span class="line">systemctl restart nfs &amp;&amp; systemctl enable nfs</span><br><span class="line"></span><br><span class="line">#查看 RPC 服务的注册状况</span><br><span class="line">rpcinfo -p localhost</span><br><span class="line"></span><br><span class="line">#showmount测试</span><br><span class="line">showmount -e 10.7.150.112</span><br><span class="line"></span><br><span class="line">#所有node节点安装客户端</span><br><span class="line">yum -y install nfs-utils</span><br><span class="line">systemctl start nfs &amp;&amp; systemctl enable nfs</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>作为准备工作，我们已经在 k8s-master 节点上搭建了一个 NFS 服务器，目录为 /data/nfs.</p>
-</blockquote>
-<h3 id="静态申请PV卷"><a href="#静态申请PV卷" class="headerlink" title="静态申请PV卷"></a>静态申请PV卷</h3><h4 id="添加pv卷对应目录-作为挂载点"><a href="#添加pv卷对应目录-作为挂载点" class="headerlink" title="添加pv卷对应目录,作为挂载点"></a>添加pv卷对应目录,作为挂载点</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#创建pv卷对应的目录</span><br><span class="line">mkdir -p /nfs/data/pv001</span><br><span class="line"></span><br><span class="line">#配置exportrs</span><br><span class="line">vim /etc/exports</span><br><span class="line">/nfs/data *(rw,no_root_squash,sync)</span><br><span class="line">/nfs/data/pv001 *(rw,no_root_squash,sync)</span><br><span class="line"></span><br><span class="line">#配置生效</span><br><span class="line">exportfs -r</span><br><span class="line">#重启rpcbind、nfs服务</span><br><span class="line">systemctl restart rpcbind &amp;&amp; systemctl restart nfs</span><br></pre></td></tr></table></figure>
-
-<h4 id="创建PV"><a href="#创建PV" class="headerlink" title="创建PV"></a>创建PV</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">`</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-pv</span><br><span class="line">  labels:</span><br><span class="line">    pv: nfs-pv</span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 1Gi</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  persistentVolumeReclaimPolicy: Recycle</span><br><span class="line">  storageClassName: nfs</span><br><span class="line">  nfs:</span><br><span class="line">    path: /nfs/data/pv</span><br><span class="line">    server: 10.7.150.112</span><br><span class="line">`</span><br></pre></td></tr></table></figure>
-<hr>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">`配置说明`：</span><br><span class="line">capacity 指定 PV 的容量为 1G。</span><br><span class="line">accessModes 指定访问模式为 ReadWriteOnce，支持的访问模式有：</span><br><span class="line">ReadWriteOnce – PV 能以 read-write 模式 mount 到单个节点。</span><br><span class="line">ReadOnlyMany – PV 能以 read-only 模式 mount 到多个节点。</span><br><span class="line">ReadWriteMany – PV 能以 read-write 模式 mount 到多个节点。</span><br><span class="line">persistentVolumeReclaimPolicy 指定当 PV 的回收策略为 Recycle，支持的策略有：</span><br><span class="line">Retain – 需要管理员手工回收。</span><br><span class="line">Recycle – 清除 PV 中的数据，效果相当于执行 rm -rf /thevolume/*。</span><br><span class="line">Delete – 删除 Storage Provider 上的对应存储资源，例如 AWS EBS、GCE PD、Azure</span><br><span class="line">Disk、OpenStack Cinder Volume 等。</span><br><span class="line">storageClassName 指定 PV 的 class 为 nfs。相当于为 PV 设置了一个分类，PVC 可以指定 class 申请相应 class 的 PV。</span><br><span class="line">指定 PV 在 NFS 服务器上对应的目录。</span><br></pre></td></tr></table></figure>
-<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8ctzzzc76j30wm03kaaq.jpg" alt="create PV"></p>
-<blockquote>
-<p>STATUS 为 Available，表示 pv就绪，可以被 PVC 申请。</p>
-</blockquote>
-<h4 id="创建PVC"><a href="#创建PVC" class="headerlink" title="创建PVC"></a>创建PVC</h4><p>接下来创建一个名为pvc的PVC，配置文件 pvc.yaml</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-pvc</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 1Gi</span><br><span class="line">  storageClassName: nfs</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      pv: nfs-pv</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cu33t8lsj30xo06kmyk.jpg" alt="Bound PVC"></p>
-<blockquote>
-<p>从 kubectl get pvc 和 kubectl get pv 的输出可以看到pvc绑定成功，注意pvc绑定到对应pv通过labels标签方式实现，也可以不指定，将随机绑定到pv。</p>
-</blockquote>
-<hr>
-<p>接下来就可以在 Pod 中使用存储了，Pod 配置文件 pod.yaml</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">kind: Pod</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-pod001</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">    - name: myfrontend</span><br><span class="line">      image: nginx</span><br><span class="line">      volumeMounts:</span><br><span class="line">      - mountPath: &quot;/var/www/html&quot;</span><br><span class="line">        name: nfs-pv</span><br><span class="line">  volumes:</span><br><span class="line">    - name: nfs-pv</span><br><span class="line">      persistentVolumeClaim:</span><br><span class="line">        claimName: nfs-pvc</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>与使用普通 Volume 的格式类似，在 volumes 中通过 persistentVolumeClaim 指定使用nfs-pvc 申请的 Volume</p>
-</blockquote>
-<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cu7x6628j30go03tt97.jpg" alt="create pod"></p>
-<p>验证PV是否可用<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cu8qrjnpj30pg02yjrt.jpg" alt="file"><br>进入pod查看情况<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cu9hb48qj30u0092abz.jpg" alt="exec pod"></p>
-<h4 id="删除pv"><a href="#删除pv" class="headerlink" title="删除pv"></a>删除pv</h4><p>删除pod，pv和pvc不会被删除，nfs存储的数据不会被删除。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cub06m8qj30hd03iq3d.jpg" alt="del pod "><br>继续删除pvc，pv将被释放，处于 Available 可用状态，并且nfs存储中的数据被删除。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cucndzf7j30us05175e.jpg" alt="del pvc "><br>继续删除pv<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cud8vkzpj30gf026dg2.jpg" alt="del pv"></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color3">k8s,nfs</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/容器//" class="article-tag-list-link color3">容器</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/10/25/%E7%94%A8nfs%E4%BD%9C%E4%B8%BAk8s%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A8/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1543,15 +1506,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1559,15 +1518,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">hexo</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">k8s</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">k8s</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1583,10 +1546,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">podman,docker</a>
               </li>
              
@@ -1595,11 +1554,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
               </li>
              
               <li class="article-tag-list-item">

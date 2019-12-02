@@ -600,7 +600,7 @@
 
 <h2 id="第四题-4-EmptyDir"><a href="#第四题-4-EmptyDir" class="headerlink" title="第四题 (4%) EmptyDir"></a>第四题 (4%) EmptyDir</h2><p>按如下要求创建一个 Pod：</p>
 <p>名称：non-persistent-redis<br>Container image: redis<br>Persistent volume name: cache-control<br>Mount Path: /data/redis<br>应在 staging namespace 中发布，且该 volume 必须不能是永久的。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">nameSpace: staging</span><br><span class="line">metadata:</span><br><span class="line">  name: non-persistent-redis</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: non-persistent-redis</span><br><span class="line">    image: redis</span><br><span class="line">    volumeMounts:</span><br><span class="line">      - name: cache-control</span><br><span class="line">        mountPath: /data/redis</span><br><span class="line">  volumes:</span><br><span class="line">  - name: cache-control</span><br><span class="line">    emptyDir: &#123;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: non-persistent-redis</span><br><span class="line">  namespace: staging</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: non-persistent-redis</span><br><span class="line">    image: redis</span><br><span class="line">    volumeMounts:</span><br><span class="line">      - name: cache-control</span><br><span class="line">        mountPath: /data/redis</span><br><span class="line">  volumes:</span><br><span class="line">  - name: cache-control</span><br><span class="line">    emptyDir: &#123;&#125;</span><br></pre></td></tr></table></figure>
 
 <p>考点：Volume、emptdir</p>
 <p>参考：<a href="https://kubernetes.io/docs/concepts/storage/volumes/#emptydir" target="_blank" rel="noopener">Volumes</a></p>
@@ -1506,10 +1506,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
               </li>
              
@@ -1522,11 +1518,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">hexo</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">hexo</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1535,10 +1531,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">nginx</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">kvm</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1575,6 +1567,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">kvm</a>
               </li>
             
             <div class="clearfix"></div>

@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
 <meta property="og:description" content="题库一24 题，160 分钟。 第一题 (5%) 日志监控 Pod bar 的日志，并提取与错误 file-not-found 相对应的日志行,将这些日志行写入 &#x2F;opt&#x2F;dir&#x2F;bar 1kubectl logs &amp;lt;podname&amp;gt; | grep Error &amp;gt; &#x2F;opt&#x2F;KUCC000xxx&#x2F;KUCC000xxx.txt  考点：Monitor, Log, and Debug">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-12-11T01:56:30.397Z">
+<meta property="og:updated_time" content="2019-12-11T02:20:57.308Z">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="jame_xhs&#39;s blog" type="application/atom+xml">
@@ -292,7 +292,7 @@
 <p>可使用 ssh node-name 通过 ssh 命令连接到相应 node<br>可使用 sudo -i 命令在该 cluster 的任何 node 上获取更高权限</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">情况一</span><br><span class="line">kubectl get cs 能看到controller manager 没有启动</span><br><span class="line">登陆到master上</span><br><span class="line">找到相关服务重启</span><br><span class="line">systemctl start kube-manager-controller.service</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">情况二</span><br><span class="line">kubectl get node显示connection refuse，估计是apiserver的故障。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">情况二</span><br><span class="line">kubectl get node显示connection refuse，估计是apiserver的故障。</span><br><span class="line">具体配置文件参考 static pod 那一题,主要解题思路如下:</span><br><span class="line">1.为什么api-server没启动 (跟其他题的集群对比发现api-server配置文件相同。但是不生效)</span><br><span class="line">2.为什么kubelet没有拉起来api-server  (跟其他题的集群对比 比如static pod 那一题，可以发现kubelet没有指定静态pod目录)</span><br><span class="line">3.kubelet配置文件中加入 (--pod-manifest-path=xxxxxxx)，重启kubelet systelctl  restart  kubelet</span><br></pre></td></tr></table></figure>
 
 <p>参考：<a href="https://kubernetes.io/docs/tasks/debug-application-cluster/debug-cluster/" target="_blank" rel="noopener">Troubleshoot Clusters</a></p>
 <h2 id="第十六题-4-节点故障排查"><a href="#第十六题-4-节点故障排查" class="headerlink" title="第十六题 (4%) 节点故障排查"></a>第十六题 (4%) 节点故障排查</h2><p>名为 wk8s-node-0 的 Kubernetes worker node 处于 NotReady 状态。</p>
@@ -614,11 +614,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -626,7 +626,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -638,11 +638,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">kvm</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">k8s</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">k8s</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">kvm</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -654,19 +654,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">podman,docker</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">podman,docker</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -682,11 +682,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">负载</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">负载</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
               </li>
             
             <div class="clearfix"></div>

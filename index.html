@@ -198,7 +198,17 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">目前在上海，家里有一个nas 和一些中日老师的学习视频，想在任何地方都获取知识.目前了解到的现状如下:</span><br><span class="line">上海用的宽带都是SDN网络,全是内网</span><br><span class="line">家里200M的网虽然上下不对等，但是上行也有30多M。如果用NAT穿透只能用我阿里云1M小水管。不甘心</span><br></pre></td></tr></table></figure>
+
+<h3 id="各种打听"><a href="#各种打听" class="headerlink" title="各种打听"></a>各种打听</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">首先打听到SDN网络可以让运营商转为桥接,跟他说光纤转桥接就行(电信运营商电话打到人工客服真不容易)</span><br><span class="line">然后就有人跟你约时间上门调试,结果发现只是签字。网是后台直接调的。</span><br><span class="line">然后你会发现，给你的网是内网。这时候继续给电信运营商打电话，说需要一个工网ip</span><br><span class="line">他们会问你为啥需要工网balbalabala的。告诉他我家里有一个NAS需要在办公室访问就OK</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>此时路由器外面的就是工网IP了。然后路由器映射一下。就OK了。</p>
+</blockquote>
+<hr>
+<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9vhy02n31j31w10u07ab.jpg" alt="路由器"><br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9vhyizmjvj31z20ms795.jpg" alt="nginx"><br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9vhze8ngxj316a0jsad9.jpg" alt="ip"><br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9vhzw9ijhj31yk0m4gqn.jpg" alt="外部nginx"></p>
+<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9vhzw9ijhj31yk0m4gqn.jpg" alt="docker内部架构图"></p>
+
       
 
       
@@ -1510,11 +1520,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1526,10 +1536,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">k8s</a>
               </li>
              
@@ -1538,11 +1544,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">nginx</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">nginx</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1558,11 +1568,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
               </li>
              
               <li class="article-tag-list-item">

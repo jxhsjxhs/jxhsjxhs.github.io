@@ -177,115 +177,6 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-练习2年的git练习生" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/10/22/%E7%BB%83%E4%B9%A02%E5%B9%B4%E7%9A%84git%E7%BB%83%E4%B9%A0%E7%94%9F/">练习2年的git练习生</a>
-</h1>
-
-
-
-        
-        <a href="/2019/10/22/%E7%BB%83%E4%B9%A02%E5%B9%B4%E7%9A%84git%E7%BB%83%E4%B9%A0%E7%94%9F/" class="archive-article-date">
-  	<time datetime="2019-10-22T03:10:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-22</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="分支操作："><a href="#分支操作：" class="headerlink" title="分支操作："></a>分支操作：</h2><blockquote>
-<p>git branch 创建分支<br>git branch -b 创建并切换到新建的分支上<br>git checkout 切换分支<br>git branch 查看分支列表<br>git branch -v 查看所有分支的最后一次操作<br>git branch -vv 查看当前分支<br>git brabch -b 分支名 origin/分支名 创建远程分支到本地<br>git branch –merged 查看别的分支和当前分支合并过的分支<br>git branch –no-merged 查看未与当前分支合并的分支<br>git branch -d 分支名 删除本地分支<br>git branch -D 分支名 强行删除分支<br>git branch origin :分支名 删除远处仓库分支<br>git merge 分支名 合并分支到当前分支上</p>
-</blockquote>
-<h2 id="暂存操作："><a href="#暂存操作：" class="headerlink" title="暂存操作："></a>暂存操作：</h2><blockquote>
-<p>git stash 暂存当前修改<br>git stash apply 恢复最近的一次暂存<br>git stash pop 恢复暂存并删除暂存记录<br>git stash list 查看暂存列表<br>git stash drop 暂存名(例：stash@{0}) 移除某次暂存<br>git stash clear 清除暂存</p>
-</blockquote>
-<h2 id="回退操作："><a href="#回退操作：" class="headerlink" title="回退操作："></a>回退操作：</h2><blockquote>
-<p>git reset –hard HEAD^ 回退到上一个版本<br>git reset –hard ahdhs1(commit_id) 回退到某个版本<br>git checkout – file 撤销修改的文件(如果文件加入到了暂存区，则回退到暂存区的，如果文件加入到了版本库，则还原至加入版本库之后的状态)<br>git reset HEAD file 撤回暂存区的文件修改到工作区</p>
-</blockquote>
-<h2 id="标签操作："><a href="#标签操作：" class="headerlink" title="标签操作："></a>标签操作：</h2><blockquote>
-<p>git tag 标签名 添加标签(默认对当前版本)<br>git tag 标签名 commit_id 对某一提交记录打标签<br>git tag -a 标签名 -m ‘描述’ 创建新标签并增加备注<br>git tag 列出所有标签列表<br>git show 标签名 查看标签信息<br>git tag -d 标签名 删除本地标签<br>git push origin 标签名 推送标签到远程仓库<br>git push origin –tags 推送所有标签到远程仓库<br>git push origin :refs/tags/标签名 从远程仓库中删除标签</p>
-</blockquote>
-<h2 id="常规操作："><a href="#常规操作：" class="headerlink" title="常规操作："></a>常规操作：</h2><blockquote>
-<p>git push origin test 推送本地分支到远程仓库<br>git rm -r –cached 文件/文件夹名字 取消文件被版本控制<br>git reflog 获取执行过的命令<br>git log –graph 查看分支合并图<br>git merge –no-ff -m ‘合并描述’ 分支名 不使用 Fast forward 方式合并，采用这种方式合并可以看到合并记录<br>git check-ignore -v 文件名 查看忽略规则<br>git add -f 文件名 强制将文件提交</p>
-</blockquote>
-<h2 id="git-创建项目仓库："><a href="#git-创建项目仓库：" class="headerlink" title="git 创建项目仓库："></a>git 创建项目仓库：</h2><blockquote>
-<p>git init 初始化<br>git remote add origin url 关联远程仓库<br>git pull<br>git fetch 获取远程仓库中所有的分支到本地<br>忽略已加入到版本库中的文件：<br>git update-index –assume-unchanged file 忽略单个文件<br>git rm -r –cached 文件/文件夹名字 (. 忽略全部文件)</p>
-</blockquote>
-<h2 id="取消忽略文件："><a href="#取消忽略文件：" class="headerlink" title="取消忽略文件："></a>取消忽略文件：</h2><blockquote>
-<p>git update-index –no-assume-unchanged file</p>
-</blockquote>
-<h2 id="拉取、上传免密码："><a href="#拉取、上传免密码：" class="headerlink" title="拉取、上传免密码："></a>拉取、上传免密码：</h2><blockquote>
-<p>git config –global credential.helper store</p>
-</blockquote>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color4">git</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/git//" class="article-tag-list-link color4">git</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/10/22/%E7%BB%83%E4%B9%A02%E5%B9%B4%E7%9A%84git%E7%BB%83%E4%B9%A0%E7%94%9F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-动手实践podman" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1057,6 +948,92 @@
 
 
   
+    <article id="post-nginx瑞士军刀-lua" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/08/06/nginx%E7%91%9E%E5%A3%AB%E5%86%9B%E5%88%80-lua/">nginx瑞士军刀-lua</a>
+</h1>
+
+
+
+        
+        <a href="/2019/08/06/nginx%E7%91%9E%E5%A3%AB%E5%86%9B%E5%88%80-lua/" class="archive-article-date">
+  	<time datetime="2019-08-06T05:27:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-08-06</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>tets</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color1">nginx</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/nginx//" class="article-tag-list-link color1">nginx</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/08/06/nginx%E7%91%9E%E5%A3%AB%E5%86%9B%E5%88%80-lua/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/2/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/">Next &amp;raquo;</a>
@@ -1160,10 +1137,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
               </li>
              
@@ -1192,11 +1165,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1213,6 +1186,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
               </li>
              
               <li class="article-tag-list-item">

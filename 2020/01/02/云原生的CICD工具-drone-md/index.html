@@ -6,20 +6,15 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.jxhs.me">
-  <title>docker运行容器后agetty进程cpu占用率100% | jame_xhs&#39;s blog</title>
+  <title>云原生的CICD工具-drone.md | jame_xhs&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="最近在使用 docker 容器的时候，发现宿主机的 agetty 进程 cpu 占用率达到 100%。  在 Google 上搜了下，引起这个问题的原因是在使用”docker run”运行容器时使用了 “&#x2F;sbin&#x2F;init”和”–privileged”参数。 使用&#x2F;sbin&#x2F;init 启动容器并加上–privileged 参数，相当于 docker 容器获得了宿主机的全权委托权限。这时 doc">
-<meta name="keywords" content="docker">
-<meta property="og:type" content="article">
-<meta property="og:title" content="docker运行容器后agetty进程cpu占用率100%">
-<meta property="og:url" content="http:&#x2F;&#x2F;www.jxhs.me&#x2F;2019&#x2F;07&#x2F;28&#x2F;docker%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8%E5%90%8Eagetty%E8%BF%9B%E7%A8%8Bcpu%E5%8D%A0%E7%94%A8%E7%8E%87100&#x2F;index.html">
+  <meta property="og:type" content="article">
+<meta property="og:title" content="云原生的CICD工具-drone.md">
+<meta property="og:url" content="http:&#x2F;&#x2F;www.jxhs.me&#x2F;2020&#x2F;01&#x2F;02&#x2F;%E4%BA%91%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7-drone-md&#x2F;index.html">
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
-<meta property="og:description" content="最近在使用 docker 容器的时候，发现宿主机的 agetty 进程 cpu 占用率达到 100%。  在 Google 上搜了下，引起这个问题的原因是在使用”docker run”运行容器时使用了 “&#x2F;sbin&#x2F;init”和”–privileged”参数。 使用&#x2F;sbin&#x2F;init 启动容器并加上–privileged 参数，相当于 docker 容器获得了宿主机的全权委托权限。这时 doc">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006y8mN6gy1g864u6hjoxj31k00ikjwt.jpg">
-<meta property="og:updated_time" content="2019-11-20T14:02:00.000Z">
+<meta property="og:updated_time" content="2020-01-02T15:12:48.576Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006y8mN6gy1g864u6hjoxj31k00ikjwt.jpg">
   
     <link rel="alternative" href="/atom.xml" title="jame_xhs&#39;s blog" type="application/atom+xml">
   
@@ -181,44 +176,28 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-docker运行容器后agetty进程cpu占用率100" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-云原生的CICD工具-drone-md" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
 
 <h1 class="article-title" itemprop="name">
-  docker运行容器后agetty进程cpu占用率100%
+  云原生的CICD工具-drone.md
 </h1>
 
 
 
         
-        <a href="/2019/07/28/docker%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8%E5%90%8Eagetty%E8%BF%9B%E7%A8%8Bcpu%E5%8D%A0%E7%94%A8%E7%8E%87100/" class="archive-article-date">
-  	<time datetime="2019-07-28T06:23:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-28</time>
+        <a href="/2020/01/02/%E4%BA%91%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7-drone-md/" class="archive-article-date">
+  	<time datetime="2020-01-02T15:12:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-02</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <blockquote>
-<p>最近在使用 docker 容器的时候，发现宿主机的 agetty 进程 cpu 占用率达到 100%。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g864u6hjoxj31k00ikjwt.jpg" alt="负载图"></p>
-</blockquote>
-<p>在 Google 上搜了下，引起这个问题的原因是在使用”docker run”运行容器时使用了 “/sbin/init”和”–privileged”参数。</p>
-<p>使用/sbin/init 启动容器并加上–privileged 参数，相当于 docker 容器获得了宿主机的全权委托权限。这时 docker 容器内部的 init 与宿主机的 init 产生了混淆。</p>
-<h3 id="引用-google-到的一段话："><a href="#引用-google-到的一段话：" class="headerlink" title="引用 google 到的一段话："></a>引用 google 到的一段话：</h3><blockquote>
-<p>I’ve done all my testing on them without using –privileged, especially since that’s so dangerous (effectively, you’re telling this second init process on your system that it’s cool to go ahead and manage your system resources, and then giving it access to them as well). I always think of –privileged as a hammer to be used very sparingly.</p>
-</blockquote>
-<hr>
-<p>出于对安全的考虑，在启动容器时，docker 容器里的系统只具有一些普通的 linux 权限，并不具有真正 root 用户的所有权限。而–privileged=true 参数可以让 docker 容器具有 linux root 用户的所有权限。</p>
-<p>为了解决这个问题，docker 后来的版本中 docker run 增加了两个选项参数”–cap-add”和”–cap-drop”。</p>
-<p>–cap-add : 获取 default 之外的 linux 的权限</p>
-<p>–cap-drop: 放弃 default linux 权限</p>
-<blockquote>
-<p>所以，在运行容器时，可以不用–privileged 参数的尽量不用，用–cap-add 参数替代。如果必须使用–privileged=true 参数的，可以通过在宿主机和容器中执行以下命令将 agetty 关闭。<br>shell&gt; systemctl stop <a href="mailto:getty@tty1.service" target="_blank" rel="noopener">getty@tty1.service</a><br>shell&gt; systemctl mask <a href="mailto:getty@tty1.service" target="_blank" rel="noopener">getty@tty1.service</a></p>
-</blockquote>
-
+        
       
 
       
@@ -226,29 +205,7 @@
     <div class="article-info article-info-index">
       
       
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color2">docker</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
       
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/容器//" class="article-tag-list-link color3">容器</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
 
       
 
@@ -298,7 +255,7 @@
     <a class="close js-modal-close" href="javascript:;" target="_blank" rel="noopener"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://www.jxhs.me/2019/07/28/docker%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8%E5%90%8Eagetty%E8%BF%9B%E7%A8%8Bcpu%E5%8D%A0%E7%94%A8%E7%8E%87100/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.jxhs.me/2020/01/02/%E4%BA%91%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7-drone-md/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -312,18 +269,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/07/29/kubernetes-ingress%E4%B9%8Bnginx-ingress/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          kubernetes ingress之nginx-ingress
-        
-      </div>
-    </a>
   
-  
-    <a href="/2019/07/25/%E6%80%A7%E8%83%BD%E5%88%A4%E6%96%AD%E4%B8%93%E6%A0%8F/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">性能判断专栏</div>
+    <a href="/2019/12/28/2019%E6%9C%80%E5%90%8E%E4%B8%80%E6%AC%A1%E5%87%BA%E6%B8%B8%E8%AE%B0%E5%BD%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">2019最后一次出游记录</div>
       <i class="icon-circle-right"></i>
     </a>
   

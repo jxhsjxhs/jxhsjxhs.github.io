@@ -6,19 +6,32 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.jxhs.me">
-  <title>命令行翻墙 | jame_xhs&#39;s blog</title>
+  <title>图解 kubernetes scheduler 源码设计系列-初步了解 | jame_xhs&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="痛点 啥也不说，先上图。这样的痛苦 国内程序员应该都体会过  共具介绍123对于技术人员shadowsocks应该不陌生，shadowsocks实质上也是一种socks5代理服务，类似于ssh代理。与vpn的全局代理不同，shadowsocks仅针对浏览器代理，不能代理应用软件，比如curl、wget等一些命令行软件。如果要让终端下的命令行工具都能支持代理，这时我们就要用上proxychains-">
+  <meta name="description" content="1.资源调度基础scheudler是kubernetes中的核心组件，负责为用户声明的pod资源选择合适的node,同时保证集群资源的最大化利用，这里先介绍下资源调度系统设计里面的一些基础概念 1.1 基础任务资源调度基础的任务资源调度通常包括三部分：    角色类型 功能    node node负责具体任务的执行,同时对包汇报自己拥有的资源   resource manager 汇总当前集群中">
+<meta name="keywords" content="kubernetes,k8s">
 <meta property="og:type" content="article">
-<meta property="og:title" content="命令行翻墙">
-<meta property="og:url" content="http:&#x2F;&#x2F;www.jxhs.me&#x2F;2019&#x2F;12&#x2F;11&#x2F;%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99&#x2F;index.html">
+<meta property="og:title" content="图解 kubernetes scheduler 源码设计系列-初步了解">
+<meta property="og:url" content="http:&#x2F;&#x2F;www.jxhs.me&#x2F;2020&#x2F;01&#x2F;20&#x2F;%E5%9B%BE%E8%A7%A3-kubernetes-scheduler-%E6%BA%90%E7%A0%81%E8%AE%BE%E8%AE%A1%E7%B3%BB%E5%88%97-%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3&#x2F;index.html">
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
-<meta property="og:description" content="痛点 啥也不说，先上图。这样的痛苦 国内程序员应该都体会过  共具介绍123对于技术人员shadowsocks应该不陌生，shadowsocks实质上也是一种socks5代理服务，类似于ssh代理。与vpn的全局代理不同，shadowsocks仅针对浏览器代理，不能代理应用软件，比如curl、wget等一些命令行软件。如果要让终端下的命令行工具都能支持代理，这时我们就要用上proxychains-">
+<meta property="og:description" content="1.资源调度基础scheudler是kubernetes中的核心组件，负责为用户声明的pod资源选择合适的node,同时保证集群资源的最大化利用，这里先介绍下资源调度系统设计里面的一些基础概念 1.1 基础任务资源调度基础的任务资源调度通常包括三部分：    角色类型 功能    node node负责具体任务的执行,同时对包汇报自己拥有的资源   resource manager 汇总当前集群中">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1g9t78ifnifj30to04gdhe.jpg">
-<meta property="og:updated_time" content="2020-01-02T15:56:52.519Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb2yzzb1vbj311u0k6qa3.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb30kf8t6xj31100ba407.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb30kv8yjqj310g0asgn7.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb30lbl880j31200fgtc7.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb30mlnso0j311w0ciwgu.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb30mz8cx6j310w0li43n.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb30ndadspj312c0d8jub.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb30vhaca4j311y0pu474.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb30vyoijuj31100gstd9.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb30wk9d8xj311y0gyadu.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb30wyvh1uj313m0a2whc.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb30ze6fbyj311e0dc0wd.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb30zuz9xmj31340jg45b.jpg">
+<meta property="og:updated_time" content="2020-01-20T06:47:41.163Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1g9t78ifnifj30to04gdhe.jpg">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb2yzzb1vbj311u0k6qa3.jpg">
   
     <link rel="alternative" href="/atom.xml" title="jame_xhs&#39;s blog" type="application/atom+xml">
   
@@ -180,79 +193,81 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-命令行翻墙" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-图解-kubernetes-scheduler-源码设计系列-初步了解" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
 
 <h1 class="article-title" itemprop="name">
-  命令行翻墙
+  图解 kubernetes scheduler 源码设计系列-初步了解
 </h1>
 
 
 
         
-        <a href="/2019/12/11/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99/" class="archive-article-date">
-  	<time datetime="2019-12-11T02:45:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-11</time>
+        <a href="/2020/01/20/%E5%9B%BE%E8%A7%A3-kubernetes-scheduler-%E6%BA%90%E7%A0%81%E8%AE%BE%E8%AE%A1%E7%B3%BB%E5%88%97-%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/" class="archive-article-date">
+  	<time datetime="2020-01-20T05:33:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-20</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="痛点"><a href="#痛点" class="headerlink" title="痛点"></a>痛点</h2><blockquote>
-<p>啥也不说，先上图。这样的痛苦 国内程序员应该都体会过<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9t78ifnifj30to04gdhe.jpg" alt="git clone"></p>
-</blockquote>
-<h2 id="共具介绍"><a href="#共具介绍" class="headerlink" title="共具介绍"></a>共具介绍</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">对于技术人员shadowsocks应该不陌生，shadowsocks实质上也是一种socks5代理服务，类似于ssh代理。</span><br><span class="line"></span><br><span class="line">与vpn的全局代理不同，shadowsocks仅针对浏览器代理，不能代理应用软件，比如curl、wget等一些命令行软件。如果要让终端下的命令行工具都能支持代理，这时我们就要用上proxychains-ng这款神器了。</span><br></pre></td></tr></table></figure>
+        <h1 id="1-资源调度基础"><a href="#1-资源调度基础" class="headerlink" title="1.资源调度基础"></a>1.资源调度基础</h1><p>scheudler是kubernetes中的核心组件，负责为用户声明的pod资源选择合适的node,同时保证集群资源的最大化利用，这里先介绍下资源调度系统设计里面的一些基础概念</p>
+<h2 id="1-1-基础任务资源调度"><a href="#1-1-基础任务资源调度" class="headerlink" title="1.1 基础任务资源调度"></a>1.1 基础任务资源调度</h2><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb2yzzb1vbj311u0k6qa3.jpg" alt="调度"><br>基础的任务资源调度通常包括三部分：</p>
+<table>
+<thead>
+<tr>
+<th>角色类型</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>node</td>
+<td>node负责具体任务的执行,同时对包汇报自己拥有的资源</td>
+</tr>
+<tr>
+<td>resource manager</td>
+<td>汇总当前集群中所有node提供的资源,供上层的scheduler的调用获取,同时根据node汇报的任务信息来进行当前集群资源的更新</td>
+</tr>
+<tr>
+<td>scheduler</td>
+<td>结合当前集群的资源和用户提交的任务信息,选择合适的node节点当前的资源，分配节点任务，尽可能保证任务的运行</td>
+</tr>
+</tbody></table>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">通用的调度框架往往还会包含一个上层的集群管理器，负责针对集群中scheduler的管理和资源分配工作，同时负责scheduler集群状态甚至resource manager的保存</span><br></pre></td></tr></table></figure>
 
-<h3 id="什么是-proxychains-ng"><a href="#什么是-proxychains-ng" class="headerlink" title="什么是 proxychains-ng"></a>什么是 proxychains-ng</h3><p>项目主页：<a href="https://github.com/rofl0r/proxychains-ng" target="_blank" rel="noopener">https://github.com/rofl0r/proxychains-ng</a></p>
-<h3 id="proxychains-ng-介绍"><a href="#proxychains-ng-介绍" class="headerlink" title="proxychains-ng 介绍"></a>proxychains-ng 介绍</h3><blockquote>
-<p>proxychains ng (new generation) - a preloader which hooks calls to sockets in dynamically linked programs and redirects it through one or more socks/http proxies. continuation of the unmaintained proxychains project.</p>
-</blockquote>
-<p>proxychains-ng是proxychains的加强版，主要有以下功能和不足：</p>
-<ul>
-<li>支持http/https/socks4/socks5</li>
-<li>支持认证</li>
-<li>远端dns查询</li>
-<li>多种代理模式</li>
-<li>不支持udp/icmp转发</li>
-<li>少部分程序和在后台运行的可能无法代理</li>
-</ul>
-<h3 id="proxychains-ng-原理"><a href="#proxychains-ng-原理" class="headerlink" title="proxychains-ng 原理"></a>proxychains-ng 原理</h3><p>简单的说就是这个程序 Hook 了 sockets 相关的操作，让普通程序的 sockets 数据走 SOCKS/HTTP 代理。</p>
-<p>其核心就是利用了 LD_PRELOAD 这个环境变量（Mac 上是 DYLD_INSERT_LIBRARIES）。</p>
-<p>在 Unix 系统中，如果设置了 LD_PRELOAD 环境变量，那么在程序运行时，动态链接器会先加载该环境变量所指定的动态库。也就是说，这个动态库的加载优先于任何其它的库，包括 libc。</p>
-<p>ProxyChains 创建了一个叫 libproxychains4.so（Mac 上是 libproxychains4.dylib）的动态库。里面重写了 connect、close 以及 sendto 等与 socket 相关的函数，通过这些函数发出的数据将会走代理，详细代码可以参考 libproxychains.c。</p>
-<p>在主程序里，它会读取配置文件，查找 libproxychains4 所在位置，把这些信息存入环境变量后执行子程序。这样子程序里对 socket 相关的函数调用就会被 Hook 了，对子程序来说，跟代理相关的东西都是透明的。</p>
-<h2 id="安装-proxychains-ng"><a href="#安装-proxychains-ng" class="headerlink" title="安装 proxychains-ng"></a>安装 proxychains-ng</h2><h3 id="源代码安装"><a href="#源代码安装" class="headerlink" title="源代码安装"></a>源代码安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/rofl0r/proxychains-ng</span><br><span class="line">./configure --prefix=/usr --sysconfdir=/etc</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line">make install-config (安装proxychains.conf配置文件)</span><br></pre></td></tr></table></figure>
+<h2 id="1-2-资源调度设计的挑战"><a href="#1-2-资源调度设计的挑战" class="headerlink" title="1.2 资源调度设计的挑战"></a>1.2 资源调度设计的挑战</h2><h3 id="1-2-1-资源：集群资源利用的最大化与平均"><a href="#1-2-1-资源：集群资源利用的最大化与平均" class="headerlink" title="1.2.1 资源：集群资源利用的最大化与平均"></a>1.2.1 资源：集群资源利用的最大化与平均</h3><p>传统的IDC集群资源利用：<br>在IDC环境中我们通常希望机器利用率能够平均,让机器保持在某个平均利用率，然后根据资源的需要预留足够的buffer, 来应对集群的资源利用高峰，毕竟采购通常都有周期，我们既不能让机器空着，也不能让他跑满(业务无法弹性)<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb30kf8t6xj31100ba407.jpg" alt=""></p>
+<hr>
+<p>云环境下的资源利用：<br>而云环境下我们可以按需分配，而且云厂商通常都支持秒级交付，那其实下面的这种资源利用率其实也可以</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb30kv8yjqj310g0asgn7.jpg" alt=""><br>可以看到仅仅是环境的不一致，就可能会导致不同的调度结果，所有针对集群资源利用最大化这个目标，其实会有很多的不同</p>
+<h3 id="1-2-2-调度-任务最少等待时间与优先级"><a href="#1-2-2-调度-任务最少等待时间与优先级" class="headerlink" title="1.2.2 调度: 任务最少等待时间与优先级"></a>1.2.2 调度: 任务最少等待时间与优先级</h3><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb30lbl880j31200fgtc7.jpg" alt=""><br>在集群任务繁忙的时候，可能会导致集群资源部足以分配给当前集群中的所有任务，在让所有任务都能够尽快完成的同时，我们还要保证高优先级的任务优先被完成</p>
+<h3 id="1-2-3-调度-任务本地性"><a href="#1-2-3-调度-任务本地性" class="headerlink" title="1.2.3 调度: 任务本地性"></a>1.2.3 调度: 任务本地性</h3><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb30mlnso0j311w0ciwgu.jpg" alt=""><br>本地性是指在大数据处理中常用的一种机制，其核心是尽可能将任务分配到包含其任务执行资源的节点上，避免数据的复制</p>
+<h3 id="1-2-4-集群-高可用性"><a href="#1-2-4-集群-高可用性" class="headerlink" title="1.2.4 集群: 高可用性"></a>1.2.4 集群: 高可用性</h3><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb30mz8cx6j310w0li43n.jpg" alt=""><br>在调度过程中可能由于硬件、系统或者软件导致任务的不可用，通常会由需要一些高可用机制，来保证当前集群不会因为部分节点宕机而导致整个系统不可用</p>
+<h3 id="1-2-5-系统-可扩展性"><a href="#1-2-5-系统-可扩展性" class="headerlink" title="1.2.5 系统: 可扩展性"></a>1.2.5 系统: 可扩展性</h3><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb30ndadspj312c0d8jub.jpg" alt=""><br>扩展机制主要是指的，系统如何如何应对业务需求的变化，提供的一种可扩展机制，在集群默认调度策略不满足业务需求时，通过扩展接口，来进行系统的扩展满足业务需求</p>
+<h2 id="1-3-Pod调度场景的挑战"><a href="#1-3-Pod调度场景的挑战" class="headerlink" title="1.3 Pod调度场景的挑战"></a>1.3 Pod调度场景的挑战</h2><p>Pod调度场景其实可以看做一类特殊的任务，除了上面资源调度的挑战，还有一些针对pod调度这个具体的场景(有些是共同的,这里通过pod来描述会比较清晰)</p>
+<h3 id="1-3-1-亲和与反亲和"><a href="#1-3-1-亲和与反亲和" class="headerlink" title="1.3.1 亲和与反亲和"></a>1.3.1 亲和与反亲和</h3><p>在kubernetes中的亲和性主要体现pod和node两种资源，主要体现在两个方面:<br>1.亲和性: 1)pod之间的亲和性 2)pod与node之间的亲和性<br>2.反亲和: 1)pod之间的反亲和性 2)pod与node之间的反亲和<br>简单举例：<br>1.pod之间的反亲和: 为了保证高可用我们通常会将同一业务的多个节点分散在不通的数据中心和机架<br>2.pod与node亲和性: 比如某些需要磁盘io操作的pod，我们可以调度到具有ssd的机器上，提高IO性能</p>
+<h3 id="1-3-2-多租户与容量规划"><a href="#1-3-2-多租户与容量规划" class="headerlink" title="1.3.2 多租户与容量规划"></a>1.3.2 多租户与容量规划</h3><p>多租户通常是为了进行集群资源的隔离，在业务系统中，通常会按照业务线来进行资源的隔离，同时会给业务设定对应的容量，从而避免单个业务线资源的过度使用影响整个公司的所有业务</p>
+<h3 id="1-3-3-Zone与node选择"><a href="#1-3-3-Zone与node选择" class="headerlink" title="1.3.3 Zone与node选择"></a>1.3.3 Zone与node选择</h3><p>zone通常是在业务容灾中常见的概念，通过将服务分散在多个数据中心，避免因为单个数据中心故障导致业务完全不可用</p>
+<p>因为之前亲和性的问题，如何在多个zone中的所有node中选择出一个合适的节点，则是一个比较大的挑战</p>
+<h3 id="1-3-4-多样化资源的扩展"><a href="#1-3-4-多样化资源的扩展" class="headerlink" title="1.3.4 多样化资源的扩展"></a>1.3.4 多样化资源的扩展</h3><p>系统资源除了cpu、内存还包括网络、磁盘io、gpu等等，针对其余资源的分配调度，kubernetes还需要提供额外的扩展机制来进行调度扩展的支持</p>
+<h3 id="1-3-5-资源混部"><a href="#1-3-5-资源混部" class="headerlink" title="1.3.5 资源混部"></a>1.3.5 资源混部</h3><p>kubernetes初期是针对pod调度场景而生，主要其实是在线web业务，这类任务的特点大部分都是无状态的，那如何针对离线场景的去支持离线的批处理计算等任务</p>
+<h1 id="2-kubernetes中的调度初识"><a href="#2-kubernetes中的调度初识" class="headerlink" title="2. kubernetes中的调度初识"></a>2. kubernetes中的调度初识</h1><h2 id="2-1-中心化数据集中存储"><a href="#2-1-中心化数据集中存储" class="headerlink" title="2.1 中心化数据集中存储"></a>2.1 中心化数据集中存储</h2><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb30vhaca4j311y0pu474.jpg" alt=""></p>
+<h3 id="2-1-1-中心化的数据存储"><a href="#2-1-1-中心化的数据存储" class="headerlink" title="2.1.1 中心化的数据存储"></a>2.1.1 中心化的数据存储</h3><p>kubernetes是一个数据中心化存储的系统，集群中的所有数据都通过apiserver存储到etcd中，包括node节点的资源信息、节点上面的pod信息、当前集群的所有pod信息，在这里其实apiserver也充当了resource manager的角色，存储所有的集群资源和已经分配的资源</p>
+<h3 id="2-1-2-调度数据的存储与获取"><a href="#2-1-2-调度数据的存储与获取" class="headerlink" title="2.1.2 调度数据的存储与获取"></a>2.1.2 调度数据的存储与获取</h3><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb30vyoijuj31100gstd9.jpg" alt=""></p>
+<p>kubernetes中采用了一种list watch的机制，用于集群中其他节点从apiserver感知数据，scheduler也采用该机制，通过在感知apiserver的数据变化，同时在本地memory中构建一份cache数据(资源数据)，来提供调度使用，即SchedulerCache</p>
+<h3 id="2-1-3-scheduler的高可用"><a href="#2-1-3-scheduler的高可用" class="headerlink" title="2.1.3 scheduler的高可用"></a>2.1.3 scheduler的高可用</h3><p>大多数系统的高可用机制都是通过类似zookeeper、etcd等AP系统实现，通过临时节点或者锁机制机制来实现多个节点的竞争，从而在主节点宕机时，能够快速接管， scheduler自然也是这种机制，通过apiserver底层的etcd来实现锁的竞争，然后通过apiserver的数据，就可以保证调度器的高可用</p>
+<h2 id="2-2-调度器内部组成"><a href="#2-2-调度器内部组成" class="headerlink" title="2.2 调度器内部组成"></a>2.2 调度器内部组成</h2><h3 id="2-2-1-调度队列"><a href="#2-2-1-调度队列" class="headerlink" title="2.2.1 调度队列"></a>2.2.1 调度队列</h3><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb30wk9d8xj311y0gyadu.jpg" alt=""></p>
+<p>当从apiserver感知到要调度的pod的时候,scheduler会根据pod的优先级，来讲其加入到内部的一个优先级队列中，后续调度的时候，会先获取优先级比较高的pod来进行优先满足调度</p>
+<p>这里还有一个点就是如果优先调度了优先级比较低的pod，其实在后续的抢占过程中，也会被驱逐出去</p>
+<h3 id="2-2-2-调度与抢占调度"><a href="#2-2-2-调度与抢占调度" class="headerlink" title="2.2.2 调度与抢占调度"></a>2.2.2 调度与抢占调度</h3><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb30wyvh1uj313m0a2whc.jpg" alt=""></p>
+<p>前面提到过抢占,kubernetes默认会对所有的pod来尝试进行调度，当集群资源部满足的时候，则会尝试抢占调度，通过抢占调度，为高优先级的pod来进行优先调度 其核心都是通过调度算法实现即ScheduleAlgorithm</p>
+<p>这里的调度算法实际上是一堆调度算法和调度配置的集合</p>
+<h3 id="2-2-3-外部扩展机制"><a href="#2-2-3-外部扩展机制" class="headerlink" title="2.2.3 外部扩展机制"></a>2.2.3 外部扩展机制</h3><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb30ze6fbyj311e0dc0wd.jpg" alt=""><br>scheduler extender是k8s对调度器的一种扩展机制，我们可以定义对应的extender,在对应资源的调度的时候，k8s会检查对应的资源，如果发现需要调用外部的extender,则将当前的调度数据发送给extender,然后汇总调度数据，决定最终的调度结果</p>
+<h3 id="2-2-4-内部扩展机制"><a href="#2-2-4-内部扩展机制" class="headerlink" title="2.2.4 内部扩展机制"></a>2.2.4 内部扩展机制</h3><p>上面提到调度算法是一组调度算法和调度配置的集合，kubernetes scheduler framework是则是一个框架声明对应插件的接口，从而支持用户编写自己的plugin,来影响调度决策，个人感觉这并不是一种好的机制，因为要修改代码，或者通过修改kubernetes scheduler启动来进行自定义插件的加载</p>
+<h2 id="2-3-调度基础架构"><a href="#2-3-调度基础架构" class="headerlink" title="2.3 调度基础架构"></a>2.3 调度基础架构</h2><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb30zuz9xmj31340jg45b.jpg" alt=""><br>结合上面所说的就得到了一个最简单的架构，主要调度流程分为如下几部分：<br>0.通过apiserver来进行主节点选举，成功者进行调度业务流程处理<br>1.通过apiserver感知集群的资源数据和pod数据，更新本地schedulerCache<br>2.通过apiserver感知用户或者controller的pod调度请求，加入本地调度队列<br>3.通过调度算法来进行pod请求的调度，分配合适的node节点，此过程可能会发生抢占调度<br>4.将调度结果返回给apiserver,然后由kubelet组件进行后续pod的请求处理</p>
 
-<h3 id="MAC下安装"><a href="#MAC下安装" class="headerlink" title="MAC下安装"></a>MAC下安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install proxychains-ng</span><br></pre></td></tr></table></figure>
-
-<h3 id="配置-proxychains-ng"><a href="#配置-proxychains-ng" class="headerlink" title="配置 proxychains-ng"></a>配置 proxychains-ng</h3><p>proxychains-ng默认配置文件名为<code>proxychains.conf</code></p>
-<ul>
-<li>通过源代码编译安装的默认为<code>/etc/proxychains.conf</code></li>
-<li>Mac下用Homebrew安装的默认为<code>/usr/local/etc/proxychains.conf</code></li>
-</ul>
-<p>proxychains-ng的配置非常简单，只需将代理加入[ProxyList]中即可。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ vim proxychains.conf</span><br><span class="line"></span><br><span class="line">quiet_mode</span><br><span class="line">dynamic_chain</span><br><span class="line">chain_len = 1 #round_robin_chain和random_chain使用</span><br><span class="line">proxy_dns</span><br><span class="line">remote_dns_subnet 224</span><br><span class="line">tcp_read_time_out 15000</span><br><span class="line">tcp_connect_time_out 8000</span><br><span class="line">localnet 127.0.0.0/255.0.0.0</span><br><span class="line">localnet 10.0.0.0/255.0.0.0</span><br><span class="line">localnet 172.16.0.0/255.240.0.0</span><br><span class="line">localnet 192.168.0.0/255.255.0.0</span><br><span class="line"></span><br><span class="line">[ProxyList]</span><br><span class="line">socks5  127.0.0.1 1086</span><br><span class="line">http    127.0.0.1 1087</span><br></pre></td></tr></table></figure>
-
-
-<p>proxychains-ng支持多种代理模式,默认是选择 strict_chain。</p>
-<ul>
-<li>dynamic_chain ：动态模式,按照代理列表顺序自动选取可用代理</li>
-<li>strict_chain ：严格模式,严格按照代理列表顺序使用代理，所有代理必须可用</li>
-<li>round_robin_chain ：轮询模式，自动跳过不可用代理</li>
-<li>random_chain ：随机模式,随机使用代理<h3 id="proxychains-ng-使用"><a href="#proxychains-ng-使用" class="headerlink" title="proxychains-ng 使用"></a>proxychains-ng 使用</h3></li>
-</ul>
-<p>proxychains-ng用法非常简单，使用格式如下:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 程序 参数</span><br></pre></td></tr></table></figure>
-
-<h3 id="proxychains-ng-测试"><a href="#proxychains-ng-测试" class="headerlink" title="proxychains-ng 测试"></a>proxychains-ng 测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 curl ip.sb</span><br></pre></td></tr></table></figure>
-
-<h3 id="proxychains-ng-优化"><a href="#proxychains-ng-优化" class="headerlink" title="proxychains-ng 优化"></a>proxychains-ng 优化</h3><p>给proxychains4增加一个别名，在 /.zshrc或/.bashrc末尾加入如下行：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alias pc=&apos;proxychains4&apos;</span><br></pre></td></tr></table></figure>
-<p>以后就可以类似$ pc curl <a href="http://www.google.com" target="_blank" rel="noopener">http://www.google.com</a>  这样调用proxychains4，简化了输入。</p>
-<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3>
       
 
       
@@ -260,6 +275,17 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color5">kubernetes,k8s</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -310,7 +336,7 @@
     <a class="close js-modal-close" href="javascript:;" target="_blank" rel="noopener"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://www.jxhs.me/2019/12/11/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.jxhs.me/2020/01/20/%E5%9B%BE%E8%A7%A3-kubernetes-scheduler-%E6%BA%90%E7%A0%81%E8%AE%BE%E8%AE%A1%E7%B3%BB%E5%88%97-%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -324,18 +350,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/12/11/%E5%AF%B9%E4%BA%8E%E7%A8%8B%E5%BA%8F%E5%91%98%E6%9D%A5%E8%AF%B4%E4%B8%AA%E4%BA%BA%E5%AE%BD%E5%B8%A6%E5%8F%AF%E4%BB%A5%E6%80%8E%E4%B9%88%E5%88%A9%E7%94%A8/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          对于程序员来说个人宽带可以怎么利用?
-        
-      </div>
-    </a>
   
-  
-    <a href="/2019/12/07/%E5%B0%8F%E7%B1%B3%E8%B7%AF%E7%94%B1%E5%99%A83%E5%A2%9E%E5%BC%BA%E7%89%88%E5%88%B7%E6%9C%BA%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">小米路由器3增强版刷机踩坑记录</div>
+    <a href="/2020/01/16/cenots7%E7%A6%BB%E7%BA%BF%E9%83%A8%E7%BD%B2k3s/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">cenots7离线部署k3s</div>
       <i class="icon-circle-right"></i>
     </a>
   

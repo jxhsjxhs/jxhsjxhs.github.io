@@ -212,9 +212,9 @@
 <blockquote>
 <p>Metallb 支持 Helm 和 YAML 两种安装方法，这里我们使用第二种：</p>
 </blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml</span><br><span class="line">kubectl apply -f metallb.yaml</span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">kubectl get pod -n metallb-system  -o wide</span><br><span class="line"></span><br><span class="line">NAME                          READY   STATUS    RESTARTS   AGE   IP               NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">controller-67496974d9-wpgw8   1/1     Running   0          75m   100.108.11.251   node2    &lt;none&gt;           &lt;none&gt;</span><br><span class="line">speaker-4cscj                 1/1     Running   0          75m   10.6.204.2       node1    &lt;none&gt;           &lt;none&gt;</span><br><span class="line">speaker-9s55h                 1/1     Running   0          75m   10.6.204.3       node2    &lt;none&gt;           &lt;none&gt;</span><br><span class="line">speaker-kr2bm                 1/1     Running   0          75m   10.6.204.1       master   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml</span><br><span class="line">kubectl apply -f metallb.yaml</span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">kubectl get pod -n metallb-system  -o wide</span><br><span class="line"></span><br><span class="line">NAME                          READY   STATUS    RESTARTS   AGE   IP               NODE     </span><br><span class="line">controller-67496974d9-wpgw8   1/1     Running   0          75m   100.108.11.251   node2    </span><br><span class="line">speaker-4cscj                 1/1     Running   0          75m   10.6.204.2       node1    </span><br><span class="line">speaker-9s55h                 1/1     Running   0          75m   10.6.204.3       node2    </span><br><span class="line">speaker-kr2bm                 1/1     Running   0          75m   10.6.204.1       master</span><br></pre></td></tr></table></figure>
 <p>kubectl get daemonset -n metallb-system</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NAME      DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                 AGE</span><br><span class="line">speaker   3         3         3       3            3           beta.kubernetes.io/os=linux   76m</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NAME      DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                 </span><br><span class="line">speaker   3         3         3       3            3           beta.kubernetes.io/os=linux</span><br></pre></td></tr></table></figure>
 
 <p>kubectl get deployment -n metallb-system</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NAME         READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">controller   1/1     1            1           76m</span><br></pre></td></tr></table></figure>
@@ -1265,11 +1265,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1305,11 +1305,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
 <meta property="og:description" content="使用kube-dns集群插件，基于DNS的服务发现已成为Kubernetes的一部分。这通常很有效，但是对于实施的可靠性、灵活性和安全性存在一些担忧。 CoreDNS是一个通用的、权威的DNS服务器，提供与Kubernetes后向兼容但可扩展的集成。它解决了kube-dns所遇到的问题，并提供了许多独特的功能，可以解决各种各样的用例。 在本文中，你将了解kube-dns和CoreDNS的实施差异，">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-01-20T08:23:06.682Z">
+<meta property="og:updated_time" content="2020-01-21T11:13:58.304Z">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="jame_xhs&#39;s blog" type="application/atom+xml">
@@ -231,11 +231,7 @@
 <p>headless.default.svc.cluster.local has SRV record 0 25 443 172-17-0-4.headless.default.svc.cluster.local.</p>
 <p>headless.default.svc.cluster.local has SRV record 0 25 443 172-17-0-9.headless.default.svc.cluster.local.</p>
 <p>对于某些应用程序，需要为此设置pod名称，而不是pod IP地址（例如，请参阅kubernetes＃47992和coredns＃1190）。要在CoreDNS中启用此功能，请在Corefile中指定“endpoint_pod_names”选项，结果如下：</p>
-<p>dnstools# host -t srv headless</p>
-<p>headless.default.svc.cluster.local has SRV record 0 25 443 headless-65bb4c479f-qv84p.headless.default.svc.cluster.local.</p>
-<p>headless.default.svc.cluster.local has SRV record 0 25 443 headless-65bb4c479f-zc8lx.headless.default.svc.cluster.local.</p>
-<p>headless.default.svc.cluster.local has SRV record 0 25 443 headless-65bb4c479f-q7lf2.headless.default.svc.cluster.local.</p>
-<p>headless.default.svc.cluster.local has SRV record 0 25 443 headless-65bb4c479f-566rt.headless.default.svc.cluster.local.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">dnstools# host -t srv headless</span><br><span class="line"></span><br><span class="line">headless.default.svc.cluster.local has SRV record 0 25 443 headless-65bb4c479f-qv84p.headless.default.svc.cluster.local.</span><br><span class="line"></span><br><span class="line">headless.default.svc.cluster.local has SRV record 0 25 443 headless-65bb4c479f-zc8lx.headless.default.svc.cluster.local.</span><br><span class="line"></span><br><span class="line">headless.default.svc.cluster.local has SRV record 0 25 443 headless-65bb4c479f-q7lf2.headless.default.svc.cluster.local.</span><br><span class="line"></span><br><span class="line">headless.default.svc.cluster.local has SRV record 0 25 443 headless-65bb4c479f-566rt.headless.default.svc.cluster.local.</span><br></pre></td></tr></table></figure>
 <h3 id="Autopath"><a href="#Autopath" class="headerlink" title="Autopath"></a>Autopath</h3><p>CoreDNS还具有一项特殊功能，可以改善外部名称DNS请求的延迟。 在Kubernetes中，pod的DNS搜索路径指定了一长串后缀。这样可以在请求集群中的服务时使用短名称，例如上面的“headless”，而不是“headless.default.svc.cluster.local”。 但是，当请求外部名称（例如“infoblox.com”时 ），客户端进行了好几次无效的DNS查询，每次都需要从客户端到kube-dns的往返：</p>
 <p>infoblox.com.default.svc.cluster.local -&gt; NXDOMAIN<br>infoblox.com.svc.cluster.local -&gt; NXDOMAIN<br>infoblox.com.cluster.local -&gt; NXDOMAIN<br>infoblox.com.your-internal-domain.com -&gt; NXDOMAIN<br>infoblox.com -&gt; returns a valid record<br>在CoreDNS中，可以启用一个名为autopath的可选功能。该功能将导致在服务器中跟踪此搜索路径。也就是说，CoreDNS将从源IP地址中找出客户端pod所在的命名空间，并遍历此搜索列表，直到获得有效答案。由于前三个在CoreDNS内部解析，因此它会切断客户端和服务器之间的所有来回，从而减少延迟。</p>
 <h3 id="其他Kubernetes特定功能"><a href="#其他Kubernetes特定功能" class="headerlink" title="其他Kubernetes特定功能"></a>其他Kubernetes特定功能</h3><p>在CoreDNS中，你可以使用标准DNS区域传输来导出整个DNS记录集。这对于调试服务以及将集群区域导入其他DNS服务器非常有用。</p>
@@ -313,6 +309,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2020/01/20/%E7%A9%B7%E9%80%BCK8S%E7%94%A8%E6%88%B7%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1LB%E6%94%AF%E6%8C%81/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          穷逼K8S用户的负载均衡LB支持
+        
+      </div>
+    </a>
   
   
     <a href="/2020/01/20/coredns%E6%B7%BB%E5%8A%A0%E8%87%AA%E5%AE%9A%E4%B9%89DNS%E8%A7%A3%E6%9E%90%E8%AE%B0%E5%BD%95/" id="article-nav-older" class="article-nav-link-wrap">
@@ -444,11 +449,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -456,7 +461,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -464,7 +469,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -480,11 +485,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -493,10 +498,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">podman,docker</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -509,6 +510,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
               </li>
              
               <li class="article-tag-list-item">

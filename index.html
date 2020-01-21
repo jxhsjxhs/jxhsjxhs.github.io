@@ -177,6 +177,69 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-穷逼K8S用户的负载均衡LB支持" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/01/20/%E7%A9%B7%E9%80%BCK8S%E7%94%A8%E6%88%B7%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1LB%E6%94%AF%E6%8C%81/">穷逼K8S用户的负载均衡LB支持</a>
+</h1>
+
+
+
+        
+        <a href="/2020/01/20/%E7%A9%B7%E9%80%BCK8S%E7%94%A8%E6%88%B7%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1LB%E6%94%AF%E6%8C%81/" class="archive-article-date">
+  	<time datetime="2020-01-20T08:38:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-20</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/01/20/%E7%A9%B7%E9%80%BCK8S%E7%94%A8%E6%88%B7%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1LB%E6%94%AF%E6%8C%81/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-kube-dns与CoreDNS有何差异？" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -230,11 +293,7 @@
 <p>headless.default.svc.cluster.local has SRV record 0 25 443 172-17-0-4.headless.default.svc.cluster.local.</p>
 <p>headless.default.svc.cluster.local has SRV record 0 25 443 172-17-0-9.headless.default.svc.cluster.local.</p>
 <p>对于某些应用程序，需要为此设置pod名称，而不是pod IP地址（例如，请参阅kubernetes＃47992和coredns＃1190）。要在CoreDNS中启用此功能，请在Corefile中指定“endpoint_pod_names”选项，结果如下：</p>
-<p>dnstools# host -t srv headless</p>
-<p>headless.default.svc.cluster.local has SRV record 0 25 443 headless-65bb4c479f-qv84p.headless.default.svc.cluster.local.</p>
-<p>headless.default.svc.cluster.local has SRV record 0 25 443 headless-65bb4c479f-zc8lx.headless.default.svc.cluster.local.</p>
-<p>headless.default.svc.cluster.local has SRV record 0 25 443 headless-65bb4c479f-q7lf2.headless.default.svc.cluster.local.</p>
-<p>headless.default.svc.cluster.local has SRV record 0 25 443 headless-65bb4c479f-566rt.headless.default.svc.cluster.local.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">dnstools# host -t srv headless</span><br><span class="line"></span><br><span class="line">headless.default.svc.cluster.local has SRV record 0 25 443 headless-65bb4c479f-qv84p.headless.default.svc.cluster.local.</span><br><span class="line"></span><br><span class="line">headless.default.svc.cluster.local has SRV record 0 25 443 headless-65bb4c479f-zc8lx.headless.default.svc.cluster.local.</span><br><span class="line"></span><br><span class="line">headless.default.svc.cluster.local has SRV record 0 25 443 headless-65bb4c479f-q7lf2.headless.default.svc.cluster.local.</span><br><span class="line"></span><br><span class="line">headless.default.svc.cluster.local has SRV record 0 25 443 headless-65bb4c479f-566rt.headless.default.svc.cluster.local.</span><br></pre></td></tr></table></figure>
 <h3 id="Autopath"><a href="#Autopath" class="headerlink" title="Autopath"></a>Autopath</h3><p>CoreDNS还具有一项特殊功能，可以改善外部名称DNS请求的延迟。 在Kubernetes中，pod的DNS搜索路径指定了一长串后缀。这样可以在请求集群中的服务时使用短名称，例如上面的“headless”，而不是“headless.default.svc.cluster.local”。 但是，当请求外部名称（例如“infoblox.com”时 ），客户端进行了好几次无效的DNS查询，每次都需要从客户端到kube-dns的往返：</p>
 <p>infoblox.com.default.svc.cluster.local -&gt; NXDOMAIN<br>infoblox.com.svc.cluster.local -&gt; NXDOMAIN<br>infoblox.com.cluster.local -&gt; NXDOMAIN<br>infoblox.com.your-internal-domain.com -&gt; NXDOMAIN<br>infoblox.com -&gt; returns a valid record<br>在CoreDNS中，可以启用一个名为autopath的可选功能。该功能将导致在服务器中跟踪此搜索路径。也就是说，CoreDNS将从源IP地址中找出客户端pod所在的命名空间，并遍历此搜索列表，直到获得有效答案。由于前三个在CoreDNS内部解析，因此它会切断客户端和服务器之间的所有来回，从而减少延迟。</p>
 <h3 id="其他Kubernetes特定功能"><a href="#其他Kubernetes特定功能" class="headerlink" title="其他Kubernetes特定功能"></a>其他Kubernetes特定功能</h3><p>在CoreDNS中，你可以使用标准DNS区域传输来导出整个DNS记录集。这对于调试服务以及将集群区域导入其他DNS服务器非常有用。</p>
@@ -317,8 +376,8 @@
 <h3 id="编辑为以下内容-添加了hosts块-："><a href="#编辑为以下内容-添加了hosts块-：" class="headerlink" title="编辑为以下内容(添加了hosts块)："></a>编辑为以下内容(添加了hosts块)：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">data:</span><br><span class="line">  Corefile: |</span><br><span class="line">    .:53 &#123;</span><br><span class="line">        errors</span><br><span class="line">        health</span><br><span class="line">        kubernetes cluster.local in-addr.arpa ip6.arpa &#123;</span><br><span class="line">          pods insecure</span><br><span class="line">          upstream</span><br><span class="line">          fallthrough in-addr.arpa ip6.arpa</span><br><span class="line">          ttl 30</span><br><span class="line">        &#125;</span><br><span class="line">        hosts &#123;</span><br><span class="line">            10.0.0.22 cos6-data1.test.alltest.com</span><br><span class="line">            10.0.0.23 cos6-data2.test.alltest.com</span><br><span class="line">            10.0.0.24 cos6-data3.test.alltest.com</span><br><span class="line">            10.0.0.25 cos6-data4.test.alltest.com</span><br><span class="line">            10.0.0.26 cos6-data5.test.alltest.com</span><br><span class="line">            10.0.0.41 cos6-datanode6.test.alltest.com</span><br><span class="line">            10.0.0.42 cos6-datanode7.test.alltest.com</span><br><span class="line">            10.0.0.43 cos6-datanode8.test.alltest.com</span><br><span class="line">            10.0.0.44 cos6-datanode9.test.alltest.com</span><br><span class="line">        &#125;</span><br><span class="line">        prometheus :9153</span><br><span class="line">        forward . &quot;/etc/resolv.conf&quot;</span><br><span class="line">        cache 30</span><br><span class="line">        loop</span><br><span class="line">        reload</span><br><span class="line">        loadbalance</span><br><span class="line">    &#125;</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">  annotations:</span><br><span class="line">    kubectl.kubernetes.io/last-applied-configuration: |</span><br><span class="line">      &#123;&quot;apiVersion&quot;:&quot;v1&quot;,&quot;data&quot;:&#123;&quot;Corefile&quot;:&quot;.:53 &#123;\n    errors\n    health\n    kubernetes cluster.local in-addr.arpa ip6.arpa &#123;\n      pods insecure\n      upstream\n      fallthrough in-addr.arpa ip6.arpa\n      ttl 30\n    &#125;\n    prometheus :9153\n    forward . \&quot;/etc/resolv.conf\&quot;\n    cache 30\n    loop\n    reload\n    loadbalance\n&#125;\n&quot;&#125;,&quot;kind&quot;:&quot;ConfigMap&quot;,&quot;metadata&quot;:&#123;&quot;annotations&quot;:&#123;&#125;,&quot;labels&quot;:&#123;&quot;addonmanager.kubernetes.io/mode&quot;:&quot;EnsureExists&quot;&#125;,&quot;name&quot;:&quot;coredns&quot;,&quot;namespace&quot;:&quot;kube-system&quot;&#125;&#125;</span><br><span class="line">  creationTimestamp: &quot;2019-08-19T09:14:15Z&quot;</span><br><span class="line">  labels:</span><br><span class="line">    addonmanager.kubernetes.io/mode: EnsureExists</span><br><span class="line">  name: coredns</span><br><span class="line">  namespace: kube-system</span><br><span class="line">  resourceVersion: &quot;3231349&quot;</span><br><span class="line">  selfLink: /api/v1/namespaces/kube-system/configmaps/coredns</span><br><span class="line">  uid: b791c47f-c261-11e9-b426-525400116042</span><br></pre></td></tr></table></figure>
 
 <h3 id="重启coredns："><a href="#重启coredns：" class="headerlink" title="重启coredns："></a>重启coredns：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">~ » kubectl scale deployment coredns -n kube-system --replicas=0</span><br><span class="line">deployment.extensions/coredns scaled</span><br><span class="line"></span><br><span class="line">~ » kubectl scale deployment coredns -n kube-system --replicas=2                                                     yjzeng@yjzeng-ubuntu</span><br><span class="line">deployment.extensions/coredns scaled</span><br></pre></td></tr></table></figure>
-<p>测试，进入任意一个具有ping命令的pod中，ping自己插入的域名，能通就说明已经生效了。</p>
 
+<h3 id="测试，进入任意一个具有ping命令的pod中，ping自己插入的域名，能通就说明已经生效了。"><a href="#测试，进入任意一个具有ping命令的pod中，ping自己插入的域名，能通就说明已经生效了。" class="headerlink" title="测试，进入任意一个具有ping命令的pod中，ping自己插入的域名，能通就说明已经生效了。"></a>测试，进入任意一个具有ping命令的pod中，ping自己插入的域名，能通就说明已经生效了。</h3>
       
 
       
@@ -1065,120 +1124,6 @@
 
 
   
-    <article id="post-命令行翻墙" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/12/11/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99/">命令行翻墙</a>
-</h1>
-
-
-
-        
-        <a href="/2019/12/11/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99/" class="archive-article-date">
-  	<time datetime="2019-12-11T02:45:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-11</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="痛点"><a href="#痛点" class="headerlink" title="痛点"></a>痛点</h2><blockquote>
-<p>啥也不说，先上图。这样的痛苦 国内程序员应该都体会过<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9t78ifnifj30to04gdhe.jpg" alt="git clone"></p>
-</blockquote>
-<h2 id="共具介绍"><a href="#共具介绍" class="headerlink" title="共具介绍"></a>共具介绍</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">对于技术人员shadowsocks应该不陌生，shadowsocks实质上也是一种socks5代理服务，类似于ssh代理。</span><br><span class="line"></span><br><span class="line">与vpn的全局代理不同，shadowsocks仅针对浏览器代理，不能代理应用软件，比如curl、wget等一些命令行软件。如果要让终端下的命令行工具都能支持代理，这时我们就要用上proxychains-ng这款神器了。</span><br></pre></td></tr></table></figure>
-
-<h3 id="什么是-proxychains-ng"><a href="#什么是-proxychains-ng" class="headerlink" title="什么是 proxychains-ng"></a>什么是 proxychains-ng</h3><p>项目主页：<a href="https://github.com/rofl0r/proxychains-ng" target="_blank" rel="noopener">https://github.com/rofl0r/proxychains-ng</a></p>
-<h3 id="proxychains-ng-介绍"><a href="#proxychains-ng-介绍" class="headerlink" title="proxychains-ng 介绍"></a>proxychains-ng 介绍</h3><blockquote>
-<p>proxychains ng (new generation) - a preloader which hooks calls to sockets in dynamically linked programs and redirects it through one or more socks/http proxies. continuation of the unmaintained proxychains project.</p>
-</blockquote>
-<p>proxychains-ng是proxychains的加强版，主要有以下功能和不足：</p>
-<ul>
-<li>支持http/https/socks4/socks5</li>
-<li>支持认证</li>
-<li>远端dns查询</li>
-<li>多种代理模式</li>
-<li>不支持udp/icmp转发</li>
-<li>少部分程序和在后台运行的可能无法代理</li>
-</ul>
-<h3 id="proxychains-ng-原理"><a href="#proxychains-ng-原理" class="headerlink" title="proxychains-ng 原理"></a>proxychains-ng 原理</h3><p>简单的说就是这个程序 Hook 了 sockets 相关的操作，让普通程序的 sockets 数据走 SOCKS/HTTP 代理。</p>
-<p>其核心就是利用了 LD_PRELOAD 这个环境变量（Mac 上是 DYLD_INSERT_LIBRARIES）。</p>
-<p>在 Unix 系统中，如果设置了 LD_PRELOAD 环境变量，那么在程序运行时，动态链接器会先加载该环境变量所指定的动态库。也就是说，这个动态库的加载优先于任何其它的库，包括 libc。</p>
-<p>ProxyChains 创建了一个叫 libproxychains4.so（Mac 上是 libproxychains4.dylib）的动态库。里面重写了 connect、close 以及 sendto 等与 socket 相关的函数，通过这些函数发出的数据将会走代理，详细代码可以参考 libproxychains.c。</p>
-<p>在主程序里，它会读取配置文件，查找 libproxychains4 所在位置，把这些信息存入环境变量后执行子程序。这样子程序里对 socket 相关的函数调用就会被 Hook 了，对子程序来说，跟代理相关的东西都是透明的。</p>
-<h2 id="安装-proxychains-ng"><a href="#安装-proxychains-ng" class="headerlink" title="安装 proxychains-ng"></a>安装 proxychains-ng</h2><h3 id="源代码安装"><a href="#源代码安装" class="headerlink" title="源代码安装"></a>源代码安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/rofl0r/proxychains-ng</span><br><span class="line">./configure --prefix=/usr --sysconfdir=/etc</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line">make install-config (安装proxychains.conf配置文件)</span><br></pre></td></tr></table></figure>
-
-<h3 id="MAC下安装"><a href="#MAC下安装" class="headerlink" title="MAC下安装"></a>MAC下安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install proxychains-ng</span><br></pre></td></tr></table></figure>
-
-<h3 id="配置-proxychains-ng"><a href="#配置-proxychains-ng" class="headerlink" title="配置 proxychains-ng"></a>配置 proxychains-ng</h3><p>proxychains-ng默认配置文件名为<code>proxychains.conf</code></p>
-<ul>
-<li>通过源代码编译安装的默认为<code>/etc/proxychains.conf</code></li>
-<li>Mac下用Homebrew安装的默认为<code>/usr/local/etc/proxychains.conf</code></li>
-</ul>
-<p>proxychains-ng的配置非常简单，只需将代理加入[ProxyList]中即可。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ vim proxychains.conf</span><br><span class="line"></span><br><span class="line">quiet_mode</span><br><span class="line">dynamic_chain</span><br><span class="line">chain_len = 1 #round_robin_chain和random_chain使用</span><br><span class="line">proxy_dns</span><br><span class="line">remote_dns_subnet 224</span><br><span class="line">tcp_read_time_out 15000</span><br><span class="line">tcp_connect_time_out 8000</span><br><span class="line">localnet 127.0.0.0/255.0.0.0</span><br><span class="line">localnet 10.0.0.0/255.0.0.0</span><br><span class="line">localnet 172.16.0.0/255.240.0.0</span><br><span class="line">localnet 192.168.0.0/255.255.0.0</span><br><span class="line"></span><br><span class="line">[ProxyList]</span><br><span class="line">socks5  127.0.0.1 1086</span><br><span class="line">http    127.0.0.1 1087</span><br></pre></td></tr></table></figure>
-
-
-<p>proxychains-ng支持多种代理模式,默认是选择 strict_chain。</p>
-<ul>
-<li>dynamic_chain ：动态模式,按照代理列表顺序自动选取可用代理</li>
-<li>strict_chain ：严格模式,严格按照代理列表顺序使用代理，所有代理必须可用</li>
-<li>round_robin_chain ：轮询模式，自动跳过不可用代理</li>
-<li>random_chain ：随机模式,随机使用代理<h3 id="proxychains-ng-使用"><a href="#proxychains-ng-使用" class="headerlink" title="proxychains-ng 使用"></a>proxychains-ng 使用</h3></li>
-</ul>
-<p>proxychains-ng用法非常简单，使用格式如下:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 程序 参数</span><br></pre></td></tr></table></figure>
-
-<h3 id="proxychains-ng-测试"><a href="#proxychains-ng-测试" class="headerlink" title="proxychains-ng 测试"></a>proxychains-ng 测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 curl ip.sb</span><br></pre></td></tr></table></figure>
-
-<h3 id="proxychains-ng-优化"><a href="#proxychains-ng-优化" class="headerlink" title="proxychains-ng 优化"></a>proxychains-ng 优化</h3><p>给proxychains4增加一个别名，在 /.zshrc或/.bashrc末尾加入如下行：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alias pc=&apos;proxychains4&apos;</span><br></pre></td></tr></table></figure>
-<p>以后就可以类似$ pc curl <a href="http://www.google.com" target="_blank" rel="noopener">http://www.google.com</a>  这样调用proxychains4，简化了输入。</p>
-<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/12/11/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1278,11 +1223,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1290,7 +1235,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1298,7 +1243,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1314,11 +1259,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1327,10 +1272,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">podman,docker</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1343,6 +1284,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
               </li>
              
               <li class="article-tag-list-item">

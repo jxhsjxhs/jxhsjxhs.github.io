@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
 <meta property="og:description" content="coredns 自带 hosts 插件， 允许像配置 hosts 一样配置自定义 DNS 解析，修改 kube-system 中 configMap 的 coredns 添加如下设置即可。 123456hosts &amp;#123;    172.21.91.28 cache.redis    172.21.91.28 persistent.redis          fallthrough&amp;#125">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-01-20T07:54:52.631Z">
+<meta property="og:updated_time" content="2020-01-21T11:13:37.633Z">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="jame_xhs&#39;s blog" type="application/atom+xml">
@@ -212,8 +212,8 @@
 <h3 id="编辑为以下内容-添加了hosts块-："><a href="#编辑为以下内容-添加了hosts块-：" class="headerlink" title="编辑为以下内容(添加了hosts块)："></a>编辑为以下内容(添加了hosts块)：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">data:</span><br><span class="line">  Corefile: |</span><br><span class="line">    .:53 &#123;</span><br><span class="line">        errors</span><br><span class="line">        health</span><br><span class="line">        kubernetes cluster.local in-addr.arpa ip6.arpa &#123;</span><br><span class="line">          pods insecure</span><br><span class="line">          upstream</span><br><span class="line">          fallthrough in-addr.arpa ip6.arpa</span><br><span class="line">          ttl 30</span><br><span class="line">        &#125;</span><br><span class="line">        hosts &#123;</span><br><span class="line">            10.0.0.22 cos6-data1.test.alltest.com</span><br><span class="line">            10.0.0.23 cos6-data2.test.alltest.com</span><br><span class="line">            10.0.0.24 cos6-data3.test.alltest.com</span><br><span class="line">            10.0.0.25 cos6-data4.test.alltest.com</span><br><span class="line">            10.0.0.26 cos6-data5.test.alltest.com</span><br><span class="line">            10.0.0.41 cos6-datanode6.test.alltest.com</span><br><span class="line">            10.0.0.42 cos6-datanode7.test.alltest.com</span><br><span class="line">            10.0.0.43 cos6-datanode8.test.alltest.com</span><br><span class="line">            10.0.0.44 cos6-datanode9.test.alltest.com</span><br><span class="line">        &#125;</span><br><span class="line">        prometheus :9153</span><br><span class="line">        forward . &quot;/etc/resolv.conf&quot;</span><br><span class="line">        cache 30</span><br><span class="line">        loop</span><br><span class="line">        reload</span><br><span class="line">        loadbalance</span><br><span class="line">    &#125;</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">  annotations:</span><br><span class="line">    kubectl.kubernetes.io/last-applied-configuration: |</span><br><span class="line">      &#123;&quot;apiVersion&quot;:&quot;v1&quot;,&quot;data&quot;:&#123;&quot;Corefile&quot;:&quot;.:53 &#123;\n    errors\n    health\n    kubernetes cluster.local in-addr.arpa ip6.arpa &#123;\n      pods insecure\n      upstream\n      fallthrough in-addr.arpa ip6.arpa\n      ttl 30\n    &#125;\n    prometheus :9153\n    forward . \&quot;/etc/resolv.conf\&quot;\n    cache 30\n    loop\n    reload\n    loadbalance\n&#125;\n&quot;&#125;,&quot;kind&quot;:&quot;ConfigMap&quot;,&quot;metadata&quot;:&#123;&quot;annotations&quot;:&#123;&#125;,&quot;labels&quot;:&#123;&quot;addonmanager.kubernetes.io/mode&quot;:&quot;EnsureExists&quot;&#125;,&quot;name&quot;:&quot;coredns&quot;,&quot;namespace&quot;:&quot;kube-system&quot;&#125;&#125;</span><br><span class="line">  creationTimestamp: &quot;2019-08-19T09:14:15Z&quot;</span><br><span class="line">  labels:</span><br><span class="line">    addonmanager.kubernetes.io/mode: EnsureExists</span><br><span class="line">  name: coredns</span><br><span class="line">  namespace: kube-system</span><br><span class="line">  resourceVersion: &quot;3231349&quot;</span><br><span class="line">  selfLink: /api/v1/namespaces/kube-system/configmaps/coredns</span><br><span class="line">  uid: b791c47f-c261-11e9-b426-525400116042</span><br></pre></td></tr></table></figure>
 
 <h3 id="重启coredns："><a href="#重启coredns：" class="headerlink" title="重启coredns："></a>重启coredns：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">~ » kubectl scale deployment coredns -n kube-system --replicas=0</span><br><span class="line">deployment.extensions/coredns scaled</span><br><span class="line"></span><br><span class="line">~ » kubectl scale deployment coredns -n kube-system --replicas=2                                                     yjzeng@yjzeng-ubuntu</span><br><span class="line">deployment.extensions/coredns scaled</span><br></pre></td></tr></table></figure>
-<p>测试，进入任意一个具有ping命令的pod中，ping自己插入的域名，能通就说明已经生效了。</p>
 
+<h3 id="测试，进入任意一个具有ping命令的pod中，ping自己插入的域名，能通就说明已经生效了。"><a href="#测试，进入任意一个具有ping命令的pod中，ping自己插入的域名，能通就说明已经生效了。" class="headerlink" title="测试，进入任意一个具有ping命令的pod中，ping自己插入的域名，能通就说明已经生效了。"></a>测试，进入任意一个具有ping命令的pod中，ping自己插入的域名，能通就说明已经生效了。</h3>
       
 
       
@@ -424,11 +424,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -436,7 +436,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -444,7 +444,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -460,11 +460,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -473,10 +473,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">podman,docker</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -489,6 +485,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
               </li>
              
               <li class="article-tag-list-item">

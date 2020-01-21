@@ -198,7 +198,41 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h3 id="背景项目"><a href="#背景项目" class="headerlink" title="背景项目"></a>背景项目</h3><p>很多公司使用k8s都是私有云方式,在没钱玩NMB的社会.连k8s都会歧视你。 服务的暴露方式只有nodeport、ExternalIP(直接使用主机网络)和ingress。剥夺了LoadBalance模式的权利</p>
+<h3 id="metallb-简介"><a href="#metallb-简介" class="headerlink" title="metallb 简介"></a>metallb 简介</h3><p>这里简单介绍下它的实现原理，具体可以参考<a href="https://metallb.universe.tf/" target="_blank" rel="noopener">metallb官网</a>，文档非常简洁、清晰。目前有如下的使用限制：</p>
+<blockquote>
+<p>Kubernetes v1.9.0版本以上，暂不支持ipvs模式<br>支持网络组件 (flannel/weave/romana), calico 部分支持<br>layer2和bgp两种模式，其中bgp模式需要外部网络设备支持bgp协议</p>
+</blockquote>
+<p>metallb主要实现了两个功能：地址分配和对外宣告</p>
+<blockquote>
+<p>地址分配：需要向网络管理员申请一段ip地址，如果是layer2模式需要这段地址与node节点地址同个网段（同一个二层）；如果是bgp模式没有这个限制。<br>对外宣告：layer2模式使用arp协议，利用节点的mac额外宣告一个loadbalancer的ip（同mac多ip）；bgp模式下节点利用bgp协议与外部网络设备建立邻居，宣告loadbalancer的地址段给外部网络。</p>
+</blockquote>
+<h3 id="演示环境信息"><a href="#演示环境信息" class="headerlink" title="演示环境信息"></a>演示环境信息</h3><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb4ghrhg6ij31xo068q9o.jpg" alt=""></p>
+<h3 id="部署过程"><a href="#部署过程" class="headerlink" title="部署过程"></a>部署过程</h3><p>注: 因bgp模式需要外部路由器的支持，这里主要选用layer2模式（如需选择bgp模式，相应修改roles/cluster-addon/templates/metallb/bgp.yaml.j2）。</p>
+<blockquote>
+<p>Metallb 支持 Helm 和 YAML 两种安装方法，这里我们使用第二种：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml</span><br><span class="line">kubectl apply -f metallb.yaml</span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">kubectl get pod -n metallb-system  -o wide</span><br><span class="line"></span><br><span class="line">NAME                          READY   STATUS    RESTARTS   AGE   IP               NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">controller-67496974d9-wpgw8   1/1     Running   0          75m   100.108.11.251   node2    &lt;none&gt;           &lt;none&gt;</span><br><span class="line">speaker-4cscj                 1/1     Running   0          75m   10.6.204.2       node1    &lt;none&gt;           &lt;none&gt;</span><br><span class="line">speaker-9s55h                 1/1     Running   0          75m   10.6.204.3       node2    &lt;none&gt;           &lt;none&gt;</span><br><span class="line">speaker-kr2bm                 1/1     Running   0          75m   10.6.204.1       master   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<p>kubectl get daemonset -n metallb-system</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NAME      DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                 AGE</span><br><span class="line">speaker   3         3         3       3            3           beta.kubernetes.io/os=linux   76m</span><br></pre></td></tr></table></figure>
+
+<p>kubectl get deployment -n metallb-system</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NAME         READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">controller   1/1     1            1           76m</span><br></pre></td></tr></table></figure>
+
+<p>创建config.yaml提供IP池<br>wget <a href="https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/example-layer2-config.yaml" target="_blank" rel="noopener">https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/example-layer2-config.yaml</a><br>修改ip地址池和集群节点网段相同</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[centos@k8s-master ~]$ vim example-layer2-config.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">  namespace: metallb-system</span><br><span class="line">  name: config</span><br><span class="line">data:</span><br><span class="line">  config: |</span><br><span class="line">    address-pools:</span><br><span class="line">    - name: default</span><br><span class="line">      protocol: layer2</span><br><span class="line">      addresses:</span><br><span class="line">      - 10.6.204.20-10.6.204.22</span><br></pre></td></tr></table></figure>
+
+<p>执行yaml文件<br>kubectl apply -f example-layer2-config.yaml</p>
+<p>创建后端应用和服务测试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ wget https://raw.githubusercontent.com/google/metallb/master/manifests/tutorial-2.yaml</span><br><span class="line">$ kubectl apply -f tutorial-2.yaml</span><br></pre></td></tr></table></figure>
+
+<p>查看svc对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kubectl get service </span><br><span class="line"></span><br><span class="line">NAME                TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE</span><br><span class="line">front-end-service   NodePort       10.101.75.133    &lt;none&gt;        80:31402/TCP     48d</span><br><span class="line">gogs                NodePort       10.104.31.59     &lt;none&gt;        3000:30064/TCP   19d</span><br><span class="line">kubernetes          ClusterIP      10.96.0.1        &lt;none&gt;        443/TCP          54d</span><br><span class="line">nexus3              NodePort       10.98.65.125     &lt;none&gt;        8082:31899/TCP   8h</span><br><span class="line">nginx               LoadBalancer   10.98.137.237    10.6.204.20   80:31909/TCP     28m</span><br><span class="line">nginx-random        NodePort       10.111.254.203   &lt;none&gt;        80:31691/TCP     48d</span><br></pre></td></tr></table></figure>
+
+<p>在集群内访问 10.6.204.20:80</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">curl 10.6.204.20</span><br><span class="line"></span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;title&gt;Welcome to nginx!&lt;/title&gt;</span><br><span class="line">&lt;style&gt;</span><br><span class="line">    body &#123;</span><br><span class="line">        width: 35em;</span><br><span class="line">        margin: 0 auto;</span><br><span class="line">        font-family: Tahoma, Verdana, Arial, sans-serif;</span><br><span class="line">    &#125;</span><br><span class="line">&lt;/style&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;h1&gt;Welcome to nginx!&lt;/h1&gt;</span><br><span class="line">&lt;p&gt;If you see this page, the nginx web server is successfully installed and</span><br><span class="line">working. Further configuration is required.&lt;/p&gt;</span><br><span class="line"></span><br><span class="line">&lt;p&gt;For online documentation and support please refer to</span><br><span class="line">&lt;a href=&quot;http://nginx.org/&quot;&gt;nginx.org&lt;/a&gt;.&lt;br/&gt;</span><br><span class="line">Commercial support is available at</span><br><span class="line">&lt;a href=&quot;http://nginx.com/&quot;&gt;nginx.com&lt;/a&gt;.&lt;/p&gt;</span><br><span class="line"></span><br><span class="line">&lt;p&gt;&lt;em&gt;Thank you for using nginx.&lt;/em&gt;&lt;/p&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>在集群外部访问<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb4goj0mqmj31vs0kgn1k.jpg" alt=""></p>
+
       
 
       
@@ -1223,11 +1257,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1235,15 +1273,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">hexo</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1267,11 +1301,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">podman,docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">podman,docker</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1284,10 +1322,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
               </li>
              
               <li class="article-tag-list-item">

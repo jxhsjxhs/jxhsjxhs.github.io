@@ -177,6 +177,100 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-科学上网之-自己动手丰衣足食" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/11/02/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E4%B9%8B-%E8%87%AA%E5%B7%B1%E5%8A%A8%E6%89%8B%E4%B8%B0%E8%A1%A3%E8%B6%B3%E9%A3%9F/">科学上网之-自己动手丰衣足食</a>
+</h1>
+
+
+
+        
+        <a href="/2019/11/02/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E4%B9%8B-%E8%87%AA%E5%B7%B1%E5%8A%A8%E6%89%8B%E4%B8%B0%E8%A1%A3%E8%B6%B3%E9%A3%9F/" class="archive-article-date">
+  	<time datetime="2019-11-02T06:18:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="自建ss-ssr教程很简单，整个教程分三步："><a href="#自建ss-ssr教程很简单，整个教程分三步：" class="headerlink" title="自建ss/ssr教程很简单，整个教程分三步："></a>自建ss/ssr教程很简单，整个教程分三步：</h2><blockquote>
+<p>第一步：购买VPS服务器</p>
+<p>第二步：一键部署VPS服务器</p>
+<p>第三步：一键加速VPS服务器</p>
+</blockquote>
+<h3 id="第一步-购买服务器"><a href="#第一步-购买服务器" class="headerlink" title="第一步:购买服务器"></a>第一步:购买服务器</h3><blockquote>
+<p>购买一个非大陆的服务器(目前全世界只有朝鲜和其他国家坚持封杀google)<br>比如搬瓦工 或者阿里云香港 都行<br>阿里云香港的 阿里云的推荐轻量服务器 贼鸡儿便宜 24块钱一个月…<br><img src="https://i.loli.net/2019/11/02/u4CcOfZRkwqthHi.png" alt="阿里云轻量服务器"><br>好了 这里其他的就不说了 买centos7的服务器就完事了</p>
+</blockquote>
+<h3 id="第二步-安装ss服务端"><a href="#第二步-安装ss服务端" class="headerlink" title="第二步:安装ss服务端"></a>第二步:安装ss服务端</h3><blockquote>
+<p>yum -y install wget<br>wget –no-check-certificate <a href="https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocksR.sh" target="_blank" rel="noopener">https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocksR.sh</a><br>chmod +x shadowsocksR.sh<br>./shadowsocksR.sh 2&gt;&amp;1 | tee shadowsocksR.log<br><img src="https://i.loli.net/2019/11/02/d9ADGxQ4B7TzVXN.png" alt="安装"><br>如上图出现管理界面后，输入数字1来安装SSR服务端。<br><img src="https://i.loli.net/2019/11/02/sg1YX9zLcrtPRhU.png" alt="设置端口"><br>根据上图提示，依次输入自己想设置的端口和密码 (密码建议用复杂点的字母组合，端口号为40-65535之间的数字)，回车键用于确认<br><img src="https://i.loli.net/2019/11/02/6IwaMfy9UsqoGYA.png" alt="加密方式"><br>如上图，选择想设置的加密方式，比如10，按回车键确认<br><img src="https://i.loli.net/2019/11/02/VwO49t6hcrgEdsL.png" alt="下载相关文件"><br>提示你下载文件，输入：y<br><img src="https://i.loli.net/2019/11/02/stL3oluRCArhyeV.png" alt="安装完成"><br>耐心等待一会，出现上面的界面即部署完成：</p>
+</blockquote>
+<hr>
+<h3 id="第三步-安装加速器"><a href="#第三步-安装加速器" class="headerlink" title="第三步:安装加速器"></a>第三步:安装加速器</h3><blockquote>
+<p>centos6不支持bbr加速 只能用破解版锐速加速</p>
+<p>yum -y install wget</p>
+<p>wget –no-check-certificate <a href="https://github.com/teddysun/across/raw/master/&gt;" target="_blank" rel="noopener">https://github.com/teddysun/across/raw/master/&gt;</a> bbr.sh</p>
+<p>chmod +x bbr.sh</p>
+<p>./bbr.sh</p>
+</blockquote>
+<p>把上面整个代码复制后粘贴进去，不动的时候按回车，然后耐心等待，最后重启vps服务器即可。<br>安装完成以后重启<br>服务器重启成功并重新连接服务器后，输入命令lsmod | grep bbr 如果出现tcp_bbr字样表示bbr已安装并启动成功。如图：<br><img src="https://i.loli.net/2019/11/02/dWR1oeF6Mk4L35x.png" alt="bbr"></p>
+<h3 id="为中华之崛起而翻墙"><a href="#为中华之崛起而翻墙" class="headerlink" title="为中华之崛起而翻墙 :-)"></a>为中华之崛起而翻墙 :-)</h3>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/杂项//" class="article-tag-list-link color3">杂项</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/11/02/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E4%B9%8B-%E8%87%AA%E5%B7%B1%E5%8A%A8%E6%89%8B%E4%B8%B0%E8%A1%A3%E8%B6%B3%E9%A3%9F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-使用client-go包访问KubernetesCRD" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1124,134 +1218,6 @@
 
 
   
-    <article id="post-是时候替换你的docker了" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/10/14/%E6%98%AF%E6%97%B6%E5%80%99%E6%9B%BF%E6%8D%A2%E4%BD%A0%E7%9A%84docker%E4%BA%86/">是时候替换你的docker了</a>
-</h1>
-
-
-
-        
-        <a href="/2019/10/14/%E6%98%AF%E6%97%B6%E5%80%99%E6%9B%BF%E6%8D%A2%E4%BD%A0%E7%9A%84docker%E4%BA%86/" class="archive-article-date">
-  	<time datetime="2019-10-14T09:30:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-14</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="罪恶的-docker"><a href="#罪恶的-docker" class="headerlink" title="罪恶的 docker"></a>罪恶的 docker</h2><p>还记得之前写过一篇关于<a href="http://www.jxhs.me/2019/07/28/docker%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8%E5%90%8Eagetty%E8%BF%9B%E7%A8%8Bcpu%E5%8D%A0%E7%94%A8%E7%8E%87100/">docker 启动时候宿主机 CPU 使用百分百的问题</a></p>
-<h3 id="使用-docker-的时候常见疑问点"><a href="#使用-docker-的时候常见疑问点" class="headerlink" title="使用 docker 的时候常见疑问点"></a>使用 docker 的时候常见疑问点</h3><blockquote>
-<p>单个过程可能是单个故障点。<br>该进程拥有所有子进程（正在运行的容器）。<br>如果发生故障，则存在孤儿容器。<br>构建容器导致安全漏洞。<br>所有 Docker 操作都必须由具有相同完全根权限的一个或多个用户执行。</p>
-</blockquote>
-<blockquote>
-<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g864qjrpbdj30lk0ggt9a.jpg" alt="docker架构"></p>
-</blockquote>
-<h3 id="常见尴尬场景："><a href="#常见尴尬场景：" class="headerlink" title="常见尴尬场景："></a>常见尴尬场景：</h3><blockquote>
-<p>由于之前对 docker 的理解不深，所以上手就直接用了。慢慢发现有一些配置文件或者其他的需要更改的时候，必须先删除所有容器，然后重启守护程序……………..(那这样意义何在？)</p>
-</blockquote>
-<h3 id="衍生出来几个问题"><a href="#衍生出来几个问题" class="headerlink" title="衍生出来几个问题"></a>衍生出来几个问题</h3><blockquote>
-<p>Docker 干嘛要配一个守护程序？<br>虽然我们把业务解耦到不同的容器中，但是由于这么多的容器底层都是同一个父进程–Docker-daemon,这相当于把鸡蛋分开到不同的篮子里，但是所有的篮子都在同一辆车上。</p>
-</blockquote>
-<h3 id="总结一下"><a href="#总结一下" class="headerlink" title="总结一下"></a>总结一下</h3><blockquote>
-<p>Docker 是一个以 root 身份在你的系统上运行的守护程序，它利用 Linux 内核的功能来管理正在运行的容器。除了运行容器之外，它还可以轻松管理容器镜像 —— 与容器注册库交互、存储映像、管理容器版本等。它基本上支持运行单个容器所需的所有操作。</p>
-<p>但即使 Docker 是管理 Linux 容器的一个非常方便的工具，它也有两个缺点：它是一个需要在你的系统上运行的守护进程，并且需要以 root 权限运行，这可能有一定的安全隐患。然而，Podman 在解决这两个问题。</p>
-</blockquote>
-<hr>
-<h2 id="下面来介绍一下-podman"><a href="#下面来介绍一下-podman" class="headerlink" title="下面来介绍一下 podman"></a><center>下面来介绍一下 podman</center></h2><blockquote>
-<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g864ql1251j30yv0afgne.jpg" alt="podman logo"><br>Podman 是一个容器运行时环境，提供与 Docker 非常相似的功能。正如已经提示的那样，它不需要在你的系统上运行任何守护进程，并且它也可以在没有 root 权限的情况下运行。让我们看看使用 Podman 运行 Linux 容器的一些示例。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g864qm0bjqj30fq0iaaao.jpg" alt="podman run"><br>你会发现启动一个容器 并不需要先启动 docker 了。甚至没有 podman 的进程。使得容器就是容器 轻量级了很多。</p>
-</blockquote>
-<blockquote>
-<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g864qo6razj31wq0e8gt1.jpg" alt="podman架构"></p>
-</blockquote>
-<h2 id="课外讲讲发展史"><a href="#课外讲讲发展史" class="headerlink" title="课外讲讲发展史"></a>课外讲讲发展史</h2><h3 id="为什-docker-做的那么早，但是这么不尽人意呢？"><a href="#为什-docker-做的那么早，但是这么不尽人意呢？" class="headerlink" title="为什 docker 做的那么早，但是这么不尽人意呢？"></a>为什 docker 做的那么早，但是这么不尽人意呢？</h3><blockquote>
-<p>一、缘起<br>1.1、鸿蒙<br>在上古时期，天地初开，一群称之为 “运维” 的人们每天在一种叫作 “服务器” 的神秘盒子中创造属于他们的世界；他们在这个世界中每日劳作，一遍又一遍的写入他们的历史，比如搭建一个 nginx、布署一个 java web 应用…</p>
-<p>大多数人其实并没有那么聪明，他们所 “创造” 的事实上可能是有人已经创造过的东西，他们可能每天都在做着重复的劳动；久而久之，一些人厌倦了、疲惫了…又过了一段时间，一些功力深厚的老前辈创造了一些批量布署工具来帮助人们做一些重复性的劳动，这些工具被起名为 “Asible”、”Chef”、”Puppet” 等等…</p>
-<p>而随着时代的发展，”世界” 变得越来越复杂，运维们需要处理的事情越来越多，比如各种网络、磁盘环境的隔离，各种应用服务的高可用…在时代的洪流下，运维们急需要一种简单高效的布署工具，既能有一定的隔离性，又能方便使用，并且最大程度降低重复劳动来提升效率。</p>
-<p>1.2、创世<br>在时代洪流的冲击下，一位名为 “Solomon Hykes” 的人异军突起，他创造了一个称之为 Docker 的工具，Docker 被创造以后就以灭世之威向运维们展示了它的强大；一个战斗力只有 5 的运维只需要学习 Docker 很短时间就可以完成资深运维们才能完成的事情，在某些情况下以前需要 1 天才能完成的工作使用 Docker 后几分钟就可以完成；此时运维们已经意识到 “新的时代” 开启了，接下来 Docker 开源并被整个运维界人们使用，Docker 也不断地完善增加各种各样的功能，此后世界正式进入 “容器纪元”。</p>
-</blockquote>
-<hr>
-<blockquote>
-<p>二、纷争<br>2.1、发展<br>随着 Docker 的日益成熟，一些人开始在 Docker 之上创造更加强大的工具，一些人开始在 Docker 之下为其提供更稳定的运行环境…</p>
-<p>其中一个叫作 Google 的公司在 Docker 之上创建了名为 “Kuberentes” 的工具，Kubernetes 操纵 Docker 完成更加复杂的任务；Kubernetes 的出现更加印证了 Docker 的强大，以及 “容器纪元” 的发展正确性。</p>
-<p>2.2、野心<br>当然这是一个充满利益的世界，Google 公司创造 Kubernetes 是可以为他们带来利益的，比如他们可以让 Kubernetes 深度适配他们的云平台，以此来增加云平台的销量等；此时 Docker 创始人也成立了一个公司，提供 Docker 的付费服务以及深度定制等；不过值得一提的是 Docker 公司提供的付费服务始终没有 Kubernetes 为 Google 公司带来的利益高，所以在利益的驱使下，Docker 公司开始动起了歪心思: 创造一个 Kubernetes 的替代品，利用用户粘度复制 Kubernetes 的成功，从 Google 嘴里抢下这块蛋糕！此时 Docker 公司只想把蛋糕抢过来，但是他们根本没有在意到暗中一群人创造了一个叫 “rkt” 的东西也在妄图夺走他们嘴里的蛋糕。</p>
-<p>2.3、冲突<br>在一段时间的沉默后，Docker 公司又创造了 “Swarm” 这个工具，妄图夺走 Google 公司利用 Kubernetes 赢来的蛋糕；当然，Google 这个公司极其庞大，人数众多，而且在这个社会有很大的影响地位…</p>
-<p>终于，巨人苏醒了，Google 联合了 Redhat、Microsoft、IBM、Intel、Cisco 等公司决定对这个爱动歪脑筋的 Docker 公司进行制裁；当然制裁的手段不能过于暴力，那样会让别人落下把柄，成为别人的笑料，被人所不耻；最总他们决定制订规范，成立组织，明确规定 Docker 的角色，以及它应当拥有的能力，这些规范包括但不限于 CRI、CNI 等；自此之后各大公司宣布他们容器相关的工具只兼容 CRI 等相关标准，无论是 Docker 还是 rkt 等工具，只要实现了这些标准，就可以配合这些容器工具进行使用。</p>
-</blockquote>
-<hr>
-<blockquote>
-<p>三、成败<br>自此之后，Docker 跌下神坛，各路大神纷纷创造满足 CRI 等规范的工具用来取代 Docker，Docker 丢失了往日一家独大的场面，最终为了顺应时代发展，拆分自己成为模块化组件；这些模块化组件被放置在 mobyproject 中方便其他人重复利用。</p>
-<p>时至今日，虽然 Docker 已经不负以前，但是仍然是容器化首选工具，因为 Docker 是一个完整的产品，它可以提供除了满足 CRI 等标准以外更加方便的功能；但是制裁并非没有结果，Google 公司借此创造了 cri-o 用来满足 CRI 标准，其他公司也相应创建了对应的 CRI 实现；为了进一步分化 Docker 势力，一个叫作 Podman 的工具被创建，它以 cri-o 为基础，兼容大部份 Docker 命令的方式开始抢夺 Dcoker 用户；到目前为止 Podman 已经可以在大部份功能上替代 Docker。</p>
-</blockquote>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color2">docker</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/容器//" class="article-tag-list-link color3">容器</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/10/14/%E6%98%AF%E6%97%B6%E5%80%99%E6%9B%BF%E6%8D%A2%E4%BD%A0%E7%9A%84docker%E4%BA%86/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/3/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/5/">Next &amp;raquo;</a>
@@ -1367,15 +1333,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">k8s</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">hexo</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1391,7 +1357,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1399,7 +1365,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1419,10 +1385,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">zero_w</a>
               </li>
              
@@ -1432,6 +1394,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
               </li>
             
             <div class="clearfix"></div>

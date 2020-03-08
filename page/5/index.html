@@ -177,6 +177,134 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-是时候替换你的docker了" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/10/14/%E6%98%AF%E6%97%B6%E5%80%99%E6%9B%BF%E6%8D%A2%E4%BD%A0%E7%9A%84docker%E4%BA%86/">是时候替换你的docker了</a>
+</h1>
+
+
+
+        
+        <a href="/2019/10/14/%E6%98%AF%E6%97%B6%E5%80%99%E6%9B%BF%E6%8D%A2%E4%BD%A0%E7%9A%84docker%E4%BA%86/" class="archive-article-date">
+  	<time datetime="2019-10-14T09:30:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-14</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="罪恶的-docker"><a href="#罪恶的-docker" class="headerlink" title="罪恶的 docker"></a>罪恶的 docker</h2><p>还记得之前写过一篇关于<a href="http://www.jxhs.me/2019/07/28/docker%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8%E5%90%8Eagetty%E8%BF%9B%E7%A8%8Bcpu%E5%8D%A0%E7%94%A8%E7%8E%87100/">docker 启动时候宿主机 CPU 使用百分百的问题</a></p>
+<h3 id="使用-docker-的时候常见疑问点"><a href="#使用-docker-的时候常见疑问点" class="headerlink" title="使用 docker 的时候常见疑问点"></a>使用 docker 的时候常见疑问点</h3><blockquote>
+<p>单个过程可能是单个故障点。<br>该进程拥有所有子进程（正在运行的容器）。<br>如果发生故障，则存在孤儿容器。<br>构建容器导致安全漏洞。<br>所有 Docker 操作都必须由具有相同完全根权限的一个或多个用户执行。</p>
+</blockquote>
+<blockquote>
+<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g864qjrpbdj30lk0ggt9a.jpg" alt="docker架构"></p>
+</blockquote>
+<h3 id="常见尴尬场景："><a href="#常见尴尬场景：" class="headerlink" title="常见尴尬场景："></a>常见尴尬场景：</h3><blockquote>
+<p>由于之前对 docker 的理解不深，所以上手就直接用了。慢慢发现有一些配置文件或者其他的需要更改的时候，必须先删除所有容器，然后重启守护程序……………..(那这样意义何在？)</p>
+</blockquote>
+<h3 id="衍生出来几个问题"><a href="#衍生出来几个问题" class="headerlink" title="衍生出来几个问题"></a>衍生出来几个问题</h3><blockquote>
+<p>Docker 干嘛要配一个守护程序？<br>虽然我们把业务解耦到不同的容器中，但是由于这么多的容器底层都是同一个父进程–Docker-daemon,这相当于把鸡蛋分开到不同的篮子里，但是所有的篮子都在同一辆车上。</p>
+</blockquote>
+<h3 id="总结一下"><a href="#总结一下" class="headerlink" title="总结一下"></a>总结一下</h3><blockquote>
+<p>Docker 是一个以 root 身份在你的系统上运行的守护程序，它利用 Linux 内核的功能来管理正在运行的容器。除了运行容器之外，它还可以轻松管理容器镜像 —— 与容器注册库交互、存储映像、管理容器版本等。它基本上支持运行单个容器所需的所有操作。</p>
+<p>但即使 Docker 是管理 Linux 容器的一个非常方便的工具，它也有两个缺点：它是一个需要在你的系统上运行的守护进程，并且需要以 root 权限运行，这可能有一定的安全隐患。然而，Podman 在解决这两个问题。</p>
+</blockquote>
+<hr>
+<h2 id="下面来介绍一下-podman"><a href="#下面来介绍一下-podman" class="headerlink" title="下面来介绍一下 podman"></a><center>下面来介绍一下 podman</center></h2><blockquote>
+<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g864ql1251j30yv0afgne.jpg" alt="podman logo"><br>Podman 是一个容器运行时环境，提供与 Docker 非常相似的功能。正如已经提示的那样，它不需要在你的系统上运行任何守护进程，并且它也可以在没有 root 权限的情况下运行。让我们看看使用 Podman 运行 Linux 容器的一些示例。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g864qm0bjqj30fq0iaaao.jpg" alt="podman run"><br>你会发现启动一个容器 并不需要先启动 docker 了。甚至没有 podman 的进程。使得容器就是容器 轻量级了很多。</p>
+</blockquote>
+<blockquote>
+<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g864qo6razj31wq0e8gt1.jpg" alt="podman架构"></p>
+</blockquote>
+<h2 id="课外讲讲发展史"><a href="#课外讲讲发展史" class="headerlink" title="课外讲讲发展史"></a>课外讲讲发展史</h2><h3 id="为什-docker-做的那么早，但是这么不尽人意呢？"><a href="#为什-docker-做的那么早，但是这么不尽人意呢？" class="headerlink" title="为什 docker 做的那么早，但是这么不尽人意呢？"></a>为什 docker 做的那么早，但是这么不尽人意呢？</h3><blockquote>
+<p>一、缘起<br>1.1、鸿蒙<br>在上古时期，天地初开，一群称之为 “运维” 的人们每天在一种叫作 “服务器” 的神秘盒子中创造属于他们的世界；他们在这个世界中每日劳作，一遍又一遍的写入他们的历史，比如搭建一个 nginx、布署一个 java web 应用…</p>
+<p>大多数人其实并没有那么聪明，他们所 “创造” 的事实上可能是有人已经创造过的东西，他们可能每天都在做着重复的劳动；久而久之，一些人厌倦了、疲惫了…又过了一段时间，一些功力深厚的老前辈创造了一些批量布署工具来帮助人们做一些重复性的劳动，这些工具被起名为 “Asible”、”Chef”、”Puppet” 等等…</p>
+<p>而随着时代的发展，”世界” 变得越来越复杂，运维们需要处理的事情越来越多，比如各种网络、磁盘环境的隔离，各种应用服务的高可用…在时代的洪流下，运维们急需要一种简单高效的布署工具，既能有一定的隔离性，又能方便使用，并且最大程度降低重复劳动来提升效率。</p>
+<p>1.2、创世<br>在时代洪流的冲击下，一位名为 “Solomon Hykes” 的人异军突起，他创造了一个称之为 Docker 的工具，Docker 被创造以后就以灭世之威向运维们展示了它的强大；一个战斗力只有 5 的运维只需要学习 Docker 很短时间就可以完成资深运维们才能完成的事情，在某些情况下以前需要 1 天才能完成的工作使用 Docker 后几分钟就可以完成；此时运维们已经意识到 “新的时代” 开启了，接下来 Docker 开源并被整个运维界人们使用，Docker 也不断地完善增加各种各样的功能，此后世界正式进入 “容器纪元”。</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>二、纷争<br>2.1、发展<br>随着 Docker 的日益成熟，一些人开始在 Docker 之上创造更加强大的工具，一些人开始在 Docker 之下为其提供更稳定的运行环境…</p>
+<p>其中一个叫作 Google 的公司在 Docker 之上创建了名为 “Kuberentes” 的工具，Kubernetes 操纵 Docker 完成更加复杂的任务；Kubernetes 的出现更加印证了 Docker 的强大，以及 “容器纪元” 的发展正确性。</p>
+<p>2.2、野心<br>当然这是一个充满利益的世界，Google 公司创造 Kubernetes 是可以为他们带来利益的，比如他们可以让 Kubernetes 深度适配他们的云平台，以此来增加云平台的销量等；此时 Docker 创始人也成立了一个公司，提供 Docker 的付费服务以及深度定制等；不过值得一提的是 Docker 公司提供的付费服务始终没有 Kubernetes 为 Google 公司带来的利益高，所以在利益的驱使下，Docker 公司开始动起了歪心思: 创造一个 Kubernetes 的替代品，利用用户粘度复制 Kubernetes 的成功，从 Google 嘴里抢下这块蛋糕！此时 Docker 公司只想把蛋糕抢过来，但是他们根本没有在意到暗中一群人创造了一个叫 “rkt” 的东西也在妄图夺走他们嘴里的蛋糕。</p>
+<p>2.3、冲突<br>在一段时间的沉默后，Docker 公司又创造了 “Swarm” 这个工具，妄图夺走 Google 公司利用 Kubernetes 赢来的蛋糕；当然，Google 这个公司极其庞大，人数众多，而且在这个社会有很大的影响地位…</p>
+<p>终于，巨人苏醒了，Google 联合了 Redhat、Microsoft、IBM、Intel、Cisco 等公司决定对这个爱动歪脑筋的 Docker 公司进行制裁；当然制裁的手段不能过于暴力，那样会让别人落下把柄，成为别人的笑料，被人所不耻；最总他们决定制订规范，成立组织，明确规定 Docker 的角色，以及它应当拥有的能力，这些规范包括但不限于 CRI、CNI 等；自此之后各大公司宣布他们容器相关的工具只兼容 CRI 等相关标准，无论是 Docker 还是 rkt 等工具，只要实现了这些标准，就可以配合这些容器工具进行使用。</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>三、成败<br>自此之后，Docker 跌下神坛，各路大神纷纷创造满足 CRI 等规范的工具用来取代 Docker，Docker 丢失了往日一家独大的场面，最终为了顺应时代发展，拆分自己成为模块化组件；这些模块化组件被放置在 mobyproject 中方便其他人重复利用。</p>
+<p>时至今日，虽然 Docker 已经不负以前，但是仍然是容器化首选工具，因为 Docker 是一个完整的产品，它可以提供除了满足 CRI 等标准以外更加方便的功能；但是制裁并非没有结果，Google 公司借此创造了 cri-o 用来满足 CRI 标准，其他公司也相应创建了对应的 CRI 实现；为了进一步分化 Docker 势力，一个叫作 Podman 的工具被创建，它以 cri-o 为基础，兼容大部份 Docker 命令的方式开始抢夺 Dcoker 用户；到目前为止 Podman 已经可以在大部份功能上替代 Docker。</p>
+</blockquote>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color2">docker</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/容器//" class="article-tag-list-link color3">容器</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/10/14/%E6%98%AF%E6%97%B6%E5%80%99%E6%9B%BF%E6%8D%A2%E4%BD%A0%E7%9A%84docker%E4%BA%86/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Kuma" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -918,109 +1046,6 @@
 
 
   
-    <article id="post-5-分钟带你搞定-Redis-复制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/07/30/5-%E5%88%86%E9%92%9F%E5%B8%A6%E4%BD%A0%E6%90%9E%E5%AE%9A-Redis-%E5%A4%8D%E5%88%B6/">5 分钟带你搞定 Redis 复制</a>
-</h1>
-
-
-
-        
-        <a href="/2019/07/30/5-%E5%88%86%E9%92%9F%E5%B8%A6%E4%BD%A0%E6%90%9E%E5%AE%9A-Redis-%E5%A4%8D%E5%88%B6/" class="archive-article-date">
-  	<time datetime="2019-07-30T03:41:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-30</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="本文大纲"><a href="#本文大纲" class="headerlink" title="本文大纲"></a>本文大纲</h2><p>1.复制过程</p>
-<p>2.数据间的同步</p>
-<p>3.全量复制</p>
-<p>4.部分复制</p>
-<p>5.心跳</p>
-<p>6.异步复制</p>
-<p>7.总结</p>
-<h3 id="一、复制过程"><a href="#一、复制过程" class="headerlink" title="一、复制过程"></a>一、复制过程</h3><blockquote>
-<p>Step 1：从节点执行 slaveof 命令。<br>Step 2：从节点只是保存了 slaveof 命令中主节点的信息，并没有立即发起复制。<br>Step 3：从节点内部的定时任务发现有主节点的信息，开始使用 socket 连接主节点。<br>Step 4：连接建立成功后，发送 ping 命令，希望得到 pong 命令响应，否则会进行重连。<br>Step 5：如果主节点设置了权限，那么就需要进行权限验证，如果验证失败，复制终止。<br>Step 6：权限验证通过后，进行数据同步，这是耗时最长的操作，主节点将把所有的数据全部发送给从节点。<br>Step 7：当主节点把当前的数据同步给从节点后，便完成了复制的建立流程。接下来，主节点就会持续的把写命令发送给从节点，保证主从数据一致性。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g863xvzz0uj30ti0t0k3c.jpg" alt="复制过程"></p>
-</blockquote>
-<h3 id="二、数据间的同步"><a href="#二、数据间的同步" class="headerlink" title="二、数据间的同步"></a>二、数据间的同步</h3><p>上面说的复制过程，其中有一个步骤是“同步数据集”，这个就是现在讲的“数据间的同步”。<br>redis 同步有 2 个命令：sync 和 psync，前者是 redis 2.8 之前的同步命令，后者是 redis 2.8 为了优化 sync 新设计的命令。我们会重点关注 2.8 的 psync 命令。</p>
-<blockquote>
-<p>1、psync 命令需要 3 个组件支持<br>主从节点各自复制偏移量<br>主节点复制积压缓冲区<br>主节点运行 ID<br>2、主从节点各自复制偏移量<br>参与复制的主从节点都会维护自身的复制偏移量。<br>主节点在处理完写入命令后，会把命令的字节长度做累加记录，统计信息在 info replication 中的 masterreploffset 指标中。<br>从节点每秒钟上报自身的的复制偏移量给主节点，因此主节点也会保存从节点的复制偏移量。<br>从节点在接收到主节点发送的命令后，也会累加自身的偏移量，统计信息在 info replication 中。<br>通过对比主从节点的复制偏移量，可以判断主从节点数据是否一致。<br>3、主节点复制积压缓冲区<br>复制积压缓冲区是一个保存在主节点的一个固定长度的先进先出的队列，默认大小 1MB。<br>这个队列在 slave 连接是创建。这时主节点响应写命令时，不但会把命令发送给从节点，也会写入复制缓冲区。<br>他的作用就是用于部分复制和复制命令丢失的数据补救。通过 info replication 可以看到相关信息。<br>4、主节点运行 ID<br>每个 redis 启动的时候，都会生成一个 40 位的运行 ID。<br>运行 ID 的主要作用是用来识别 Redis 节点。如果使用 ip+port 的方式，那么如果主节点重启修改了 RDB/AOF 数据，从节点再基于偏移量进行复制将是不安全的。所以，当运行 id 变化后，从节点将进行全量复制。也就是说，redis 重启后，默认从节点会进行全量复制。<br>5、如果在重启时不改变运行 ID 呢？<br>可以通过 debug reload 命令重新加载 RDB 并保持运行 ID 不变，从而有效的避免不必要的全量复制。<br>缺点是：debug reload 命令会阻塞当前 Redis 节点主线程，因此对于大数据量的主节点或者无法容忍阻塞的节点，需要谨慎使用。一般通过故障转移机制可以解决这个问题。<br>6、psync 命令的使用方式<br>命令格式为 psync{runId}{offset}<br>runId：从节点所复制主节点的运行 id<br>offset：当前从节点已复制的数据偏移量<br>7、psync 执行流程<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g864g77205j30o60gugqa.jpg" alt="数据同步"></p>
-</blockquote>
-<h3 id="流程说明："><a href="#流程说明：" class="headerlink" title="流程说明："></a>流程说明：</h3><blockquote>
-<p>从节点发送 psync 命令给主节点，runId 就是目标主节点的 ID，如果没有默认为 -1，offset 是从节点保存的复制偏移量，如果是第一次复制则为 -1.主节点会根据 runid 和 offset 决定返回结果：<br>如果回复 +FULLRESYNC {runId} {offset} ，那么从节点将触发全量复制流程。<br>如果回复 +CONTINUE，从节点将触发部分复制。<br>如果回复 +ERR，说明主节点不支持 2.8 的 psync 命令，将使用 sync 执行全量复制。<br>到这里，数据之间的同步就讲的差不多了，篇幅还是比较长的。主要是针对 psync 命令相关之间的介绍。</p>
-</blockquote>
-<h3 id="三、全量复制"><a href="#三、全量复制" class="headerlink" title="三、全量复制"></a>三、全量复制</h3><blockquote>
-<p>全量复制是 Redis 最早支持的复制方式，也是主从第一次建立复制时必须经历的的阶段。触发全量复制的命令是 sync 和 psync。之前说过，这两个命令的分水岭版本是 2.8，redis 2.8 之前使用 sync 只能执行全量不同，2.8 之后同时支持全量同步和部分同步。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g864i3kt7pj30tk0zu12k.jpg" alt="全量复制"><br>流程如下：<br>Step 1：发送 psync 命令（spync ？-1）<br>Step 2：主节点根据命令返回 FULLRESYNC<br>Step 3：从节点记录主节点 ID 和 offset<br>Step 4：主节点 bgsave 并保存 RDB 到本地<br>Step 5：主节点发送 RBD 文件到从节点<br>Step 6：从节点收到 RDB 文件并加载到内存中<br>Step 7：主节点在从节点接受数据的期间，将新数据保存到“复制客户端缓冲区”，当从节点加载 RDB 完毕，再发送过去。（如果从节点花费时间过长，将导致缓冲区溢出，最后全量同步失败）<br>Step 8：从节点清空数据后加载 RDB 文件，如果 RDB 文件很大，这一步操作仍然耗时，如果此时客户端访问，将导致数据不一致，可以使用配置 slave-server-stale-data 关闭.<br>Step 9：从节点成功加载完 RBD 后，如果开启了 AOF，会立刻做 bgrewriteaof。<br>以上加粗的部分是整个全量同步耗时的地方。</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">注意：</span><br><span class="line">如过 RDB 文件大于 6GB，并且是千兆网卡，Redis 的默认超时机制（60 秒），会导致全量复制失败。可以通过调大 repl-timeout 参数来解决此问题。</span><br><span class="line">Redis 虽然支持无盘复制，即直接通过网络发送给从节点，但功能不是很完善，生产环境慎用。</span><br></pre></td></tr></table></figure>
-
-<h3 id="四、部分复制"><a href="#四、部分复制" class="headerlink" title="四、部分复制"></a>四、部分复制</h3><p>当从节点正在复制主节点时，如果出现网络闪断和其他异常，从节点会让主节点补发丢失的命令数据，主节点只需要将复制缓冲区的数据发送到从节点就能够保证数据的一致性，相比较全量复制，成本小很多。</p>
-<blockquote>
-<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g864kqtqm2j30w40m6wmc.jpg" alt="部分复制"><br>当从节点出现网络中断，超过了 repl-timeout 时间，主节点就会中断复制连接。<br>主节点会将请求的数据写入到“复制积压缓冲区”，默认 1MB。<br>当从节点恢复，重新连接上主节点，从节点会将 offset 和主节点 id 发送到主节点。<br>主节点校验后，如果偏移量的数后的数据在缓冲区中，就发送 cuntinue 响应 —— 表示可以进行部分复制。<br>主节点将缓冲区的数据发送到从节点，保证主从复制进行正常状态。</p>
-</blockquote>
-<h3 id="五、心跳"><a href="#五、心跳" class="headerlink" title="五、心跳"></a>五、心跳</h3><p>主从节点在建立复制后，他们之间维护着长连接并彼此发送心跳命令。</p>
-<blockquote>
-<p>心跳的关键机制如下：<br>中从都有心跳检测机制，各自模拟成对方的客户端进行通信，通过 client list 命令查看复制相关客户端信息，主节点的连接状态为 flags = M，从节点的连接状态是 flags = S。<br>主节点默认每隔 10 秒对从节点发送 ping 命令，可修改配置 repl-ping-slave-period 控制发送频率。<br>从节点在主线程每隔一秒发送 replconf ack{offset} 命令，给主节点上报自身当前的复制偏移量。<br>主节点收到 replconf 信息后，判断从节点超时时间，如果超过 repl-timeout 60 秒，则判断节点下线。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g864ik5kdlj30jw0a2wi1.jpg" alt="心跳"></p>
-</blockquote>
-<p>注意：</p>
-<p>为了降低主从延迟，一般把 redis 主从节点部署在相同的机房/同城机房，避免网络延迟带来的网络分区造成的心跳中断等情况。</p>
-<h3 id="六、异步复制"><a href="#六、异步复制" class="headerlink" title="六、异步复制"></a>六、异步复制</h3><p>主节点不但负责数据读写，还负责把写命令同步给从节点，写命令的发送过程是异步完成，也就是说主节点处理完写命令后立即返回客户度，并不等待从节点复制完成。</p>
-<blockquote>
-<p>异步复制的步骤很简单，如下：<br>Step 1：主节点接受处理命令。<br>Step 2：主节点处理完后返回响应结果 。<br>Step 3：对于修改命令，异步发送给从节点，从节点在主线程中执行复制的命令<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g864l736zwj30so0do77c.jpg" alt="异步复制"></p>
-</blockquote>
-<h3 id="七、总结"><a href="#七、总结" class="headerlink" title="七、总结"></a>七、总结</h3><p>本文主要分析了 Redis 的复制原理，包括复制过程，数据之间的同步，全量复制的流程，部分复制的流程，心跳设计，异步复制流程。</p>
-<blockquote>
-<p>其中，可以看出，RDB 数据之间的同步非常耗时。所以，Redis 在 2.8 版本退出了类似增量复制的 psync 命令，当 Redis 主从直接发生了网络中断，不会进行全量复制，而是将数据放到缓冲区（默认 1MB）里，再通过主从之间各自维护复制 offset 来判断缓存区的数据是否溢出。如果没有溢出，只需要发送缓冲区数据即可，成本很小；反之，则要进行全量复制。因此控制缓冲区大小非常的重要。</p>
-</blockquote>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/07/30/5-%E5%88%86%E9%92%9F%E5%B8%A6%E4%BD%A0%E6%90%9E%E5%AE%9A-Redis-%E5%A4%8D%E5%88%B6/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/4/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/6/">Next &amp;raquo;</a>
@@ -1136,15 +1161,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">k8s</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">hexo</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1160,7 +1185,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1168,7 +1193,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1188,10 +1213,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">zero_w</a>
               </li>
              
@@ -1201,6 +1222,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
               </li>
             
             <div class="clearfix"></div>

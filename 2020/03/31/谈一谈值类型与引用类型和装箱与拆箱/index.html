@@ -9,6 +9,7 @@
   <title>谈一谈值类型与引用类型和装箱与拆箱 | jame_xhs&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="值类型与引用类型首先说一说什么是值类型和引用类型 12值类型直接存储其值。引用类型存储对值的引用。 粗俗点儿翻译的就是值类型就是现金，要用直接用；引用类型是存折，要用还得先去银行取现。 衍生出几个问题: 1231.为什么能直接直接用2.引用类型怎么引用的3.有啥区别 问题1 为什么值类型的能直接用 基础扎实的同学知道。栈空间是某个进程启动的时候所内置的内存空间,我们经常听到的比如局部变量。这类型信">
+<meta name="keywords" content="C#">
 <meta property="og:type" content="article">
 <meta property="og:title" content="谈一谈值类型与引用类型和装箱与拆箱">
 <meta property="og:url" content="http:&#x2F;&#x2F;www.jxhs.me&#x2F;2020&#x2F;03&#x2F;31&#x2F;%E8%B0%88%E4%B8%80%E8%B0%88%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1&#x2F;index.html">
@@ -18,7 +19,7 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;00831rSTgy1gddc3pkcflj30mw0jy0uq.jpg">
 <meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;00831rSTgy1gddc8328sjj31480l2wfs.jpg">
 <meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;00831rSTgy1gddch6bnphj313i0oan0i.jpg">
-<meta property="og:updated_time" content="2020-03-31T11:48:43.039Z">
+<meta property="og:updated_time" content="2020-03-31T13:04:10.551Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;00831rSTgy1gddc3pkcflj30mw0jy0uq.jpg">
   
@@ -239,6 +240,17 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color3">C#</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -437,15 +449,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -469,11 +481,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂谈</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂谈</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -485,10 +497,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">c#</a>
               </li>
              
@@ -497,11 +505,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -518,6 +526,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">C#</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
               </li>
             
             <div class="clearfix"></div>

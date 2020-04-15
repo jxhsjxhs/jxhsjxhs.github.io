@@ -177,155 +177,6 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-运维神器tmux" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/10/24/%E8%BF%90%E7%BB%B4%E7%A5%9E%E5%99%A8tmux/">运维神器tmux</a>
-</h1>
-
-
-
-        
-        <a href="/2019/10/24/%E8%BF%90%E7%BB%B4%E7%A5%9E%E5%99%A8tmux/" class="archive-article-date">
-  	<time datetime="2019-10-24T00:56:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="一、Tmux-是什么？"><a href="#一、Tmux-是什么？" class="headerlink" title="一、Tmux 是什么？"></a>一、Tmux 是什么？</h2><hr>
-<h3 id="1-1-会话与进程"><a href="#1-1-会话与进程" class="headerlink" title="1.1 会话与进程"></a>1.1 会话与进程</h3><blockquote>
-<p>命令行的典型使用方式是，打开一个终端窗口（terminal window，以下简称”窗口”），在里面输入命令。用户与计算机的这种临时的交互，称为一次”会话”（session） 。<br>会话的一个重要特点是，窗口与其中启动的进程是连在一起的。打开窗口，会话开始；关闭窗口，会话结束，会话内部的进程也会随之终止，不管有没有运行完。<br>一个典型的例子就是，SSH 登录远程计算机，打开一个远程窗口执行命令。这时，网络突然断线，再次登录的时候，是找不回上一次执行的命令的。因为上一次 SSH 会话已经终止了，里面的进程也随之消失了。<br>为了解决这个问题，会话与窗口可以”解绑”：窗口关闭时，会话并不终止，而是继续运行，等到以后需要的时候，再让会话”绑定”其他窗口。</p>
-</blockquote>
-<h2 id="1-2-Tmux-的作用"><a href="#1-2-Tmux-的作用" class="headerlink" title="1.2 Tmux 的作用"></a>1.2 Tmux 的作用</h2><blockquote>
-<p>Tmux 就是会话与窗口的”解绑”工具，将它们彻底分离。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">它允许在单个窗口中，同时访问多个会话。这对于同时运行多个命令行程序很有用。</span><br><span class="line">它可以让新窗口&quot;接入&quot;已经存在的会话。</span><br><span class="line">它允许每个会话有多个连接窗口，因此可以多人实时共享会话。</span><br><span class="line">它还支持窗口任意的垂直和水平拆分。</span><br></pre></td></tr></table></figure>
-<p>类似的终端复用器还有 GNU Screen。Tmux 与它功能相似，但是更易用，也更强大。</p>
-</blockquote>
-<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8ax01tp5ej31zz0u07tv.jpg" alt="tmux"></p>
-<h2 id="二、基本用法"><a href="#二、基本用法" class="headerlink" title="二、基本用法"></a>二、基本用法</h2><h3 id="2-1-安装"><a href="#2-1-安装" class="headerlink" title="2.1 安装"></a>2.1 安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># Ubuntu 或 Debian</span><br><span class="line">$ sudo apt-get install tmux</span><br><span class="line"></span><br><span class="line"># CentOS 或 Fedora</span><br><span class="line">$ sudo yum install tmux</span><br><span class="line"></span><br><span class="line"># Mac</span><br><span class="line">$ brew install tmux</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-2-启动与退出"><a href="#2-2-启动与退出" class="headerlink" title="2.2 启动与退出"></a>2.2 启动与退出</h3><p>安装完成后，键入<code>tmux</code>命令，就进入了 Tmux 窗口。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ tmux</span><br></pre></td></tr></table></figure>
-<p>上面命令会启动 Tmux 窗口，底部有一个状态栏。状态栏的左侧是窗口信息（编号和名称），右侧是系统信息。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8axbkbbqgj30ke0dvt94.jpg" alt="tmux run"><br>按下<code>Ctrl+d</code>或者显式输入<code>exit</code>命令，就可以退出 Tmux 窗口。</p>
-<h3 id="2-3-前缀键"><a href="#2-3-前缀键" class="headerlink" title="2.3 前缀键"></a>2.3 前缀键</h3><p>Tmux 窗口有大量的快捷键。所有快捷键都要通过前缀键唤起。默认的前缀键是<code>Ctrl+b</code>，即先按下<code>Ctrl+b</code>，快捷键才会生效。<br>举例来说，帮助命令的快捷键是<code>Ctrl+b ?</code>。它的用法是，在 Tmux 窗口中，先按下<code>Ctrl+b</code>，再按下?，就会显示帮助信息。<br>然后，按下 ESC 键或<code>q</code>键，就可以退出帮助。</p>
-<h2 id="三、会话管理"><a href="#三、会话管理" class="headerlink" title="三、会话管理"></a>三、会话管理</h2><h3 id="3-1-新建会话"><a href="#3-1-新建会话" class="headerlink" title="3.1 新建会话"></a>3.1 新建会话</h3><p>第一个启动的 Tmux 窗口，编号是0，第二个窗口的编号是1，以此类推。这些窗口对应的会话，就是 0 号会话、1 号会话。<br>使用编号区分会话，不太直观，更好的方法是为会话起名。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ tmux new -s &lt;session-name&gt;</span><br></pre></td></tr></table></figure>
-<p>上面命令新建一个指定名称的会话。</p>
-<h3 id="3-2-分离会话"><a href="#3-2-分离会话" class="headerlink" title="3.2 分离会话"></a>3.2 分离会话</h3><p>在 Tmux 窗口中，按下<code>Ctrl+b d</code>或者输入<code>tmux detach</code>命令，就会将当前会话与窗口分离。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ tmux detach</span><br></pre></td></tr></table></figure>
-<p>上面命令执行后，就会退出当前 Tmux 窗口，但是会话和里面的进程仍然在后台运行。<br><code>tmux ls</code>命令可以查看当前所有的 Tmux 会话。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ tmux ls</span><br><span class="line"># or</span><br><span class="line">$ tmux list-session</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-3-接入会话"><a href="#3-3-接入会话" class="headerlink" title="3.3 接入会话"></a>3.3 接入会话</h3><p><code>tmux attach</code>命令用于重新接入某个已存在的会话。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"># 使用会话编号</span><br><span class="line">$ tmux attach -t 0</span><br><span class="line"></span><br><span class="line"># 使用会话名称</span><br><span class="line">$ tmux attach -t &lt;session-name&gt;</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="3-4-杀死会话"><a href="#3-4-杀死会话" class="headerlink" title="3.4 杀死会话"></a>3.4 杀死会话</h3><p><code>tmux kill-session</code>命令用于杀死某个会话。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"># 使用会话编号</span><br><span class="line">$ tmux kill-session -t 0</span><br><span class="line"></span><br><span class="line"># 使用会话名称</span><br><span class="line">$ tmux kill-session -t &lt;session-name&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-5-切换会话"><a href="#3-5-切换会话" class="headerlink" title="3.5 切换会话"></a>3.5 切换会话</h3><p><code>tmux switch</code>命令用于切换会话。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"># 使用会话编号</span><br><span class="line">$ tmux switch -t 0</span><br><span class="line"></span><br><span class="line"># 使用会话名称</span><br><span class="line">$ tmux switch -t &lt;session-name&gt;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="3-6-重命名会话"><a href="#3-6-重命名会话" class="headerlink" title="3.6 重命名会话"></a>3.6 重命名会话</h3><p><code>tmux rename-session</code>命令用于重命名会话。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ tmux rename-session -t 0 &lt;new-name&gt;</span><br></pre></td></tr></table></figure>
-<p>上面命令将0号会话重命名。</p>
-<h3 id="3-7-会话快捷键"><a href="#3-7-会话快捷键" class="headerlink" title="3.7 会话快捷键"></a>3.7 会话快捷键</h3><p>下面是一些会话相关的快捷键。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Ctrl+b d：分离当前会话。</span><br><span class="line">Ctrl+b s：列出所有会话。</span><br><span class="line">Ctrl+b $：重命名当前会话。</span><br></pre></td></tr></table></figure>
-
-<h2 id="四、最简操作流程"><a href="#四、最简操作流程" class="headerlink" title="四、最简操作流程"></a>四、最简操作流程</h2><p>综上所述，以下是 Tmux 的最简操作流程。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">新建会话tmux new -s my_session。</span><br><span class="line">在 Tmux 窗口运行所需的程序。</span><br><span class="line">按下快捷键Ctrl+b d将会话分离。</span><br><span class="line">下次使用时，重新连接到会话tmux attach-session -t my_session。</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="五、窗格操作"><a href="#五、窗格操作" class="headerlink" title="五、窗格操作"></a>五、窗格操作</h2><p>Tmux 可以将窗口分成多个窗格（pane），每个窗格运行不同的命令。以下命令都是在 Tmux 窗口中执行。</p>
-<h3 id="5-1-划分窗格"><a href="#5-1-划分窗格" class="headerlink" title="5.1 划分窗格"></a>5.1 划分窗格</h3><p>tmux split-window命令用来划分窗格。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"># 划分上下两个窗格</span><br><span class="line">$ tmux split-window</span><br><span class="line"></span><br><span class="line"># 划分左右两个窗格</span><br><span class="line">$ tmux split-window -h</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8axhwysv1j30jc0bzq4q.jpg" alt="tmux run1"></p>
-<h3 id="5-2-移动光标"><a href="#5-2-移动光标" class="headerlink" title="5.2 移动光标"></a>5.2 移动光标</h3><p><code>tmux select-pane</code>命令用来移动光标位置。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 光标切换到上方窗格</span><br><span class="line">$ tmux select-pane -U</span><br><span class="line"></span><br><span class="line"># 光标切换到下方窗格</span><br><span class="line">$ tmux select-pane -D</span><br><span class="line"></span><br><span class="line"># 光标切换到左边窗格</span><br><span class="line">$ tmux select-pane -L</span><br><span class="line"></span><br><span class="line"># 光标切换到右边窗格</span><br><span class="line">$ tmux select-pane -R</span><br></pre></td></tr></table></figure>
-
-<h3 id="5-3-交换窗格位置"><a href="#5-3-交换窗格位置" class="headerlink" title="5.3 交换窗格位置"></a>5.3 交换窗格位置</h3><p><code>tmux swap-pane</code>命令用来交换窗格位置。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 当前窗格上移</span><br><span class="line">$ tmux swap-pane -U</span><br><span class="line"></span><br><span class="line"># 当前窗格下移</span><br><span class="line">$ tmux swap-pane -D</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="5-4-窗格快捷键"><a href="#5-4-窗格快捷键" class="headerlink" title="5.4 窗格快捷键"></a>5.4 窗格快捷键</h3><p>下面是一些窗格操作的快捷键。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Ctrl+b %：划分左右两个窗格。</span><br><span class="line">Ctrl+b &quot;：划分上下两个窗格。</span><br><span class="line">Ctrl+b &lt;arrow key&gt;：光标切换到其他窗格。&lt;arrow key&gt;是指向要切换到的窗格的方向键，比如切换到下方窗格，就按方向键↓。</span><br><span class="line">Ctrl+b ;：光标切换到上一个窗格。</span><br><span class="line">Ctrl+b o：光标切换到下一个窗格。</span><br><span class="line">Ctrl+b &#123;：当前窗格左移。</span><br><span class="line">Ctrl+b &#125;：当前窗格右移。</span><br><span class="line">Ctrl+b Ctrl+o：当前窗格上移。</span><br><span class="line">Ctrl+b Alt+o：当前窗格下移。</span><br><span class="line">Ctrl+b x：关闭当前窗格。</span><br><span class="line">Ctrl+b !：将当前窗格拆分为一个独立窗口。</span><br><span class="line">Ctrl+b z：当前窗格全屏显示，再使用一次会变回原来大小。</span><br><span class="line">Ctrl+b Ctrl+&lt;arrow key&gt;：按箭头方向调整窗格大小。</span><br><span class="line">Ctrl+b q：显示窗格编号。</span><br></pre></td></tr></table></figure>
-
-<h2 id="六、窗口管理"><a href="#六、窗口管理" class="headerlink" title="六、窗口管理"></a>六、窗口管理</h2><p>除了将一个窗口划分成多个窗格，Tmux 也允许新建多个窗口。</p>
-<h3 id="6-1-新建窗口"><a href="#6-1-新建窗口" class="headerlink" title="6.1 新建窗口"></a>6.1 新建窗口</h3><p><code>tmux new-window</code>命令用来创建新窗口。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">$ tmux new-window</span><br><span class="line"></span><br><span class="line"># 新建一个指定名称的窗口</span><br><span class="line">$ tmux new-window -n &lt;window-name&gt;</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="6-2-切换窗口"><a href="#6-2-切换窗口" class="headerlink" title="6.2 切换窗口"></a>6.2 切换窗口</h3><p><code>tmux select-window</code>命令用来切换窗口。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 切换到指定编号的窗口</span><br><span class="line">$ tmux select-window -t &lt;window-number&gt;</span><br><span class="line"></span><br><span class="line"># 切换到指定名称的窗口</span><br><span class="line">$ tmux select-window -t &lt;window-name&gt;</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="6-3-重命名窗口"><a href="#6-3-重命名窗口" class="headerlink" title="6.3 重命名窗口"></a>6.3 重命名窗口</h3><p><code>tmux rename-window</code>命令用于为当前窗口起名（或重命名）。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ tmux rename-window &lt;new-name&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="6-4-窗口快捷键"><a href="#6-4-窗口快捷键" class="headerlink" title="6.4 窗口快捷键"></a>6.4 窗口快捷键</h3><p>下面是一些窗口操作的快捷键。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Ctrl+b c：创建一个新窗口，状态栏会显示多个窗口的信息。</span><br><span class="line">Ctrl+b p：切换到上一个窗口（按照状态栏上的顺序）。</span><br><span class="line">Ctrl+b n：切换到下一个窗口。</span><br><span class="line">Ctrl+b &lt;number&gt;：切换到指定编号的窗口，其中的&lt;number&gt;是状态栏上的窗口编号。</span><br><span class="line">Ctrl+b w：从列表中选择窗口。</span><br><span class="line">Ctrl+b ,：窗口重命名。</span><br></pre></td></tr></table></figure>
-<h2 id="七、其他命令"><a href="#七、其他命令" class="headerlink" title="七、其他命令"></a>七、其他命令</h2><p>下面是一些其他命令。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 列出所有快捷键，及其对应的 Tmux 命令</span><br><span class="line">$ tmux list-keys</span><br><span class="line"></span><br><span class="line"># 列出所有 Tmux 命令及其参数</span><br><span class="line">$ tmux list-commands</span><br><span class="line"></span><br><span class="line"># 列出当前所有 Tmux 会话的信息</span><br><span class="line">$ tmux info</span><br><span class="line"></span><br><span class="line"># 重新加载当前的 Tmux 配置</span><br><span class="line">$ tmux source-file ~/.tmux.conf</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/杂项//" class="article-tag-list-link color3">杂项</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/10/24/%E8%BF%90%E7%BB%B4%E7%A5%9E%E5%99%A8tmux/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-练习2年的git练习生" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1106,6 +957,106 @@
 
 
   
+    <article id="post-Mac-brew-特别慢-解决方案" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/08/09/Mac-brew-%E7%89%B9%E5%88%AB%E6%85%A2-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">Mac brew 特别慢 解决方案 </a>
+</h1>
+
+
+
+        
+        <a href="/2019/08/09/Mac-brew-%E7%89%B9%E5%88%AB%E6%85%A2-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="archive-article-date">
+  	<time datetime="2019-08-09T06:09:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-08-09</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>众所周知，brew是mac下最好的下载软件工具，类似与yum、apt有过之而不及。(如果没听过，请关闭该网页)</p>
+<p>接下来解决特别慢的问题。<br>1.按照常规安装安装好brew</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;</span><br></pre></td></tr></table></figure>
+<p>2.替换brew.git:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd &quot;$(brew --repo)&quot;</span><br><span class="line">git remote set-url origin https://mirrors.ustc.edu.cn/brew.git</span><br></pre></td></tr></table></figure>
+<p>3.替换homebrew-core.git:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd &quot;$(brew --repo)/Library/Taps/homebrew/homebrew-core&quot;</span><br><span class="line">git remote set-url origin https://mirrors.ustc.edu.cn/homebrew-core.git</span><br></pre></td></tr></table></figure>
+<p>4.什么?你连安装第一步都卡?请关闭该网页！<br>5.开个玩笑,第一步执行卡可以换源下载brew</p>
+<ul>
+<li>获取 install 文件<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install &gt;&gt; brew_install</span><br></pre></td></tr></table></figure></li>
+<li>更改脚本中的资源链接<br>换成清华大学的镜像，修改如下两句.<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BREW_REPO = “https://github.com/Homebrew/brew“.freeze </span><br><span class="line">CORE_TAP_REPO = “https://github.com/Homebrew/homebrew-core“.freeze</span><br></pre></td></tr></table></figure>
+更改为这两句(或者你找的其他家的)<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BREW_REPO = &quot;https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git&quot;.freeze </span><br><span class="line">CORE_TAP_REPO = &quot;https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git&quot;.freeze</span><br></pre></td></tr></table></figure></li>
+<li>运行脚本<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/ruby brew_install</span><br></pre></td></tr></table></figure></li>
+<li>可以愉快玩耍了</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color4">mac</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/杂项//" class="article-tag-list-link color3">杂项</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/08/09/Mac-brew-%E7%89%B9%E5%88%AB%E6%85%A2-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/4/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/6/">Next &amp;raquo;</a>
@@ -1209,11 +1160,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1258,10 +1209,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">c#</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -18,7 +18,8 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb315kdc6qj31ag0heq89.jpg">
 <meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb31og03w8j30t70dr0u4.jpg">
 <meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb31onpelnj312k0faq6h.jpg">
-<meta property="og:updated_time" content="2020-01-20T07:11:20.424Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;007S8ZIlgy1ge3n7e4opzj31fr0u07wi.jpg">
+<meta property="og:updated_time" content="2020-04-23T05:40:43.075Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gb315kdc6qj31ag0heq89.jpg">
   
@@ -220,9 +221,31 @@
 <p>export INSTALL_K3S_SKIP_DOWNLOAD=true           //设置跳过下载k3s二进制文件<br>export INSTALL_K3S_BIN_DIR=/usr/bin       //设置k3s安装目录<br>./install.sh       //自动建立service服务及软连接  kubectl ctr  ….</p>
 <p>systemctl status k3s    //服务运行状态</p>
 <p>journalctl -u k3s -f     //根据日志可以看到服务启动不起来,要去国外拉images，你懂得，heihei</p>
-<h3 id="修正k3s服务改用docker"><a href="#修正k3s服务改用docker" class="headerlink" title="修正k3s服务改用docker"></a>修正k3s服务改用docker</h3><p>vi /etc/systemd/system/k3s.service<br>ExecStart=/usr/bin/k3s <br>server –docker\              //容器选择docker，替换默认的containerd</p>
+<h3 id="修正k3s服务改用docker"><a href="#修正k3s服务改用docker" class="headerlink" title="修正k3s服务改用docker"></a>修正k3s服务改用docker</h3><p>vi /etc/systemd/system/k3s.service<br>ExecStart=/usr/bin/k3s <br>server –docker\              //注意 两个杠，容器选择docker，替换默认的containerd</p>
 <p>systemctl daemon-reload    //刷新服务配置文件，重新定向到target<br>systemctl restart k3s</p>
 <p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb31og03w8j30t70dr0u4.jpg" alt=""><br>k3s的pod运行在docker之中<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb31onpelnj312k0faq6h.jpg" alt=""></p>
+<h3 id="安装错误记录"><a href="#安装错误记录" class="headerlink" title="安装错误记录"></a>安装错误记录</h3><p>在树莓派4装的ubuntu 18.04 LTS 系统中跑k3s发现如下错误<br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge3n7e4opzj31fr0u07wi.jpg" alt=""><br>关键报错信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">level=error msg=&quot;Failed to find memory cgroup, you may need to add \&quot;cgroup_memory=1 cgroup_enable=memory\&quot; to your linux cmdline (/boot/cmdline.txt on a Raspberry Pi)&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="排查记录"><a href="#排查记录" class="headerlink" title="排查记录"></a>排查记录</h3><p>日志提示很明显，所以我们修改/boot/cmdline.txt并重启，但是重启后发现问题依旧，还是有这个问题。这个修改的本质是添加内核参数，所以我们从操作系统层面检查：</p>
+<blockquote>
+<p>$ cat /proc/cmdline | grep cgroup_memory<br>nothing return</p>
+</blockquote>
+<p>也就是说，cmdline的修改没有生效。所以，我们怀疑ubuntu这个镜像修改cmdline有其他方式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">$ df -hT | grep mmc</span><br><span class="line">/dev/mmcblk0p2 ext4       29G  2.8G   26G  10% /</span><br><span class="line">/dev/mmcblk0p1 vfat      253M  117M  136M  47% /boot/firmware</span><br><span class="line"># 真正的启动分区在/boot/firmware</span><br><span class="line"></span><br><span class="line"># 阅读/boot/firmware/README</span><br><span class="line"># 排查后得知，应该修改nobtcmd.txt</span><br></pre></td></tr></table></figure>
+
+<p>在/boot/firmware/nobtcmd.txt添加cgroup相关参数后，重启后可以看到cmdline有了期望的配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cat /proc/cmdline | grep cgroup_memory</span><br><span class="line">coherent_pool=1M ………. cgroup_memory=1 cgroup_enable=memory</span><br></pre></td></tr></table></figure>
+
+<p>这时发现k3s依然没有完成启动，日志输出缓慢，怀疑系统某些因素影响了启动过程。排查entropy，发现可用值非常低，低到会阻塞程序运行，一般来说&lt;1000程序就会卡住</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cat /proc/sys/kernel/random/entropy_avail</span><br><span class="line">522</span><br></pre></td></tr></table></figure>
+
+<p>很多程序的运行都依赖随机数生成，比如hash、加密解密等过程。申请随机数就会消耗系统的entropy（熵），当entropy低到一定阈值，程序就运行缓慢，等待随机数种子。</p>
+<p>一般来说kernel可以从硬件运行信息中收集噪声来补充entropy，但树莓派毕竟硬件能力有限，无法从硬件层面快速生成entropy，所以我们安装软件提供模拟算法进行补充：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ apt install haveged </span><br><span class="line">$ systemctl enable haveged</span><br><span class="line"></span><br><span class="line">$ cat /proc/sys/kernel/random/entropy_avail</span><br><span class="line">2366</span><br></pre></td></tr></table></figure>
+
+<p>一切妥当之后，再查看k3s启动状态，k3s已经完成启动。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>Linux运行在诸如树莓派这种简易硬件架构下，会有很多细微差别，平日在x86 server体系的认知和经验可能都是不成立，这就导致运行在服务器Linux上的软件并不会那么容易移植到小型终端设备上。对于树莓派，除了文中提及的内容，你还需要关注NTP时间同步，MicroSD卡的IO性能等等。</p>
 
       
 
@@ -434,7 +457,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -442,7 +465,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
               </li>
              
               <li class="article-tag-list-item">

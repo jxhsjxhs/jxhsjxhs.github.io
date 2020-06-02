@@ -177,6 +177,586 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-用nfs作为k8s持久化存储" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/10/25/%E7%94%A8nfs%E4%BD%9C%E4%B8%BAk8s%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A8/">用nfs作为k8s持久化存储</a>
+</h1>
+
+
+
+        
+        <a href="/2019/10/25/%E7%94%A8nfs%E4%BD%9C%E4%B8%BAk8s%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A8/" class="archive-article-date">
+  	<time datetime="2019-10-25T05:57:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-25</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="kubernetes部署NFS持久存储"><a href="#kubernetes部署NFS持久存储" class="headerlink" title="kubernetes部署NFS持久存储"></a>kubernetes部署NFS持久存储</h2><h3 id="NFS简介"><a href="#NFS简介" class="headerlink" title="NFS简介"></a>NFS简介</h3><blockquote>
+<p>NFS是网络文件系统Network File System的缩写，NFS服务器可以让PC将网络中的NFS服务器共享的目录挂载到本地的文件系统中，而在本地的系统中来看，那个远程主机的目录就好像是自己的一个磁盘分区一样。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubernetes使用NFS共享存储有两种方式：</span><br><span class="line">手动方式静态创建所需要的PV和PVC。</span><br><span class="line">通过创建PVC动态地创建对应PV，无需手动创建PV。</span><br><span class="line">这条博客是写的静态创建方法</span><br></pre></td></tr></table></figure>
+<p>可以发现k8s中的Volume（无论何种类型）和使用它的Pod都是一种静态绑定关系，在Pod定义文件中，同时定义了它使用的Volume。在这种情况下，Volume是Pod的附属品，我们无法像创建其他资源（例如Pod，Node，Deployment等等）一样创建一个Volume。</p>
+</blockquote>
+<p>因此Kubernetes提出了PersistentVolume（PV）的概念。PersistentVolume和Volume一样，代表了集群中的一块存储区域，然而Kubernetes将PersistentVolume抽象成了一种集群资源，类似于集群中的Node对象，这意味着我们可以使用Kubernetes API来创建PersistentVolume对象。PV与Volume最大的不同是PV拥有着独立于Pod的生命周期。</p>
+<p>而PersistentVolumeClaim（PVC）代表了用户对PV资源的请求。用户需要使用PV资源时，只需要创建一个PVC对象（包括指定使用何种存储资源，使用多少GB，以何种模式使用PV等信息），Kubernetes会自动为我们分配我们所需的PV。如果把PersistentVolume类比成集群中的Node，那么PersistentVolumeClaim就相当于集群中的Pod，Kubernetes为Pod分配可用的Node，为PersistentVolumeClaim分配可用的PersistentVolume。</p>
+<h3 id="搭建nfs服务器"><a href="#搭建nfs服务器" class="headerlink" title="搭建nfs服务器"></a>搭建nfs服务器</h3><p>这里作为测试，临时在master节点上部署NFS服务器。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">#master节点安装nfs</span><br><span class="line">yum -y install nfs-utils</span><br><span class="line"></span><br><span class="line">#创建nfs目录</span><br><span class="line">mkdir -p /data/nfs/</span><br><span class="line"></span><br><span class="line">#修改权限</span><br><span class="line">chmod -R 777 /data/nfs</span><br><span class="line"></span><br><span class="line">#编辑export文件</span><br><span class="line">vim /etc/exports</span><br><span class="line">/data/nfs *(rw,no_root_squash,sync)</span><br><span class="line"></span><br><span class="line">#配置生效</span><br><span class="line">exportfs -r</span><br><span class="line">#查看生效</span><br><span class="line">exportfs</span><br><span class="line"></span><br><span class="line">#启动rpcbind、nfs服务</span><br><span class="line">systemctl restart rpcbind &amp;&amp; systemctl enable rpcbind</span><br><span class="line">systemctl restart nfs &amp;&amp; systemctl enable nfs</span><br><span class="line"></span><br><span class="line">#查看 RPC 服务的注册状况</span><br><span class="line">rpcinfo -p localhost</span><br><span class="line"></span><br><span class="line">#showmount测试</span><br><span class="line">showmount -e 10.7.150.112</span><br><span class="line"></span><br><span class="line">#所有node节点安装客户端</span><br><span class="line">yum -y install nfs-utils</span><br><span class="line">systemctl start nfs &amp;&amp; systemctl enable nfs</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>作为准备工作，我们已经在 k8s-master 节点上搭建了一个 NFS 服务器，目录为 /data/nfs.</p>
+</blockquote>
+<h3 id="静态申请PV卷"><a href="#静态申请PV卷" class="headerlink" title="静态申请PV卷"></a>静态申请PV卷</h3><h4 id="添加pv卷对应目录-作为挂载点"><a href="#添加pv卷对应目录-作为挂载点" class="headerlink" title="添加pv卷对应目录,作为挂载点"></a>添加pv卷对应目录,作为挂载点</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#创建pv卷对应的目录</span><br><span class="line">mkdir -p /nfs/data/pv001</span><br><span class="line"></span><br><span class="line">#配置exportrs</span><br><span class="line">vim /etc/exports</span><br><span class="line">/nfs/data *(rw,no_root_squash,sync)</span><br><span class="line">/nfs/data/pv001 *(rw,no_root_squash,sync)</span><br><span class="line"></span><br><span class="line">#配置生效</span><br><span class="line">exportfs -r</span><br><span class="line">#重启rpcbind、nfs服务</span><br><span class="line">systemctl restart rpcbind &amp;&amp; systemctl restart nfs</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建PV"><a href="#创建PV" class="headerlink" title="创建PV"></a>创建PV</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">`</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-pv</span><br><span class="line">  labels:</span><br><span class="line">    pv: nfs-pv</span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 1Gi</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  persistentVolumeReclaimPolicy: Recycle</span><br><span class="line">  storageClassName: nfs</span><br><span class="line">  nfs:</span><br><span class="line">    path: /nfs/data/pv</span><br><span class="line">    server: 10.7.150.112</span><br><span class="line">`</span><br></pre></td></tr></table></figure>
+<hr>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">`配置说明`：</span><br><span class="line">capacity 指定 PV 的容量为 1G。</span><br><span class="line">accessModes 指定访问模式为 ReadWriteOnce，支持的访问模式有：</span><br><span class="line">ReadWriteOnce – PV 能以 read-write 模式 mount 到单个节点。</span><br><span class="line">ReadOnlyMany – PV 能以 read-only 模式 mount 到多个节点。</span><br><span class="line">ReadWriteMany – PV 能以 read-write 模式 mount 到多个节点。</span><br><span class="line">persistentVolumeReclaimPolicy 指定当 PV 的回收策略为 Recycle，支持的策略有：</span><br><span class="line">Retain – 需要管理员手工回收。</span><br><span class="line">Recycle – 清除 PV 中的数据，效果相当于执行 rm -rf /thevolume/*。</span><br><span class="line">Delete – 删除 Storage Provider 上的对应存储资源，例如 AWS EBS、GCE PD、Azure</span><br><span class="line">Disk、OpenStack Cinder Volume 等。</span><br><span class="line">storageClassName 指定 PV 的 class 为 nfs。相当于为 PV 设置了一个分类，PVC 可以指定 class 申请相应 class 的 PV。</span><br><span class="line">指定 PV 在 NFS 服务器上对应的目录。</span><br></pre></td></tr></table></figure>
+<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8ctzzzc76j30wm03kaaq.jpg" alt="create PV"></p>
+<blockquote>
+<p>STATUS 为 Available，表示 pv就绪，可以被 PVC 申请。</p>
+</blockquote>
+<h4 id="创建PVC"><a href="#创建PVC" class="headerlink" title="创建PVC"></a>创建PVC</h4><p>接下来创建一个名为pvc的PVC，配置文件 pvc.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-pvc</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 1Gi</span><br><span class="line">  storageClassName: nfs</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      pv: nfs-pv</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cu33t8lsj30xo06kmyk.jpg" alt="Bound PVC"></p>
+<blockquote>
+<p>从 kubectl get pvc 和 kubectl get pv 的输出可以看到pvc绑定成功，注意pvc绑定到对应pv通过labels标签方式实现，也可以不指定，将随机绑定到pv。</p>
+</blockquote>
+<hr>
+<p>接下来就可以在 Pod 中使用存储了，Pod 配置文件 pod.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">kind: Pod</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-pod001</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">    - name: myfrontend</span><br><span class="line">      image: nginx</span><br><span class="line">      volumeMounts:</span><br><span class="line">      - mountPath: &quot;/var/www/html&quot;</span><br><span class="line">        name: nfs-pv</span><br><span class="line">  volumes:</span><br><span class="line">    - name: nfs-pv</span><br><span class="line">      persistentVolumeClaim:</span><br><span class="line">        claimName: nfs-pvc</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>与使用普通 Volume 的格式类似，在 volumes 中通过 persistentVolumeClaim 指定使用nfs-pvc 申请的 Volume</p>
+</blockquote>
+<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cu7x6628j30go03tt97.jpg" alt="create pod"></p>
+<p>验证PV是否可用<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cu8qrjnpj30pg02yjrt.jpg" alt="file"><br>进入pod查看情况<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cu9hb48qj30u0092abz.jpg" alt="exec pod"></p>
+<h4 id="删除pv"><a href="#删除pv" class="headerlink" title="删除pv"></a>删除pv</h4><p>删除pod，pv和pvc不会被删除，nfs存储的数据不会被删除。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cub06m8qj30hd03iq3d.jpg" alt="del pod "><br>继续删除pvc，pv将被释放，处于 Available 可用状态，并且nfs存储中的数据被删除。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cucndzf7j30us05175e.jpg" alt="del pvc "><br>继续删除pv<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cud8vkzpj30gf026dg2.jpg" alt="del pv"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color3">k8s,nfs</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/容器//" class="article-tag-list-link color3">容器</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/10/25/%E7%94%A8nfs%E4%BD%9C%E4%B8%BAk8s%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A8/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-hexo换电脑怎么继续写作" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/10/25/hexo%E6%8D%A2%E7%94%B5%E8%84%91%E6%80%8E%E4%B9%88%E7%BB%A7%E7%BB%AD%E5%86%99%E4%BD%9C/">hexo换电脑怎么继续写作</a>
+</h1>
+
+
+
+        
+        <a href="/2019/10/25/hexo%E6%8D%A2%E7%94%B5%E8%84%91%E6%80%8E%E4%B9%88%E7%BB%A7%E7%BB%AD%E5%86%99%E4%BD%9C/" class="archive-article-date">
+  	<time datetime="2019-10-24T16:00:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-25</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>惭愧 – 博客写了俩月才想到这个话题，换电脑了咋继续写博客。</p>
+<hr>
+<h3 id="首先说说我写博客用的东西："><a href="#首先说说我写博客用的东西：" class="headerlink" title="首先说说我写博客用的东西："></a>首先说说我写博客用的东西：</h3><blockquote>
+<ol>
+<li>博客使用hexo，使用3-hexo主题</li>
+<li>我把博客代码跟编译出来的静态页面分为两个仓库。写完以后分别提交。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8aut185bdj309d026dft.jpg" alt="git仓库"></li>
+</ol>
+</blockquote>
+<h3 id="正文来了"><a href="#正文来了" class="headerlink" title="正文来了"></a>正文来了</h3><blockquote>
+<ol>
+<li>走了的好多弯路，一开始博客的图片用的都是本地图片，第一是加载慢。并且换电脑以后 用hexo g &amp;&amp; hexo s  居然显示不了图片。</li>
+<li>然后图片就换了图床—(这里推荐一个mac下的图床工具ipic,免费 好用)利用的是新浪的图床  也不知道能用多久。。打算自己用oss搭建一个图床<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8avadnznpj306205z756.jpg" alt="图床软件"></li>
+</ol>
+</blockquote>
+<hr>
+<h3 id="真的正文"><a href="#真的正文" class="headerlink" title="真的正文"></a>真的正文</h3><blockquote>
+<ol>
+<li>安装必要软件<br>git  nodejs  </li>
+<li>github免密</li>
+<li>拷贝之前的电脑的以下文件(git clone也行 但是一般比较慢)<br>_config.yml  package.json   scaffolds/    source/    themes/</li>
+<li>在新的电脑上执行  npm install hexo-cli -g</li>
+<li>进入新电脑中想放博客代码的目录，把步骤三中拷贝的文件放入其中</li>
+<li>执行以下命令</li>
+</ol>
+</blockquote>
+<hr>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br><span class="line">npm install hexo-deployer-git --save  // 文章部署到 git 的模块</span><br><span class="line">(下面为选择安装)</span><br><span class="line">npm install hexo-generator-feed --save  // 建立 RSS 订阅</span><br><span class="line">npm install hexo-generator-sitemap --save // 建立站点地图</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>这时候使用 hexo s 基本可以看到你新添加的文章了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">部署发布文章</span><br><span class="line">hexo clean   // 清除缓存 网页正常情况下可以忽略此条命令</span><br><span class="line">hexo g       // 生成静态网页</span><br><span class="line">hexo d       // 开始部署</span><br></pre></td></tr></table></figure>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color5">hexo</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/杂项//" class="article-tag-list-link color3">杂项</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/10/25/hexo%E6%8D%A2%E7%94%B5%E8%84%91%E6%80%8E%E4%B9%88%E7%BB%A7%E7%BB%AD%E5%86%99%E4%BD%9C/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-运维神器tmux" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/10/24/%E8%BF%90%E7%BB%B4%E7%A5%9E%E5%99%A8tmux/">运维神器tmux</a>
+</h1>
+
+
+
+        
+        <a href="/2019/10/24/%E8%BF%90%E7%BB%B4%E7%A5%9E%E5%99%A8tmux/" class="archive-article-date">
+  	<time datetime="2019-10-24T00:56:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-24</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="一、Tmux-是什么？"><a href="#一、Tmux-是什么？" class="headerlink" title="一、Tmux 是什么？"></a>一、Tmux 是什么？</h2><hr>
+<h3 id="1-1-会话与进程"><a href="#1-1-会话与进程" class="headerlink" title="1.1 会话与进程"></a>1.1 会话与进程</h3><blockquote>
+<p>命令行的典型使用方式是，打开一个终端窗口（terminal window，以下简称”窗口”），在里面输入命令。用户与计算机的这种临时的交互，称为一次”会话”（session） 。<br>会话的一个重要特点是，窗口与其中启动的进程是连在一起的。打开窗口，会话开始；关闭窗口，会话结束，会话内部的进程也会随之终止，不管有没有运行完。<br>一个典型的例子就是，SSH 登录远程计算机，打开一个远程窗口执行命令。这时，网络突然断线，再次登录的时候，是找不回上一次执行的命令的。因为上一次 SSH 会话已经终止了，里面的进程也随之消失了。<br>为了解决这个问题，会话与窗口可以”解绑”：窗口关闭时，会话并不终止，而是继续运行，等到以后需要的时候，再让会话”绑定”其他窗口。</p>
+</blockquote>
+<h2 id="1-2-Tmux-的作用"><a href="#1-2-Tmux-的作用" class="headerlink" title="1.2 Tmux 的作用"></a>1.2 Tmux 的作用</h2><blockquote>
+<p>Tmux 就是会话与窗口的”解绑”工具，将它们彻底分离。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">它允许在单个窗口中，同时访问多个会话。这对于同时运行多个命令行程序很有用。</span><br><span class="line">它可以让新窗口&quot;接入&quot;已经存在的会话。</span><br><span class="line">它允许每个会话有多个连接窗口，因此可以多人实时共享会话。</span><br><span class="line">它还支持窗口任意的垂直和水平拆分。</span><br></pre></td></tr></table></figure>
+<p>类似的终端复用器还有 GNU Screen。Tmux 与它功能相似，但是更易用，也更强大。</p>
+</blockquote>
+<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8ax01tp5ej31zz0u07tv.jpg" alt="tmux"></p>
+<h2 id="二、基本用法"><a href="#二、基本用法" class="headerlink" title="二、基本用法"></a>二、基本用法</h2><h3 id="2-1-安装"><a href="#2-1-安装" class="headerlink" title="2.1 安装"></a>2.1 安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># Ubuntu 或 Debian</span><br><span class="line">$ sudo apt-get install tmux</span><br><span class="line"></span><br><span class="line"># CentOS 或 Fedora</span><br><span class="line">$ sudo yum install tmux</span><br><span class="line"></span><br><span class="line"># Mac</span><br><span class="line">$ brew install tmux</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-启动与退出"><a href="#2-2-启动与退出" class="headerlink" title="2.2 启动与退出"></a>2.2 启动与退出</h3><p>安装完成后，键入<code>tmux</code>命令，就进入了 Tmux 窗口。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ tmux</span><br></pre></td></tr></table></figure>
+<p>上面命令会启动 Tmux 窗口，底部有一个状态栏。状态栏的左侧是窗口信息（编号和名称），右侧是系统信息。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8axbkbbqgj30ke0dvt94.jpg" alt="tmux run"><br>按下<code>Ctrl+d</code>或者显式输入<code>exit</code>命令，就可以退出 Tmux 窗口。</p>
+<h3 id="2-3-前缀键"><a href="#2-3-前缀键" class="headerlink" title="2.3 前缀键"></a>2.3 前缀键</h3><p>Tmux 窗口有大量的快捷键。所有快捷键都要通过前缀键唤起。默认的前缀键是<code>Ctrl+b</code>，即先按下<code>Ctrl+b</code>，快捷键才会生效。<br>举例来说，帮助命令的快捷键是<code>Ctrl+b ?</code>。它的用法是，在 Tmux 窗口中，先按下<code>Ctrl+b</code>，再按下?，就会显示帮助信息。<br>然后，按下 ESC 键或<code>q</code>键，就可以退出帮助。</p>
+<h2 id="三、会话管理"><a href="#三、会话管理" class="headerlink" title="三、会话管理"></a>三、会话管理</h2><h3 id="3-1-新建会话"><a href="#3-1-新建会话" class="headerlink" title="3.1 新建会话"></a>3.1 新建会话</h3><p>第一个启动的 Tmux 窗口，编号是0，第二个窗口的编号是1，以此类推。这些窗口对应的会话，就是 0 号会话、1 号会话。<br>使用编号区分会话，不太直观，更好的方法是为会话起名。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ tmux new -s &lt;session-name&gt;</span><br></pre></td></tr></table></figure>
+<p>上面命令新建一个指定名称的会话。</p>
+<h3 id="3-2-分离会话"><a href="#3-2-分离会话" class="headerlink" title="3.2 分离会话"></a>3.2 分离会话</h3><p>在 Tmux 窗口中，按下<code>Ctrl+b d</code>或者输入<code>tmux detach</code>命令，就会将当前会话与窗口分离。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ tmux detach</span><br></pre></td></tr></table></figure>
+<p>上面命令执行后，就会退出当前 Tmux 窗口，但是会话和里面的进程仍然在后台运行。<br><code>tmux ls</code>命令可以查看当前所有的 Tmux 会话。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ tmux ls</span><br><span class="line"># or</span><br><span class="line">$ tmux list-session</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-接入会话"><a href="#3-3-接入会话" class="headerlink" title="3.3 接入会话"></a>3.3 接入会话</h3><p><code>tmux attach</code>命令用于重新接入某个已存在的会话。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"># 使用会话编号</span><br><span class="line">$ tmux attach -t 0</span><br><span class="line"></span><br><span class="line"># 使用会话名称</span><br><span class="line">$ tmux attach -t &lt;session-name&gt;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="3-4-杀死会话"><a href="#3-4-杀死会话" class="headerlink" title="3.4 杀死会话"></a>3.4 杀死会话</h3><p><code>tmux kill-session</code>命令用于杀死某个会话。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"># 使用会话编号</span><br><span class="line">$ tmux kill-session -t 0</span><br><span class="line"></span><br><span class="line"># 使用会话名称</span><br><span class="line">$ tmux kill-session -t &lt;session-name&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-5-切换会话"><a href="#3-5-切换会话" class="headerlink" title="3.5 切换会话"></a>3.5 切换会话</h3><p><code>tmux switch</code>命令用于切换会话。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"># 使用会话编号</span><br><span class="line">$ tmux switch -t 0</span><br><span class="line"></span><br><span class="line"># 使用会话名称</span><br><span class="line">$ tmux switch -t &lt;session-name&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-6-重命名会话"><a href="#3-6-重命名会话" class="headerlink" title="3.6 重命名会话"></a>3.6 重命名会话</h3><p><code>tmux rename-session</code>命令用于重命名会话。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ tmux rename-session -t 0 &lt;new-name&gt;</span><br></pre></td></tr></table></figure>
+<p>上面命令将0号会话重命名。</p>
+<h3 id="3-7-会话快捷键"><a href="#3-7-会话快捷键" class="headerlink" title="3.7 会话快捷键"></a>3.7 会话快捷键</h3><p>下面是一些会话相关的快捷键。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Ctrl+b d：分离当前会话。</span><br><span class="line">Ctrl+b s：列出所有会话。</span><br><span class="line">Ctrl+b $：重命名当前会话。</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、最简操作流程"><a href="#四、最简操作流程" class="headerlink" title="四、最简操作流程"></a>四、最简操作流程</h2><p>综上所述，以下是 Tmux 的最简操作流程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">新建会话tmux new -s my_session。</span><br><span class="line">在 Tmux 窗口运行所需的程序。</span><br><span class="line">按下快捷键Ctrl+b d将会话分离。</span><br><span class="line">下次使用时，重新连接到会话tmux attach-session -t my_session。</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="五、窗格操作"><a href="#五、窗格操作" class="headerlink" title="五、窗格操作"></a>五、窗格操作</h2><p>Tmux 可以将窗口分成多个窗格（pane），每个窗格运行不同的命令。以下命令都是在 Tmux 窗口中执行。</p>
+<h3 id="5-1-划分窗格"><a href="#5-1-划分窗格" class="headerlink" title="5.1 划分窗格"></a>5.1 划分窗格</h3><p>tmux split-window命令用来划分窗格。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"># 划分上下两个窗格</span><br><span class="line">$ tmux split-window</span><br><span class="line"></span><br><span class="line"># 划分左右两个窗格</span><br><span class="line">$ tmux split-window -h</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8axhwysv1j30jc0bzq4q.jpg" alt="tmux run1"></p>
+<h3 id="5-2-移动光标"><a href="#5-2-移动光标" class="headerlink" title="5.2 移动光标"></a>5.2 移动光标</h3><p><code>tmux select-pane</code>命令用来移动光标位置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 光标切换到上方窗格</span><br><span class="line">$ tmux select-pane -U</span><br><span class="line"></span><br><span class="line"># 光标切换到下方窗格</span><br><span class="line">$ tmux select-pane -D</span><br><span class="line"></span><br><span class="line"># 光标切换到左边窗格</span><br><span class="line">$ tmux select-pane -L</span><br><span class="line"></span><br><span class="line"># 光标切换到右边窗格</span><br><span class="line">$ tmux select-pane -R</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-交换窗格位置"><a href="#5-3-交换窗格位置" class="headerlink" title="5.3 交换窗格位置"></a>5.3 交换窗格位置</h3><p><code>tmux swap-pane</code>命令用来交换窗格位置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 当前窗格上移</span><br><span class="line">$ tmux swap-pane -U</span><br><span class="line"></span><br><span class="line"># 当前窗格下移</span><br><span class="line">$ tmux swap-pane -D</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="5-4-窗格快捷键"><a href="#5-4-窗格快捷键" class="headerlink" title="5.4 窗格快捷键"></a>5.4 窗格快捷键</h3><p>下面是一些窗格操作的快捷键。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Ctrl+b %：划分左右两个窗格。</span><br><span class="line">Ctrl+b &quot;：划分上下两个窗格。</span><br><span class="line">Ctrl+b &lt;arrow key&gt;：光标切换到其他窗格。&lt;arrow key&gt;是指向要切换到的窗格的方向键，比如切换到下方窗格，就按方向键↓。</span><br><span class="line">Ctrl+b ;：光标切换到上一个窗格。</span><br><span class="line">Ctrl+b o：光标切换到下一个窗格。</span><br><span class="line">Ctrl+b &#123;：当前窗格左移。</span><br><span class="line">Ctrl+b &#125;：当前窗格右移。</span><br><span class="line">Ctrl+b Ctrl+o：当前窗格上移。</span><br><span class="line">Ctrl+b Alt+o：当前窗格下移。</span><br><span class="line">Ctrl+b x：关闭当前窗格。</span><br><span class="line">Ctrl+b !：将当前窗格拆分为一个独立窗口。</span><br><span class="line">Ctrl+b z：当前窗格全屏显示，再使用一次会变回原来大小。</span><br><span class="line">Ctrl+b Ctrl+&lt;arrow key&gt;：按箭头方向调整窗格大小。</span><br><span class="line">Ctrl+b q：显示窗格编号。</span><br></pre></td></tr></table></figure>
+
+<h2 id="六、窗口管理"><a href="#六、窗口管理" class="headerlink" title="六、窗口管理"></a>六、窗口管理</h2><p>除了将一个窗口划分成多个窗格，Tmux 也允许新建多个窗口。</p>
+<h3 id="6-1-新建窗口"><a href="#6-1-新建窗口" class="headerlink" title="6.1 新建窗口"></a>6.1 新建窗口</h3><p><code>tmux new-window</code>命令用来创建新窗口。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">$ tmux new-window</span><br><span class="line"></span><br><span class="line"># 新建一个指定名称的窗口</span><br><span class="line">$ tmux new-window -n &lt;window-name&gt;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="6-2-切换窗口"><a href="#6-2-切换窗口" class="headerlink" title="6.2 切换窗口"></a>6.2 切换窗口</h3><p><code>tmux select-window</code>命令用来切换窗口。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 切换到指定编号的窗口</span><br><span class="line">$ tmux select-window -t &lt;window-number&gt;</span><br><span class="line"></span><br><span class="line"># 切换到指定名称的窗口</span><br><span class="line">$ tmux select-window -t &lt;window-name&gt;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="6-3-重命名窗口"><a href="#6-3-重命名窗口" class="headerlink" title="6.3 重命名窗口"></a>6.3 重命名窗口</h3><p><code>tmux rename-window</code>命令用于为当前窗口起名（或重命名）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ tmux rename-window &lt;new-name&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="6-4-窗口快捷键"><a href="#6-4-窗口快捷键" class="headerlink" title="6.4 窗口快捷键"></a>6.4 窗口快捷键</h3><p>下面是一些窗口操作的快捷键。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Ctrl+b c：创建一个新窗口，状态栏会显示多个窗口的信息。</span><br><span class="line">Ctrl+b p：切换到上一个窗口（按照状态栏上的顺序）。</span><br><span class="line">Ctrl+b n：切换到下一个窗口。</span><br><span class="line">Ctrl+b &lt;number&gt;：切换到指定编号的窗口，其中的&lt;number&gt;是状态栏上的窗口编号。</span><br><span class="line">Ctrl+b w：从列表中选择窗口。</span><br><span class="line">Ctrl+b ,：窗口重命名。</span><br></pre></td></tr></table></figure>
+<h2 id="七、其他命令"><a href="#七、其他命令" class="headerlink" title="七、其他命令"></a>七、其他命令</h2><p>下面是一些其他命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 列出所有快捷键，及其对应的 Tmux 命令</span><br><span class="line">$ tmux list-keys</span><br><span class="line"></span><br><span class="line"># 列出所有 Tmux 命令及其参数</span><br><span class="line">$ tmux list-commands</span><br><span class="line"></span><br><span class="line"># 列出当前所有 Tmux 会话的信息</span><br><span class="line">$ tmux info</span><br><span class="line"></span><br><span class="line"># 重新加载当前的 Tmux 配置</span><br><span class="line">$ tmux source-file ~/.tmux.conf</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/杂项//" class="article-tag-list-link color3">杂项</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/10/24/%E8%BF%90%E7%BB%B4%E7%A5%9E%E5%99%A8tmux/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-练习2年的git练习生" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/10/22/%E7%BB%83%E4%B9%A02%E5%B9%B4%E7%9A%84git%E7%BB%83%E4%B9%A0%E7%94%9F/">练习2年的git练习生</a>
+</h1>
+
+
+
+        
+        <a href="/2019/10/22/%E7%BB%83%E4%B9%A02%E5%B9%B4%E7%9A%84git%E7%BB%83%E4%B9%A0%E7%94%9F/" class="archive-article-date">
+  	<time datetime="2019-10-22T03:10:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-22</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="分支操作："><a href="#分支操作：" class="headerlink" title="分支操作："></a>分支操作：</h2><blockquote>
+<p>git branch 创建分支<br>git branch -b 创建并切换到新建的分支上<br>git checkout 切换分支<br>git branch 查看分支列表<br>git branch -v 查看所有分支的最后一次操作<br>git branch -vv 查看当前分支<br>git brabch -b 分支名 origin/分支名 创建远程分支到本地<br>git branch –merged 查看别的分支和当前分支合并过的分支<br>git branch –no-merged 查看未与当前分支合并的分支<br>git branch -d 分支名 删除本地分支<br>git branch -D 分支名 强行删除分支<br>git branch origin :分支名 删除远处仓库分支<br>git merge 分支名 合并分支到当前分支上</p>
+</blockquote>
+<h2 id="暂存操作："><a href="#暂存操作：" class="headerlink" title="暂存操作："></a>暂存操作：</h2><blockquote>
+<p>git stash 暂存当前修改<br>git stash apply 恢复最近的一次暂存<br>git stash pop 恢复暂存并删除暂存记录<br>git stash list 查看暂存列表<br>git stash drop 暂存名(例：stash@{0}) 移除某次暂存<br>git stash clear 清除暂存</p>
+</blockquote>
+<h2 id="回退操作："><a href="#回退操作：" class="headerlink" title="回退操作："></a>回退操作：</h2><blockquote>
+<p>git reset –hard HEAD^ 回退到上一个版本<br>git reset –hard ahdhs1(commit_id) 回退到某个版本<br>git checkout – file 撤销修改的文件(如果文件加入到了暂存区，则回退到暂存区的，如果文件加入到了版本库，则还原至加入版本库之后的状态)<br>git reset HEAD file 撤回暂存区的文件修改到工作区</p>
+</blockquote>
+<h2 id="标签操作："><a href="#标签操作：" class="headerlink" title="标签操作："></a>标签操作：</h2><blockquote>
+<p>git tag 标签名 添加标签(默认对当前版本)<br>git tag 标签名 commit_id 对某一提交记录打标签<br>git tag -a 标签名 -m ‘描述’ 创建新标签并增加备注<br>git tag 列出所有标签列表<br>git show 标签名 查看标签信息<br>git tag -d 标签名 删除本地标签<br>git push origin 标签名 推送标签到远程仓库<br>git push origin –tags 推送所有标签到远程仓库<br>git push origin :refs/tags/标签名 从远程仓库中删除标签</p>
+</blockquote>
+<h2 id="常规操作："><a href="#常规操作：" class="headerlink" title="常规操作："></a>常规操作：</h2><blockquote>
+<p>git push origin test 推送本地分支到远程仓库<br>git rm -r –cached 文件/文件夹名字 取消文件被版本控制<br>git reflog 获取执行过的命令<br>git log –graph 查看分支合并图<br>git merge –no-ff -m ‘合并描述’ 分支名 不使用 Fast forward 方式合并，采用这种方式合并可以看到合并记录<br>git check-ignore -v 文件名 查看忽略规则<br>git add -f 文件名 强制将文件提交</p>
+</blockquote>
+<h2 id="git-创建项目仓库："><a href="#git-创建项目仓库：" class="headerlink" title="git 创建项目仓库："></a>git 创建项目仓库：</h2><blockquote>
+<p>git init 初始化<br>git remote add origin url 关联远程仓库<br>git pull<br>git fetch 获取远程仓库中所有的分支到本地<br>忽略已加入到版本库中的文件：<br>git update-index –assume-unchanged file 忽略单个文件<br>git rm -r –cached 文件/文件夹名字 (. 忽略全部文件)</p>
+</blockquote>
+<h2 id="取消忽略文件："><a href="#取消忽略文件：" class="headerlink" title="取消忽略文件："></a>取消忽略文件：</h2><blockquote>
+<p>git update-index –no-assume-unchanged file</p>
+</blockquote>
+<h2 id="拉取、上传免密码："><a href="#拉取、上传免密码：" class="headerlink" title="拉取、上传免密码："></a>拉取、上传免密码：</h2><blockquote>
+<p>git config –global credential.helper store</p>
+</blockquote>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color4">git</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/git//" class="article-tag-list-link color4">git</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/10/22/%E7%BB%83%E4%B9%A02%E5%B9%B4%E7%9A%84git%E7%BB%83%E4%B9%A0%E7%94%9F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-动手实践podman" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/10/19/%E5%8A%A8%E6%89%8B%E5%AE%9E%E8%B7%B5podman/">动手实践podman</a>
+</h1>
+
+
+
+        
+        <a href="/2019/10/19/%E5%8A%A8%E6%89%8B%E5%AE%9E%E8%B7%B5podman/" class="archive-article-date">
+  	<time datetime="2019-10-19T15:24:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color4">podman,docker</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/容器//" class="article-tag-list-link color3">容器</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/10/19/%E5%8A%A8%E6%89%8B%E5%AE%9E%E8%B7%B5podman/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-ORI-or-OCI-？" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -623,458 +1203,9 @@
 
 
   
-    <article id="post-论营销" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/08/30/%E8%AE%BA%E8%90%A5%E9%94%80/">论营销</a>
-</h1>
-
-
-
-        
-        <a href="/2019/08/30/%E8%AE%BA%E8%90%A5%E9%94%80/" class="archive-article-date">
-  	<time datetime="2019-08-30T03:07:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-08-30</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/08/30/%E8%AE%BA%E8%90%A5%E9%94%80/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Ubuntu桌面版优化" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/08/11/Ubuntu%E6%A1%8C%E9%9D%A2%E7%89%88%E4%BC%98%E5%8C%96/">Ubuntu桌面版优化</a>
-</h1>
-
-
-
-        
-        <a href="/2019/08/11/Ubuntu%E6%A1%8C%E9%9D%A2%E7%89%88%E4%BC%98%E5%8C%96/" class="archive-article-date">
-  	<time datetime="2019-08-11T04:53:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-08-11</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><blockquote>
-<p>完全转入 Ubuntu 也有一段时间了, 像我这种有着些微强迫症的人, 接触到新事物必定是先要优化 + 美化一番. 毕竟, 工具玩的顺手, 工作才更有激情.</p>
-</blockquote>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color4">ubuntu优化</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/08/11/Ubuntu%E6%A1%8C%E9%9D%A2%E7%89%88%E4%BC%98%E5%8C%96/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Mac-brew-特别慢-解决方案" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/08/09/Mac-brew-%E7%89%B9%E5%88%AB%E6%85%A2-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">Mac brew 特别慢 解决方案 </a>
-</h1>
-
-
-
-        
-        <a href="/2019/08/09/Mac-brew-%E7%89%B9%E5%88%AB%E6%85%A2-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="archive-article-date">
-  	<time datetime="2019-08-09T06:09:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-08-09</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>众所周知，brew是mac下最好的下载软件工具，类似与yum、apt有过之而不及。(如果没听过，请关闭该网页)</p>
-<p>接下来解决特别慢的问题。<br>1.按照常规安装安装好brew</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;</span><br></pre></td></tr></table></figure>
-<p>2.替换brew.git:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd &quot;$(brew --repo)&quot;</span><br><span class="line">git remote set-url origin https://mirrors.ustc.edu.cn/brew.git</span><br></pre></td></tr></table></figure>
-<p>3.替换homebrew-core.git:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd &quot;$(brew --repo)/Library/Taps/homebrew/homebrew-core&quot;</span><br><span class="line">git remote set-url origin https://mirrors.ustc.edu.cn/homebrew-core.git</span><br></pre></td></tr></table></figure>
-<p>4.什么?你连安装第一步都卡?请关闭该网页！<br>5.开个玩笑,第一步执行卡可以换源下载brew</p>
-<ul>
-<li><p>获取 install 文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install &gt;&gt; brew_install</span><br></pre></td></tr></table></figure>
-<p>如果这个你访问不了,连手机热点 然后加hosts。稳稳的</p>
-</li>
-<li><p>更改脚本中的资源链接<br>换成清华大学的镜像，修改如下两句.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BREW_REPO = “https://github.com/Homebrew/brew“.freeze </span><br><span class="line">CORE_TAP_REPO = “https://github.com/Homebrew/homebrew-core“.freeze</span><br></pre></td></tr></table></figure>
-<p>更改为这两句(或者你找的其他家的)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BREW_REPO = &quot;https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git&quot;.freeze </span><br><span class="line">CORE_TAP_REPO = &quot;https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git&quot;.freeze</span><br></pre></td></tr></table></figure></li>
-<li><p>运行脚本</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/ruby brew_install</span><br></pre></td></tr></table></figure></li>
-<li><p>可以愉快玩耍了</p>
-</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color4">mac</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/杂项//" class="article-tag-list-link color3">杂项</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/08/09/Mac-brew-%E7%89%B9%E5%88%AB%E6%85%A2-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-nginx瑞士军刀-lua" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/08/06/nginx%E7%91%9E%E5%A3%AB%E5%86%9B%E5%88%80-lua/">nginx瑞士军刀-lua</a>
-</h1>
-
-
-
-        
-        <a href="/2019/08/06/nginx%E7%91%9E%E5%A3%AB%E5%86%9B%E5%88%80-lua/" class="archive-article-date">
-  	<time datetime="2019-08-06T05:27:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-08-06</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>tets</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color1">nginx</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/nginx//" class="article-tag-list-link color1">nginx</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/08/06/nginx%E7%91%9E%E5%A3%AB%E5%86%9B%E5%88%80-lua/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-浅谈dockerd、contaierd、containerd-shim、runC之间的关系" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/08/05/%E6%B5%85%E8%B0%88dockerd%E3%80%81contaierd%E3%80%81containerd-shim%E3%80%81runC%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/">浅谈dockerd、contaierd、containerd-shim、runC之间的关系</a>
-</h1>
-
-
-
-        
-        <a href="/2019/08/05/%E6%B5%85%E8%B0%88dockerd%E3%80%81contaierd%E3%80%81containerd-shim%E3%80%81runC%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/" class="archive-article-date">
-  	<time datetime="2019-08-05T02:52:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-08-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>“少啰嗦，先看东西”<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g864obry93j318c0ieaet.jpg" alt="docker内部架构图"></p>
-<h2 id="组件大纲"><a href="#组件大纲" class="headerlink" title="组件大纲"></a>组件大纲</h2><blockquote>
-<p>1.docker<br>2.dockerd<br>3.containerd<br>4.containerd-shim<br>5.runC</p>
-</blockquote>
-<h3 id="docker"><a href="#docker" class="headerlink" title="docker"></a>docker</h3><blockquote>
-<p>docker 的命令行工具，是给用户和 docker daemon 建立通信的客户端。</p>
-</blockquote>
-<h3 id="dockerd"><a href="#dockerd" class="headerlink" title="dockerd"></a>dockerd</h3><blockquote>
-<p>dockerd 是 docker 架构中一个常驻在后台的系统进程，称为 docker daemon，dockerd 实际调用的还是 containerd 的 api 接口（rpc 方式实现）,docker daemon 的作用主要有以下两方面：</p>
-<p>接收并处理 docker client 发送的请求<br>管理所有的 docker 容器</p>
-<p>有了 containerd 之后，dockerd 可以独立升级，以此避免之前 dockerd 升级会导致所有容器不可用的问题。</p>
-</blockquote>
-<h3 id="containerd"><a href="#containerd" class="headerlink" title="containerd"></a>containerd</h3><blockquote>
-<p>containerd 是 dockerd 和 runc 之间的一个中间交流组件，docker 对容器的管理和操作基本都是通过 containerd 完成的。containerd 的主要功能有：</p>
-<p>容器生命周期管理<br>日志管理<br>镜像管理<br>存储管理<br>容器网络接口及网络管理</p>
-</blockquote>
-<h3 id="containerd-shim"><a href="#containerd-shim" class="headerlink" title="containerd-shim"></a>containerd-shim</h3><blockquote>
-<p>containerd-shim 是一个真实运行容器的载体，每启动一个容器都会起一个新的 containerd-shim 的一个进程， 它直接通过指定的三个参数：容器 id，boundle 目录（containerd 对应某个容器生成的目录，一般位于：/var/run/docker/libcontainerd/containerID，其中包括了容器配置和标准输入、标准输出、标准错误三个管道文件），运行时二进制（默认为 runC）来调用 runc 的 api 创建一个容器，上面的 docker 进程图中可以直观的显示。其主要作用是：</p>
-<p>它允许容器运行时(即 runC)在启动容器之后退出，简单说就是不必为每个容器一直运行一个容器运行时(runC)<br>即使在 containerd 和 dockerd 都挂掉的情况下，容器的标准 IO 和其它的文件描述符也都是可用的<br>向 containerd 报告容器的退出状态</p>
-<p>有了它就可以在不中断容器运行的情况下升级或重启 dockerd，对于生产环境来说意义重大。<br>运行是二进制（默认为 runc）来调用 runc 的 api 创建一个容器（比如创建容器：最后拼装的命令如下：runc create 。。。。。）</p>
-</blockquote>
-<h3 id="runC"><a href="#runC" class="headerlink" title="runC"></a>runC</h3><blockquote>
-<p>简单的说，runC 是一个命令行工具，用来运行按照 OCI 标准格式打包过的应用</p>
-</blockquote>
-<p>启动一个容器的过程如下：</p>
-<blockquote>
-<p>用户在命令行执行 <code>docker run -itd busybox</code> 由 docker client 通过 grpc 将指令传给 dockerd<br>docker daemon 请检查本机是否存在 docker 镜像文件，如果有继续往下执行<br>dockerd 会向 host os 请求创建容器<br>linux 会创建一个空的容器(cgroup namespace),并启动 containerd-shim 进程。<br>containerd-shim 拿到三个参数(容器 id，boundle 目录，运行时二进制文件 runc )来调用 runC 的 api<br>runC 提取镜像文件，生成容器配置文件，然后启动容器</p>
-</blockquote>
-<h3 id="最后插一张-docker-内部通信图"><a href="#最后插一张-docker-内部通信图" class="headerlink" title="最后插一张 docker 内部通信图"></a>最后插一张 docker 内部通信图</h3><blockquote>
-<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g864od01lxj31560l2tbe.jpg" alt="docker内部通信"></p>
-</blockquote>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color2">docker</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/容器//" class="article-tag-list-link color3">容器</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/08/05/%E6%B5%85%E8%B0%88dockerd%E3%80%81contaierd%E3%80%81containerd-shim%E3%80%81runC%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/5/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/7/">Next &amp;raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/5/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/7/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -1171,15 +1302,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">Csharp</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">istio</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1207,6 +1338,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">k8s, 中间件, mysql</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">kvm</a>
               </li>
              
@@ -1219,15 +1354,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">podman,docker</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">podman,docker</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1239,15 +1370,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
               </li>
              
               <li class="article-tag-list-item">

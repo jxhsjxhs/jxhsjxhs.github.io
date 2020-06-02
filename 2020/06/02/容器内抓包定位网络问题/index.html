@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
 <meta property="og:description" content="在使用 kubernetes 跑应用的时候，可能会遇到一些网络问题，比较常见的是服务端无响应(超时)或回包内容不正常，如果没找出各种配置上有问题，这时我们需要确认数据包到底有没有最终被路由到容器里，或者报文到达容器的内容和出容器的内容符不符合预期，通过分析报文可以进一步缩小问题范围。那么如何在容器内抓包呢？本文提供实用的脚本一键进入容器网络命名空间(netns)，使用宿主机上的tcpdump进行抓">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-06-02T06:13:17.442Z">
+<meta property="og:updated_time" content="2020-06-02T06:16:10.691Z">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="jame_xhs&#39;s blog" type="application/atom+xml">
@@ -321,6 +321,15 @@
   
 <nav id="article-nav">
   
+    <a href="/2020/06/02/%E5%86%85%E5%AD%98%E7%A2%8E%E7%89%87%E5%8C%96/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          内存碎片化
+        
+      </div>
+    </a>
+  
   
     <a href="/2020/05/29/drone%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/" id="article-nav-older" class="article-nav-link-wrap">
       <div class="article-nav-title">drone使用手册</div>
@@ -455,15 +464,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">istio</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">istio</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -503,11 +512,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">podman,docker</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">podman,docker</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -515,11 +524,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -527,11 +532,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">

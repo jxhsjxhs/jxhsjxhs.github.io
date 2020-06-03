@@ -276,7 +276,11 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>在redis中常用<code>StackExchange.Redis</code></p>
+        <p>在redis中常用<code>StackExchange.Redis</code>库<br>使用<code>NuGet</code>安装<code>StackExchange.Redis</code><br>简单使用方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">using System;</span><br><span class="line">using  StackExchange.Redis;</span><br><span class="line"></span><br><span class="line">namespace redistest</span><br><span class="line">&#123;</span><br><span class="line">    class Program</span><br><span class="line">    &#123;</span><br><span class="line">        static void Main(string[] args)</span><br><span class="line">        &#123;</span><br><span class="line">            //配置连接</span><br><span class="line">            var conn = ConnectionMultiplexer.Connect(&quot;ss.jxhs.me:6379&quot;);</span><br><span class="line">            </span><br><span class="line">            //获取连接</span><br><span class="line">            IDatabase idb = conn.GetDatabase(1); // 默认db0</span><br><span class="line"></span><br><span class="line">            //获取字符串</span><br><span class="line">            string city =  idb.StringGet(&quot;hello&quot;);</span><br><span class="line">            </span><br><span class="line">            //塞数据进redis</span><br><span class="line">            string value = &quot;abcdefg&quot;;</span><br><span class="line">            idb.StringSet(&quot;mykey&quot;, value);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="推荐一个redis的客户端。贼好用"><a href="#推荐一个redis的客户端。贼好用" class="headerlink" title="推荐一个redis的客户端。贼好用"></a>推荐一个redis的客户端。贼好用</h3><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfez9d29hhj30uk0k8ac6.jpg" alt=""><br><a href="https://github.com/qishibo/AnotherRedisDesktopManager" target="_blank" rel="noopener">redis工具github项目地址</a></p>
+<h3 id="StackExchange-Redis具体使用文档"><a href="#StackExchange-Redis具体使用文档" class="headerlink" title="StackExchange.Redis具体使用文档"></a>StackExchange.Redis具体使用文档</h3><p><a href="https://www.jxhs.me/db/redis-csharp.pdf">StackExchange.Redis库中文文档</a></p>
 
       
 
@@ -1614,15 +1618,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">Csharp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">istio</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1631,6 +1631,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">istio</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1654,11 +1658,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">nginx</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">kvm</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">kvm</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">nginx</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1674,11 +1678,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1702,11 +1706,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">负载</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">负载</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">

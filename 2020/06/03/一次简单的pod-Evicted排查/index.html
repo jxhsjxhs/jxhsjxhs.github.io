@@ -8,13 +8,18 @@
   <link rel="dns-prefetch" href="http://www.jxhs.me">
   <title>一次简单的pod Evicted排查 | jame_xhs&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="article">
+  <meta name="description" content="早上开发人员反馈一个测试集群经常有后端或者其他的程序无故挂掉。由于是开发自测环境 常年没人维护，上去一看发现很多pod都是evicted状态居然s达到了2000多个。。不过也没大事儿，evicted都是驱逐 要么是标签驱逐 要么是资源驱逐。都很好解决 具体查看某个pod的日志可知. 1kubectl describe pod  xxxxxx  日志显示的是节点的磁盘不足导致。加相关目录磁盘即可解决">
+<meta property="og:type" content="article">
 <meta property="og:title" content="一次简单的pod Evicted排查">
 <meta property="og:url" content="http:&#x2F;&#x2F;www.jxhs.me&#x2F;2020&#x2F;06&#x2F;03&#x2F;%E4%B8%80%E6%AC%A1%E7%AE%80%E5%8D%95%E7%9A%84pod-Evicted%E6%8E%92%E6%9F%A5&#x2F;index.html">
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
+<meta property="og:description" content="早上开发人员反馈一个测试集群经常有后端或者其他的程序无故挂掉。由于是开发自测环境 常年没人维护，上去一看发现很多pod都是evicted状态居然s达到了2000多个。。不过也没大事儿，evicted都是驱逐 要么是标签驱逐 要么是资源驱逐。都很好解决 具体查看某个pod的日志可知. 1kubectl describe pod  xxxxxx  日志显示的是节点的磁盘不足导致。加相关目录磁盘即可解决">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-06-03T02:54:31.103Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;007S8ZIlgy1gfewxmle3gj311o0ds7o3.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;007S8ZIlgy1gfewxyocsbj312x09fdrk.jpg">
+<meta property="og:updated_time" content="2020-06-03T03:46:01.027Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;007S8ZIlgy1gfewxmle3gj311o0ds7o3.jpg">
   
     <link rel="alternative" href="/atom.xml" title="jame_xhs&#39;s blog" type="application/atom+xml">
   
@@ -197,7 +202,22 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>早上开发人员反馈一个测试集群经常有后端或者其他的程序无故挂掉。由于是开发自测环境 常年没人维护，上去一看发现很多pod都是<code>evicted</code>状态居然s达到了2000多个。。<br>不过也没大事儿，<code>evicted</code>都是驱逐 要么是标签驱逐 要么是资源驱逐。都很好解决<br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfewxmle3gj311o0ds7o3.jpg" alt=""></p>
+<p>具体查看某个pod的日志可知.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe pod  xxxxxx</span><br></pre></td></tr></table></figure>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfewxyocsbj312x09fdrk.jpg" alt=""></p>
+<p>日志显示的是节点的磁盘不足导致。加相关目录磁盘即可解决。<br>lvm扩容磁盘步骤</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@node2 ~]# vgextend centos /dev/sdb</span><br><span class="line">[root@node2 ~]# lvextend -L +190G  /dev/centos/root</span><br><span class="line">[root@node2 ~]#  xfs_growfs /dev/centos/root</span><br><span class="line"></span><br><span class="line">[root@node2 ~]# lsblk</span><br><span class="line">NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT</span><br><span class="line">sda               8:0    0   50G  0 disk</span><br><span class="line">├─sda1            8:1    0    2G  0 part /boot</span><br><span class="line">└─sda2            8:2    0   48G  0 part</span><br><span class="line">  ├─centos-root 253:0    0  230G  0 lvm  /</span><br><span class="line">  └─centos-swap 253:1    0    8G  0 lvm</span><br><span class="line">sdb               8:16   0  200G  0 disk</span><br><span class="line">└─centos-root   253:0    0  230G  0 lvm  /</span><br><span class="line">sr0              11:0    1 1024M  0 rom</span><br></pre></td></tr></table></figure>
+<p>完事了。</p>
+<hr>
+<p>现有的<code>evicted</code>pod可以用命令一起删除</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods   | grep Evicted | awk &apos;&#123;print $1&#125;&apos; | xargs kubectl delete pod</span><br></pre></td></tr></table></figure>
+
+<p>默认由于资源的驱逐规则</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">memory.available&lt;100Mi</span><br><span class="line">nodefs.available&lt;10%</span><br><span class="line">nodefs.inodesFree&lt;5%</span><br><span class="line">imagefs.available&lt;15%</span><br></pre></td></tr></table></figure>
+
+<h3 id="官方文档"><a href="#官方文档" class="headerlink" title="官方文档"></a>官方文档</h3><p><a href="https://kubernetes.io/zh/docs/tasks/administer-cluster/out-of-resource/" target="_blank" rel="noopener">官网解读kubernetes配置资源不足处理</a></p>
+
       
 
       
@@ -399,11 +419,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">Csharp</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">Csharp</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -411,11 +431,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -439,11 +459,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">kvm</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">nginx</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">nginx</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">kvm</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -459,11 +479,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -487,11 +507,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">负载</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">负载</a>
               </li>
              
               <li class="article-tag-list-item">

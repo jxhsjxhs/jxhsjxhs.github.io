@@ -177,6 +177,164 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-kvm-虚拟机修改ip地址" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/07/31/kvm-%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%BF%AE%E6%94%B9ip%E5%9C%B0%E5%9D%80/">kvm 虚拟机修改ip地址</a>
+</h1>
+
+
+
+        
+        <a href="/2019/07/31/kvm-%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%BF%AE%E6%94%B9ip%E5%9C%B0%E5%9D%80/" class="archive-article-date">
+  	<time datetime="2019-07-31T15:20:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-31</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="KVM-虚拟化之-libguestfs-tools-工具常用命令介绍"><a href="#KVM-虚拟化之-libguestfs-tools-工具常用命令介绍" class="headerlink" title="KVM 虚拟化之 libguestfs-tools 工具常用命令介绍"></a>KVM 虚拟化之 libguestfs-tools 工具常用命令介绍</h2><blockquote>
+<p>背景:由于 kvm 虚拟机没有图形化界面，导致模版克隆的虚拟机更改 ip 很不方便。需要一台台手动登陆去修改，而 libguestfs-tools 工具能做到给克隆出来的虚拟机更改 ip，写成脚本后非常方便使用。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install libguestfs-tools</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><blockquote>
+<p>libguestfs-tools 工具的部分命令使用方便，但是执行速度不是很快，下面只对一些常用命令进行介绍<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g864vcr9hlj31nw0aijyl.jpg" alt="libguestfs-tools工具命令"><br>1.virt-df<br>介绍：类似于虚拟机本地“df”命令<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8652z1kfsj31as05w0wp.jpg" alt="virt-df"><br>2.virt-cat<br>介绍：类似于虚拟机本地“cat”命令<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g86537buvij31c604k0wa.jpg" alt="virt-cat"><br>3.virt-edit<br>介绍：类似于虚拟机本地”vi”命令，使用这个命令需要关闭虚拟机<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8653sy7d0j31b609waht.jpg" alt="virt-edit"><br>4.virt-ls<br>介绍：类似于虚拟机本地”ls”命令<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8653zq34qj30su0ac0vz.jpg" alt="virt-ls"><br>5.virt-copy-out<br>介绍：复制虚拟机文件到宿主机本地磁盘，类似于本地”cp”命令<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g86547qc0qj313s04sgoa.jpg" alt="virt-copy-out"><br>6.virt-copy-in<br>介绍：复制宿主机本地文件到虚拟机磁盘，类似于本地”cp”命令<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8654erb43j314s08879p.jpg" alt="virt-copy-in"></p>
+</blockquote>
+<h3 id="注意-virt-copy-in-以及-virt-edit-命令-需要关闭虚拟机才能执行"><a href="#注意-virt-copy-in-以及-virt-edit-命令-需要关闭虚拟机才能执行" class="headerlink" title="注意 virt-copy-in 以及 virt-edit 命令 需要关闭虚拟机才能执行"></a>注意 virt-copy-in 以及 virt-edit 命令 需要关闭虚拟机才能执行</h3><blockquote>
+<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8654nhqrwj31b607m45b.jpg" alt="error"></p>
+</blockquote>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color4">kvm</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/虚拟化//" class="article-tag-list-link color4">虚拟化</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/07/31/kvm-%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%BF%AE%E6%94%B9ip%E5%9C%B0%E5%9D%80/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-netfilter-和-iptables" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/07/30/netfilter-%E5%92%8C-iptables/">netfilter 和 iptables</a>
+</h1>
+
+
+
+        
+        <a href="/2019/07/30/netfilter-%E5%92%8C-iptables/" class="archive-article-date">
+  	<time datetime="2019-07-30T15:03:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-30</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/07/30/netfilter-%E5%92%8C-iptables/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-5-分钟带你搞定-Redis-复制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1202,11 +1360,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">Csharp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">Csharp</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1262,15 +1420,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1278,11 +1428,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">windows</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
               </li>
              
               <li class="article-tag-list-item">

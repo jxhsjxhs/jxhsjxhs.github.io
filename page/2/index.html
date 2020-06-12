@@ -177,6 +177,97 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-kubernetes-拉取私有镜像-imagepullsecrets" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/05/23/kubernetes-%E6%8B%89%E5%8F%96%E7%A7%81%E6%9C%89%E9%95%9C%E5%83%8F-imagepullsecrets/">kubernetes 拉取私有镜像 imagepullsecrets</a>
+</h1>
+
+
+
+        
+        <a href="/2020/05/23/kubernetes-%E6%8B%89%E5%8F%96%E7%A7%81%E6%9C%89%E9%95%9C%E5%83%8F-imagepullsecrets/" class="archive-article-date">
+  	<time datetime="2020-05-23T07:52:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="docker-使用私有仓库"><a href="#docker-使用私有仓库" class="headerlink" title="docker 使用私有仓库"></a>docker 使用私有仓库</h3><p>使用docker时,由于私有仓库很多时候没有搭建https的认证证书,访问时需要在本地docker的配置文件中加上允许对次镜像或者对所有镜像的http请求。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@Core:~# cat /etc/docker/dameon.json </span><br><span class="line">&#123;&quot;insecure-registries&quot;: [&quot;0.0.0.0/0&quot;]&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2020/05/23/b1jExvs8kBHRgYd.png" alt="DeepinScreenshot_select-area_20200523193555.png"></p>
+<p>然后使用docker login 登录的时候会发现,登录成功以后会在本地生<code>~/.docker/config.json</code>的配置文件。<br><img src="https://i.loli.net/2020/05/23/FAWPjmx4Bh9tqvX.png" alt="DeepinScreenshot_select-area_20200523193918.png"><br>该文件会存放登录过的用户的token以及登录仓库的地址</p>
+<h3 id="k8s使用私有仓库"><a href="#k8s使用私有仓库" class="headerlink" title="k8s使用私有仓库"></a>k8s使用私有仓库</h3><p>虚假的使用方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">在k8s中,想要使用私有仓库而用以上方法是不现实的。如下</span><br><span class="line">1.由于pod是漂移的,不知道下次pod会在哪个节点。</span><br><span class="line">2.并且如果几个部门合作之类的，不止只有一个私有库,在k8s集群中将非常麻烦。</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>真实的使用方法</p>
+<p>将刚刚生成的<code>config.json</code>变成configmap放置到k8s中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl create secret generic harborsecret \</span><br><span class="line">    --from-file=.dockerconfigjson=/root/.docker/config.json \</span><br><span class="line">    --type=kubernetes.io/dockerconfigjson</span><br></pre></td></tr></table></figure>
+
+<p>查看一下<br>kubectl get secrets harborsecret<br><img src="https://i.loli.net/2020/05/23/nV25oGzHJIQkmSa.png" alt="DeepinScreenshot_select-area_20200523222238.png"></p>
+<p>kubectl get secret harborsecret –output=yaml<br><img src="https://i.loli.net/2020/05/23/WBXF4wsAdVQDR1o.png" alt="DeepinScreenshot_select-area_20200523222224.png"></p>
+<p>在要部署的deployment中放入此镜像的configmap配置文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  namespace: istio-cosmo</span><br><span class="line">  name: cosmo-bff</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: istio</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nginx</span><br><span class="line">    spec:</span><br><span class="line">      imagePullSecrets:</span><br><span class="line">      - name: daocloud-registry</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        image: registry.daocloud.cn/xxx/nginx:264</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 8080</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: cosmo-conf</span><br><span class="line">          mountPath: /work/config</span><br><span class="line">      volumes:</span><br><span class="line">      - name: cosmo-conf</span><br><span class="line">        configMap:</span><br><span class="line">          name: cosmo-conf</span><br></pre></td></tr></table></figure>
+<p>这样不管是哪台机器执行下载该镜像的任务都会调用这个config文件。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color4">k8s</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/05/23/kubernetes-%E6%8B%89%E5%8F%96%E7%A7%81%E6%9C%89%E9%95%9C%E5%83%8F-imagepullsecrets/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-k8s部署mysql单节点到sotrageclass" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -878,79 +969,9 @@
 
 
   
-    <article id="post-Thinkpad-L440双系统记录" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/03/29/Thinkpad-L440%E5%8F%8C%E7%B3%BB%E7%BB%9F%E8%AE%B0%E5%BD%95/">Thinkpad L440双系统记录</a>
-</h1>
-
-
-
-        
-        <a href="/2020/03/29/Thinkpad-L440%E5%8F%8C%E7%B3%BB%E7%BB%9F%E8%AE%B0%E5%BD%95/" class="archive-article-date">
-  	<time datetime="2020-03-29T15:59:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-29</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>驱动过程没啥好说的,EFI我整理好了如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">EFI如下</span><br><span class="line">链接:https://pan.baidu.com/s/1X1r5warmKrzWX423YdSMMw  密码:kdnc</span><br><span class="line">镜像地址如下</span><br><span class="line">链接:https://pan.baidu.com/s/170PKgxP-emez_BibOIHyhg  密码:qrj3</span><br></pre></td></tr></table></figure>
-<h3 id="坑"><a href="#坑" class="headerlink" title="坑"></a>坑</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">中间有意思的说一下做个记录</span><br><span class="line">我这个笔记本有两个盘，想的一个盘做好mac以后 用四叶草驱动作为windows的启动项引导。</span><br><span class="line">然后呢 装黑苹果的时候 Bios得开启AHIC模式,开启到这个模式以后,windows怎么都启动不起来。</span><br><span class="line">win7直接蓝屏然后0x0000...忘记了 </span><br><span class="line">win10报错以后可以进入那种引导修复的状态。</span><br><span class="line">重点来了</span><br><span class="line">在这种状态中 进入高级设置里面 然后点击类似重装系统这种修复。</span><br><span class="line">重装完以后 就可以在AHIC模式下启动windows了 我也不晓得为啥 试出来的</span><br></pre></td></tr></table></figure>
-<p>上双系统的图瞧瞧<br><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gdb90jbqawj31400u0di5.jpg" alt=""><br><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gdb91goay0j31hb0tz7wi.jpg" alt=""><br><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gdb91q3qc3j31hc0u0hdt.jpg" alt=""></p>
-<blockquote>
-<p>补充一句,电脑已经卖掉了….只是买来玩玩。倒手转卖赚了500.(我真他娘应该去做销售的.)</p>
-</blockquote>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/29/Thinkpad-L440%E5%8F%8C%E7%B3%BB%E7%BB%9F%E8%AE%B0%E5%BD%95/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
+      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -1047,11 +1068,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">Csharp</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">Csharp</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1063,11 +1084,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1103,6 +1124,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">podman,docker</a>
               </li>
              
@@ -1115,14 +1140,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">windows</a>
               </li>
              
@@ -1131,15 +1148,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">zero_w</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">负载</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">负载</a>
               </li>
              
               <li class="article-tag-list-item">

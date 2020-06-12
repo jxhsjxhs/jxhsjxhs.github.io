@@ -177,6 +177,86 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-python3使用sqlit3文档记录" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/06/12/python3%E4%BD%BF%E7%94%A8sqlit3%E6%96%87%E6%A1%A3%E8%AE%B0%E5%BD%95/">python3使用sqlit3文档记录</a>
+</h1>
+
+
+
+        
+        <a href="/2020/06/12/python3%E4%BD%BF%E7%94%A8sqlit3%E6%96%87%E6%A1%A3%E8%AE%B0%E5%BD%95/" class="archive-article-date">
+  	<time datetime="2020-06-12T06:24:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-12</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用python3内置的sqlite3库，首先连接到数据库，创建并使用游标Cursor，再执行SQL语句，最后提交事务以实现sqlite3数据库中的CRUD新增数据，查询数据，更新数据和删除数据的常用操作。</p>
+<p>SQLite是一种嵌入式数据库，它的数据库就是一个文件，SQLite能保存可以保存空值、整数、浮点数、字符串和blob 。sqlite相关教程动手学sqlite。</p>
+<h3 id="连接数据库-如果不存在则创建"><a href="#连接数据库-如果不存在则创建" class="headerlink" title="连接数据库(如果不存在则创建)"></a>连接数据库(如果不存在则创建)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">import sqlite3</span><br><span class="line"> </span><br><span class="line"># 连接数据库(如果不存在则创建)</span><br><span class="line">conn = sqlite3.connect(&apos;test.db&apos;)</span><br><span class="line">print(&quot;Opened database successfully&quot;)</span><br><span class="line"> </span><br><span class="line"># 创建游标</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line"># 关闭游标</span><br><span class="line">cursor.close()</span><br><span class="line"># 提交事物</span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">#关闭游标</span><br><span class="line">cursor.close()</span><br><span class="line"></span><br><span class="line">#关闭连接</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建表"><a href="#创建表" class="headerlink" title="创建表"></a>创建表</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">import sqlite3</span><br><span class="line"> </span><br><span class="line"># 连接数据库(如果不存在则创建)</span><br><span class="line">conn = sqlite3.connect(&apos;test.db&apos;)</span><br><span class="line"></span><br><span class="line"># 创建游标</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line"> </span><br><span class="line"># 创建表</span><br><span class="line">sql = &apos;CREATE TABLE Student(id integer PRIMARY KEY autoincrement, Name  varchar(30), Age integer)&apos;</span><br><span class="line">cursor.execute(sql)</span><br><span class="line"> </span><br><span class="line"># 提交事物</span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">#关闭游标</span><br><span class="line">cursor.close()</span><br><span class="line"></span><br><span class="line">#关闭连接</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+
+<h3 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">import sqlite3</span><br><span class="line"> </span><br><span class="line"># 连接数据库(如果不存在则创建)</span><br><span class="line">conn = sqlite3.connect(&apos;test.db&apos;)</span><br><span class="line"></span><br><span class="line"># 创建游标</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line"> </span><br><span class="line"># 插入数据1</span><br><span class="line">sql = &quot;INSERT INTO Student(Name, Age) VALUES(&apos;lucy&apos;, 22)&quot;</span><br><span class="line">cursor.execute(sql)</span><br><span class="line"> </span><br><span class="line"># 插入数据 2</span><br><span class="line">data = (&apos;jack&apos;, 21) </span><br><span class="line">sql = &quot;INSERT INTO Student(Name, Age) VALUES(?, ?)&quot;</span><br><span class="line">cursor.execute(sql, data)</span><br><span class="line"> </span><br><span class="line"># 提交事物</span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">#关闭游标</span><br><span class="line">cursor.close()</span><br><span class="line"></span><br><span class="line">#关闭连接</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<h3 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">import sqlite3</span><br><span class="line"> </span><br><span class="line"># 连接数据库(如果不存在则创建)</span><br><span class="line">conn = sqlite3.connect(&apos;test.db&apos;)</span><br><span class="line"></span><br><span class="line"># 创建游标</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line"> </span><br><span class="line">cursor.execute(&quot;UPDATE Student SET name = ? where id = ?&quot;,(&quot;lily&quot;,&quot;3&quot;))</span><br><span class="line"></span><br><span class="line"># 提交事物</span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">#关闭游标</span><br><span class="line">cursor.close()</span><br><span class="line"></span><br><span class="line">#关闭连接</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除记录"><a href="#删除记录" class="headerlink" title="删除记录"></a>删除记录</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">import sqlite3</span><br><span class="line"> </span><br><span class="line"># 连接数据库(如果不存在则创建)</span><br><span class="line">conn = sqlite3.connect(&apos;test.db&apos;)</span><br><span class="line"></span><br><span class="line"># 创建游标</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line"> </span><br><span class="line">cursor.execute(&quot;delete from Student where id=?&quot;,(&quot;1&quot;,)) #逗号不能省，元组元素只有一个的时候一定要加逗号,将删除lucy</span><br><span class="line"></span><br><span class="line"># 提交事物</span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">#关闭游标</span><br><span class="line">cursor.close()</span><br><span class="line"></span><br><span class="line">#关闭连接</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="查询数据"><a href="#查询数据" class="headerlink" title="查询数据"></a>查询数据</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">import sqlite3</span><br><span class="line"> </span><br><span class="line"># 连接数据库(如果不存在则创建)</span><br><span class="line">conn = sqlite3.connect(&apos;test.db&apos;)</span><br><span class="line"></span><br><span class="line"># 创建游标</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line"> </span><br><span class="line"># 查询数据1</span><br><span class="line">sql = &quot;select * from Student&quot;</span><br><span class="line">values = cursor.execute(sql)</span><br><span class="line">for i in values:</span><br><span class="line">    print(i)</span><br><span class="line"> </span><br><span class="line"># 查询数据 2</span><br><span class="line">sql = &quot;select * from Student where id=?&quot;</span><br><span class="line">values = cursor.execute(sql, (1,))</span><br><span class="line">for i in values:</span><br><span class="line">    print(&apos;id:&apos;, i[0])</span><br><span class="line">    print(&apos;name:&apos;, i[1])</span><br><span class="line">    print(&apos;age:&apos;, i[2])</span><br><span class="line"> </span><br><span class="line"># 提交事物</span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">#关闭游标</span><br><span class="line">cursor.close()</span><br><span class="line"></span><br><span class="line">#关闭连接</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除表格"><a href="#删除表格" class="headerlink" title="删除表格"></a>删除表格</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">import sqlite3</span><br><span class="line"></span><br><span class="line"># 连接数据库(如果不存在则创建)</span><br><span class="line">conn = sqlite3.connect(&apos;test.db&apos;)</span><br><span class="line"></span><br><span class="line"># 创建游标</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line"></span><br><span class="line">#删除表格Student</span><br><span class="line">cursor.execute(&quot;DROP TABLE Student&quot;)</span><br><span class="line"></span><br><span class="line"># 提交事物</span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">#关闭游标</span><br><span class="line">cursor.close()</span><br><span class="line"></span><br><span class="line">#关闭连接</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+
+<p>通过以上的demo可以精炼出函数来执行增删改查。demo如下</p>
+<h3 id="增加"><a href="#增加" class="headerlink" title="增加"></a>增加</h3>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/06/12/python3%E4%BD%BF%E7%94%A8sqlit3%E6%96%87%E6%A1%A3%E8%AE%B0%E5%BD%95/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-netcore3-1-使用mysql" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1384,100 +1464,9 @@ deployment.apps/webapp<br>REVISION  CHANGE-CAUSE<br>2         <none><br>3       
 
 
   
-    <article id="post-kubernetes-拉取私有镜像-imagepullsecrets" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/05/23/kubernetes-%E6%8B%89%E5%8F%96%E7%A7%81%E6%9C%89%E9%95%9C%E5%83%8F-imagepullsecrets/">kubernetes 拉取私有镜像 imagepullsecrets</a>
-</h1>
-
-
-
-        
-        <a href="/2020/05/23/kubernetes-%E6%8B%89%E5%8F%96%E7%A7%81%E6%9C%89%E9%95%9C%E5%83%8F-imagepullsecrets/" class="archive-article-date">
-  	<time datetime="2020-05-23T07:52:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-23</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="docker-使用私有仓库"><a href="#docker-使用私有仓库" class="headerlink" title="docker 使用私有仓库"></a>docker 使用私有仓库</h3><p>使用docker时,由于私有仓库很多时候没有搭建https的认证证书,访问时需要在本地docker的配置文件中加上允许对次镜像或者对所有镜像的http请求。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@Core:~# cat /etc/docker/dameon.json </span><br><span class="line">&#123;&quot;insecure-registries&quot;: [&quot;0.0.0.0/0&quot;]&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://i.loli.net/2020/05/23/b1jExvs8kBHRgYd.png" alt="DeepinScreenshot_select-area_20200523193555.png"></p>
-<p>然后使用docker login 登录的时候会发现,登录成功以后会在本地生<code>~/.docker/config.json</code>的配置文件。<br><img src="https://i.loli.net/2020/05/23/FAWPjmx4Bh9tqvX.png" alt="DeepinScreenshot_select-area_20200523193918.png"><br>该文件会存放登录过的用户的token以及登录仓库的地址</p>
-<h3 id="k8s使用私有仓库"><a href="#k8s使用私有仓库" class="headerlink" title="k8s使用私有仓库"></a>k8s使用私有仓库</h3><p>虚假的使用方法</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">在k8s中,想要使用私有仓库而用以上方法是不现实的。如下</span><br><span class="line">1.由于pod是漂移的,不知道下次pod会在哪个节点。</span><br><span class="line">2.并且如果几个部门合作之类的，不止只有一个私有库,在k8s集群中将非常麻烦。</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p>真实的使用方法</p>
-<p>将刚刚生成的<code>config.json</code>变成configmap放置到k8s中</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl create secret generic harborsecret \</span><br><span class="line">    --from-file=.dockerconfigjson=/root/.docker/config.json \</span><br><span class="line">    --type=kubernetes.io/dockerconfigjson</span><br></pre></td></tr></table></figure>
-
-<p>查看一下<br>kubectl get secrets harborsecret<br><img src="https://i.loli.net/2020/05/23/nV25oGzHJIQkmSa.png" alt="DeepinScreenshot_select-area_20200523222238.png"></p>
-<p>kubectl get secret harborsecret –output=yaml<br><img src="https://i.loli.net/2020/05/23/WBXF4wsAdVQDR1o.png" alt="DeepinScreenshot_select-area_20200523222224.png"></p>
-<p>在要部署的deployment中放入此镜像的configmap配置文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  namespace: istio-cosmo</span><br><span class="line">  name: cosmo-bff</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: istio</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nginx</span><br><span class="line">    spec:</span><br><span class="line">      imagePullSecrets:</span><br><span class="line">      - name: daocloud-registry</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        image: registry.daocloud.cn/xxx/nginx:264</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 8080</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: cosmo-conf</span><br><span class="line">          mountPath: /work/config</span><br><span class="line">      volumes:</span><br><span class="line">      - name: cosmo-conf</span><br><span class="line">        configMap:</span><br><span class="line">          name: cosmo-conf</span><br></pre></td></tr></table></figure>
-<p>这样不管是哪台机器执行下载该镜像的任务都会调用这个config文件。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color4">k8s</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/05/23/kubernetes-%E6%8B%89%E5%8F%96%E7%A7%81%E6%9C%89%E9%95%9C%E5%83%8F-imagepullsecrets/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -1574,11 +1563,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">Csharp</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">Csharp</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1590,11 +1579,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1630,6 +1619,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">podman,docker</a>
               </li>
              
@@ -1642,14 +1635,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">windows</a>
               </li>
              
@@ -1658,15 +1643,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">zero_w</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">负载</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">负载</a>
               </li>
              
               <li class="article-tag-list-item">

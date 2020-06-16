@@ -177,6 +177,88 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-MTU是什么" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/05/23/MTU%E6%98%AF%E4%BB%80%E4%B9%88/">MTU是什么</a>
+</h1>
+
+
+
+        
+        <a href="/2020/05/23/MTU%E6%98%AF%E4%BB%80%E4%B9%88/" class="archive-article-date">
+  	<time datetime="2020-05-23T07:57:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="什么是MTU"><a href="#什么是MTU" class="headerlink" title="什么是MTU"></a>什么是MTU</h3><p>Maximum Transmission Unit，缩写MTU，中文名是：最大传输单元。</p>
+<h3 id="这是哪一层网络的概念？"><a href="#这是哪一层网络的概念？" class="headerlink" title="这是哪一层网络的概念？"></a>这是哪一层网络的概念？</h3><p>从下面这个表格中可以看到，在7层网络协议中，MTU是数据链路层的概念。MTU限制的是数据链路层的payload，也就是上层协议的大小，例如IP，ICMP等。</p>
+<h3 id="MTU有什么用？"><a href="#MTU有什么用？" class="headerlink" title="MTU有什么用？"></a>MTU有什么用？</h3><p>举一个最简单的场景，你在家用自己的笔记本上网，用的是路由器，路由器连接电信网络，然后访问了<a href="http://www.baidu.com，从你的笔记本出发的一个以太网数据帧总共经过了以下路径：" target="_blank" rel="noopener">www.baidu.com，从你的笔记本出发的一个以太网数据帧总共经过了以下路径：</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">笔记本 -&gt; 路由器 -&gt; 电信机房 -&gt; 服务器</span><br></pre></td></tr></table></figure>
+<p>其中，每个节点都有一个MTU值，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1500     1500                 1500</span><br><span class="line">笔记本 -&gt; 路由器 -&gt; 电信机房  -&gt; 服务器</span><br></pre></td></tr></table></figure>
+<p>假设现在我把笔记本的MTU最大值设置成了1700，然后发送了一个超大的ip数据包（2000），这时候在以外网传输的时候会被拆成2个包，一个1700，一个300，然后加上头信息进行传输。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1700     1500                1500</span><br><span class="line">笔记本 -&gt; 路由器 -&gt; 电信机房 -&gt; 服务器</span><br></pre></td></tr></table></figure>
+<p>路由器接收到了一个1700的帧，发现大于自己设置的最大值：1500，如果IP包DF标志位为1，也就是不允许分包，那么路由器直接就把这个包丢弃了，根本就不会到达电信机房，也就到不了服务器了，所以，到这里我们就会发现，MTU其实就是在每一个节点的管控值，只要是大于这个值的数据帧，要么选择分片，要么直接丢弃。</p>
+<h3 id="MTU遇到calico"><a href="#MTU遇到calico" class="headerlink" title="MTU遇到calico"></a>MTU遇到calico</h3><p>这里分享一个前不久的k8s集群排障过程。<br>一天新搭建的集群各个节点看起来都是ok的但是只有同主机的pod才能访问的通,跨主机的通讯都有问题。当时的calico用的ipip模式，也就是每一台机器相当于一个路由器。互相通讯的时候通过主机的路由去寻路。<br><img src="https://i.loli.net/2020/05/24/PMKpLNv7Q6C1y9Z.png" alt="DeepinScreenshot_select-area_20200524123309.png"></p>
+<p><code>IPIP</code> 是linux内核的驱动程序，可以对数据包进行隧道，上图可以看到两个不同的网络 vlan1 和 vlan2。基于现有的以太网将原始包中的原始IP进行一次封装，通过tunl0解包，这个tunl0类似于ipip模块，和Flannel vxlan的veth很类似。</p>
+<p>Pod1 访问 Pod2 流程如下：<br>1、数据包从 Pod1 出到达Veth Pair另一端（宿主机上，以cali前缀开头）。</p>
+<p>2、进入IP隧道设备（tunl0），由Linux内核IPIP驱动封装，把源容器ip换成源宿主机ip，目的容器ip换成目的主机ip，这样就封装成 Node1 到 Node2 的数据包。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">此时包的类型：</span><br><span class="line">  原始IP包：</span><br><span class="line">  源IP：10.244.1.10</span><br><span class="line">  目的IP：10.244.2.10</span><br><span class="line"></span><br><span class="line">   TCP：</span><br><span class="line">   源IP: 192.168.31.62</span><br><span class="line">   目的iP：192.168.32.63</span><br></pre></td></tr></table></figure>
+<p>3、数据包经过路由器三层转发到 Node2。</p>
+<p>4、Node2 收到数据包后，网络协议栈会使用IPIP驱动进行解包，从中拿到原始IP包。</p>
+<p>5、然后根据路由规则，将数据包转发给cali设备，从而到达 Pod2。</p>
+<p>经过排障发现,当时主机的MTU为1454<br><img src="https://i.loli.net/2020/05/24/PIbBLknaqUKYrJM.png" alt="DeepinScreenshot_select-area_20200524123542.png"></p>
+<p>找到问题以后处理就很简单了。要么改主机的MTU要么改calico的。由于这里是云主机 改主机MTU可能会引发其他问题。所以我改了calico的MTU。问题修复</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/05/23/MTU%E6%98%AF%E4%BB%80%E4%B9%88/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-kubernetes-拉取私有镜像-imagepullsecrets" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -867,108 +949,6 @@
 
 
   
-    <article id="post-谈一谈值类型与引用类型和装箱与拆箱" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/03/31/%E8%B0%88%E4%B8%80%E8%B0%88%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1/">谈一谈值类型与引用类型和装箱与拆箱</a>
-</h1>
-
-
-
-        
-        <a href="/2020/03/31/%E8%B0%88%E4%B8%80%E8%B0%88%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1/" class="archive-article-date">
-  	<time datetime="2020-03-31T10:45:28.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-31</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="值类型与引用类型"><a href="#值类型与引用类型" class="headerlink" title="值类型与引用类型"></a>值类型与引用类型</h2><p>首先说一说什么是值类型和引用类型</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">值类型直接存储其值。</span><br><span class="line">引用类型存储对值的引用。</span><br></pre></td></tr></table></figure>
-<p>粗俗点儿翻译的就是值类型就是现金，要用直接用；引用类型是存折，要用还得先去银行取现。</p>
-<p>衍生出几个问题:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.为什么能直接直接用</span><br><span class="line">2.引用类型怎么引用的</span><br><span class="line">3.有啥区别</span><br></pre></td></tr></table></figure>
-<h3 id="问题1-为什么值类型的能直接用"><a href="#问题1-为什么值类型的能直接用" class="headerlink" title="问题1 为什么值类型的能直接用"></a>问题1 为什么值类型的能直接用</h3><blockquote>
-<p>基础扎实的同学知道。栈空间是某个进程启动的时候所内置的内存空间,我们经常听到的比如局部变量。这类型信息就存在栈当中,所以可以直接使用。但是栈的空间比较小。如果有其他需求我们只能放到堆内存当中。</p>
-</blockquote>
-<h3 id="问题2-引用类型怎么引用的"><a href="#问题2-引用类型怎么引用的" class="headerlink" title="问题2 引用类型怎么引用的"></a>问题2 引用类型怎么引用的</h3><p><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gddc3pkcflj30mw0jy0uq.jpg" alt=""></p>
-<blockquote>
-<p>如图,我们创建<code>Name</code>类就是在堆内存中,而我们如果需要使用。实例化以后。如下图所示<br><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gddc8328sjj31480l2wfs.jpg" alt=""><br>obj这个变量存储的东西只是Name对象的地址.(这个引用过程就是传说中的指针)</p>
-</blockquote>
-<h3 id="问题3-有啥区别"><a href="#问题3-有啥区别" class="headerlink" title="问题3 有啥区别"></a>问题3 有啥区别</h3><p><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gddch6bnphj313i0oan0i.jpg" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">值类型通常被人们称为轻量级的类型，因为在大多数情况下，值类型的的实例都分配在线程栈中，因此它不受垃圾回收的控制，缓解了托管堆中的压力，减少了应用程序的垃圾回收的次数，提高性能。</span><br><span class="line"></span><br><span class="line">所有的引用类型的实例都分配在托管堆上，c#中new操作符会返回一个内存地址指向当前的对象。所以当你在创建个一个引用类型实例的时候，你必须要考虑以下问题：</span><br><span class="line"></span><br><span class="line">&gt; 内存是在托管堆上分配的</span><br><span class="line">&gt; 在分配每一个对象时都会包含一些额外的成员（类型对象指针，同步块索引），这些成员必须初始化</span><br><span class="line">&gt; 对象中的其他字节总是设为零</span><br><span class="line">&gt; 在分配对象时，可能会进行一次垃圾回收操作（如果托管堆上的内存不够分配一次对象时）</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="装箱与拆箱"><a href="#装箱与拆箱" class="headerlink" title="装箱与拆箱"></a>装箱与拆箱</h2><p>简单解释</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">装箱 就是把“值类型”转换成“引用类型”(Object)；</span><br><span class="line"></span><br><span class="line">拆箱 就是把“引用类型”转换成“值类型”；</span><br></pre></td></tr></table></figure>
-<p>举个例子</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//装箱 boxing</span><br><span class="line">int i = 3 ;  //分配在栈上</span><br><span class="line">object o = i ;//隐式装箱操作，int i 在堆上</span><br><span class="line">object b = (object)i ; //显示装箱操作</span><br><span class="line">//拆箱 unboxing</span><br><span class="line">int j = (int) o ;//显示拆箱（将对象o拆箱为int类型）</span><br><span class="line"> </span><br><span class="line">int k = b ;//error!!, 不能隐式拆箱</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">值类型和引用类型理解透彻后，我们知道C#里面是值传递，但是有些变量是引用类型的，在传递和拷贝时需要特别注意。方法传递参数时加上ref(out)，为引用传递参数。</span><br><span class="line"></span><br><span class="line">值传递仅仅传递的是值，不影响原始值。</span><br><span class="line"></span><br><span class="line">引用传递，传递的是内存地址，修改后会改变内存地址对应储存的值</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color3">C#</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/31/%E8%B0%88%E4%B8%80%E8%B0%88%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
@@ -1068,10 +1048,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">Csharp</a>
               </li>
              
@@ -1096,15 +1072,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">k8s, 中间件, mysql</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">k8s</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">k8s, 中间件, mysql</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1116,11 +1088,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂谈</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂谈</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1132,11 +1104,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1148,15 +1124,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">zero_w</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1164,7 +1132,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">C#</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
               </li>
             
             <div class="clearfix"></div>

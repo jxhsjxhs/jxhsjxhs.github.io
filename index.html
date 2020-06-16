@@ -177,6 +177,71 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-vim复制粘贴导致多行出现-号解决办法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/06/16/vim%E5%A4%8D%E5%88%B6%E7%B2%98%E8%B4%B4%E5%AF%BC%E8%87%B4%E5%A4%9A%E8%A1%8C%E5%87%BA%E7%8E%B0-%E5%8F%B7%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/">vim复制粘贴导致多行出现#号解决办法</a>
+</h1>
+
+
+
+        
+        <a href="/2020/06/16/vim%E5%A4%8D%E5%88%B6%E7%B2%98%E8%B4%B4%E5%AF%BC%E8%87%B4%E5%A4%9A%E8%A1%8C%E5%87%BA%E7%8E%B0-%E5%8F%B7%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/" class="archive-article-date">
+  	<time datetime="2020-06-16T05:53:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-16</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在vim内复制多行假如复制的行带有#号会导致其他不带#号的行自动加#</p>
+<p>解决办法，输入一下命令再粘贴即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:set paste</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/06/16/vim%E5%A4%8D%E5%88%B6%E7%B2%98%E8%B4%B4%E5%AF%BC%E8%87%B4%E5%A4%9A%E8%A1%8C%E5%87%BA%E7%8E%B0-%E5%8F%B7%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-python3使用sqlit3文档记录" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1382,88 +1447,6 @@ deployment.apps/webapp<br>REVISION  CHANGE-CAUSE<br>2         <none><br>3       
 
 
   
-    <article id="post-MTU是什么" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/05/23/MTU%E6%98%AF%E4%BB%80%E4%B9%88/">MTU是什么</a>
-</h1>
-
-
-
-        
-        <a href="/2020/05/23/MTU%E6%98%AF%E4%BB%80%E4%B9%88/" class="archive-article-date">
-  	<time datetime="2020-05-23T07:57:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-23</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="什么是MTU"><a href="#什么是MTU" class="headerlink" title="什么是MTU"></a>什么是MTU</h3><p>Maximum Transmission Unit，缩写MTU，中文名是：最大传输单元。</p>
-<h3 id="这是哪一层网络的概念？"><a href="#这是哪一层网络的概念？" class="headerlink" title="这是哪一层网络的概念？"></a>这是哪一层网络的概念？</h3><p>从下面这个表格中可以看到，在7层网络协议中，MTU是数据链路层的概念。MTU限制的是数据链路层的payload，也就是上层协议的大小，例如IP，ICMP等。</p>
-<h3 id="MTU有什么用？"><a href="#MTU有什么用？" class="headerlink" title="MTU有什么用？"></a>MTU有什么用？</h3><p>举一个最简单的场景，你在家用自己的笔记本上网，用的是路由器，路由器连接电信网络，然后访问了<a href="http://www.baidu.com，从你的笔记本出发的一个以太网数据帧总共经过了以下路径：" target="_blank" rel="noopener">www.baidu.com，从你的笔记本出发的一个以太网数据帧总共经过了以下路径：</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">笔记本 -&gt; 路由器 -&gt; 电信机房 -&gt; 服务器</span><br></pre></td></tr></table></figure>
-<p>其中，每个节点都有一个MTU值，如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1500     1500                 1500</span><br><span class="line">笔记本 -&gt; 路由器 -&gt; 电信机房  -&gt; 服务器</span><br></pre></td></tr></table></figure>
-<p>假设现在我把笔记本的MTU最大值设置成了1700，然后发送了一个超大的ip数据包（2000），这时候在以外网传输的时候会被拆成2个包，一个1700，一个300，然后加上头信息进行传输。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1700     1500                1500</span><br><span class="line">笔记本 -&gt; 路由器 -&gt; 电信机房 -&gt; 服务器</span><br></pre></td></tr></table></figure>
-<p>路由器接收到了一个1700的帧，发现大于自己设置的最大值：1500，如果IP包DF标志位为1，也就是不允许分包，那么路由器直接就把这个包丢弃了，根本就不会到达电信机房，也就到不了服务器了，所以，到这里我们就会发现，MTU其实就是在每一个节点的管控值，只要是大于这个值的数据帧，要么选择分片，要么直接丢弃。</p>
-<h3 id="MTU遇到calico"><a href="#MTU遇到calico" class="headerlink" title="MTU遇到calico"></a>MTU遇到calico</h3><p>这里分享一个前不久的k8s集群排障过程。<br>一天新搭建的集群各个节点看起来都是ok的但是只有同主机的pod才能访问的通,跨主机的通讯都有问题。当时的calico用的ipip模式，也就是每一台机器相当于一个路由器。互相通讯的时候通过主机的路由去寻路。<br><img src="https://i.loli.net/2020/05/24/PMKpLNv7Q6C1y9Z.png" alt="DeepinScreenshot_select-area_20200524123309.png"></p>
-<p><code>IPIP</code> 是linux内核的驱动程序，可以对数据包进行隧道，上图可以看到两个不同的网络 vlan1 和 vlan2。基于现有的以太网将原始包中的原始IP进行一次封装，通过tunl0解包，这个tunl0类似于ipip模块，和Flannel vxlan的veth很类似。</p>
-<p>Pod1 访问 Pod2 流程如下：<br>1、数据包从 Pod1 出到达Veth Pair另一端（宿主机上，以cali前缀开头）。</p>
-<p>2、进入IP隧道设备（tunl0），由Linux内核IPIP驱动封装，把源容器ip换成源宿主机ip，目的容器ip换成目的主机ip，这样就封装成 Node1 到 Node2 的数据包。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">此时包的类型：</span><br><span class="line">  原始IP包：</span><br><span class="line">  源IP：10.244.1.10</span><br><span class="line">  目的IP：10.244.2.10</span><br><span class="line"></span><br><span class="line">   TCP：</span><br><span class="line">   源IP: 192.168.31.62</span><br><span class="line">   目的iP：192.168.32.63</span><br></pre></td></tr></table></figure>
-<p>3、数据包经过路由器三层转发到 Node2。</p>
-<p>4、Node2 收到数据包后，网络协议栈会使用IPIP驱动进行解包，从中拿到原始IP包。</p>
-<p>5、然后根据路由规则，将数据包转发给cali设备，从而到达 Pod2。</p>
-<p>经过排障发现,当时主机的MTU为1454<br><img src="https://i.loli.net/2020/05/24/PIbBLknaqUKYrJM.png" alt="DeepinScreenshot_select-area_20200524123542.png"></p>
-<p>找到问题以后处理就很简单了。要么改主机的MTU要么改calico的。由于这里是云主机 改主机MTU可能会引发其他问题。所以我改了calico的MTU。问题修复</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/05/23/MTU%E6%98%AF%E4%BB%80%E4%B9%88/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1563,10 +1546,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">Csharp</a>
               </li>
              
@@ -1591,15 +1570,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">k8s, 中间件, mysql</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">k8s</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">k8s, 中间件, mysql</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1611,11 +1586,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂谈</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂谈</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1627,11 +1602,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1643,15 +1622,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">zero_w</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1659,7 +1630,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">C#</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
               </li>
             
             <div class="clearfix"></div>

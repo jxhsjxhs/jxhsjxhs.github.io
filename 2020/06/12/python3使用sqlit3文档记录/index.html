@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
 <meta property="og:description" content="使用python3内置的sqlite3库，首先连接到数据库，创建并使用游标Cursor，再执行SQL语句，最后提交事务以实现sqlite3数据库中的CRUD新增数据，查询数据，更新数据和删除数据的常用操作。 SQLite是一种嵌入式数据库，它的数据库就是一个文件，SQLite能保存可以保存空值、整数、浮点数、字符串和blob 。sqlite相关教程动手学sqlite。 连接数据库(如果不存在则创建">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-06-12T06:34:04.088Z">
+<meta property="og:updated_time" content="2020-06-12T08:51:11.237Z">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="jame_xhs&#39;s blog" type="application/atom+xml">
@@ -288,6 +288,15 @@
   
 <nav id="article-nav">
   
+    <a href="/2020/06/16/vim%E5%A4%8D%E5%88%B6%E7%B2%98%E8%B4%B4%E5%AF%BC%E8%87%B4%E5%A4%9A%E8%A1%8C%E5%87%BA%E7%8E%B0-%E5%8F%B7%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          vim复制粘贴导致多行出现#号解决办法
+        
+      </div>
+    </a>
+  
   
     <a href="/2020/06/08/netcore3-1-%E4%BD%BF%E7%94%A8mysql/" id="article-nav-older" class="article-nav-link-wrap">
       <div class="article-nav-title">.netcore3.1 使用mysql</div>
@@ -418,10 +427,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">Csharp</a>
               </li>
              
@@ -446,15 +451,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">k8s, 中间件, mysql</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">k8s</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">k8s, 中间件, mysql</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -466,11 +467,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂谈</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂谈</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -482,11 +483,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -498,15 +503,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">zero_w</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -514,7 +511,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">C#</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
               </li>
             
             <div class="clearfix"></div>

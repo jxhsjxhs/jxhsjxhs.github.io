@@ -16,8 +16,10 @@
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
 <meta property="og:description" content="其实默认安装完istio是会带一个promethes的。但是如果都用那个prometheus局限性比较大  还是用先进的prometheus-operator来监控istio。 安装prometheus-operator1234git clone https:&#x2F;&#x2F;github.com&#x2F;coreos&#x2F;kube-prometheus.git ; cd kube-prometheuskubectl cr">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-06-18T16:45:09.585Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;007S8ZIlgy1gfwxbhgdr3j31ot0u0do8.jpg">
+<meta property="og:updated_time" content="2020-06-18T16:51:19.061Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;007S8ZIlgy1gfwxbhgdr3j31ot0u0do8.jpg">
   
     <link rel="alternative" href="/atom.xml" title="jame_xhs&#39;s blog" type="application/atom+xml">
   
@@ -209,6 +211,7 @@
 
 <h3 id="安装监控项ServiceMonitor"><a href="#安装监控项ServiceMonitor" class="headerlink" title="安装监控项ServiceMonitor"></a>安装监控项ServiceMonitor</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">[root@master data]# cat ServiceMonitor.yaml</span><br><span class="line">apiVersion: monitoring.coreos.com/v1</span><br><span class="line">kind: ServiceMonitor</span><br><span class="line">metadata:</span><br><span class="line">  name: istio-monitor</span><br><span class="line">  namespace: monitoring</span><br><span class="line">  labels:</span><br><span class="line">    app: prometheus-istio</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: mixer </span><br><span class="line">      istio: mixer</span><br><span class="line">  endpoints:</span><br><span class="line">  - port: prometheus </span><br><span class="line">    interval: 10s    </span><br><span class="line">  namespaceSelector:</span><br><span class="line">    matchNames:</span><br><span class="line">    - istio-system   </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">kubectl apply -f ServiceMonitor.yaml</span><br></pre></td></tr></table></figure>
 
+<p>从promehtues的监控数据中可查看<br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfwxbhgdr3j31ot0u0do8.jpg" alt=""></p>
 
       
 
@@ -482,6 +485,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
               </li>
              
@@ -490,7 +497,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -498,19 +505,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">zero_w</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">负载</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">负载</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">

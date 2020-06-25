@@ -8,18 +8,20 @@
   <link rel="dns-prefetch" href="http://www.jxhs.me">
   <title>搭建我的世界私服 | jame_xhs&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="随着社会的进步,手动安装部署mc服务器已经落伍了. 现在用docker很好的能解决安装问题。 安装步骤1.安装docker  12345678systemctl   stop firewalld &amp;amp;&amp;amp; systemctl   disable  firewalldswapoff -ased -i &amp;apos;s#SELINUX=enforcing#SELINUX=disabled#&amp;">
+  <meta name="description" content="随着社会的进步,手动安装部署mc服务器已经落伍了. 现在用docker很好的能解决安装问题。 安装步骤1.安装docker  12345678systemctl   stop firewalld &amp;&amp; systemctl   disable  firewalldswapoff -ased -i &#39;s#SELINUX&#x3D;enforcing#SELINUX&#x3D;d">
 <meta property="og:type" content="article">
 <meta property="og:title" content="搭建我的世界私服">
-<meta property="og:url" content="http:&#x2F;&#x2F;www.jxhs.me&#x2F;2020&#x2F;01&#x2F;27&#x2F;%E6%90%AD%E5%BB%BA%E6%88%91%E7%9A%84%E4%B8%96%E7%95%8C%E7%A7%81%E6%9C%8D&#x2F;index.html">
+<meta property="og:url" content="http://www.jxhs.me/2020/01/27/%E6%90%AD%E5%BB%BA%E6%88%91%E7%9A%84%E4%B8%96%E7%95%8C%E7%A7%81%E6%9C%8D/index.html">
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
-<meta property="og:description" content="随着社会的进步,手动安装部署mc服务器已经落伍了. 现在用docker很好的能解决安装问题。 安装步骤1.安装docker  12345678systemctl   stop firewalld &amp;amp;&amp;amp; systemctl   disable  firewalldswapoff -ased -i &amp;apos;s#SELINUX=enforcing#SELINUX=disabled#&amp;">
-<meta property="og:locale" content="en">
-<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gbbdw5dyo2j31rv0u01ky.jpg">
-<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gbbdzykxnoj30jk1080xw.jpg">
-<meta property="og:updated_time" content="2020-02-20T08:38:20.943Z">
+<meta property="og:description" content="随着社会的进步,手动安装部署mc服务器已经落伍了. 现在用docker很好的能解决安装问题。 安装步骤1.安装docker  12345678systemctl   stop firewalld &amp;&amp; systemctl   disable  firewalldswapoff -ased -i &#39;s#SELINUX&#x3D;enforcing#SELINUX&#x3D;d">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1gbbdw5dyo2j31rv0u01ky.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1gbbdzykxnoj30jk1080xw.jpg">
+<meta property="article:published_time" content="2020-01-27T12:02:58.000Z">
+<meta property="article:modified_time" content="2020-02-20T08:38:20.943Z">
+<meta property="article:author" content="jame_xhs">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;006tNbRwgy1gbbdw5dyo2j31rv0u01ky.jpg">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1gbbdw5dyo2j31rv0u01ky.jpg">
   
     <link rel="alternative" href="/atom.xml" title="jame_xhs&#39;s blog" type="application/atom+xml">
   
@@ -37,7 +39,7 @@
 
   
 
-</head>
+<meta name="generator" content="Hexo 4.2.1"></head>
 
 <body>
   <div id="container" q-class="show:isCtnShow">
@@ -204,13 +206,13 @@
       
         <p>随着社会的进步,手动安装部署mc服务器已经落伍了. 现在用docker很好的能解决安装问题。</p>
 <h3 id="安装步骤"><a href="#安装步骤" class="headerlink" title="安装步骤"></a>安装步骤</h3><p>1.安装docker </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">systemctl   stop firewalld &amp;&amp; systemctl   disable  firewalld</span><br><span class="line">swapoff -a</span><br><span class="line">sed -i &apos;s#SELINUX=enforcing#SELINUX=disabled#&apos; /etc/selinux/config</span><br><span class="line">yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><br><span class="line">yum -y install docker-ce-18.06.0.ce-3.el7  vim wget  tcpdump nload</span><br><span class="line">iptables -P FORWARD ACCEPT</span><br><span class="line">systemctl start docker &amp;&amp; systemctl enable docker</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">systemctl   stop firewalld &amp;&amp; systemctl   disable  firewalld</span><br><span class="line">swapoff -a</span><br><span class="line">sed -i &#39;s#SELINUX&#x3D;enforcing#SELINUX&#x3D;disabled#&#39; &#x2F;etc&#x2F;selinux&#x2F;config</span><br><span class="line">yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">yum-config-manager --add-repo http:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;docker-ce&#x2F;linux&#x2F;centos&#x2F;docker-ce.repo</span><br><span class="line">yum -y install docker-ce-18.06.0.ce-3.el7  vim wget  tcpdump nload</span><br><span class="line">iptables -P FORWARD ACCEPT</span><br><span class="line">systemctl start docker &amp;&amp; systemctl enable docker</span><br></pre></td></tr></table></figure>
 
 <p>2.搜索mc镜像</p>
 <p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gbbdw5dyo2j31rv0u01ky.jpg" alt=""></p>
 <p>这次我们使用的是kitematic/minecraft:latest 这个镜像</p>
 <p>3.部署mc服务</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir  /data </span><br><span class="line">docker run -itd  -p 25565:25565  -v /data:/data  kitematic/minecraft:latest</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir  &#x2F;data </span><br><span class="line">docker run -itd  -p 25565:25565  -v &#x2F;data:&#x2F;data  kitematic&#x2F;minecraft:latest</span><br></pre></td></tr></table></figure>
 <p>4.由于是私服,需要关闭服务器的认证</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim  server.properties</span><br></pre></td></tr></table></figure>
 <p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gbbdzykxnoj30jk1080xw.jpg" alt=""></p>
@@ -218,7 +220,7 @@
 <p>docker restart xxxxx</p>
 <p>连接即可。</p>
 <p>案例<br>Docker搭建我的世界私服并开启Forge插件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">//通过-e TYPE=FORGE在命令行中添加来启用Forge服务器模式</span><br><span class="line">//默认情况下，容器将运行Forge服务器的RECOMMENDED版本， 但您也可以选择使用运行特定版本。-e FORGEVERSION=10.13.4.1448</span><br><span class="line">docker run -d -p 25565:25565 \</span><br><span class="line">-v /Users/litong/Desktop/Docker/Minecraft:/data \</span><br><span class="line">-e EULA=TRUE \</span><br><span class="line">-e VERSION=1.12.2 \</span><br><span class="line">-e TYPE=FORGE \</span><br><span class="line">--name=mc \</span><br><span class="line">itzg/minecraft-server</span><br><span class="line"></span><br><span class="line">//要从自定义位置（例如您自己的文件存储库）下载Forge安装程序</span><br><span class="line">docker run -d -p 25565:25565  -v /root/桌面/Minecraft:/data -e EULA=TRUE -e VERSION=1.12.2 -e TYPE=FORGE -e FORGE_INSTALLER_URL=http://HOST/forge-1.11.2-13.20.0.2228-installer.jar --name=mc itzg/minecraft-server</span><br><span class="line"></span><br><span class="line">//使用预下载的Forge安装程序，将其放置在附件/data目录中，并使用来指定安装程序文件的名称FORGE_INSTALLER</span><br><span class="line">docker run -d -p 25565:25565  -v /root/桌面/Minecraft:/data -e EULA=TRUE -e VERSION=1.12.2 -e TYPE=FORGE -e FORGE_INSTALLER=forge-1.12.2-14.23.5.2768-installer.jar --name=mc itzg/minecraft-server</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;通过-e TYPE&#x3D;FORGE在命令行中添加来启用Forge服务器模式</span><br><span class="line">&#x2F;&#x2F;默认情况下，容器将运行Forge服务器的RECOMMENDED版本， 但您也可以选择使用运行特定版本。-e FORGEVERSION&#x3D;10.13.4.1448</span><br><span class="line">docker run -d -p 25565:25565 \</span><br><span class="line">-v &#x2F;Users&#x2F;litong&#x2F;Desktop&#x2F;Docker&#x2F;Minecraft:&#x2F;data \</span><br><span class="line">-e EULA&#x3D;TRUE \</span><br><span class="line">-e VERSION&#x3D;1.12.2 \</span><br><span class="line">-e TYPE&#x3D;FORGE \</span><br><span class="line">--name&#x3D;mc \</span><br><span class="line">itzg&#x2F;minecraft-server</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;要从自定义位置（例如您自己的文件存储库）下载Forge安装程序</span><br><span class="line">docker run -d -p 25565:25565  -v &#x2F;root&#x2F;桌面&#x2F;Minecraft:&#x2F;data -e EULA&#x3D;TRUE -e VERSION&#x3D;1.12.2 -e TYPE&#x3D;FORGE -e FORGE_INSTALLER_URL&#x3D;http:&#x2F;&#x2F;HOST&#x2F;forge-1.11.2-13.20.0.2228-installer.jar --name&#x3D;mc itzg&#x2F;minecraft-server</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;使用预下载的Forge安装程序，将其放置在附件&#x2F;data目录中，并使用来指定安装程序文件的名称FORGE_INSTALLER</span><br><span class="line">docker run -d -p 25565:25565  -v &#x2F;root&#x2F;桌面&#x2F;Minecraft:&#x2F;data -e EULA&#x3D;TRUE -e VERSION&#x3D;1.12.2 -e TYPE&#x3D;FORGE -e FORGE_INSTALLER&#x3D;forge-1.12.2-14.23.5.2768-installer.jar --name&#x3D;mc itzg&#x2F;minecraft-server</span><br></pre></td></tr></table></figure>
 
 <p>设置管理员</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># 打开ops.json文件，添加管理员</span><br><span class="line">[</span><br><span class="line">  &#123;</span><br><span class="line">    &quot;uuid&quot;: &quot;用户1的uuid&quot;,</span><br><span class="line">    &quot;name&quot;: &quot;用户1名称&quot;,</span><br><span class="line">    &quot;level&quot;: 4,</span><br><span class="line">    &quot;bypassesPlayerLimit&quot;: false</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    &quot;uuid&quot;: &quot;用户2的uuid&quot;,</span><br><span class="line">    &quot;name&quot;: &quot;用户2名称&quot;,</span><br><span class="line">    &quot;level&quot;: 4,</span><br><span class="line">    &quot;bypassesPlayerLimit&quot;: false</span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
@@ -238,35 +240,35 @@
 <div class="share-btn share-icons tooltip-left">
   <div class="tooltip tooltip-east">
     <span class="tooltip-item">
-      <a href="javascript:;" target="_blank" rel="noopener" class="share-sns share-outer">
+      <a href="javascript:;" class="share-sns share-outer">
         <i class="icon icon-share"></i>
       </a>
     </span>
     <span class="tooltip-content">
       <div class="share-wrap">
         <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="weibo">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
             <i class="icon icon-weibo"></i>
           </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" target="_blank" rel="noopener" data-type="weixin">
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
             <i class="icon icon-weixin"></i>
           </a>
-          <a class="qq share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="qq">
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
             <i class="icon icon-qq"></i>
           </a>
-          <a class="douban share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="douban">
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
             <i class="icon icon-douban"></i>
           </a>
-          <a class="qzone share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="qzone">
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
             <i class="icon icon-qzone"></i>
           </a>
-          <a class="facebook share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="facebook">
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
             <i class="icon icon-facebook"></i>
           </a>
-          <a class="twitter share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="twitter">
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
             <i class="icon icon-twitter"></i>
           </a>
-          <a class="google share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="google">
+          <a class="google share-sns" href="javascript:;" data-type="google">
             <i class="icon icon-google"></i>
           </a>
         </div>
@@ -276,7 +278,7 @@
 </div>
 
 <div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;" target="_blank" rel="noopener"><i class="icon icon-close"></i></a>
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
       <img src="//pan.baidu.com/share/qrcode?url=http://www.jxhs.me/2020/01/27/%E6%90%AD%E5%BB%BA%E6%88%91%E7%9A%84%E4%B8%96%E7%95%8C%E7%A7%81%E6%9C%8D/" alt="微信分享二维码">
@@ -315,7 +317,7 @@
     <div class="mod-side-operation">
         
         <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
                 <i class="icon-font icon-back"></i>
             </a>
             <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
@@ -403,15 +405,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     
     
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" target="_blank" rel="noopener" q-class="active:innerArchive">所有文章</a></li>
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
       
         
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" target="_blank" rel="noopener" q-class="active:friends">友链</a></li>
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
       
         
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" target="_blank" rel="noopener" q-class="active:aboutme">关于我</a></li>
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
       
         
     </ul>
@@ -432,107 +434,107 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">Csharp</a>
+                <a href="javascript:void(0)" class="js-tag color2">Csharp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">istio</a>
+                <a href="javascript:void(0)" class="js-tag color1">istio</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
+                <a href="javascript:void(0)" class="js-tag color4">mac</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
+                <a href="javascript:void(0)" class="js-tag color2">docker</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
+                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">hexo</a>
+                <a href="javascript:void(0)" class="js-tag color4">ubuntu优化</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">k8s, 中间件, mysql</a>
+                <a href="javascript:void(0)" class="js-tag color1">k8s, 中间件, mysql</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">k8s</a>
+                <a href="javascript:void(0)" class="js-tag color4">k8s</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">kvm</a>
+                <a href="javascript:void(0)" class="js-tag color4">kvm</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">nginx</a>
+                <a href="javascript:void(0)" class="js-tag color1">nginx</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂谈</a>
+                <a href="javascript:void(0)" class="js-tag color3">杂谈</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
+                <a href="javascript:void(0)" class="js-tag color2">golang</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
+                <a href="javascript:void(0)" class="js-tag color4">podman,docker</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">podman,docker</a>
+                <a href="javascript:void(0)" class="js-tag color3">k8s,nfs</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">prometheus</a>
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
+                <a href="javascript:void(0)" class="js-tag color3">杂项</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" class="js-tag color3">方案</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
+                <a href="javascript:void(0)" class="js-tag color3">系统</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
+                <a href="javascript:void(0)" class="js-tag color2">zero_w</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">zero_w</a>
+                <a href="javascript:void(0)" class="js-tag color1">prometheus</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">负载</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color3">负载</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">C#</a>
+                <a href="javascript:void(0)" class="js-tag color3">C#</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
+                <a href="javascript:void(0)" class="js-tag color5">kubernetes,k8s</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
+                <a href="javascript:void(0)" class="js-tag color4">CKA</a>
               </li>
             
             <div class="clearfix"></div>
@@ -673,5 +675,5 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
 
 </div>
   </div>
-</body>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
 </html>

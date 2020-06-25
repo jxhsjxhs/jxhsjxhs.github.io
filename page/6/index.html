@@ -10,9 +10,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
 <meta property="og:title" content="jame_xhs&#39;s blog">
-<meta property="og:url" content="http:&#x2F;&#x2F;www.jxhs.me&#x2F;page&#x2F;6&#x2F;index.html">
+<meta property="og:url" content="http://www.jxhs.me/page/6/index.html">
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
-<meta property="og:locale" content="en">
+<meta property="og:locale" content="en_US">
+<meta property="article:author" content="jame_xhs">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="jame_xhs&#39;s blog" type="application/atom+xml">
@@ -31,7 +32,7 @@
 
   
 
-</head>
+<meta name="generator" content="Hexo 4.2.1"></head>
 
 <body>
   <div id="container" q-class="show:isCtnShow">
@@ -177,6 +178,138 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-k8s-v1-17-新特性预告-拓扑感知服务路由" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/11/28/k8s-v1-17-%E6%96%B0%E7%89%B9%E6%80%A7%E9%A2%84%E5%91%8A-%E6%8B%93%E6%89%91%E6%84%9F%E7%9F%A5%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1/">k8s v1.17 新特性预告: 拓扑感知服务路由</a>
+</h1>
+
+
+
+        
+        <a href="/2019/11/28/k8s-v1-17-%E6%96%B0%E7%89%B9%E6%80%A7%E9%A2%84%E5%91%8A-%E6%8B%93%E6%89%91%E6%84%9F%E7%9F%A5%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1/" class="archive-article-date">
+  	<time datetime="2019-11-28T03:00:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p align="right">转摘自roc   https://imroc.io</p>
+
+
+<h2 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h2><ul>
+<li>拓扑域: 表示在集群中的某一类 “地方”，比如某节点、某机架、某可用区或某地域等，这些都可以作为某种拓扑域。</li>
+<li>endpoint: k8s 某个服务的某个 ip+port，通常是 pod 的 ip+port。</li>
+<li>service: k8s 的 service 资源(服务)，关联一组 endpoint ，访问 service 会被转发到关联的某个 endpoint 上。</li>
+</ul>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>拓扑感知服务路由，此特性最初由杜军大佬提出并设计。为什么要设计此特性呢？想象一下，k8s 集群节点分布在不同的地方，service 对应的 endpoints 分布在不同节点，传统转发策略会对所有 endpoint 做负载均衡，通常会等概率转发，当访问 service 时，流量就可能被分散打到这些不同的地方。虽然 service 转发做了负载均衡，但如果 endpoint 距离比较远，流量转发过去网络时延就相对比较高，会影响网络性能，在某些情况下甚至还可能会付出额外的流量费用。要是如能实现 service 就近转发 endpoint，是不是就可以实现降低网络时延，提升网络性能了呢？是的！这也正是该特性所提出的目的和意义。</p>
+<h2 id="k8s-亲和性"><a href="#k8s-亲和性" class="headerlink" title="k8s 亲和性"></a>k8s 亲和性</h2><p>service 的就近转发实际就是一种网络的亲和性，倾向于转发到离自己比较近的 endpoint。在此特性之前，已经在调度和存储方面有一些亲和性的设计与实现:</p>
+<ul>
+<li>节点亲和性 (Node Affinity): 让 Pod 被调度到符合一些期望条件的 Node 上，比如限制调度到某一可用区，或者要求节点支持 GPU，这算是调度亲和，调度结果取决于节点属性。</li>
+<li>Pod 亲和性与反亲和性 (Pod Affinity/AntiAffinity): 让一组 Pod 调度到同一拓扑域的节点上，或者打散到不同拓扑域的节点， 这也算是调度亲和，调度结果取决于其它 Pod。</li>
+<li>数据卷拓扑感知调度 (Volume Topology-aware Scheduling): 让 Pod 只被调度到符合其绑定的存储所在拓扑域的节点上，这算是调度与存储的亲和，调度结果取决于存储的拓扑域。</li>
+<li>本地数据卷 (Local Persistent Volume): 让 Pod 使用本地数据卷，比如高性能 SSD，在某些需要高 IOPS 低时延的场景很有用，它还会保证 Pod 始终被调度到同一节点，数据就不会不丢失，这也算是调度与存储的亲和，调度结果取决于存储所在节点。</li>
+<li>数据卷拓扑感知动态创建 (Topology-Aware Volume Dynamic Provisioning): 先调度 Pod，再根据 Pod 所在节点的拓扑域来创建存储，这算是存储与调度的亲和，存储的创建取决于调度的结果。</li>
+</ul>
+<p>而 k8s 目前在网络方面还没有亲和性能力，拓扑感知服务路由这个新特性恰好可以补齐这个的空缺，此特性使得 service 可以实现就近转发而不是所有 endpoint 等概率转发。</p>
+<h2 id="如何实现"><a href="#如何实现" class="headerlink" title="如何实现"></a>如何实现</h2><p>我们知道，service 转发主要是 node 上的 kube-proxy 进程通过 watch apiserver 获取 service 对应的 endpoint，再写入 iptables 或 ipvs 规则来实现的; 对于 headless service，主要是通过 kube-dns 或 coredns 动态解析到不同 endpoint ip 来实现的。实现 service 就近转发的关键点就在于如何将流量转发到跟当前节点在同一拓扑域的 endpoint 上，也就是会进行一次 endpoint 筛选，选出一部分符合当前节点拓扑域的 endpoint 进行转发。</p>
+<p>那么如何判断 endpoint 跟当前节点是否在同一拓扑域里呢？只要能获取到 endpoint 的拓扑信息，用它跟当前节点拓扑对比下就可以知道了。那又如何获取 endpoint 的拓扑信息呢？答案是通过 endpoint 所在节点的 label，我们可以使用 node label 来描述拓扑域。</p>
+<p>通常在节点初始化的时候，controller-manager 就会为节点打上许多 label，比如 <code>kubernetes.io/hostname</code> 表示节点的 hostname 来区分节点；另外，在云厂商提供的 k8s 服务，或者使用 cloud-controller-manager 的自建集群，通常还会给节点打上 <code>failure-domain.beta.kubernetes.io/zone</code> 和 <code>failure-domain.beta.kubernetes.io/region</code> 以区分节点所在可用区和所在地域，但自 v1.17 开始将会改名成 <code>topology.kubernetes.io/zon</code>e 和 <code>topology.kubernetes.io/region</code>，参见 <a href="https://github.com/kubernetes/kubernetes/pull/81431" target="_blank" rel="noopener">PR #81431</a>。</p>
+<p>如何根据 endpoint 查到它所在节点的这些 label 呢？答案是通过 <code>Endpoint Slice</code>，该特性在 v1.16 发布了 alpha，在 v1.17 将会进入 beta，它相当于 Endpoint API 增强版，通过将 endpoint 做数据分片来解决大规模 endpoint 的性能问题，并且可以携带更多的信息，包括 endpoint 所在节点的拓扑信息，拓扑感知服务路由特性会通过 <code>Endpoint Slice</code> 获取这些拓扑信息实现 endpoint 筛选 (过滤出在同一拓扑域的 endpoint)，然后再转换为 iptables 或 ipvs 规则写入节点以实现拓扑感知的路由转发。</p>
+<p>细心的你可能已经发现，之前每个节点上转发 service 的 iptables/ipvs 规则基本是一样的，但启用了拓扑感知服务路由特性之后，每个节点上的转发规则就可能不一样了，因为不同节点的拓扑信息不一样，导致过滤出的 endpoint 就不一样，也正是因为这样，service 转发变得不再等概率，灵活的就近转发才得以实现。</p>
+<p>当前还不支持 headless service 的拓扑路由，计划在 beta 阶段支持。由于 headless service 不是通过 kube-proxy 生成转发规则，而是通过 dns 动态解析实现的，所以需要改 kube-dns/coredns 来支持这个特性。</p>
+<h2 id="前提条件"><a href="#前提条件" class="headerlink" title="前提条件"></a>前提条件</h2><p>启用当前 alpha 实现的拓扑感知服务路由特性需要满足以下前提条件:</p>
+<ul>
+<li>集群版本在 v1.17 及其以上。</li>
+<li>Kube-proxy 以 iptables 或 IPVS 模式运行 (alpha 阶段暂时只实现了这两种模式)。</li>
+<li>启用了 <a href="https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/" target="_blank" rel="noopener">Endpoint Slices</a> (此特性虽然在 v1.17 进入 beta，但没有默认开启)。</li>
+</ul>
+<h2 id="如何启用此特性"><a href="#如何启用此特性" class="headerlink" title="如何启用此特性"></a>如何启用此特性</h2><p>给所有 k8s 组件打开 <code>ServiceTopology</code> 和 <code>EndpointSlice</code> 这两个 feature:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--feature-gates&#x3D;&quot;ServiceTopology&#x3D;true,EndpointSlice&#x3D;true&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h2><p>在 Service spec 里加上 <code>topologyKeys</code> 字段，表示该 Service 优先顺序选用的拓扑域列表，对应节点标签的 key；当访问此 Service 时，会找是否有 endpoint 有对应 topology key 的拓扑信息并且 value 跟当前节点也一样，如果是，那就选定此 topology key 作为当前转发的拓扑域，并且筛选出其余所有在这个拓扑域的 endpoint 来进行转发；如果没有找到任何 endpoint 在当前 topology key 对应拓扑域，就会尝试第二个 topology key，依此类推；如果遍历完所有 topology key 也没有匹配到 endpoint 就会拒绝转发，就像此 service 没有后端 endpoint 一样。</p>
+<p>有一个特殊的 topology key “<em>“，它可以匹配所有 endpoint，如果 <code>topologyKeys</code> 包含了 `</em>`，它必须在列表末尾，通常是在没有匹配到合适的拓扑域来实现就近转发时，就打消就近转发的念头，可以转发到任意 endpoint 上。</p>
+<p>当前 topology key 支持以下可能的值（未来会增加更多）:</p>
+<ul>
+<li>kubernetes.io/hostname: 节点的 hostname，通常将它放列表中第一个，表示如果本机有 endpoint 就直接转发到本机的 endpoint。</li>
+<li>topology.kubernetes.io/zone: 节点所在的可用区，通常将它放在 kubernetes.io/hostname 后面，表示如果本机没有对应 endpoint，就转发到当前可用区其它节点上的 endpoint（部分云厂商跨可用区通信会收取额外的流量费用）。</li>
+<li>topology.kubernetes.io/region: 表示节点所在的地域，表示转发到当前地域的 endpoint，这个用的应该会比较少，因为通常集群所有节点都只会在同一个地域，如果节点跨地域了，节点之间通信延时将会很高。</li>
+<li>*: 忽略拓扑域，匹配所有 endpoint，相当于一个保底策略，避免丢包，只能放在列表末尾。</li>
+</ul>
+<p>除此之外，还有以下约束:</p>
+<ul>
+<li>topologyKeys 与 externalTrafficPolicy=Local 不兼容，是互斥的，如果 externalTrafficPolicy 为 Local，就不能定义 topologyKeys，反之亦然。</li>
+<li>topology key 必须是合法的 label 格式，并且最多定义 16 个 key。</li>
+</ul>
+<p>这里给出一个简单的 Service 示例:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx</span><br><span class="line">spec:</span><br><span class="line">  type: ClusterIP</span><br><span class="line">  ports:</span><br><span class="line">  - name: http</span><br><span class="line">    port: 80</span><br><span class="line">    protocol: TCP</span><br><span class="line">    targetPort: 80</span><br><span class="line">  selector:</span><br><span class="line">    app: nginx</span><br><span class="line">  topologyKeys: [&quot;kubernetes.io&#x2F;hostname&quot;, &quot;topology.kubernetes.io&#x2F;zone&quot;, &quot;*&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>解释: 当访问 nginx 服务时，首先看本机是否有这个服务的 endpoint，如果有就直接本机路由过去；如果没有，就看是否有 endpoint 位于当前节点所在可用区，如果有，就转发过去，如果还是没有，就转发给任意 endpoint。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g9dkunyvsqj30na0h20sy.jpg" alt="endpoint"></p>
+<p>上图就是其中一次转发的例子：Pod 访问 nginx 这个 service 时，发现本机没有 endpoint，就找当前可用区的，找到了就转发过去，也就不会考虑转发给另一可用区的 endpoint。</p>
+<h2 id="背后小故事"><a href="#背后小故事" class="headerlink" title="背后小故事"></a>背后小故事</h2><p>此特性的 KEP Proposal 最终被认可（合并）时的设计与当前最终的代码实现已经有一些差别，实现方案历经一变再变，但同时也推动了其它特性的发展，我来讲下这其中的故事。</p>
+<p>一开始设计是在 alpha 时，让 kube-proxy 直接暴力 watch node，每个节点都有一份全局的 node 的缓存，通过 endpoint 的 <code>nodeName</code> 字段找到对应的 node 缓存，再查 node 包含的 label 就可以知道该 endpoint 的拓扑域了，但在集群节点数量多的情况下，kube-proxy 将会消耗大量资源，不过优点是实现上很简单，可以作为 alpha 阶段的实现，beta 时再从 watch node 切换到 watch 一个新设计的 PodLocator API，作为拓扑信息存储的中介，避免 watch 庞大的 node。</p>
+<p>实际上一开始我也是按照 watch node 的方式，花了九牛二虎之力终于实现了这个特性，后来 v1.15 时 k8s 又支持了 metadata-only watch，参见 PR 71548，利用此特性可以仅仅 watch node 的 metadata，而不用 watch 整个 node，可以极大减小传输和缓存的数据量，然后我就将实现切成了 watch node metadata; 即便如此，metadata 还是会更新比较频繁，主要是 <code>resourceVersion</code> 会经常变 (kubelet 经常上报 node 状态)，所以虽然 watch node metadata 比 watch node 要好，但也还是可能会造成大量不必要的网络流量，但作为 alpha 实现是可以接受的。</p>
+<p>可惜在 v1.16 code freeze 之前没能将此特性合进去，只因有一点小细节还没讨论清楚。 实际在实现 watch node 方案期间，Endpoint Slice 特性就提出来了，在这个特性讨论的阶段，我们就想到了可以利用它来携带拓扑信息，以便让拓扑感知服务路由这个特性后续可以直接利用 Endpoint Slice 来获取拓扑信息，也就可以替代之前设计的 PodLocator API，但由于它还处于很早期阶段，并且代码还未合并进去，所以 alpha 阶段先不考虑 watch Endpint Slice。后来，Endpoint Slice 特性在 v1.16 发布了 alpha。</p>
+<p>由于 v1.16 没能将拓扑感知服务路由特性合进去，在 v1.17 周期开始后，有更多时间来讨论小细节，并且 Endpoint Slice 代码已经合并，我就干脆直接又将实现从 watch node metadata 切成了 watch Endpint Slice，在 alpha 阶段就做了打算在 beta 阶段做的事情，终于，此特性实现代码最终合进了主干。</p>
+<h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>拓扑感知服务路由可以实现 service 就近转发，减少网络延时，进一步提升 k8s 的网络性能，此特性将于 k8s v1.17 发布 alpha，时间是 12 月上旬，让我们一起期待吧！k8s 网络是块难啃的硬骨头，感兴趣的同学可以看下杜军的新书 《Kubernetes 网络权威指南》，整理巩固一下 k8s 的网络知识。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">k8s</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/11/28/k8s-v1-17-%E6%96%B0%E7%89%B9%E6%80%A7%E9%A2%84%E5%91%8A-%E6%8B%93%E6%89%91%E6%84%9F%E7%9F%A5%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-ip协议簇" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -307,7 +440,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color3">网络</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">网络</a>
         		</li>
       		
 		</ul>
@@ -331,7 +464,7 @@
     <div class="mod-side-operation">
         
         <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
                 <i class="icon-font icon-back"></i>
             </a>
             <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
@@ -370,29 +503,29 @@
       
         <h1 id="题库一"><a href="#题库一" class="headerlink" title="题库一"></a>题库一</h1><p>24 题，160 分钟。</p>
 <h2 id="第一题-5-日志"><a href="#第一题-5-日志" class="headerlink" title="第一题 (5%) 日志"></a>第一题 (5%) 日志</h2><p>监控 Pod bar 的日志，并提取与错误 file-not-found 相对应的日志行,将这些日志行写入 /opt/dir/bar</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs &lt;podname&gt; | grep Error &gt; /opt/KUCC000xxx/KUCC000xxx.txt</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs &lt;podname&gt; | grep Error &gt; &#x2F;opt&#x2F;KUCC000xxx&#x2F;KUCC000xxx.txt</span><br></pre></td></tr></table></figure>
 
 <p>考点：Monitor, Log, and Debug</p>
 <h2 id="第二题-3-PV-按大小排序"><a href="#第二题-3-PV-按大小排序" class="headerlink" title="第二题 (3%) PV 按大小排序"></a>第二题 (3%) PV 按大小排序</h2><p>(使用 kubectl 的自带功能对输出排序，不要做其他任何处理)<br>按 capacity 排序列出所有 persistent volumes, 将完整的 kubectl 输出保存到 /opt/dir/volume_list</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pv --sort-by=&apos;&#123;spec.capacity.storage&#125;&apos;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pv --sort-by&#x3D;&#39;&#123;spec.capacity.storage&#125;&#39;</span><br></pre></td></tr></table></figure>
 
 <p><strong>列出环境内所有的 pv 并以 name 字段排序（使用 kubectl 自带排序功能）</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pv --sort-by=.metadata.name</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pv --sort-by&#x3D;.metadata.name</span><br></pre></td></tr></table></figure>
 
 <p>考点：kubectl 命令熟悉程度</p>
 <h2 id="第三题-3-创建-Pod"><a href="#第三题-3-创建-Pod" class="headerlink" title="第三题 (3%) 创建 Pod"></a>第三题 (3%) 创建 Pod</h2><p>按如下要求创建一个 Pod：</p>
 <p>名称：jenkins<br>使用 image: jenkins<br>在名为 website-frontend 的 新 kubernetes namespace 中</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 方法一: 通过命令创建</span><br><span class="line">kubectl run jenkins --image=jenkins --namespace=website-frontend --replicas=1 --generator=run-pod/v1 --labels=app=jenkins --dry-run -o yaml</span><br><span class="line"></span><br><span class="line"># 方法二: 编写yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">nameSpace: website-frontend</span><br><span class="line">metadata:</span><br><span class="line">  name: jenkins</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: jenkins</span><br><span class="line">    image: jenkins</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 方法一: 通过命令创建</span><br><span class="line">kubectl run jenkins --image&#x3D;jenkins --namespace&#x3D;website-frontend --replicas&#x3D;1 --generator&#x3D;run-pod&#x2F;v1 --labels&#x3D;app&#x3D;jenkins --dry-run -o yaml</span><br><span class="line"></span><br><span class="line"># 方法二: 编写yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">nameSpace: website-frontend</span><br><span class="line">metadata:</span><br><span class="line">  name: jenkins</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: jenkins</span><br><span class="line">    image: jenkins</span><br></pre></td></tr></table></figure>
 
 <h2 id="第四题-4-EmptyDir"><a href="#第四题-4-EmptyDir" class="headerlink" title="第四题 (4%) EmptyDir"></a>第四题 (4%) EmptyDir</h2><p>按如下要求创建一个 Pod：</p>
 <p>名称：non-persistent-redis<br>Container image: redis<br>Persistent volume name: cache-control<br>Mount Path: /data/redis<br>应在 staging namespace 中发布，且该 volume 必须不能是永久的。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: non-persistent-redis</span><br><span class="line">  namespace: staging</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: non-persistent-redis</span><br><span class="line">    image: redis</span><br><span class="line">    volumeMounts:</span><br><span class="line">      - name: cache-control</span><br><span class="line">        mountPath: /data/redis</span><br><span class="line">  volumes:</span><br><span class="line">  - name: cache-control</span><br><span class="line">    emptyDir: &#123;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: non-persistent-redis</span><br><span class="line">  namespace: staging</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: non-persistent-redis</span><br><span class="line">    image: redis</span><br><span class="line">    volumeMounts:</span><br><span class="line">      - name: cache-control</span><br><span class="line">        mountPath: &#x2F;data&#x2F;redis</span><br><span class="line">  volumes:</span><br><span class="line">  - name: cache-control</span><br><span class="line">    emptyDir: &#123;&#125;</span><br></pre></td></tr></table></figure>
 
 <p>考点：Volume、emptdir</p>
 <p>参考：<a href="https://kubernetes.io/docs/concepts/storage/volumes/#emptydir" target="_blank" rel="noopener">Volumes</a></p>
 <h2 id="第五题-3-DaemonSet"><a href="#第五题-3-DaemonSet" class="headerlink" title="第五题 (3%) DaemonSet"></a>第五题 (3%) DaemonSet</h2><p>确保在 Kubernetes cluster 的每个 node 上都运行 pod nginx 的一个实例，此处，nginx 也表示必须使用的 image 名称。切勿覆盖当前存在的任何 taint。</p>
 <p>使用 DaemonSet 完成此任务，并使用 ds-kubesc12345 作为 DaemonSet 名称。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: DaemonSet</span><br><span class="line">metadata:</span><br><span class="line">  name: ds-kubesc12345</span><br><span class="line">  annotations:</span><br><span class="line">    wocao: wuqing</span><br><span class="line">  labels:</span><br><span class="line">    app: ds-kubesc12345</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      name: ds-kubesc12345</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        name: ds-kubesc12345</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: ds-kubesc12345</span><br><span class="line">        image: busybox</span><br><span class="line">        command:</span><br><span class="line">        - sh</span><br><span class="line">      tolerations:</span><br><span class="line">      - key: node-role.kubernetes.io/master</span><br><span class="line">        effect: NoSchedule</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps&#x2F;v1</span><br><span class="line">kind: DaemonSet</span><br><span class="line">metadata:</span><br><span class="line">  name: ds-kubesc12345</span><br><span class="line">  annotations:</span><br><span class="line">    wocao: wuqing</span><br><span class="line">  labels:</span><br><span class="line">    app: ds-kubesc12345</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      name: ds-kubesc12345</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        name: ds-kubesc12345</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: ds-kubesc12345</span><br><span class="line">        image: busybox</span><br><span class="line">        command:</span><br><span class="line">        - sh</span><br><span class="line">      tolerations:</span><br><span class="line">      - key: node-role.kubernetes.io&#x2F;master</span><br><span class="line">        effect: NoSchedule</span><br></pre></td></tr></table></figure>
 
 <p><strong>另外:建议直接先创建一个 deployment 然后修改 yaml 使其成为 daemonset 编排(注意删除 replicas 和其他不必要字段字段)</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl run ds-kubesc12345 --image nginx --image-pull-policy IfNotPresent --dry-run -o yaml</span><br></pre></td></tr></table></figure>
@@ -406,18 +539,18 @@
 <p>Replicas: 3</p>
 <p>然后，执行滚动更新，使用新版本 1.11.13-alpine 部署应用并记录此更新。</p>
 <p>最后，将此更新回滚至之前版本 1.10.2-alpine</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kubectl run nginx-app --image=nginx:1.10.2-alpine</span><br><span class="line">kubectl set image deployment nginx-app nginx-app=nginx:1.11.13-alpine --record</span><br><span class="line"># 直接回滚到上一个版本</span><br><span class="line">kubectl rollout undo deployment nginx-app</span><br><span class="line">kubectl rollout status -w deployment nginx-app</span><br><span class="line"></span><br><span class="line"># 通过查看历史记录回滚到指定版本</span><br><span class="line">kubectl rollout history deploy/nginx</span><br><span class="line">kubectl rollout undo deploy/nginx  --to-revision=2</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kubectl run nginx-app --image&#x3D;nginx:1.10.2-alpine</span><br><span class="line">kubectl set image deployment nginx-app nginx-app&#x3D;nginx:1.11.13-alpine --record</span><br><span class="line"># 直接回滚到上一个版本</span><br><span class="line">kubectl rollout undo deployment nginx-app</span><br><span class="line">kubectl rollout status -w deployment nginx-app</span><br><span class="line"></span><br><span class="line"># 通过查看历史记录回滚到指定版本</span><br><span class="line">kubectl rollout history deploy&#x2F;nginx</span><br><span class="line">kubectl rollout undo deploy&#x2F;nginx  --to-revision&#x3D;2</span><br></pre></td></tr></table></figure>
 
 <p>考点：资源的更新</p>
 <p>参考：<a href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/#updating-resources" target="_blank" rel="noopener">Kubectl Cheat Sheet:Updating Resources</a></p>
 <h2 id="第七题-3-Deployment"><a href="#第七题-3-Deployment" class="headerlink" title="第七题 (3%) Deployment"></a>第七题 (3%) Deployment</h2><p>创建一个 Deployment 的 spec 文件：</p>
 <p>Image: nginx<br>Replicas: 4<br>Label: app_env_stage=prod<br>Name: kual12345<br>将此 spec 文件的副本保存至 /opt/dir/deployment_spec.yaml (或 .json)。</p>
 <p>完成后，清理(删除)执行此任务时生成的任何新 Kubernetes API 对象。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">kubectl run kual12345 --image nginx --replicas 4 --labels app_env_stage=prod --dry-run -o yaml</span><br><span class="line"></span><br><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  labels:</span><br><span class="line">    app_env_stage: prod</span><br><span class="line">  name: kual12345</span><br><span class="line">spec:</span><br><span class="line">  replicas: 4</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app_env_stage: prod</span><br><span class="line">  strategy: &#123;&#125;</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      creationTimestamp: null</span><br><span class="line">      labels:</span><br><span class="line">        app_env_stage: prod</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - image: nginx</span><br><span class="line">        name: kual12345</span><br><span class="line">        resources: &#123;&#125;</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">kubectl run kual12345 --image nginx --replicas 4 --labels app_env_stage&#x3D;prod --dry-run -o yaml</span><br><span class="line"></span><br><span class="line">apiVersion: apps&#x2F;v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  labels:</span><br><span class="line">    app_env_stage: prod</span><br><span class="line">  name: kual12345</span><br><span class="line">spec:</span><br><span class="line">  replicas: 4</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app_env_stage: prod</span><br><span class="line">  strategy: &#123;&#125;</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      creationTimestamp: null</span><br><span class="line">      labels:</span><br><span class="line">        app_env_stage: prod</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - image: nginx</span><br><span class="line">        name: kual12345</span><br><span class="line">        resources: &#123;&#125;</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="第八题-7-init-container"><a href="#第八题-7-init-container" class="headerlink" title="第八题 (7%) init container"></a>第八题 (7%) init container</h2><p>执行以下任务：</p>
 <p>添加一个 init container 至 bumpy-llama (已在 spec 文件 /opt/dir/Pod-spec-12345.yaml 中定义)<br>init container 应该：创建一个名为 /workdir/faithful.txt 的 空文件<br>如果未检测到 /workdir/failthful.txt , Pod 应退出<br>一旦使用 init container 定义更新 spec 文件，则应创建 Pod</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: hungry-bear</span><br><span class="line">spec:</span><br><span class="line">  volumes:</span><br><span class="line">  - name: workdir</span><br><span class="line">    emptyDir: &#123;&#125;</span><br><span class="line">  containers:</span><br><span class="line">  - name: checker</span><br><span class="line">    image: busybox</span><br><span class="line">    command: [&quot;/bin/sh&quot;, &quot;-c&quot;, &quot;if [ -f /workdir/faithful.txt ] ; then sleep 100000; else exit 1; fi&quot;]</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: workdir</span><br><span class="line">      mountPath: /workdir</span><br><span class="line">  initContainers:</span><br><span class="line">  - name: init-c</span><br><span class="line">    image: busybox</span><br><span class="line">    command: [&quot;/bin/sh&quot;, &quot;-c&quot;, &quot;touch /workdir/faithful.txt&quot;]</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: workdir</span><br><span class="line">      mountPath: /workdir</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: hungry-bear</span><br><span class="line">spec:</span><br><span class="line">  volumes:</span><br><span class="line">  - name: workdir</span><br><span class="line">    emptyDir: &#123;&#125;</span><br><span class="line">  containers:</span><br><span class="line">  - name: checker</span><br><span class="line">    image: busybox</span><br><span class="line">    command: [&quot;&#x2F;bin&#x2F;sh&quot;, &quot;-c&quot;, &quot;if [ -f &#x2F;workdir&#x2F;faithful.txt ] ; then sleep 100000; else exit 1; fi&quot;]</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: workdir</span><br><span class="line">      mountPath: &#x2F;workdir</span><br><span class="line">  initContainers:</span><br><span class="line">  - name: init-c</span><br><span class="line">    image: busybox</span><br><span class="line">    command: [&quot;&#x2F;bin&#x2F;sh&quot;, &quot;-c&quot;, &quot;touch &#x2F;workdir&#x2F;faithful.txt&quot;]</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: workdir</span><br><span class="line">      mountPath: &#x2F;workdir</span><br></pre></td></tr></table></figure>
 
 <p>考点：init Container。一开始审题不仔细，以为要用到 livenessProbes</p>
 <p>参考：<a href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/" target="_blank" rel="noopener">init-containers</a></p>
@@ -426,32 +559,32 @@
 <p>Credential: alice or username:bob</p>
 <p>Create a Pod named pod-secrets-via-file using the redis image which mounts a secret named super-secret at /secrets</p>
 <p>Create a second Pod named pod-secrets-via-env using the redis image,which exports credential/username as TOPSECRET/CREDENTIALS</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">生成secret参考命令</span><br><span class="line">kubectl create secret generic super-secret --from-literal=username=bob  --from-literal=credential=alice</span><br><span class="line">生成yaml文件的命令，再在此基础上改写(可以在https://kubernetes.io/docs/页面搜索框输入volumes查询example)</span><br><span class="line">kubectl run pod-secrets-via-file --image=redis --generator=run-pod/v1 --dry-run -o yaml &gt;12-1.yml</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  labels:</span><br><span class="line">    run: pod-secrets-via-file</span><br><span class="line">  name: pod-secrets-via-file</span><br><span class="line">spec:</span><br><span class="line">  volumes:</span><br><span class="line">  - name: super-secret</span><br><span class="line">    secret:</span><br><span class="line">      secretName: super-secret</span><br><span class="line">  containers:</span><br><span class="line">  - image: redis</span><br><span class="line">    name: pod-secrets-via-file</span><br><span class="line">    resources: &#123;&#125;</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: super-secret</span><br><span class="line">      mountPath: /secrets</span><br><span class="line">  dnsPolicy: ClusterFirst</span><br><span class="line">  restartPolicy: Always</span><br><span class="line">status: &#123;&#125;</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  labels:</span><br><span class="line">    run: pod-secrets-via-env</span><br><span class="line">  name: pod-secrets-via-env</span><br><span class="line">spec:</span><br><span class="line">  volumes:</span><br><span class="line">  - name: super-secret</span><br><span class="line">    secret:</span><br><span class="line">      secretName: super-secret</span><br><span class="line">  containers:</span><br><span class="line">  - image: redis</span><br><span class="line">    name: pod-secrets-via-env</span><br><span class="line">    resources: &#123;&#125;</span><br><span class="line">    env:</span><br><span class="line">    - name: CREDENTIALS</span><br><span class="line">      valueFrom:</span><br><span class="line">        secretKeyRef:</span><br><span class="line">          name: super-secret</span><br><span class="line">          key: username</span><br><span class="line">    - name: TOPSECRET</span><br><span class="line">      valueFrom:</span><br><span class="line">        secretKeyRef:</span><br><span class="line">          name: super-secret</span><br><span class="line">          key: credential</span><br><span class="line">  dnsPolicy: ClusterFirst</span><br><span class="line">  restartPolicy: Always</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">生成secret参考命令</span><br><span class="line">kubectl create secret generic super-secret --from-literal&#x3D;username&#x3D;bob  --from-literal&#x3D;credential&#x3D;alice</span><br><span class="line">生成yaml文件的命令，再在此基础上改写(可以在https:&#x2F;&#x2F;kubernetes.io&#x2F;docs&#x2F;页面搜索框输入volumes查询example)</span><br><span class="line">kubectl run pod-secrets-via-file --image&#x3D;redis --generator&#x3D;run-pod&#x2F;v1 --dry-run -o yaml &gt;12-1.yml</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  labels:</span><br><span class="line">    run: pod-secrets-via-file</span><br><span class="line">  name: pod-secrets-via-file</span><br><span class="line">spec:</span><br><span class="line">  volumes:</span><br><span class="line">  - name: super-secret</span><br><span class="line">    secret:</span><br><span class="line">      secretName: super-secret</span><br><span class="line">  containers:</span><br><span class="line">  - image: redis</span><br><span class="line">    name: pod-secrets-via-file</span><br><span class="line">    resources: &#123;&#125;</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: super-secret</span><br><span class="line">      mountPath: &#x2F;secrets</span><br><span class="line">  dnsPolicy: ClusterFirst</span><br><span class="line">  restartPolicy: Always</span><br><span class="line">status: &#123;&#125;</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  labels:</span><br><span class="line">    run: pod-secrets-via-env</span><br><span class="line">  name: pod-secrets-via-env</span><br><span class="line">spec:</span><br><span class="line">  volumes:</span><br><span class="line">  - name: super-secret</span><br><span class="line">    secret:</span><br><span class="line">      secretName: super-secret</span><br><span class="line">  containers:</span><br><span class="line">  - image: redis</span><br><span class="line">    name: pod-secrets-via-env</span><br><span class="line">    resources: &#123;&#125;</span><br><span class="line">    env:</span><br><span class="line">    - name: CREDENTIALS</span><br><span class="line">      valueFrom:</span><br><span class="line">        secretKeyRef:</span><br><span class="line">          name: super-secret</span><br><span class="line">          key: username</span><br><span class="line">    - name: TOPSECRET</span><br><span class="line">      valueFrom:</span><br><span class="line">        secretKeyRef:</span><br><span class="line">          name: super-secret</span><br><span class="line">          key: credential</span><br><span class="line">  dnsPolicy: ClusterFirst</span><br><span class="line">  restartPolicy: Always</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
 
 <p>参考：<a href="https://kubernetes.io/docs/concepts/configuration/secret/" target="_blank" rel="noopener">Secret</a></p>
 <h2 id="第十题-4-Service"><a href="#第十题-4-Service" class="headerlink" title="第十题 (4%) Service"></a>第十题 (4%) Service</h2><p>创建和配置 front-end-service service, 以便可通过 NodePort 访问该 service 并将其路由到名为 front-end 的现有 Pod</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl expose pod front-end --name=front-end-service --type=&apos;NodePort&apos; --port=80</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl expose pod front-end --name&#x3D;front-end-service --type&#x3D;&#39;NodePort&#39; --port&#x3D;80</span><br></pre></td></tr></table></figure>
 
 <p>考点：Service</p>
 <p>参考：<a href="https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types" target="_blank" rel="noopener">publishing-services-service-types</a></p>
 <h2 id="第十一题-4-多容器-Pod"><a href="#第十一题-4-多容器-Pod" class="headerlink" title="第十一题 (4%) 多容器 Pod"></a>第十一题 (4%) 多容器 Pod</h2><p>创建一个名为 kucc3 的 Pod，在 Pod 里面分别为以下每个 image 单独运行一个 app container（可能会有 1 ～ 4 个 images）:</p>
 <p>nginx + redis + memcached + consul</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"># 先用命令行创建一个示例</span><br><span class="line">kubectl run kucc3 --image=nginx --image-pull-policy=IfNotPresent --replicas=1 --generator=run-pod/v1 --dry-run -o yaml</span><br><span class="line"># 而后修改示例</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  labels:</span><br><span class="line">    run: kucc4</span><br><span class="line">  name: kucc4</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - image: nginx</span><br><span class="line">    name: nginx</span><br><span class="line">  - image: redis</span><br><span class="line">    name: redis</span><br><span class="line">  - image: memcached</span><br><span class="line">    name: memcached</span><br><span class="line">  - image: consul</span><br><span class="line">    name: consul</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"># 先用命令行创建一个示例</span><br><span class="line">kubectl run kucc3 --image&#x3D;nginx --image-pull-policy&#x3D;IfNotPresent --replicas&#x3D;1 --generator&#x3D;run-pod&#x2F;v1 --dry-run -o yaml</span><br><span class="line"># 而后修改示例</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  labels:</span><br><span class="line">    run: kucc4</span><br><span class="line">  name: kucc4</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - image: nginx</span><br><span class="line">    name: nginx</span><br><span class="line">  - image: redis</span><br><span class="line">    name: redis</span><br><span class="line">  - image: memcached</span><br><span class="line">    name: memcached</span><br><span class="line">  - image: consul</span><br><span class="line">    name: consul</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
 
 <p>考点：kubectl 命令熟悉程度、多个容器的 pod 的创建</p>
 <p>参考：<a href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/" target="_blank" rel="noopener">kubectl cheatsheet</a></p>
 <h2 id="第十二题-3-Label"><a href="#第十二题-3-Label" class="headerlink" title="第十二题 (3%) Label"></a>第十二题 (3%) Label</h2><p>Create a file /opt/KUCC00302/kucc00302.txt that lists all pods that implement Service foo in Namespce production</p>
 <p>The format of the file should be one pod name per line</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@vms31 KUCC00302]# kubectl get svc --show-labels -n production</span><br><span class="line">[root@vms31 KUCC00302]# kubectl get pods -l name=haha -n production |grep -v NAME|awk &apos;&#123;print $1&#125;&apos; &gt; /opt/KUCC00302/kucc00302.txt</span><br><span class="line">[root@vms31 KUCC00302]# cat /opt/KUCC00302/kucc00302.txt</span><br><span class="line">foo-fd6cbbd89-jdsdx</span><br><span class="line">foo-fd6cbbd89-wrd6v</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@vms31 KUCC00302]# kubectl get svc --show-labels -n production</span><br><span class="line">[root@vms31 KUCC00302]# kubectl get pods -l name&#x3D;haha -n production |grep -v NAME|awk &#39;&#123;print $1&#125;&#39; &gt; &#x2F;opt&#x2F;KUCC00302&#x2F;kucc00302.txt</span><br><span class="line">[root@vms31 KUCC00302]# cat &#x2F;opt&#x2F;KUCC00302&#x2F;kucc00302.txt</span><br><span class="line">foo-fd6cbbd89-jdsdx</span><br><span class="line">foo-fd6cbbd89-wrd6v</span><br></pre></td></tr></table></figure>
 
 <h2 id="第十三题-2-Node-Selector"><a href="#第十三题-2-Node-Selector" class="headerlink" title="第十三题 (2%) Node Selector"></a>第十三题 (2%) Node Selector</h2><p>按如下要求调度一个 Pod：</p>
 <p>名称：nginx-kucc2345<br>Image： nginx<br>Node Selector: disk=spinning</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  labels:</span><br><span class="line">    run: nginx-kucc2345</span><br><span class="line">  name: nginx-kucc2345</span><br><span class="line">spec:</span><br><span class="line">  replicas: 1</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      run: nginx-kucc2345</span><br><span class="line">  strategy: &#123;&#125;</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      creationTimestamp: null</span><br><span class="line">      labels:</span><br><span class="line">        run: nginx-kucc2345</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - image: nginx</span><br><span class="line">        name: nginx-kucc2345</span><br><span class="line">        resources: &#123;&#125;</span><br><span class="line">      nodeSelector:</span><br><span class="line">        disk: spinning</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps&#x2F;v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  labels:</span><br><span class="line">    run: nginx-kucc2345</span><br><span class="line">  name: nginx-kucc2345</span><br><span class="line">spec:</span><br><span class="line">  replicas: 1</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      run: nginx-kucc2345</span><br><span class="line">  strategy: &#123;&#125;</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      creationTimestamp: null</span><br><span class="line">      labels:</span><br><span class="line">        run: nginx-kucc2345</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - image: nginx</span><br><span class="line">        name: nginx-kucc2345</span><br><span class="line">        resources: &#123;&#125;</span><br><span class="line">      nodeSelector:</span><br><span class="line">        disk: spinning</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
 
 <p>考点：pod 的调度。</p>
 <p>参考：<a href="https://kubernetes.io/docs/concepts/configuration/assign-pod-node/" target="_blank" rel="noopener">assign-pod-node</a></p>
 <h2 id="第十四题-3-PV-hostPath"><a href="#第十四题-3-PV-hostPath" class="headerlink" title="第十四题 (3%) PV hostPath"></a>第十四题 (3%) PV hostPath</h2><p>创建名为 app-config 的 Persistent Volume，容量为 1Gi, 访问模式为 ReadWriteOnce。Volume 类型为 hostPath，位于 /srv/app-config。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: app-config</span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 1Gi</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  hostPath:</span><br><span class="line">    path: /srv/app-config</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: app-config</span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 1Gi</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  hostPath:</span><br><span class="line">    path: &#x2F;srv&#x2F;app-config</span><br></pre></td></tr></table></figure>
 
 <p>考点：创建 PV<br>参考：<a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/" target="_blank" rel="noopener">persistent volumes</a></p>
 <h2 id="第十五题-4-集群故障排查"><a href="#第十五题-4-集群故障排查" class="headerlink" title="第十五题 (4%) 集群故障排查"></a>第十五题 (4%) 集群故障排查</h2><p>提供一个非完全正常运行的 Kubernetes Cluster, 在该 Cluster 中找出故障征兆。</p>
@@ -460,7 +593,7 @@
 <p>可使用 ssh node-name 通过 ssh 命令连接到相应 node<br>可使用 sudo -i 命令在该 cluster 的任何 node 上获取更高权限</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">情况一</span><br><span class="line">kubectl get cs 能看到controller manager 没有启动</span><br><span class="line">登陆到master上</span><br><span class="line">找到相关服务重启</span><br><span class="line">systemctl start kube-manager-controller.service</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">情况二</span><br><span class="line">kubectl get node显示connection refuse，估计是apiserver的故障。</span><br><span class="line">具体配置文件参考 static pod 那一题,主要解题思路如下:</span><br><span class="line">1.为什么api-server没启动 (跟其他题的集群对比发现api-server配置文件相同。但是不生效)</span><br><span class="line">2.为什么kubelet没有拉起来api-server  (跟其他题的集群对比 比如static pod 那一题，可以发现kubelet没有指定静态pod目录)</span><br><span class="line">3.kubelet配置文件中加入 (--pod-manifest-path=xxxxxxx)，重启kubelet systelctl  restart  kubelet</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">情况二</span><br><span class="line">kubectl get node显示connection refuse，估计是apiserver的故障。</span><br><span class="line">具体配置文件参考 static pod 那一题,主要解题思路如下:</span><br><span class="line">1.为什么api-server没启动 (跟其他题的集群对比发现api-server配置文件相同。但是不生效)</span><br><span class="line">2.为什么kubelet没有拉起来api-server  (跟其他题的集群对比 比如static pod 那一题，可以发现kubelet没有指定静态pod目录)</span><br><span class="line">3.kubelet配置文件中加入 (--pod-manifest-path&#x3D;xxxxxxx)，重启kubelet systelctl  restart  kubelet</span><br></pre></td></tr></table></figure>
 
 <p>参考：<a href="https://kubernetes.io/docs/tasks/debug-application-cluster/debug-cluster/" target="_blank" rel="noopener">Troubleshoot Clusters</a></p>
 <h2 id="第十六题-4-节点故障排查"><a href="#第十六题-4-节点故障排查" class="headerlink" title="第十六题 (4%) 节点故障排查"></a>第十六题 (4%) 节点故障排查</h2><p>名为 wk8s-node-0 的 Kubernetes worker node 处于 NotReady 状态。</p>
@@ -478,7 +611,7 @@
 <p><strong>另外:可能题目有另外一种说法,就是需要你去配置 worker 节点上 kube-proxy、kubelet 的 tls</strong></p>
 <p>参考：<a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet-tls-bootstrapping/" target="_blank" rel="noopener">TLS Bootstrapping</a></p>
 <h2 id="第十八题-4-Drain"><a href="#第十八题-4-Drain" class="headerlink" title="第十八题 (4%) Drain"></a>第十八题 (4%) Drain</h2><p>将标签为 ek8s-node-1 的 Node 设置为不可用，并重新调度该 Node 上所有运行的 Pods。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubetl get node --show-labels |grep name=ek8s-node-1</span><br><span class="line">kubectl drain ek8s-node-1</span><br><span class="line">#如果直接drain会出错，需要添加--ignore-daemonsets --delete-local-data参数</span><br><span class="line">kubectl drain node node1  --ignore-daemonsets --delete-local-data</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubetl get node --show-labels |grep name&#x3D;ek8s-node-1</span><br><span class="line">kubectl drain ek8s-node-1</span><br><span class="line">#如果直接drain会出错，需要添加--ignore-daemonsets --delete-local-data参数</span><br><span class="line">kubectl drain node node1  --ignore-daemonsets --delete-local-data</span><br></pre></td></tr></table></figure>
 
 <p><strong>另外:使用 cordon 可以先暂停调度</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl cordon</span><br></pre></td></tr></table></figure>
@@ -489,13 +622,13 @@
 <p>Etcd 实例运行的 etcd 版本为 3.3.10</p>
 <p>以下 TLS 证书密钥用于通过 etcdctl 连接服务器：</p>
 <p>CA 证书：/opt/dir/ca.crt<br>客户端证书：/opt/dir/etcd-client.crt<br>客户端密钥：/opt/dir/etcd-client.key</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export ETCDCTL_API=3</span><br><span class="line">etcdctl help  再etcdctl snapshot save --help</span><br><span class="line">etcdctl --endpoints=127.0.0.1:2379 --cacert=/opt/dir/ca.crt --cert=//opt/dir/etcd-client.crt --key=/opt/dir/etcd-client.key snapshot save /data/backup/etcd-snapshot.db</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export ETCDCTL_API&#x3D;3</span><br><span class="line">etcdctl help  再etcdctl snapshot save --help</span><br><span class="line">etcdctl --endpoints&#x3D;127.0.0.1:2379 --cacert&#x3D;&#x2F;opt&#x2F;dir&#x2F;ca.crt --cert&#x3D;&#x2F;&#x2F;opt&#x2F;dir&#x2F;etcd-client.crt --key&#x3D;&#x2F;opt&#x2F;dir&#x2F;etcd-client.key snapshot save &#x2F;data&#x2F;backup&#x2F;etcd-snapshot.db</span><br></pre></td></tr></table></figure>
 
 <p>参考：<a href="https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster" target="_blank" rel="noopener">backing up an etcd cluster</a></p>
 <h2 id="第二十题-7-DNS"><a href="#第二十题-7-DNS" class="headerlink" title="第二十题 (7%) DNS"></a>第二十题 (7%) DNS</h2><p>按如下要求创建一个 Deployment：</p>
 <p>名称：nginx-random<br>通过 Service 暴露：nginx-random<br>确保 Service 和 Pod 可通过各自的 DNS 记录访问<br>在此 Deployment 中运行的任何 Pod 内的 Container 都应使用 nginx image<br>接下来，使用实用工具 nslookup 查询该 Service 和 Pod 的 DNS 记录，并将输出结果分别写入 /opt/dir/service.dns 和 /opt/dir/Pod.dns</p>
 <p>确保在任何测试中使用 busybox</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl run nginx-dns --image=nginx</span><br><span class="line">kubectl expose deployment nginx-dns --port=80</span><br><span class="line">kubectl get pods - o wide 获取pod的IP</span><br><span class="line">kubectl run busybox -it --rm --image=busybox:1.28 sh</span><br><span class="line">　　nslookup nginx-dns</span><br><span class="line">　　nslookup 获取pod的IP</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl run nginx-dns --image&#x3D;nginx</span><br><span class="line">kubectl expose deployment nginx-dns --port&#x3D;80</span><br><span class="line">kubectl get pods - o wide 获取pod的IP</span><br><span class="line">kubectl run busybox -it --rm --image&#x3D;busybox:1.28 sh</span><br><span class="line">　　nslookup nginx-dns</span><br><span class="line">　　nslookup 获取pod的IP</span><br></pre></td></tr></table></figure>
 
 <p>考点：网络相关，DNS 解析</p>
 <p>参考：<a href="https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/" target="_blank" rel="noopener">Debugging DNS Resolution</a></p>
@@ -503,17 +636,17 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl top pod |grep -iv name|sort -k 2 -n</span><br></pre></td></tr></table></figure>
 
 <p><strong>列出 Service 名为 test 下的 pod 并找出使用 CPU 使用率最高的一个，将 pod 名称写入文件中</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#使用-o wide 获取service test的SELECTOR</span><br><span class="line">kubectl get svc test -o wide</span><br><span class="line">##获取结果我就随便造了</span><br><span class="line">NAME  TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE       SELECTOR</span><br><span class="line">test  ClusterIP   None         &lt;none&gt;        3306/TCP   50d       app=wordpress,tier=mysql</span><br><span class="line"></span><br><span class="line">#获取对应SELECTOR的pod使用率，找到最大那个写入文件中</span><br><span class="line">kubectl top test -l &apos;app=wordpress,tier=mysql&apos;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#使用-o wide 获取service test的SELECTOR</span><br><span class="line">kubectl get svc test -o wide</span><br><span class="line">##获取结果我就随便造了</span><br><span class="line">NAME  TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE       SELECTOR</span><br><span class="line">test  ClusterIP   None         &lt;none&gt;        3306&#x2F;TCP   50d       app&#x3D;wordpress,tier&#x3D;mysql</span><br><span class="line"></span><br><span class="line">#获取对应SELECTOR的pod使用率，找到最大那个写入文件中</span><br><span class="line">kubectl top test -l &#39;app&#x3D;wordpress,tier&#x3D;mysql&#39;</span><br></pre></td></tr></table></figure>
 
 <p>考点：获取 service selector，kubectl top 监控 pod 资源</p>
 <p>参考：<a href="https://kubernetes.io/docs/tasks/debug-application-cluster/resource-usage-monitoring" target="_blank" rel="noopener">Tools for Monitoring Resources</a></p>
 <h2 id="第二十二题-2-Taint"><a href="#第二十二题-2-Taint" class="headerlink" title="第二十二题 (2%) Taint"></a>第二十二题 (2%) Taint</h2><p>检查有多少 Nodes 已准备就绪(不包括被打上 Taint: NoSchedule 的节点)，并将数量写入 /opt/dir/nodes.txt。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes --show-labels|grep -vi schedule |grep -vi version |grep -i ready |wc -l</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#CheatSheet方法，应该还能优化JSONPATH</span><br><span class="line">JSONPATH=&apos;&#123;range .items[*]&#125;&#123;@.metadata.name&#125;:&#123;range @.status.conditions[*]&#125;&#123;@.type&#125;=&#123;@.status&#125;;&#123;end&#125;&#123;end&#125;&apos; \</span><br><span class="line"> &amp;&amp; kubectl get nodes -o jsonpath=&quot;$JSONPATH&quot; | grep &quot;Ready=True&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes --show-labels|grep -vi schedule |grep -vi version |grep -i ready |wc -l</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#CheatSheet方法，应该还能优化JSONPATH</span><br><span class="line">JSONPATH&#x3D;&#39;&#123;range .items[*]&#125;&#123;@.metadata.name&#125;:&#123;range @.status.conditions[*]&#125;&#123;@.type&#125;&#x3D;&#123;@.status&#125;;&#123;end&#125;&#123;end&#125;&#39; \</span><br><span class="line"> &amp;&amp; kubectl get nodes -o jsonpath&#x3D;&quot;$JSONPATH&quot; | grep &quot;Ready&#x3D;True&quot;</span><br></pre></td></tr></table></figure>
 
 <p>考点：kubectl 命令熟悉程度</p>
 <p>参考：<a href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/" target="_blank" rel="noopener">kubectl cheatsheet</a></p>
 <h2 id="第二十三题-1-Scale"><a href="#第二十三题-1-Scale" class="headerlink" title="第二十三题 (1%) Scale"></a>第二十三题 (1%) Scale</h2><p>Scale the deployment webserver to 6 pods</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@vms31 opt]# kubectl get deployments.</span><br><span class="line">NAME        DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">nginx-app   3         3         3            3           11h</span><br><span class="line">webserver   1         1         1            1           174d</span><br><span class="line">[root@vms31 opt]# kubectl scale --replicas=6 deployment/webserver</span><br><span class="line">deployment.extensions/webserver scaled</span><br><span class="line">[root@vms31 opt]# kubectl get deployments.</span><br><span class="line">NAME        DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">nginx-app   3         3         3            3           11h</span><br><span class="line">webserver   6         6         6            1           174d</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@vms31 opt]# kubectl get deployments.</span><br><span class="line">NAME        DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">nginx-app   3         3         3            3           11h</span><br><span class="line">webserver   1         1         1            1           174d</span><br><span class="line">[root@vms31 opt]# kubectl scale --replicas&#x3D;6 deployment&#x2F;webserver</span><br><span class="line">deployment.extensions&#x2F;webserver scaled</span><br><span class="line">[root@vms31 opt]# kubectl get deployments.</span><br><span class="line">NAME        DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">nginx-app   3         3         3            3           11h</span><br><span class="line">webserver   6         6         6            1           174d</span><br></pre></td></tr></table></figure>
 
 <p>考点：deployment 的 Scaling，搜索 Scaling</p>
 <p>参考：<a href="https://kubernetes.io/docs/tasks/run-application/run-stateless-application-deployment/#scaling-the-application-by-increasing-the-replica-count" target="_blank" rel="noopener">Scaling the application by increasing the replica count</a></p>
@@ -522,26 +655,26 @@
 <p>Hints:</p>
 <p>You can ssh to the failed node using $ ssh wk8s-node-0</p>
 <p>You can assume elevated privileges on the node with the following command $ sudo -i</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/systemd/system/kubelet.service</span><br><span class="line">添加下面参数</span><br><span class="line">--pod-manifest-path=/etc/kubernetes/manifests</span><br><span class="line">使用下面的参考命令生成pod文件</span><br><span class="line">kubectl run myservice --image=nginx --generator=run-pod/v1 --dry-run -o yaml &gt; /etc/kubernetes/manifests/24.yml</span><br><span class="line">重启服务</span><br><span class="line">systemctl start kubelet</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vi &#x2F;etc&#x2F;systemd&#x2F;system&#x2F;kubelet.service</span><br><span class="line">添加下面参数</span><br><span class="line">--pod-manifest-path&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;manifests</span><br><span class="line">使用下面的参考命令生成pod文件</span><br><span class="line">kubectl run myservice --image&#x3D;nginx --generator&#x3D;run-pod&#x2F;v1 --dry-run -o yaml &gt; &#x2F;etc&#x2F;kubernetes&#x2F;manifests&#x2F;24.yml</span><br><span class="line">重启服务</span><br><span class="line">systemctl start kubelet</span><br></pre></td></tr></table></figure>
 
 <h1 id="题库二"><a href="#题库二" class="headerlink" title="题库二"></a>题库二</h1><h2 id="第二十五题：-Ingress"><a href="#第二十五题：-Ingress" class="headerlink" title="第二十五题： Ingress"></a>第二十五题： Ingress</h2><p>部署 ingress controller，创建 ingress，域名为***，使得 curl 该域名，返回 200 ok</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"># 部署ingres controller</span><br><span class="line">kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/mandatory.yaml</span><br><span class="line"></span><br><span class="line">#创建规则</span><br><span class="line">[root@dce-bj-master-21 ingress]# cat ingress-rule.yml</span><br><span class="line">apiVersion: extensions/v1beta1</span><br><span class="line">kind: Ingress</span><br><span class="line">metadata:</span><br><span class="line">  name: a2048</span><br><span class="line">  labels:</span><br><span class="line">    dce.daocloud.io/app: dao-2048</span><br><span class="line">spec:</span><br><span class="line">  rules:</span><br><span class="line">  - host: 2048.fuck.you</span><br><span class="line">    http:</span><br><span class="line">      paths:</span><br><span class="line">      - path: /1</span><br><span class="line">        backend:</span><br><span class="line">          serviceName: dao-2048</span><br><span class="line">          servicePort: 80</span><br><span class="line">      - path: /2</span><br><span class="line">        backend:</span><br><span class="line">          serviceName: dao-2049</span><br><span class="line">          servicePort: 80</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"># 部署ingres controller</span><br><span class="line">kubectl apply -f https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;kubernetes&#x2F;ingress-nginx&#x2F;master&#x2F;deploy&#x2F;mandatory.yaml</span><br><span class="line"></span><br><span class="line">#创建规则</span><br><span class="line">[root@dce-bj-master-21 ingress]# cat ingress-rule.yml</span><br><span class="line">apiVersion: extensions&#x2F;v1beta1</span><br><span class="line">kind: Ingress</span><br><span class="line">metadata:</span><br><span class="line">  name: a2048</span><br><span class="line">  labels:</span><br><span class="line">    dce.daocloud.io&#x2F;app: dao-2048</span><br><span class="line">spec:</span><br><span class="line">  rules:</span><br><span class="line">  - host: 2048.fuck.you</span><br><span class="line">    http:</span><br><span class="line">      paths:</span><br><span class="line">      - path: &#x2F;1</span><br><span class="line">        backend:</span><br><span class="line">          serviceName: dao-2048</span><br><span class="line">          servicePort: 80</span><br><span class="line">      - path: &#x2F;2</span><br><span class="line">        backend:</span><br><span class="line">          serviceName: dao-2049</span><br><span class="line">          servicePort: 80</span><br></pre></td></tr></table></figure>
 
 <h2 id="第二十六题：Job"><a href="#第二十六题：Job" class="headerlink" title="第二十六题：Job"></a>第二十六题：Job</h2><p>创建一个固定结束次数的并行 Job，共 2 个 pod，运行 45 completion，Job pod 打印“Beijing”。镜像自选</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">cat job.yaml</span><br><span class="line">apiVersion: batch/v1</span><br><span class="line">kind: Job</span><br><span class="line">metadata:</span><br><span class="line">  name: busybox</span><br><span class="line">spec:</span><br><span class="line">  parallelism: 2</span><br><span class="line">  completions: 45</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      name: busybox</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: busybox</span><br><span class="line">        image: busybox</span><br><span class="line">        command: [&quot;echo&quot;, &quot;Beijing&quot;]</span><br><span class="line">      restartPolicy: Never</span><br><span class="line">[root@conn01 ~]# kubectl describe job busybox</span><br><span class="line">……</span><br><span class="line">Pods Statuses:  0 Running / 45 Succeeded / 0 Failed</span><br><span class="line">……</span><br><span class="line">[root@conn01 ~]# kubectl logs  busybox-cj86j</span><br><span class="line">Beijing</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">cat job.yaml</span><br><span class="line">apiVersion: batch&#x2F;v1</span><br><span class="line">kind: Job</span><br><span class="line">metadata:</span><br><span class="line">  name: busybox</span><br><span class="line">spec:</span><br><span class="line">  parallelism: 2</span><br><span class="line">  completions: 45</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      name: busybox</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: busybox</span><br><span class="line">        image: busybox</span><br><span class="line">        command: [&quot;echo&quot;, &quot;Beijing&quot;]</span><br><span class="line">      restartPolicy: Never</span><br><span class="line">[root@conn01 ~]# kubectl describe job busybox</span><br><span class="line">……</span><br><span class="line">Pods Statuses:  0 Running &#x2F; 45 Succeeded &#x2F; 0 Failed</span><br><span class="line">……</span><br><span class="line">[root@conn01 ~]# kubectl logs  busybox-cj86j</span><br><span class="line">Beijing</span><br></pre></td></tr></table></figure>
 
 <h2 id="第二十七题：Network"><a href="#第二十七题：Network" class="headerlink" title="第二十七题：Network"></a>第二十七题：Network</h2><p>namespace secure 中存在一个 redis 的 pod，配置该 namespace 的 network policy，拒绝其它 namespace 中的 pod 的访问，指定某一个 namespace 中的 pod 可以访问 redis pod 的 6379 端口。集群的 k8s 版本为 1.6.2。参考：<a href="https://v1-6.docs.kubernetes.io/docs/concepts/services-networking/network-policies/" target="_blank" rel="noopener">https://v1-6.docs.kubernetes.io/docs/concepts/services-networking/network-policies/</a></p>
 <p><strong>创建 NameSpace 的 Policy</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kind: NetworkPolicy</span><br><span class="line">apiVersion: networking.k8s.io/v1</span><br><span class="line">metadata:</span><br><span class="line">  namespace: secure</span><br><span class="line">  name: deny-other-namespaces</span><br><span class="line">spec:</span><br><span class="line">  podSelector: &#123;&#125;</span><br><span class="line">  policyTypes:</span><br><span class="line">  - Ingress</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kind: NetworkPolicy</span><br><span class="line">apiVersion: networking.k8s.io&#x2F;v1</span><br><span class="line">metadata:</span><br><span class="line">  namespace: secure</span><br><span class="line">  name: deny-other-namespaces</span><br><span class="line">spec:</span><br><span class="line">  podSelector: &#123;&#125;</span><br><span class="line">  policyTypes:</span><br><span class="line">  - Ingress</span><br></pre></td></tr></table></figure>
 
 <p><strong>创建 POD 和 POD 的 Policy</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: networking.k8s.io/v1</span><br><span class="line">kind: NetworkPolicy</span><br><span class="line">metadata:</span><br><span class="line">  name: test-network-policy</span><br><span class="line">  namespace: secure</span><br><span class="line">spec:</span><br><span class="line">  podSelector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      role: redis</span><br><span class="line">  policyTypes:</span><br><span class="line">  - Ingress</span><br><span class="line">  ingress:</span><br><span class="line">  - from:</span><br><span class="line">    - namespaceSelector:</span><br><span class="line">        matchLabels:</span><br><span class="line">          project: myproject</span><br><span class="line">    - podSelector:</span><br><span class="line">        matchLabels:</span><br><span class="line">          role: frontend</span><br><span class="line">    ports:</span><br><span class="line">    - protocol: TCP</span><br><span class="line">      port: 6379</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: networking.k8s.io&#x2F;v1</span><br><span class="line">kind: NetworkPolicy</span><br><span class="line">metadata:</span><br><span class="line">  name: test-network-policy</span><br><span class="line">  namespace: secure</span><br><span class="line">spec:</span><br><span class="line">  podSelector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      role: redis</span><br><span class="line">  policyTypes:</span><br><span class="line">  - Ingress</span><br><span class="line">  ingress:</span><br><span class="line">  - from:</span><br><span class="line">    - namespaceSelector:</span><br><span class="line">        matchLabels:</span><br><span class="line">          project: myproject</span><br><span class="line">    - podSelector:</span><br><span class="line">        matchLabels:</span><br><span class="line">          role: frontend</span><br><span class="line">    ports:</span><br><span class="line">    - protocol: TCP</span><br><span class="line">      port: 6379</span><br></pre></td></tr></table></figure>
 
 <h2 id="第二十八题：Annotation"><a href="#第二十八题：Annotation" class="headerlink" title="第二十八题：Annotation"></a>第二十八题：Annotation</h2><p>创建一个 deployment，该 deployment 具有 app=***的 annotation，将 deployment 的 yaml 文件保存至指定目录</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl annotate deploy test-alpine app=&apos;ckaexam&apos;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl annotate deploy test-alpine app&#x3D;&#39;ckaexam&#39;</span><br></pre></td></tr></table></figure>
 
 <h2 id="第二十九题：RBAC"><a href="#第二十九题：RBAC" class="headerlink" title="第二十九题：RBAC"></a>第二十九题：RBAC</h2><p>使用 rbac 资源，包括 role、rolebinding 等，具体可参考官方文档</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">读取ns default下的 Pod 的权限和列出 Pod 的权限</span><br><span class="line">kind: Role</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">metadata:</span><br><span class="line">  namespace: default</span><br><span class="line">  name: pod-reader</span><br><span class="line">rules:</span><br><span class="line">- apiGroups: [&quot;&quot;] #&quot;&quot; indicates the core API group</span><br><span class="line">  resources: [&quot;pods&quot;]</span><br><span class="line">  verbs: [&quot;get&quot;, &quot;watch&quot;, &quot;list&quot;]</span><br><span class="line"></span><br><span class="line">给用户jane读取ns default下的 Pod 的权限和列出 Pod 的权限</span><br><span class="line">kind: RoleBinding</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">metadata:</span><br><span class="line">  name: read-pods</span><br><span class="line">  namespace: default</span><br><span class="line">subjects:</span><br><span class="line">- kind: User</span><br><span class="line">  name: jane</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">roleRef:</span><br><span class="line">  kind: Role</span><br><span class="line">  name: pod-reader</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">读取ns default下的 Pod 的权限和列出 Pod 的权限</span><br><span class="line">kind: Role</span><br><span class="line">apiVersion: rbac.authorization.k8s.io&#x2F;v1</span><br><span class="line">metadata:</span><br><span class="line">  namespace: default</span><br><span class="line">  name: pod-reader</span><br><span class="line">rules:</span><br><span class="line">- apiGroups: [&quot;&quot;] #&quot;&quot; indicates the core API group</span><br><span class="line">  resources: [&quot;pods&quot;]</span><br><span class="line">  verbs: [&quot;get&quot;, &quot;watch&quot;, &quot;list&quot;]</span><br><span class="line"></span><br><span class="line">给用户jane读取ns default下的 Pod 的权限和列出 Pod 的权限</span><br><span class="line">kind: RoleBinding</span><br><span class="line">apiVersion: rbac.authorization.k8s.io&#x2F;v1</span><br><span class="line">metadata:</span><br><span class="line">  name: read-pods</span><br><span class="line">  namespace: default</span><br><span class="line">subjects:</span><br><span class="line">- kind: User</span><br><span class="line">  name: jane</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">roleRef:</span><br><span class="line">  kind: Role</span><br><span class="line">  name: pod-reader</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br></pre></td></tr></table></figure>
 
 <h2 id="第三十题：Network"><a href="#第三十题：Network" class="headerlink" title="第三十题：Network"></a>第三十题：Network</h2><p>登陆另一集群，该集群未配置网络，选择 calico 配置集群网络。创建 pod，配置 network policy。可参考 k8s 官网 network policy</p>
 <p><strong>参考:</strong></p>
@@ -562,7 +695,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color4">CKA</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">CKA</a>
         		</li>
       		
 		</ul>
@@ -597,7 +730,7 @@
     <div class="mod-side-operation">
         
         <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
                 <i class="icon-font icon-back"></i>
             </a>
             <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
@@ -647,7 +780,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color2">zero_w</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">zero_w</a>
         		</li>
       		
 		</ul>
@@ -682,7 +815,7 @@
     <div class="mod-side-operation">
         
         <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
                 <i class="icon-font icon-back"></i>
             </a>
             <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
@@ -778,7 +911,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color3">方案</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">方案</a>
         		</li>
       		
 		</ul>
@@ -813,7 +946,7 @@
     <div class="mod-side-operation">
         
         <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
                 <i class="icon-font icon-back"></i>
             </a>
             <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
@@ -878,7 +1011,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color3">windows</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">windows</a>
         		</li>
       		
 		</ul>
@@ -913,7 +1046,7 @@
     <div class="mod-side-operation">
         
         <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
                 <i class="icon-font icon-back"></i>
             </a>
             <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
@@ -1007,7 +1140,7 @@
     <div class="mod-side-operation">
         
         <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
                 <i class="icon-font icon-back"></i>
             </a>
             <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
@@ -1057,7 +1190,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color2">golang</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">golang</a>
         		</li>
       		
 		</ul>
@@ -1092,7 +1225,7 @@
     <div class="mod-side-operation">
         
         <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
                 <i class="icon-font icon-back"></i>
             </a>
             <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
@@ -1141,7 +1274,7 @@
 <blockquote>
 <p>我们整合三个配置，如下</p>
 </blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-client-provisioner</span><br><span class="line">  namespace: kube-system</span><br><span class="line">---</span><br><span class="line">kind: ClusterRole</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-client-provisioner-runner</span><br><span class="line">rules:</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;persistentvolumes&quot;]</span><br><span class="line">    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;, &quot;create&quot;, &quot;delete&quot;]</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;persistentvolumeclaims&quot;]</span><br><span class="line">    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;, &quot;update&quot;]</span><br><span class="line">  - apiGroups: [&quot;storage.k8s.io&quot;]</span><br><span class="line">    resources: [&quot;storageclasses&quot;]</span><br><span class="line">    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;]</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;events&quot;]</span><br><span class="line">    verbs: [&quot;list&quot;, &quot;watch&quot;, &quot;create&quot;, &quot;update&quot;, &quot;patch&quot;]</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">metadata:</span><br><span class="line">  name: run-nfs-client-provisioner</span><br><span class="line">subjects:</span><br><span class="line">  - kind: ServiceAccount</span><br><span class="line">    name: nfs-client-provisioner</span><br><span class="line">    namespace: kube-system</span><br><span class="line">roleRef:</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: nfs-client-provisioner-runner</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">kind: Deployment</span><br><span class="line">apiVersion: apps/v1</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-client-provisioner</span><br><span class="line">  namespace: kube-system</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: nfs-client-provisioner</span><br><span class="line">  replicas: 1</span><br><span class="line">  strategy:</span><br><span class="line">    type: Recreate</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nfs-client-provisioner</span><br><span class="line">    spec:</span><br><span class="line">      serviceAccount: nfs-client-provisioner</span><br><span class="line">      containers:</span><br><span class="line">        - name: nfs-client-provisioner</span><br><span class="line">          image: jmgao1983/nfs-client-provisioner</span><br><span class="line">          volumeMounts:</span><br><span class="line">            - name: nfs-client-root</span><br><span class="line">              mountPath: /persistentvolumes</span><br><span class="line">          resources:</span><br><span class="line">            requests:</span><br><span class="line">              cpu: &quot;0.4&quot;</span><br><span class="line">              memory: &quot;1Gi&quot;</span><br><span class="line">            limits:</span><br><span class="line">              cpu: &quot;1&quot;</span><br><span class="line">              memory: &quot;1Gi&quot;</span><br><span class="line">          env:</span><br><span class="line">            - name: PROVISIONER_NAME</span><br><span class="line">              value: fuseim.pri/ifs2</span><br><span class="line">            - name: NFS_SERVER</span><br><span class="line">              value: 10.6.204.1</span><br><span class="line">            - name: NFS_PATH</span><br><span class="line">              value: /data/nfs</span><br><span class="line">      volumes:</span><br><span class="line">        - name: nfs-client-root</span><br><span class="line">          nfs:</span><br><span class="line">            server: 10.6.204.1</span><br><span class="line">            path: /data/nfs</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">apiVersion: storage.k8s.io/v1</span><br><span class="line">kind: StorageClass</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-storage</span><br><span class="line">provisioner: fuseim.pri/ifs2</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-client-provisioner</span><br><span class="line">  namespace: kube-system</span><br><span class="line">---</span><br><span class="line">kind: ClusterRole</span><br><span class="line">apiVersion: rbac.authorization.k8s.io&#x2F;v1</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-client-provisioner-runner</span><br><span class="line">rules:</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;persistentvolumes&quot;]</span><br><span class="line">    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;, &quot;create&quot;, &quot;delete&quot;]</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;persistentvolumeclaims&quot;]</span><br><span class="line">    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;, &quot;update&quot;]</span><br><span class="line">  - apiGroups: [&quot;storage.k8s.io&quot;]</span><br><span class="line">    resources: [&quot;storageclasses&quot;]</span><br><span class="line">    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;]</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;events&quot;]</span><br><span class="line">    verbs: [&quot;list&quot;, &quot;watch&quot;, &quot;create&quot;, &quot;update&quot;, &quot;patch&quot;]</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">apiVersion: rbac.authorization.k8s.io&#x2F;v1</span><br><span class="line">metadata:</span><br><span class="line">  name: run-nfs-client-provisioner</span><br><span class="line">subjects:</span><br><span class="line">  - kind: ServiceAccount</span><br><span class="line">    name: nfs-client-provisioner</span><br><span class="line">    namespace: kube-system</span><br><span class="line">roleRef:</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: nfs-client-provisioner-runner</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">kind: Deployment</span><br><span class="line">apiVersion: apps&#x2F;v1</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-client-provisioner</span><br><span class="line">  namespace: kube-system</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: nfs-client-provisioner</span><br><span class="line">  replicas: 1</span><br><span class="line">  strategy:</span><br><span class="line">    type: Recreate</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nfs-client-provisioner</span><br><span class="line">    spec:</span><br><span class="line">      serviceAccount: nfs-client-provisioner</span><br><span class="line">      containers:</span><br><span class="line">        - name: nfs-client-provisioner</span><br><span class="line">          image: jmgao1983&#x2F;nfs-client-provisioner</span><br><span class="line">          volumeMounts:</span><br><span class="line">            - name: nfs-client-root</span><br><span class="line">              mountPath: &#x2F;persistentvolumes</span><br><span class="line">          resources:</span><br><span class="line">            requests:</span><br><span class="line">              cpu: &quot;0.4&quot;</span><br><span class="line">              memory: &quot;1Gi&quot;</span><br><span class="line">            limits:</span><br><span class="line">              cpu: &quot;1&quot;</span><br><span class="line">              memory: &quot;1Gi&quot;</span><br><span class="line">          env:</span><br><span class="line">            - name: PROVISIONER_NAME</span><br><span class="line">              value: fuseim.pri&#x2F;ifs2</span><br><span class="line">            - name: NFS_SERVER</span><br><span class="line">              value: 10.6.204.1</span><br><span class="line">            - name: NFS_PATH</span><br><span class="line">              value: &#x2F;data&#x2F;nfs</span><br><span class="line">      volumes:</span><br><span class="line">        - name: nfs-client-root</span><br><span class="line">          nfs:</span><br><span class="line">            server: 10.6.204.1</span><br><span class="line">            path: &#x2F;data&#x2F;nfs</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">apiVersion: storage.k8s.io&#x2F;v1</span><br><span class="line">kind: StorageClass</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-storage</span><br><span class="line">provisioner: fuseim.pri&#x2F;ifs2</span><br></pre></td></tr></table></figure>
 
 <h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>查看创建好的storageclass<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1ga9zbr3jiwj30ls050js9.jpg" alt="storageclass"></p>
 <p>创建pvc,查看是否自动创建相应的pv</p>
@@ -1161,7 +1294,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color3">k8s,nfs</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">k8s,nfs</a>
         		</li>
       		
 		</ul>
@@ -1196,7 +1329,7 @@
     <div class="mod-side-operation">
         
         <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
                 <i class="icon-font icon-back"></i>
             </a>
             <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
@@ -1241,15 +1374,15 @@
 <p>因此Kubernetes提出了PersistentVolume（PV）的概念。PersistentVolume和Volume一样，代表了集群中的一块存储区域，然而Kubernetes将PersistentVolume抽象成了一种集群资源，类似于集群中的Node对象，这意味着我们可以使用Kubernetes API来创建PersistentVolume对象。PV与Volume最大的不同是PV拥有着独立于Pod的生命周期。</p>
 <p>而PersistentVolumeClaim（PVC）代表了用户对PV资源的请求。用户需要使用PV资源时，只需要创建一个PVC对象（包括指定使用何种存储资源，使用多少GB，以何种模式使用PV等信息），Kubernetes会自动为我们分配我们所需的PV。如果把PersistentVolume类比成集群中的Node，那么PersistentVolumeClaim就相当于集群中的Pod，Kubernetes为Pod分配可用的Node，为PersistentVolumeClaim分配可用的PersistentVolume。</p>
 <h3 id="搭建nfs服务器"><a href="#搭建nfs服务器" class="headerlink" title="搭建nfs服务器"></a>搭建nfs服务器</h3><p>这里作为测试，临时在master节点上部署NFS服务器。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">#master节点安装nfs</span><br><span class="line">yum -y install nfs-utils</span><br><span class="line"></span><br><span class="line">#创建nfs目录</span><br><span class="line">mkdir -p /data/nfs/</span><br><span class="line"></span><br><span class="line">#修改权限</span><br><span class="line">chmod -R 777 /data/nfs</span><br><span class="line"></span><br><span class="line">#编辑export文件</span><br><span class="line">vim /etc/exports</span><br><span class="line">/data/nfs *(rw,no_root_squash,sync)</span><br><span class="line"></span><br><span class="line">#配置生效</span><br><span class="line">exportfs -r</span><br><span class="line">#查看生效</span><br><span class="line">exportfs</span><br><span class="line"></span><br><span class="line">#启动rpcbind、nfs服务</span><br><span class="line">systemctl restart rpcbind &amp;&amp; systemctl enable rpcbind</span><br><span class="line">systemctl restart nfs &amp;&amp; systemctl enable nfs</span><br><span class="line"></span><br><span class="line">#查看 RPC 服务的注册状况</span><br><span class="line">rpcinfo -p localhost</span><br><span class="line"></span><br><span class="line">#showmount测试</span><br><span class="line">showmount -e 10.7.150.112</span><br><span class="line"></span><br><span class="line">#所有node节点安装客户端</span><br><span class="line">yum -y install nfs-utils</span><br><span class="line">systemctl start nfs &amp;&amp; systemctl enable nfs</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">#master节点安装nfs</span><br><span class="line">yum -y install nfs-utils</span><br><span class="line"></span><br><span class="line">#创建nfs目录</span><br><span class="line">mkdir -p &#x2F;data&#x2F;nfs&#x2F;</span><br><span class="line"></span><br><span class="line">#修改权限</span><br><span class="line">chmod -R 777 &#x2F;data&#x2F;nfs</span><br><span class="line"></span><br><span class="line">#编辑export文件</span><br><span class="line">vim &#x2F;etc&#x2F;exports</span><br><span class="line">&#x2F;data&#x2F;nfs *(rw,no_root_squash,sync)</span><br><span class="line"></span><br><span class="line">#配置生效</span><br><span class="line">exportfs -r</span><br><span class="line">#查看生效</span><br><span class="line">exportfs</span><br><span class="line"></span><br><span class="line">#启动rpcbind、nfs服务</span><br><span class="line">systemctl restart rpcbind &amp;&amp; systemctl enable rpcbind</span><br><span class="line">systemctl restart nfs &amp;&amp; systemctl enable nfs</span><br><span class="line"></span><br><span class="line">#查看 RPC 服务的注册状况</span><br><span class="line">rpcinfo -p localhost</span><br><span class="line"></span><br><span class="line">#showmount测试</span><br><span class="line">showmount -e 10.7.150.112</span><br><span class="line"></span><br><span class="line">#所有node节点安装客户端</span><br><span class="line">yum -y install nfs-utils</span><br><span class="line">systemctl start nfs &amp;&amp; systemctl enable nfs</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>作为准备工作，我们已经在 k8s-master 节点上搭建了一个 NFS 服务器，目录为 /data/nfs.</p>
 </blockquote>
-<h3 id="静态申请PV卷"><a href="#静态申请PV卷" class="headerlink" title="静态申请PV卷"></a>静态申请PV卷</h3><h4 id="添加pv卷对应目录-作为挂载点"><a href="#添加pv卷对应目录-作为挂载点" class="headerlink" title="添加pv卷对应目录,作为挂载点"></a>添加pv卷对应目录,作为挂载点</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#创建pv卷对应的目录</span><br><span class="line">mkdir -p /nfs/data/pv001</span><br><span class="line"></span><br><span class="line">#配置exportrs</span><br><span class="line">vim /etc/exports</span><br><span class="line">/nfs/data *(rw,no_root_squash,sync)</span><br><span class="line">/nfs/data/pv001 *(rw,no_root_squash,sync)</span><br><span class="line"></span><br><span class="line">#配置生效</span><br><span class="line">exportfs -r</span><br><span class="line">#重启rpcbind、nfs服务</span><br><span class="line">systemctl restart rpcbind &amp;&amp; systemctl restart nfs</span><br></pre></td></tr></table></figure>
+<h3 id="静态申请PV卷"><a href="#静态申请PV卷" class="headerlink" title="静态申请PV卷"></a>静态申请PV卷</h3><h4 id="添加pv卷对应目录-作为挂载点"><a href="#添加pv卷对应目录-作为挂载点" class="headerlink" title="添加pv卷对应目录,作为挂载点"></a>添加pv卷对应目录,作为挂载点</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#创建pv卷对应的目录</span><br><span class="line">mkdir -p &#x2F;nfs&#x2F;data&#x2F;pv001</span><br><span class="line"></span><br><span class="line">#配置exportrs</span><br><span class="line">vim &#x2F;etc&#x2F;exports</span><br><span class="line">&#x2F;nfs&#x2F;data *(rw,no_root_squash,sync)</span><br><span class="line">&#x2F;nfs&#x2F;data&#x2F;pv001 *(rw,no_root_squash,sync)</span><br><span class="line"></span><br><span class="line">#配置生效</span><br><span class="line">exportfs -r</span><br><span class="line">#重启rpcbind、nfs服务</span><br><span class="line">systemctl restart rpcbind &amp;&amp; systemctl restart nfs</span><br></pre></td></tr></table></figure>
 
-<h4 id="创建PV"><a href="#创建PV" class="headerlink" title="创建PV"></a>创建PV</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">`</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-pv</span><br><span class="line">  labels:</span><br><span class="line">    pv: nfs-pv</span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 1Gi</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  persistentVolumeReclaimPolicy: Recycle</span><br><span class="line">  storageClassName: nfs</span><br><span class="line">  nfs:</span><br><span class="line">    path: /nfs/data/pv</span><br><span class="line">    server: 10.7.150.112</span><br><span class="line">`</span><br></pre></td></tr></table></figure>
+<h4 id="创建PV"><a href="#创建PV" class="headerlink" title="创建PV"></a>创建PV</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#96;</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-pv</span><br><span class="line">  labels:</span><br><span class="line">    pv: nfs-pv</span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 1Gi</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  persistentVolumeReclaimPolicy: Recycle</span><br><span class="line">  storageClassName: nfs</span><br><span class="line">  nfs:</span><br><span class="line">    path: &#x2F;nfs&#x2F;data&#x2F;pv</span><br><span class="line">    server: 10.7.150.112</span><br><span class="line">&#96;</span><br></pre></td></tr></table></figure>
 <hr>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">`配置说明`：</span><br><span class="line">capacity 指定 PV 的容量为 1G。</span><br><span class="line">accessModes 指定访问模式为 ReadWriteOnce，支持的访问模式有：</span><br><span class="line">ReadWriteOnce – PV 能以 read-write 模式 mount 到单个节点。</span><br><span class="line">ReadOnlyMany – PV 能以 read-only 模式 mount 到多个节点。</span><br><span class="line">ReadWriteMany – PV 能以 read-write 模式 mount 到多个节点。</span><br><span class="line">persistentVolumeReclaimPolicy 指定当 PV 的回收策略为 Recycle，支持的策略有：</span><br><span class="line">Retain – 需要管理员手工回收。</span><br><span class="line">Recycle – 清除 PV 中的数据，效果相当于执行 rm -rf /thevolume/*。</span><br><span class="line">Delete – 删除 Storage Provider 上的对应存储资源，例如 AWS EBS、GCE PD、Azure</span><br><span class="line">Disk、OpenStack Cinder Volume 等。</span><br><span class="line">storageClassName 指定 PV 的 class 为 nfs。相当于为 PV 设置了一个分类，PVC 可以指定 class 申请相应 class 的 PV。</span><br><span class="line">指定 PV 在 NFS 服务器上对应的目录。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#96;配置说明&#96;：</span><br><span class="line">capacity 指定 PV 的容量为 1G。</span><br><span class="line">accessModes 指定访问模式为 ReadWriteOnce，支持的访问模式有：</span><br><span class="line">ReadWriteOnce – PV 能以 read-write 模式 mount 到单个节点。</span><br><span class="line">ReadOnlyMany – PV 能以 read-only 模式 mount 到多个节点。</span><br><span class="line">ReadWriteMany – PV 能以 read-write 模式 mount 到多个节点。</span><br><span class="line">persistentVolumeReclaimPolicy 指定当 PV 的回收策略为 Recycle，支持的策略有：</span><br><span class="line">Retain – 需要管理员手工回收。</span><br><span class="line">Recycle – 清除 PV 中的数据，效果相当于执行 rm -rf &#x2F;thevolume&#x2F;*。</span><br><span class="line">Delete – 删除 Storage Provider 上的对应存储资源，例如 AWS EBS、GCE PD、Azure</span><br><span class="line">Disk、OpenStack Cinder Volume 等。</span><br><span class="line">storageClassName 指定 PV 的 class 为 nfs。相当于为 PV 设置了一个分类，PVC 可以指定 class 申请相应 class 的 PV。</span><br><span class="line">指定 PV 在 NFS 服务器上对应的目录。</span><br></pre></td></tr></table></figure>
 <p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8ctzzzc76j30wm03kaaq.jpg" alt="create PV"></p>
 <blockquote>
 <p>STATUS 为 Available，表示 pv就绪，可以被 PVC 申请。</p>
@@ -1263,7 +1396,7 @@
 </blockquote>
 <hr>
 <p>接下来就可以在 Pod 中使用存储了，Pod 配置文件 pod.yaml</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">kind: Pod</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-pod001</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">    - name: myfrontend</span><br><span class="line">      image: nginx</span><br><span class="line">      volumeMounts:</span><br><span class="line">      - mountPath: &quot;/var/www/html&quot;</span><br><span class="line">        name: nfs-pv</span><br><span class="line">  volumes:</span><br><span class="line">    - name: nfs-pv</span><br><span class="line">      persistentVolumeClaim:</span><br><span class="line">        claimName: nfs-pvc</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">kind: Pod</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-pod001</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">    - name: myfrontend</span><br><span class="line">      image: nginx</span><br><span class="line">      volumeMounts:</span><br><span class="line">      - mountPath: &quot;&#x2F;var&#x2F;www&#x2F;html&quot;</span><br><span class="line">        name: nfs-pv</span><br><span class="line">  volumes:</span><br><span class="line">    - name: nfs-pv</span><br><span class="line">      persistentVolumeClaim:</span><br><span class="line">        claimName: nfs-pvc</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>与使用普通 Volume 的格式类似，在 volumes 中通过 persistentVolumeClaim 指定使用nfs-pvc 申请的 Volume</p>
 </blockquote>
@@ -1283,7 +1416,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color3">k8s,nfs</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">k8s,nfs</a>
         		</li>
       		
 		</ul>
@@ -1318,122 +1451,7 @@
     <div class="mod-side-operation">
         
         <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-hexo换电脑怎么继续写作" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/10/25/hexo%E6%8D%A2%E7%94%B5%E8%84%91%E6%80%8E%E4%B9%88%E7%BB%A7%E7%BB%AD%E5%86%99%E4%BD%9C/">hexo换电脑怎么继续写作</a>
-</h1>
-
-
-
-        
-        <a href="/2019/10/25/hexo%E6%8D%A2%E7%94%B5%E8%84%91%E6%80%8E%E4%B9%88%E7%BB%A7%E7%BB%AD%E5%86%99%E4%BD%9C/" class="archive-article-date">
-  	<time datetime="2019-10-24T16:00:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>惭愧 – 博客写了俩月才想到这个话题，换电脑了咋继续写博客。</p>
-<hr>
-<h3 id="首先说说我写博客用的东西："><a href="#首先说说我写博客用的东西：" class="headerlink" title="首先说说我写博客用的东西："></a>首先说说我写博客用的东西：</h3><blockquote>
-<ol>
-<li>博客使用hexo，使用3-hexo主题</li>
-<li>我把博客代码跟编译出来的静态页面分为两个仓库。写完以后分别提交。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8aut185bdj309d026dft.jpg" alt="git仓库"></li>
-</ol>
-</blockquote>
-<h3 id="正文来了"><a href="#正文来了" class="headerlink" title="正文来了"></a>正文来了</h3><blockquote>
-<ol>
-<li>走了的好多弯路，一开始博客的图片用的都是本地图片，第一是加载慢。并且换电脑以后 用hexo g &amp;&amp; hexo s  居然显示不了图片。</li>
-<li>然后图片就换了图床—(这里推荐一个mac下的图床工具ipic,免费 好用)利用的是新浪的图床  也不知道能用多久。。打算自己用oss搭建一个图床<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8avadnznpj306205z756.jpg" alt="图床软件"></li>
-</ol>
-</blockquote>
-<hr>
-<h3 id="真的正文"><a href="#真的正文" class="headerlink" title="真的正文"></a>真的正文</h3><blockquote>
-<ol>
-<li>安装必要软件<br>git  nodejs  </li>
-<li>github免密</li>
-<li>拷贝之前的电脑的以下文件(git clone也行 但是一般比较慢)<br>_config.yml  package.json   scaffolds/    source/    themes/</li>
-<li>在新的电脑上执行  npm install hexo-cli -g</li>
-<li>进入新电脑中想放博客代码的目录，把步骤三中拷贝的文件放入其中</li>
-<li>执行以下命令</li>
-</ol>
-</blockquote>
-<hr>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br><span class="line">npm install hexo-deployer-git --save  // 文章部署到 git 的模块</span><br><span class="line">(下面为选择安装)</span><br><span class="line">npm install hexo-generator-feed --save  // 建立 RSS 订阅</span><br><span class="line">npm install hexo-generator-sitemap --save // 建立站点地图</span><br></pre></td></tr></table></figure>
-
-<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>这时候使用 hexo s 基本可以看到你新添加的文章了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">部署发布文章</span><br><span class="line">hexo clean   // 清除缓存 网页正常情况下可以忽略此条命令</span><br><span class="line">hexo g       // 生成静态网页</span><br><span class="line">hexo d       // 开始部署</span><br></pre></td></tr></table></figure>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color5">hexo</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/杂项//" class="article-tag-list-link color3">杂项</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/10/25/hexo%E6%8D%A2%E7%94%B5%E8%84%91%E6%80%8E%E4%B9%88%E7%BB%A7%E7%BB%AD%E5%86%99%E4%BD%9C/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
                 <i class="icon-font icon-back"></i>
             </a>
             <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
@@ -1519,15 +1537,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     
     
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" target="_blank" rel="noopener" q-class="active:innerArchive">所有文章</a></li>
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
       
         
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" target="_blank" rel="noopener" q-class="active:friends">友链</a></li>
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
       
         
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" target="_blank" rel="noopener" q-class="active:aboutme">关于我</a></li>
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
       
         
     </ul>
@@ -1548,107 +1566,107 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">Csharp</a>
+                <a href="javascript:void(0)" class="js-tag color2">Csharp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">istio</a>
+                <a href="javascript:void(0)" class="js-tag color1">istio</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
+                <a href="javascript:void(0)" class="js-tag color4">mac</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
+                <a href="javascript:void(0)" class="js-tag color2">docker</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
+                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">hexo</a>
+                <a href="javascript:void(0)" class="js-tag color4">ubuntu优化</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">k8s, 中间件, mysql</a>
+                <a href="javascript:void(0)" class="js-tag color1">k8s, 中间件, mysql</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">k8s</a>
+                <a href="javascript:void(0)" class="js-tag color4">k8s</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">kvm</a>
+                <a href="javascript:void(0)" class="js-tag color4">kvm</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">nginx</a>
+                <a href="javascript:void(0)" class="js-tag color1">nginx</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂谈</a>
+                <a href="javascript:void(0)" class="js-tag color3">杂谈</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
+                <a href="javascript:void(0)" class="js-tag color2">golang</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
+                <a href="javascript:void(0)" class="js-tag color4">podman,docker</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">podman,docker</a>
+                <a href="javascript:void(0)" class="js-tag color3">k8s,nfs</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">prometheus</a>
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
+                <a href="javascript:void(0)" class="js-tag color3">杂项</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" class="js-tag color3">方案</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
+                <a href="javascript:void(0)" class="js-tag color3">系统</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
+                <a href="javascript:void(0)" class="js-tag color2">zero_w</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">zero_w</a>
+                <a href="javascript:void(0)" class="js-tag color1">prometheus</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">负载</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color3">负载</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">C#</a>
+                <a href="javascript:void(0)" class="js-tag color3">C#</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
+                <a href="javascript:void(0)" class="js-tag color5">kubernetes,k8s</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
+                <a href="javascript:void(0)" class="js-tag color4">CKA</a>
               </li>
             
             <div class="clearfix"></div>
@@ -1789,5 +1807,5 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
 
 </div>
   </div>
-</body>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
 </html>

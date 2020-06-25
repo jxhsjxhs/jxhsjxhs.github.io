@@ -11,17 +11,19 @@
   <meta name="description" content="Cobra既是用于创建强大的现代CLI应用程序的库，也是用于生成应用程序和命令文件的程序。 有多强呢,我列举一下优秀的开源项目中用到Cobra的 1234567891011121314151617KubernetesHugorktetcdMoby (former Docker)Docker (distribution)OpenShiftDelveGopherJSCockroachDBBlevePr">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用 Cobra 构建命令行工具">
-<meta property="og:url" content="http:&#x2F;&#x2F;www.jxhs.me&#x2F;2020&#x2F;02&#x2F;21&#x2F;%E4%BD%BF%E7%94%A8-Cobra-%E6%9E%84%E5%BB%BA%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7&#x2F;index.html">
+<meta property="og:url" content="http://www.jxhs.me/2020/02/21/%E4%BD%BF%E7%94%A8-Cobra-%E6%9E%84%E5%BB%BA%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7/index.html">
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
 <meta property="og:description" content="Cobra既是用于创建强大的现代CLI应用程序的库，也是用于生成应用程序和命令文件的程序。 有多强呢,我列举一下优秀的开源项目中用到Cobra的 1234567891011121314151617KubernetesHugorktetcdMoby (former Docker)Docker (distribution)OpenShiftDelveGopherJSCockroachDBBlevePr">
-<meta property="og:locale" content="en">
-<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;0082zybpgy1gc4duaem93j319c0qa13s.jpg">
-<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;0082zybpgy1gc4f8adl5mj30mo03et8p.jpg">
-<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;0082zybpgy1gc4fdq8cxxj30j60ekq3d.jpg">
-<meta property="og:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;0082zybpgy1gc4fi34sm4j310e0koq4y.jpg">
-<meta property="og:updated_time" content="2020-02-21T15:50:07.848Z">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/0082zybpgy1gc4duaem93j319c0qa13s.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/0082zybpgy1gc4f8adl5mj30mo03et8p.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/0082zybpgy1gc4fdq8cxxj30j60ekq3d.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/0082zybpgy1gc4fi34sm4j310e0koq4y.jpg">
+<meta property="article:published_time" content="2020-02-21T13:11:57.000Z">
+<meta property="article:modified_time" content="2020-02-21T15:50:07.848Z">
+<meta property="article:author" content="jame_xhs">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;tva1.sinaimg.cn&#x2F;large&#x2F;0082zybpgy1gc4duaem93j319c0qa13s.jpg">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/0082zybpgy1gc4duaem93j319c0qa13s.jpg">
   
     <link rel="alternative" href="/atom.xml" title="jame_xhs&#39;s blog" type="application/atom+xml">
   
@@ -39,7 +41,7 @@
 
   
 
-</head>
+<meta name="generator" content="Hexo 4.2.1"></head>
 
 <body>
   <div id="container" q-class="show:isCtnShow">
@@ -206,9 +208,9 @@
       
         <p>Cobra既是用于创建强大的现代CLI应用程序的库，也是用于生成应用程序和命令文件的程序。</p>
 <p>有多强呢,我列举一下优秀的开源项目中用到Cobra的</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Kubernetes</span><br><span class="line">Hugo</span><br><span class="line">rkt</span><br><span class="line">etcd</span><br><span class="line">Moby (former Docker)</span><br><span class="line">Docker (distribution)</span><br><span class="line">OpenShift</span><br><span class="line">Delve</span><br><span class="line">GopherJS</span><br><span class="line">CockroachDB</span><br><span class="line">Bleve</span><br><span class="line">ProjectAtomic (enterprise)</span><br><span class="line">GiantSwarm&apos;s swarm</span><br><span class="line">Nanobox/Nanopack</span><br><span class="line">rclone</span><br><span class="line">nehm</span><br><span class="line">Pouch</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Kubernetes</span><br><span class="line">Hugo</span><br><span class="line">rkt</span><br><span class="line">etcd</span><br><span class="line">Moby (former Docker)</span><br><span class="line">Docker (distribution)</span><br><span class="line">OpenShift</span><br><span class="line">Delve</span><br><span class="line">GopherJS</span><br><span class="line">CockroachDB</span><br><span class="line">Bleve</span><br><span class="line">ProjectAtomic (enterprise)</span><br><span class="line">GiantSwarm&#39;s swarm</span><br><span class="line">Nanobox&#x2F;Nanopack</span><br><span class="line">rclone</span><br><span class="line">nehm</span><br><span class="line">Pouch</span><br></pre></td></tr></table></figure>
 <h3 id="概念介绍"><a href="#概念介绍" class="headerlink" title="概念介绍"></a>概念介绍</h3><p>Cobra 结构由三部分组成：命令 (commands)、参数 (arguments)、标志 (flags)。基本模型如下：<br><code>APPNAME VERB NOUN --ADJECTIVE</code> 或者 <code>APPNAME COMMAND ARG --FLAG</code><br>如果不是太理解的话，没关系，我们先看个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hugo server --port=1313</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hugo server --port&#x3D;1313</span><br></pre></td></tr></table></figure>
 <p>hugo：根命令<br>server：子命令<br>–port：标志</p>
 <p>再看个带有参数的例子：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone URL --bare</span><br></pre></td></tr></table></figure>
@@ -221,16 +223,16 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">简易的子命令行模式，如 app server， app fetch 等等</span><br><span class="line">完全兼容 posix 命令行模式</span><br><span class="line">嵌套子命令 subcommand</span><br><span class="line">支持全局，局部，串联 flags</span><br><span class="line">使用 cobra 很容易的生成应用程序和命令，使用 cobra create appname 和 cobra add cmdname</span><br><span class="line">如果命令输入错误，将提供智能建议，如 app srver，将提示 srver 没有，是不是 app server</span><br><span class="line">自动生成 commands 和 flags 的帮助信息</span><br><span class="line">自动生成详细的 help 信息，如 app help</span><br><span class="line">自动识别帮助 flag -h，--help</span><br><span class="line">自动生成应用程序在 bash 下命令自动完成功能</span><br><span class="line">自动生成应用程序的 man 手册</span><br><span class="line">命令行别名</span><br><span class="line">自定义 help 和 usage 信息</span><br><span class="line">可选的与 viper apps 的紧密集成</span><br></pre></td></tr></table></figure>
 <p>上面的描述稍微有点抽象，下面结合例子讲下cobra如何做的。</p>
 <h3 id="Cobra的安装"><a href="#Cobra的安装" class="headerlink" title="Cobra的安装"></a>Cobra的安装</h3><p>首先，通过go get下载cobra</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">go get -v github.com/spf13/cobra/cobra</span><br><span class="line">go install</span><br><span class="line">完成安装 (GOROOT/bin/记得加到环境变量)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">go get -v github.com&#x2F;spf13&#x2F;cobra&#x2F;cobra</span><br><span class="line">go install</span><br><span class="line">完成安装 (GOROOT&#x2F;bin&#x2F;记得加到环境变量)</span><br></pre></td></tr></table></figure>
 <h3 id="初始化项目"><a href="#初始化项目" class="headerlink" title="初始化项目"></a>初始化项目</h3><p>在命令行下运行下cobra命令<br><img src="https://tva1.sinaimg.cn/large/0082zybpgy1gc4duaem93j319c0qa13s.jpg" alt=""><br>如图的话 就是安装OK了。接下来就可以使用cobra了。<br>假设我们现在要开发一个基于CLI的命令程序，名字的。如下dsb(大傻逼)图操作：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">➜  src cobra init dsb --pkg-name=dsb</span><br><span class="line">Your Cobra applicaton is ready at</span><br><span class="line">/Users/jame_xhs/go/src/dsb</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">➜  src cobra init dsb --pkg-name&#x3D;dsb</span><br><span class="line">Your Cobra applicaton is ready at</span><br><span class="line">&#x2F;Users&#x2F;jame_xhs&#x2F;go&#x2F;src&#x2F;dsb</span><br></pre></td></tr></table></figure>
 <p>当前目录结构为</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dsb</span><br><span class="line">├── cmd</span><br><span class="line">│   └── root.go</span><br><span class="line">├── LICENSE</span><br><span class="line">└── main.go</span><br></pre></td></tr></table></figure>
 <p>可以看到初始化后的项目非常简单，主要是 main.go 和 root.go 文件。在编写代码之前，我们先分析下目前代码的逻辑。</p>
 <h3 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h3><p>先查看下入口文件 <code>main.go</code>。代码逻辑很简单，就是调用 cmd 包里 Execute()函数:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import &quot;demo/cmd&quot;</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">  cmd.Execute()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import &quot;demo&#x2F;cmd&quot;</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">  cmd.Execute()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>再看下 <code>root.go</code> 中 rootCmd 的字段：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line">var rootCmd = &amp;cobra.Command&#123;</span><br><span class="line">  Use:   &quot;demo&quot;,</span><br><span class="line">  Short: &quot;A brief description of your application&quot;,</span><br><span class="line">  Long: `A longer description that spans multiple lines and likely contains</span><br><span class="line">examples and usage of using your application. For example:</span><br><span class="line"></span><br><span class="line">Cobra is a CLI library for Go that empowers applications.</span><br><span class="line">This application is a tool to generate the needed files</span><br><span class="line">to quickly create a Cobra application.`,</span><br><span class="line">  // Uncomment the following line if your bare application</span><br><span class="line">  // has an action associated with it:</span><br><span class="line">  //    Run: func(cmd *cobra.Command, args []string) &#123; &#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// Execute adds all child commands to the root command and sets flags appropriately.</span><br><span class="line">// This is called by main.main(). It only needs to happen once to the rootCmd.</span><br><span class="line">func Execute() &#123;</span><br><span class="line">  if err := rootCmd.Execute(); err != nil &#123;</span><br><span class="line">    fmt.Println(err)</span><br><span class="line">    os.Exit(1)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line">var rootCmd &#x3D; &amp;cobra.Command&#123;</span><br><span class="line">  Use:   &quot;demo&quot;,</span><br><span class="line">  Short: &quot;A brief description of your application&quot;,</span><br><span class="line">  Long: &#96;A longer description that spans multiple lines and likely contains</span><br><span class="line">examples and usage of using your application. For example:</span><br><span class="line"></span><br><span class="line">Cobra is a CLI library for Go that empowers applications.</span><br><span class="line">This application is a tool to generate the needed files</span><br><span class="line">to quickly create a Cobra application.&#96;,</span><br><span class="line">  &#x2F;&#x2F; Uncomment the following line if your bare application</span><br><span class="line">  &#x2F;&#x2F; has an action associated with it:</span><br><span class="line">  &#x2F;&#x2F;    Run: func(cmd *cobra.Command, args []string) &#123; &#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; Execute adds all child commands to the root command and sets flags appropriately.</span><br><span class="line">&#x2F;&#x2F; This is called by main.main(). It only needs to happen once to the rootCmd.</span><br><span class="line">func Execute() &#123;</span><br><span class="line">  if err :&#x3D; rootCmd.Execute(); err !&#x3D; nil &#123;</span><br><span class="line">    fmt.Println(err)</span><br><span class="line">    os.Exit(1)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 
 <p>简单说明：<br>Use：命令名<br>Short &amp; Long：帮助信息的文字内容<br>Run：运行命令的逻辑</p>
 <p>Command 结构体中的字段当然远不止这些，受限于篇幅，这里无法全部介绍。有兴趣的童鞋可以查阅下官方文档。</p>
@@ -242,21 +244,21 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line">func init() &#123;</span><br><span class="line">       rootCmd.AddCommand(createCmd)        </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>运行测试：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost demo]# go run main.go create</span><br><span class="line">create called</span><br><span class="line"></span><br><span class="line"># 未知命令</span><br><span class="line">[root@localhost demo]# go run main.go crea</span><br><span class="line">Error: unknown command &quot;crea&quot; for &quot;demo&quot;</span><br><span class="line"></span><br><span class="line">Did you mean this?</span><br><span class="line">	create</span><br><span class="line"></span><br><span class="line">Run &apos;demo --help&apos; for usage.</span><br><span class="line">unknown command &quot;crea&quot; for &quot;demo&quot;</span><br><span class="line"></span><br><span class="line">Did you mean this?</span><br><span class="line">	create</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost demo]# go run main.go create</span><br><span class="line">create called</span><br><span class="line"></span><br><span class="line"># 未知命令</span><br><span class="line">[root@localhost demo]# go run main.go crea</span><br><span class="line">Error: unknown command &quot;crea&quot; for &quot;demo&quot;</span><br><span class="line"></span><br><span class="line">Did you mean this?</span><br><span class="line">	create</span><br><span class="line"></span><br><span class="line">Run &#39;demo --help&#39; for usage.</span><br><span class="line">unknown command &quot;crea&quot; for &quot;demo&quot;</span><br><span class="line"></span><br><span class="line">Did you mean this?</span><br><span class="line">	create</span><br></pre></td></tr></table></figure>
 <p><img src="https://tva1.sinaimg.cn/large/0082zybpgy1gc4fdq8cxxj30j60ekq3d.jpg" alt=""></p>
 <h3 id="子命令嵌套"><a href="#子命令嵌套" class="headerlink" title="子命令嵌套"></a>子命令嵌套</h3><p>对于功能相对复杂的 CLI，通常会通过多级子命令，即：子命令嵌套的方式进行描述，那么该如何实现呢？</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dsb create rule</span><br></pre></td></tr></table></figure>
 
 <p>首先添加子命令 rule :</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost dsb]# cobra add rule</span><br><span class="line">rule created at /root/go/src/dsb</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost dsb]# cobra add rule</span><br><span class="line">rule created at &#x2F;root&#x2F;go&#x2F;src&#x2F;dsb</span><br></pre></td></tr></table></figure>
 
 <p>当前目录结构如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">dsb</span><br><span class="line">├── cmd</span><br><span class="line">│   ├── create.go</span><br><span class="line">│   ├── root.go</span><br><span class="line">│   └── rule.go</span><br><span class="line">├── LICENSE</span><br><span class="line">└── main.go</span><br></pre></td></tr></table></figure>
 
 <p>目前create 和 rule 是同级的，所以需要修改 rule.go 的 init() 来改变子命令间的层级关系</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line">func init() &#123;</span><br><span class="line">        // 修改子命令的层级关系</span><br><span class="line">        //rootCmd.AddCommand(ruleCmd)</span><br><span class="line">        createCmd.AddCommand(ruleCmd)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line">func init() &#123;</span><br><span class="line">        &#x2F;&#x2F; 修改子命令的层级关系</span><br><span class="line">        &#x2F;&#x2F;rootCmd.AddCommand(ruleCmd)</span><br><span class="line">        createCmd.AddCommand(ruleCmd)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这样 rule 就属于create的子命令了。<br>虽然调整了命令的层级关系，但是目前运行 demo create 会打印 create called，我希望运行时可以打印帮助提示。所以我们继续完善下代码，修改 create.go：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line">var createCmd = &amp;cobra.Command&#123;</span><br><span class="line">        Use:   &quot;create&quot;,</span><br><span class="line">        Short: &quot;create&quot;,</span><br><span class="line">        Long: &quot;Create Command.&quot;,</span><br><span class="line">        Run: func(cmd *cobra.Command, args []string) &#123;</span><br><span class="line">                // 如果 create 命令后没有参数，则提示帮助信息</span><br><span class="line">                if len(args) == 0 &#123;</span><br><span class="line">                  cmd.Help()</span><br><span class="line">                  return</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line">var createCmd &#x3D; &amp;cobra.Command&#123;</span><br><span class="line">        Use:   &quot;create&quot;,</span><br><span class="line">        Short: &quot;create&quot;,</span><br><span class="line">        Long: &quot;Create Command.&quot;,</span><br><span class="line">        Run: func(cmd *cobra.Command, args []string) &#123;</span><br><span class="line">                &#x2F;&#x2F; 如果 create 命令后没有参数，则提示帮助信息</span><br><span class="line">                if len(args) &#x3D;&#x3D; 0 &#123;</span><br><span class="line">                  cmd.Help()</span><br><span class="line">                  return</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 
 <p>运行测试：</p>
 <p>直接运行 create，打印帮助提示：<br><img src="https://tva1.sinaimg.cn/large/0082zybpgy1gc4fi34sm4j310e0koq4y.jpg" alt=""></p>
@@ -271,7 +273,7 @@
 <p>NoArgs：如果有任何参数，命令行将会报错<br>ArbitraryArgs： 命令行将会接收任何参数<br>OnlyValidArgs： 如果有如何参数不属于 Command 的 ValidArgs 字段，命令行将会报错<br>MinimumNArgs(int)： 如果参数个数少于 N 个，命令行将会报错<br>MaximumNArgs(int)： 如果参数个数多于 N 个，命令行将会报错<br>ExactArgs(int)： 如果参数个数不等于 N 个，命令行将会报错<br>RangeArgs(min, max)： 如果参数个数不在 min 和 max 之间, 命令行将会报错</p>
 </blockquote>
 <p>由于需求里要求参数有且仅有一个，想想应该用哪个内置验证方法呢？ ExactArgs(int)。<br>改写下 <code>rule.go</code>：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line">var ruleCmd = &amp;cobra.Command&#123;</span><br><span class="line">        Use:   &quot;rule&quot;,</span><br><span class="line">        Short: &quot;rule&quot;,</span><br><span class="line">        Long: &quot;Rule Command.&quot;,</span><br><span class="line">        </span><br><span class="line">        Args: cobra.ExactArgs(1),</span><br><span class="line">        Run: func(cmd *cobra.Command, args []string) &#123;           </span><br><span class="line">          fmt.Printf(&quot;Create rule %s success.\n&quot;, args[0])</span><br><span class="line">        &#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line">var ruleCmd &#x3D; &amp;cobra.Command&#123;</span><br><span class="line">        Use:   &quot;rule&quot;,</span><br><span class="line">        Short: &quot;rule&quot;,</span><br><span class="line">        Long: &quot;Rule Command.&quot;,</span><br><span class="line">        </span><br><span class="line">        Args: cobra.ExactArgs(1),</span><br><span class="line">        Run: func(cmd *cobra.Command, args []string) &#123;           </span><br><span class="line">          fmt.Printf(&quot;Create rule %s success.\n&quot;, args[0])</span><br><span class="line">        &#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 
 <p>运行测试：</p>
 <p>不输入参数：</p>
@@ -291,33 +293,33 @@
 <p>持久标志：指所有的 commands 都可以使用该标志。比如：–verbose ，–namespace<br>本地标志：指特定的 commands 才可以使用该标志。</p>
 </blockquote>
 <p>这个标志的作用是修饰和描述 rule的名字，所以选用本地标志。修改 rule.go：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">package cmd</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">        &quot;fmt&quot;        </span><br><span class="line">        &quot;github.com/spf13/cobra&quot;</span><br><span class="line">)       </span><br><span class="line"></span><br><span class="line">// 添加变量 name</span><br><span class="line">var name string</span><br><span class="line"></span><br><span class="line">var ruleCmd = &amp;cobra.Command&#123;</span><br><span class="line">        Use:   &quot;rule&quot;,</span><br><span class="line">        Short: &quot;rule&quot;,</span><br><span class="line">        Long: &quot;Rule Command.&quot;,</span><br><span class="line">        Run: func(cmd *cobra.Command, args []string) &#123;</span><br><span class="line">          // 如果没有输入 name</span><br><span class="line">          if len(name) == 0 &#123;</span><br><span class="line">            cmd.Help()</span><br><span class="line">            return</span><br><span class="line">          &#125;     </span><br><span class="line">          fmt.Printf(&quot;Create rule %s success.\n&quot;, name)</span><br><span class="line">        &#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func init() &#123;</span><br><span class="line">        createCmd.AddCommand(ruleCmd)</span><br><span class="line">        // 添加本地标志</span><br><span class="line">        ruleCmd.Flags().StringVarP(&amp;name, &quot;name&quot;, &quot;n&quot;, &quot;&quot;, &quot;rule name&quot;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">package cmd</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">        &quot;fmt&quot;        </span><br><span class="line">        &quot;github.com&#x2F;spf13&#x2F;cobra&quot;</span><br><span class="line">)       </span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 添加变量 name</span><br><span class="line">var name string</span><br><span class="line"></span><br><span class="line">var ruleCmd &#x3D; &amp;cobra.Command&#123;</span><br><span class="line">        Use:   &quot;rule&quot;,</span><br><span class="line">        Short: &quot;rule&quot;,</span><br><span class="line">        Long: &quot;Rule Command.&quot;,</span><br><span class="line">        Run: func(cmd *cobra.Command, args []string) &#123;</span><br><span class="line">          &#x2F;&#x2F; 如果没有输入 name</span><br><span class="line">          if len(name) &#x3D;&#x3D; 0 &#123;</span><br><span class="line">            cmd.Help()</span><br><span class="line">            return</span><br><span class="line">          &#125;     </span><br><span class="line">          fmt.Printf(&quot;Create rule %s success.\n&quot;, name)</span><br><span class="line">        &#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func init() &#123;</span><br><span class="line">        createCmd.AddCommand(ruleCmd)</span><br><span class="line">        &#x2F;&#x2F; 添加本地标志</span><br><span class="line">        ruleCmd.Flags().StringVarP(&amp;name, &quot;name&quot;, &quot;n&quot;, &quot;&quot;, &quot;rule name&quot;)</span><br></pre></td></tr></table></figure>
 <p>说明：<code>StringVarP</code> 用来接收类型为字符串变量的标志。相较<code>StringVar</code>， <code>StringVarP</code> 支持标志短写。以我们的 CLI 为例：在指定标志时可以用 <code>--name</code>，也可以使用短写 <code>-n</code>。</p>
 <p>运行测试：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 这几种写法都可以执行</span><br><span class="line">[root@localhost dsb]# go run main.go create rule -n foo</span><br><span class="line">Create rule foo success.</span><br><span class="line">[root@localhost dsb]# go run main.go create rule --name foo</span><br><span class="line">Create rule foo success.</span><br><span class="line">[root@localhost dsb]# go run main.go create -n foo rule</span><br><span class="line">Create rule foo success.</span><br></pre></td></tr></table></figure>
 
 <h3 id="读取配置"><a href="#读取配置" class="headerlink" title="读取配置"></a>读取配置</h3><p>需求：要求 –name 标志存在默认值，且该值是可配置的。<br>如果只需要标志提供默认值，我们只需要修改 StringVarP 的 value 参数就可以实现。但是这个需求关键在于标志是可配置的，所以需要借助配置文件。</p>
 <p>很多情况下，CLI 是需要读取配置信息的，比如 kubectl 的~/.kube/config。在帮助提示里可以看到默认的配置文件为 $HOME/.demo.yaml：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Global Flags:</span><br><span class="line">      --config string   config file (default is $HOME/.demo.yaml)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Global Flags:</span><br><span class="line">      --config string   config file (default is $HOME&#x2F;.demo.yaml)</span><br></pre></td></tr></table></figure>
 
 <p>​配置库我们可以使用 Viper。Viper 是 Cobra 集成的配置文件读取库，支持 <code>YAML</code>，<code>JSON</code>， <code>TOML</code>， <code>HCL</code> 等格式的配置。</p>
 <p>添加配置文件 $HOME/.demo.yaml，增加 name 字段：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vim $HOME/.demo.yaml </span><br><span class="line">name: xiangli</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vim $HOME&#x2F;.demo.yaml </span><br><span class="line">name: xiangli</span><br></pre></td></tr></table></figure>
 
 <p>修改 <code>rule.go</code>:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">package cmd</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">        &quot;fmt&quot;</span><br><span class="line">         // 导入 viper 包</span><br><span class="line">        &quot;github.com/spf13/viper&quot;</span><br><span class="line">        &quot;github.com/spf13/cobra&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">var name string</span><br><span class="line"></span><br><span class="line">var ruleCmd = &amp;cobra.Command&#123;</span><br><span class="line">        Use:   &quot;rule&quot;,</span><br><span class="line">        Short: &quot;rule&quot;,</span><br><span class="line">        Long: &quot;Rule Command.&quot;,</span><br><span class="line">        Run: func(cmd *cobra.Command, args []string) &#123;</span><br><span class="line">          // 不输入 --name 从配置文件中读取 name</span><br><span class="line">          if len(name) == 0 &#123;</span><br><span class="line">            name = viper.GetString(&quot;name&quot;)</span><br><span class="line">            // 配置文件中未读取到 name，打印帮助提示</span><br><span class="line">            if len(name) == 0 &#123;</span><br><span class="line">              cmd.Help()</span><br><span class="line">              return</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">          fmt.Printf(&quot;Create rule %s success.\n&quot;, name)</span><br><span class="line">        &#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func init() &#123;</span><br><span class="line">        createCmd.AddCommand(ruleCmd)</span><br><span class="line">        ruleCmd.Flags().StringVarP(&amp;name, &quot;name&quot;, &quot;n&quot;, &quot;&quot;, &quot;rule name&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">package cmd</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">        &quot;fmt&quot;</span><br><span class="line">         &#x2F;&#x2F; 导入 viper 包</span><br><span class="line">        &quot;github.com&#x2F;spf13&#x2F;viper&quot;</span><br><span class="line">        &quot;github.com&#x2F;spf13&#x2F;cobra&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">var name string</span><br><span class="line"></span><br><span class="line">var ruleCmd &#x3D; &amp;cobra.Command&#123;</span><br><span class="line">        Use:   &quot;rule&quot;,</span><br><span class="line">        Short: &quot;rule&quot;,</span><br><span class="line">        Long: &quot;Rule Command.&quot;,</span><br><span class="line">        Run: func(cmd *cobra.Command, args []string) &#123;</span><br><span class="line">          &#x2F;&#x2F; 不输入 --name 从配置文件中读取 name</span><br><span class="line">          if len(name) &#x3D;&#x3D; 0 &#123;</span><br><span class="line">            name &#x3D; viper.GetString(&quot;name&quot;)</span><br><span class="line">            &#x2F;&#x2F; 配置文件中未读取到 name，打印帮助提示</span><br><span class="line">            if len(name) &#x3D;&#x3D; 0 &#123;</span><br><span class="line">              cmd.Help()</span><br><span class="line">              return</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">          fmt.Printf(&quot;Create rule %s success.\n&quot;, name)</span><br><span class="line">        &#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func init() &#123;</span><br><span class="line">        createCmd.AddCommand(ruleCmd)</span><br><span class="line">        ruleCmd.Flags().StringVarP(&amp;name, &quot;name&quot;, &quot;n&quot;, &quot;&quot;, &quot;rule name&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>运行测试：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost dsb]# go run main.go create rule</span><br><span class="line">Using config file: /root/.demo.yaml</span><br><span class="line">Create rule xiangli success.</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost dsb]# go run main.go create rule</span><br><span class="line">Using config file: &#x2F;root&#x2F;.demo.yaml</span><br><span class="line">Create rule xiangli success.</span><br></pre></td></tr></table></figure>
 
 <p>如果 CLI 没有用到配置文件，可以在初始化项目的时候关闭 Viper 的选项以减少编译后文件的体积，如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cobra init demo --pkg-name=demo --viper=false</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cobra init demo --pkg-name&#x3D;demo --viper&#x3D;false</span><br></pre></td></tr></table></figure>
 
 <h3 id="编译运行"><a href="#编译运行" class="headerlink" title="编译运行"></a>编译运行</h3><p>​编译生成命令行工具</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost dsb]# go build -o dsb</span><br></pre></td></tr></table></figure>
 
 <p>运行测试：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost dsb]# ./dsb create rule</span><br><span class="line">Using config file: /root/.demo.yaml</span><br><span class="line">Create rule xiangli success.</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost dsb]# .&#x2F;dsb create rule</span><br><span class="line">Using config file: &#x2F;root&#x2F;.demo.yaml</span><br><span class="line">Create rule xiangli success.</span><br></pre></td></tr></table></figure>
 
 <p>学起来啊,同学们。</p>
 
@@ -337,35 +339,35 @@
 <div class="share-btn share-icons tooltip-left">
   <div class="tooltip tooltip-east">
     <span class="tooltip-item">
-      <a href="javascript:;" target="_blank" rel="noopener" class="share-sns share-outer">
+      <a href="javascript:;" class="share-sns share-outer">
         <i class="icon icon-share"></i>
       </a>
     </span>
     <span class="tooltip-content">
       <div class="share-wrap">
         <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="weibo">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
             <i class="icon icon-weibo"></i>
           </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" target="_blank" rel="noopener" data-type="weixin">
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
             <i class="icon icon-weixin"></i>
           </a>
-          <a class="qq share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="qq">
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
             <i class="icon icon-qq"></i>
           </a>
-          <a class="douban share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="douban">
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
             <i class="icon icon-douban"></i>
           </a>
-          <a class="qzone share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="qzone">
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
             <i class="icon icon-qzone"></i>
           </a>
-          <a class="facebook share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="facebook">
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
             <i class="icon icon-facebook"></i>
           </a>
-          <a class="twitter share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="twitter">
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
             <i class="icon icon-twitter"></i>
           </a>
-          <a class="google share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="google">
+          <a class="google share-sns" href="javascript:;" data-type="google">
             <i class="icon icon-google"></i>
           </a>
         </div>
@@ -375,7 +377,7 @@
 </div>
 
 <div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;" target="_blank" rel="noopener"><i class="icon icon-close"></i></a>
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
       <img src="//pan.baidu.com/share/qrcode?url=http://www.jxhs.me/2020/02/21/%E4%BD%BF%E7%94%A8-Cobra-%E6%9E%84%E5%BB%BA%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7/" alt="微信分享二维码">
@@ -414,7 +416,7 @@
     <div class="mod-side-operation">
         
         <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
                 <i class="icon-font icon-back"></i>
             </a>
             <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
@@ -502,15 +504,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     
     
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" target="_blank" rel="noopener" q-class="active:innerArchive">所有文章</a></li>
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
       
         
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" target="_blank" rel="noopener" q-class="active:friends">友链</a></li>
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
       
         
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" target="_blank" rel="noopener" q-class="active:aboutme">关于我</a></li>
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
       
         
     </ul>
@@ -531,107 +533,107 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">Csharp</a>
+                <a href="javascript:void(0)" class="js-tag color2">Csharp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">istio</a>
+                <a href="javascript:void(0)" class="js-tag color1">istio</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">mac</a>
+                <a href="javascript:void(0)" class="js-tag color4">mac</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">docker</a>
+                <a href="javascript:void(0)" class="js-tag color2">docker</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">ubuntu优化</a>
+                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">hexo</a>
+                <a href="javascript:void(0)" class="js-tag color4">ubuntu优化</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">k8s, 中间件, mysql</a>
+                <a href="javascript:void(0)" class="js-tag color1">k8s, 中间件, mysql</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">k8s</a>
+                <a href="javascript:void(0)" class="js-tag color4">k8s</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">kvm</a>
+                <a href="javascript:void(0)" class="js-tag color4">kvm</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">nginx</a>
+                <a href="javascript:void(0)" class="js-tag color1">nginx</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂谈</a>
+                <a href="javascript:void(0)" class="js-tag color3">杂谈</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">golang</a>
+                <a href="javascript:void(0)" class="js-tag color2">golang</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">k8s,nfs</a>
+                <a href="javascript:void(0)" class="js-tag color4">podman,docker</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">podman,docker</a>
+                <a href="javascript:void(0)" class="js-tag color3">k8s,nfs</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">prometheus</a>
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">杂项</a>
+                <a href="javascript:void(0)" class="js-tag color3">杂项</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" class="js-tag color3">方案</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">方案</a>
+                <a href="javascript:void(0)" class="js-tag color3">系统</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">系统</a>
+                <a href="javascript:void(0)" class="js-tag color2">zero_w</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color2">zero_w</a>
+                <a href="javascript:void(0)" class="js-tag color1">prometheus</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">负载</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color3">负载</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color3">C#</a>
+                <a href="javascript:void(0)" class="js-tag color3">C#</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">kubernetes,k8s</a>
+                <a href="javascript:void(0)" class="js-tag color5">kubernetes,k8s</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">CKA</a>
+                <a href="javascript:void(0)" class="js-tag color4">CKA</a>
               </li>
             
             <div class="clearfix"></div>
@@ -772,5 +774,5 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
 
 </div>
   </div>
-</body>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
 </html>

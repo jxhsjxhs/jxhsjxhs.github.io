@@ -6,13 +6,15 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.jxhs.me">
-  <title>Archives | jame_xhs&#39;s blog</title>
+  <title>JWT的原理和用法 | jame_xhs&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="jame_xhs&#39;s blog">
-<meta property="og:url" content="http://www.jxhs.me/archives/page/4/index.html">
+  <meta property="og:type" content="article">
+<meta property="og:title" content="JWT的原理和用法">
+<meta property="og:url" content="http://www.jxhs.me/2020/07/14/JWT%E7%9A%84%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%A8%E6%B3%95/index.html">
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-07-14T07:03:29.000Z">
+<meta property="article:modified_time" content="2020-07-14T07:03:29.624Z">
 <meta property="article:author" content="jame_xhs">
 <meta name="twitter:card" content="summary">
   
@@ -176,316 +178,134 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-JWT的原理和用法" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+
+<h1 class="article-title" itemprop="name">
+  JWT的原理和用法
+</h1>
+
+
+
+        
+        <a href="/2020/07/14/JWT%E7%9A%84%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%A8%E6%B3%95/" class="archive-article-date">
+  	<time datetime="2020-07-14T07:03:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-14</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2020" class="archive-year">2020</a>
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/02/25/%E9%80%9A%E8%BF%87Heketi%E4%B8%BAK8S%E9%9B%86%E7%BE%A4%E6%8F%90%E4%BE%9B%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A8/" class="archive-article-date">
-  	<time datetime="2020-02-25T10:04:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-02-25</time>
-</a>
-        </div>
-    	 
+      </div>
+    </span>
+  </div>
+</div>
 
-<h1 itemprop="name">
-  <a class="archive-article-title" href="/2020/02/25/%E9%80%9A%E8%BF%87Heketi%E4%B8%BAK8S%E9%9B%86%E7%BE%A4%E6%8F%90%E4%BE%9B%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A8/">通过Heketi为K8S集群提供持久化存储</a>
-</h1>
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.jxhs.me/2020/07/14/JWT%E7%9A%84%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%A8%E6%B3%95/" alt="微信分享二维码">
+    </div>
+</div>
 
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/02/24/%E4%BD%BF%E7%94%A8GoAccess%E5%88%86%E6%9E%90nginx%E6%97%A5%E5%BF%97/" class="archive-article-date">
-  	<time datetime="2020-02-24T09:21:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-02-24</time>
-</a>
-        </div>
-    	 
-
-<h1 itemprop="name">
-  <a class="archive-article-title" href="/2020/02/24/%E4%BD%BF%E7%94%A8GoAccess%E5%88%86%E6%9E%90nginx%E6%97%A5%E5%BF%97/">使用GoAccess分析nginx日志</a>
-</h1>
-
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/02/21/%E4%BD%BF%E7%94%A8-Cobra-%E6%9E%84%E5%BB%BA%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7/" class="archive-article-date">
-  	<time datetime="2020-02-21T13:11:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-02-21</time>
-</a>
-        </div>
-    	 
-
-<h1 itemprop="name">
-  <a class="archive-article-title" href="/2020/02/21/%E4%BD%BF%E7%94%A8-Cobra-%E6%9E%84%E5%BB%BA%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7/">使用 Cobra 构建命令行工具</a>
-</h1>
-
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/02/20/tcp-ip%E4%B9%8BTCP-Fast-open/" class="archive-article-date">
-  	<time datetime="2020-02-20T04:08:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-02-20</time>
-</a>
-        </div>
-    	 
-
-<h1 itemprop="name">
-  <a class="archive-article-title" href="/2020/02/20/tcp-ip%E4%B9%8BTCP-Fast-open/">tcp/ip之TCP Fast open</a>
-</h1>
-
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/02/17/%E7%BD%91%E7%BB%9C%E6%8A%93%E5%8C%85%E7%A5%9E%E5%99%A8-Tcpdump-%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" class="archive-article-date">
-  	<time datetime="2020-02-17T02:46:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-02-17</time>
-</a>
-        </div>
-    	 
-
-<h1 itemprop="name">
-  <a class="archive-article-title" href="/2020/02/17/%E7%BD%91%E7%BB%9C%E6%8A%93%E5%8C%85%E7%A5%9E%E5%99%A8-Tcpdump-%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">网络抓包神器 Tcpdump 使用指南</a>
-</h1>
-
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/02/05/%E4%BA%BA%E6%98%AF%E6%80%8E%E4%B9%88%E5%BA%9F%E6%8E%89%E7%9A%84/" class="archive-article-date">
-  	<time datetime="2020-02-05T05:56:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-02-05</time>
-</a>
-        </div>
-    	 
-
-<h1 itemprop="name">
-  <a class="archive-article-title" href="/2020/02/05/%E4%BA%BA%E6%98%AF%E6%80%8E%E4%B9%88%E5%BA%9F%E6%8E%89%E7%9A%84/">人是怎么废掉的</a>
-</h1>
-
-
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">杂谈</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/01/27/%E6%90%AD%E5%BB%BA%E6%88%91%E7%9A%84%E4%B8%96%E7%95%8C%E7%A7%81%E6%9C%8D/" class="archive-article-date">
-  	<time datetime="2020-01-27T12:02:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-27</time>
-</a>
-        </div>
-    	 
-
-<h1 itemprop="name">
-  <a class="archive-article-title" href="/2020/01/27/%E6%90%AD%E5%BB%BA%E6%88%91%E7%9A%84%E4%B8%96%E7%95%8C%E7%A7%81%E6%9C%8D/">搭建我的世界私服</a>
-</h1>
-
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/01/24/ubuntu-server%E8%BF%9EWiFi/" class="archive-article-date">
-  	<time datetime="2020-01-24T08:53:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-24</time>
-</a>
-        </div>
-    	 
-
-<h1 itemprop="name">
-  <a class="archive-article-title" href="/2020/01/24/ubuntu-server%E8%BF%9EWiFi/">ubuntu server连WiFi</a>
-</h1>
-
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/01/23/%E6%B0%B8%E7%94%9F%E7%9A%84%E4%BB%A3%E4%BB%B7/" class="archive-article-date">
-  	<time datetime="2020-01-23T00:37:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-23</time>
-</a>
-        </div>
-    	 
-
-<h1 itemprop="name">
-  <a class="archive-article-title" href="/2020/01/23/%E6%B0%B8%E7%94%9F%E7%9A%84%E4%BB%A3%E4%BB%B7/">永生的代价</a>
-</h1>
-
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/01/20/%E7%A9%B7%E9%80%BCK8S%E7%94%A8%E6%88%B7%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1LB%E6%94%AF%E6%8C%81/" class="archive-article-date">
-  	<time datetime="2020-01-20T08:38:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-20</time>
-</a>
-        </div>
-    	 
-
-<h1 itemprop="name">
-  <a class="archive-article-title" href="/2020/01/20/%E7%A9%B7%E9%80%BCK8S%E7%94%A8%E6%88%B7%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1LB%E6%94%AF%E6%8C%81/">穷逼K8S用户的负载均衡LB支持</a>
-</h1>
-
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2020/07/14/%E4%BD%BF%E7%94%A8Air%E5%AE%9E%E7%8E%B0gin%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%97%B6%E9%87%8D%E6%96%B0%E5%8A%A0%E8%BD%BD/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">使用Air实现gin框架实时重新加载</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/page/3/">&amp;laquo; Prev</a><a class="page-number" href="/archives/">1</a><a class="page-number" href="/archives/page/2/">2</a><a class="page-number" href="/archives/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/archives/page/5/">5</a><a class="page-number" href="/archives/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/archives/page/9/">9</a><a class="extend next" rel="next" href="/archives/page/5/">Next &amp;raquo;</a>
-    </nav>
+  
+
+  
+
   
 
 
@@ -511,8 +331,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

@@ -178,6 +178,118 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-容器内抓包定位网络问题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/06/02/%E5%AE%B9%E5%99%A8%E5%86%85%E6%8A%93%E5%8C%85%E5%AE%9A%E4%BD%8D%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98/">容器内抓包定位网络问题</a>
+</h1>
+
+
+
+        
+        <a href="/2020/06/02/%E5%AE%B9%E5%99%A8%E5%86%85%E6%8A%93%E5%8C%85%E5%AE%9A%E4%BD%8D%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98/" class="archive-article-date">
+  	<time datetime="2020-06-02T01:56:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在使用 kubernetes 跑应用的时候，可能会遇到一些网络问题，比较常见的是服务端无响应(超时)或回包内容不正常，如果没找出各种配置上有问题，这时我们需要确认数据包到底有没有最终被路由到容器里，或者报文到达容器的内容和出容器的内容符不符合预期，通过分析报文可以进一步缩小问题范围。那么如何在容器内抓包呢？本文提供实用的脚本一键进入容器网络命名空间(netns)，使用宿主机上的tcpdump进行抓包。</p>
+<h3 id="使用脚本一键进入-pod-netns-抓包"><a href="#使用脚本一键进入-pod-netns-抓包" class="headerlink" title="使用脚本一键进入 pod netns 抓包"></a>使用脚本一键进入 pod netns 抓包</h3><blockquote>
+<p>发现某个服务不通，最好将其副本数调为1，并找到这个副本 pod 所在节点和 pod 名称</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod -o wide</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>登录 pod 所在节点，将如下脚本粘贴到 shell (注册函数到当前登录的 shell，我们后面用)</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">function e() &#123;</span><br><span class="line">    set -eu</span><br><span class="line">    ns&#x3D;$&#123;2-&quot;default&quot;&#125;</span><br><span class="line">    pod&#x3D;&#96;kubectl -n $ns describe pod $1 | grep -A10 &quot;^Containers:&quot; | grep -Eo &#39;docker:&#x2F;&#x2F;.*$&#39; | head -n 1 | sed &#39;s&#x2F;docker:\&#x2F;\&#x2F;\(.*\)$&#x2F;\1&#x2F;&#39;&#96;</span><br><span class="line">    pid&#x3D;&#96;docker inspect -f &#123;&#123;.State.Pid&#125;&#125; $pod&#96;</span><br><span class="line">    echo &quot;entering pod netns for $ns&#x2F;$1&quot;</span><br><span class="line">    cmd&#x3D;&quot;nsenter -n --target $pid&quot;</span><br><span class="line">    echo $cmd</span><br><span class="line">    $cmd</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>一键进入 pod 所在的 netns，格式：<code>e POD_NAME NAMESPACE</code>，示例：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">e istio-galley-58c7c7c646-m6568 istio-system</span><br><span class="line">e proxy-5546768954-9rxg6 # 省略 NAMESPACE 默认为 default</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这时已经进入 pod 的 netns，可以执行宿主机上的 <code>ip a</code> 或 <code>ifconfig</code> 来查看容器的网卡，执行 <code>netstat -tunlp</code> 查看当前容器监听了哪些端口，再通过 tcpdump 抓包：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 -w test.pcap port 80</span><br></pre></td></tr></table></figure>
+<p><code>ctrl-c</code> 停止抓包，再用 <code>scp</code> 或 <code>sz</code> 将抓下来的包下载到本地使用 <code>wireshark</code> 分析，提供一些常用的 <code>wireshark</code> 过滤语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 使用 telnet 连上并发送一些测试文本，比如 &quot;lbtest&quot;，</span><br><span class="line"># 用下面语句可以看发送的测试报文有没有到容器</span><br><span class="line">tcp contains &quot;lbtest&quot;</span><br><span class="line"># 如果容器提供的是http服务，可以使用 curl 发送一些测试路径的请求，</span><br><span class="line"># 通过下面语句过滤 uri 看报文有没有都容器</span><br><span class="line">http.request.uri&#x3D;&#x3D;&quot;&#x2F;mytest&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="脚本原理"><a href="#脚本原理" class="headerlink" title="脚本原理"></a>脚本原理</h3><p>我们解释下步骤二中用到的脚本的原理</p>
+<blockquote>
+<p>查看指定 pod 运行的容器 ID</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe pod &lt;pod&gt; -n mservice</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>获得容器进程的 pid</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect -f &#123;&#123;.State.Pid&#125;&#125; &lt;container&gt;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>进入该容器的 network namespace</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nsenter -n --target &lt;PID&gt;</span><br></pre></td></tr></table></figure>
+
+<p>依赖宿主机的命名：<code>kubectl</code>, <code>docker</code>, <code>nsenter</code>, <code>grep</code>, <code>head</code>, <code>sed</code></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">网络</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/06/02/%E5%AE%B9%E5%99%A8%E5%86%85%E6%8A%93%E5%8C%85%E5%AE%9A%E4%BD%8D%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-drone使用手册" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1348,80 +1460,6 @@ deployment.apps/webapp<br>REVISION  CHANGE-CAUSE<br>2         <none><br>3       
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2020/04/26/Istio%E6%98%AF%E4%B8%AA%E5%95%A5/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Csharp-中Abstract和Virtual" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/04/24/Csharp-%E4%B8%ADAbstract%E5%92%8CVirtual/">Csharp 中Abstract和Virtual</a>
-</h1>
-
-
-
-        
-        <a href="/2020/04/24/Csharp-%E4%B8%ADAbstract%E5%92%8CVirtual/" class="archive-article-date">
-  	<time datetime="2020-04-24T08:07:09.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Csharp</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/04/24/Csharp-%E4%B8%ADAbstract%E5%92%8CVirtual/">展开全文 >></a>
         </p>
       
 

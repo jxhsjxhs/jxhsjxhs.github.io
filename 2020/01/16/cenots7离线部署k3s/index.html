@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1gb31onpelnj312k0faq6h.jpg">
 <meta property="og:image" content="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge3n7e4opzj31fr0u07wi.jpg">
 <meta property="article:published_time" content="2020-01-15T16:24:12.000Z">
-<meta property="article:modified_time" content="2020-04-23T05:43:24.453Z">
+<meta property="article:modified_time" content="2020-07-15T06:49:12.301Z">
 <meta property="article:author" content="jame_xhs">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1gb315kdc6qj31ag0heq89.jpg">
@@ -223,7 +223,7 @@
 <p>export INSTALL_K3S_SKIP_DOWNLOAD=true           //设置跳过下载k3s二进制文件<br>export INSTALL_K3S_BIN_DIR=/usr/bin       //设置k3s安装目录<br>./install.sh       //自动建立service服务及软连接  kubectl ctr  ….</p>
 <p>systemctl status k3s    //服务运行状态</p>
 <p>journalctl -u k3s -f     //根据日志可以看到服务启动不起来,要去国外拉images，你懂得，heihei</p>
-<h3 id="修正k3s服务改用docker"><a href="#修正k3s服务改用docker" class="headerlink" title="修正k3s服务改用docker"></a>修正k3s服务改用docker</h3><p>vi /etc/systemd/system/k3s.service<br>ExecStart=/usr/bin/k3s <br>server –docker\              //注意 两个杠，容器选择docker，替换默认的containerd</p>
+<h3 id="修正k3s服务改用docker"><a href="#修正k3s服务改用docker" class="headerlink" title="修正k3s服务改用docker"></a>修正k3s服务改用docker</h3><p>vim /etc/systemd/system/k3s.service<br>ExecStart=/usr/bin/k3s <br>server –docker\              //注意 两个杠，容器选择docker，替换默认的containerd</p>
 <p>systemctl daemon-reload    //刷新服务配置文件，重新定向到target<br>systemctl restart k3s</p>
 <p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb31og03w8j30t70dr0u4.jpg" alt=""><br>k3s的pod运行在docker之中<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb31onpelnj312k0faq6h.jpg" alt=""></p>
 <h3 id="安装错误记录"><a href="#安装错误记录" class="headerlink" title="安装错误记录"></a>安装错误记录</h3><p>在树莓派4装的ubuntu 18.04 LTS 系统中跑k3s发现如下错误<br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge3n7e4opzj31fr0u07wi.jpg" alt=""><br>关键报错信息：</p>

@@ -220,7 +220,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	&quot;auths&quot;: &#123;</span><br><span class="line">		&quot;myregistrydomain.com:5000&quot;: &#123;</span><br><span class="line">			&quot;auth&quot;: &quot;dGVzdHVzZXI6dGVzdHBhc3N3b3Jk&quot;,</span><br><span class="line">			&quot;email&quot;: &quot;stuf@ex.cm&quot;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
-<h5 id="其他命令"><a href="#其他命令" class="headerlink" title="其他命令"></a>其他命令</h5><p>skopeo 还有一些其他的实用命令，比如 sync 可以在两个位置之间同步镜像,inspect 可以查看镜像信息等.</p>
+<h5 id="其他命令"><a href="#其他命令" class="headerlink" title="其他命令"></a>其他命令</h5><p>skopeo 还有一些其他的实用命令，比如 sync 可以在两个位置之间同步镜像.</p>
 <h3 id="源码赏析"><a href="#源码赏析" class="headerlink" title="源码赏析"></a>源码赏析</h3><p>暂时先埋个坑 以后再写</p>
 
       
@@ -285,7 +285,48 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h3 id="啥是JWT"><a href="#啥是JWT" class="headerlink" title="啥是JWT"></a>啥是JWT</h3><p>JSON Web Token（缩写 JWT）是目前最流行的跨域认证解决方案。</p>
+<h3 id="为啥会有JWT"><a href="#为啥会有JWT" class="headerlink" title="为啥会有JWT"></a>为啥会有JWT</h3><p>互联网服务离不开用户认证。一般流程是下面这样。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1、用户向服务器发送用户名和密码。</span><br><span class="line"></span><br><span class="line">2、服务器验证通过后，在当前对话（session）里面保存相关数据，比如用户角色、登录时间等等。</span><br><span class="line"></span><br><span class="line">3、服务器向用户返回一个 session_id，写入用户的 Cookie。</span><br><span class="line"></span><br><span class="line">4、用户随后的每一次请求，都会通过 Cookie，将 session_id 传回服务器。</span><br><span class="line"></span><br><span class="line">5、服务器收到 session_id，找到前期保存的数据，由此得知用户的身份。</span><br></pre></td></tr></table></figure>
+
+<p>这种模式的问题在于，扩展性（scaling）不好。单机当然没有问题，如果是服务器集群，或者是跨域的服务导向架构，就要求 session 数据共享，每台服务器都能够读取 session。</p>
+<p>举例来说，A 网站和 B 网站是同一家公司的关联服务。现在要求，用户只要在其中一个网站登录，再访问另一个网站就会自动登录，请问怎么实现？</p>
+<p>一种解决方案是 session 数据持久化，写入数据库或别的持久层。各种服务收到请求后，都向持久层请求数据。这种方案的优点是架构清晰，缺点是工程量比较大。另外，持久层万一挂了，就会单点失败。</p>
+<p>另一种方案是服务器索性不保存 session 数据了，所有数据都保存在客户端，每次请求都发回服务器。JWT 就是这种方案的一个代表。</p>
+<h3 id="JWT-的原理"><a href="#JWT-的原理" class="headerlink" title="JWT 的原理"></a>JWT 的原理</h3><p>JWT 的原理是，服务器认证以后，生成一个 JSON 对象，发回给用户，就像下面这样。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;姓名&quot;: &quot;dashabi&quot;,</span><br><span class="line">  &quot;角色&quot;: &quot;管理员&quot;,</span><br><span class="line">  &quot;到期时间&quot;: &quot;2020年7月15日0点0分&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以后，用户与服务端通信的时候，都要发回这个 JSON 对象。服务器完全只靠这个对象认定用户身份。为了防止用户篡改数据，服务器在生成这个对象的时候，会加上签名（详见后文）。</p>
+<p>服务器就不保存任何 session 数据了，也就是说，服务器变成无状态了，从而比较容易实现扩展。</p>
+<h3 id="JWT-的数据结构"><a href="#JWT-的数据结构" class="headerlink" title="JWT 的数据结构"></a>JWT 的数据结构</h3><p>实际的 JWT 大概就像下面这样。<br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ggrmz6bwctj315e096n7h.jpg" alt=""></p>
+<p>它是一个很长的字符串，中间用点<code>（.）</code>分隔成三个部分。注意，JWT 内部是没有换行的，这里只是为了便于展示，将它写成了几行。</p>
+<p>JWT 的三个部分依次如下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Header（头部）</span><br><span class="line">Payload（负载）</span><br><span class="line">Signature（签名）</span><br></pre></td></tr></table></figure>
+<p>写成一行，就是下面的样子。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Header.Payload.Signature</span><br></pre></td></tr></table></figure>
+
+<h3 id="具体讲解JWT三部分"><a href="#具体讲解JWT三部分" class="headerlink" title="具体讲解JWT三部分"></a>具体讲解JWT三部分</h3><h4 id="Header"><a href="#Header" class="headerlink" title="Header"></a>Header</h4><p>Header 部分是一个 JSON 对象，描述 JWT 的元数据，通常是下面的样子。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;alg&quot;: &quot;HS256&quot;,</span><br><span class="line">  &quot;typ&quot;: &quot;JWT&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面代码中，alg属性表示签名的算法（algorithm），默认是 HMAC SHA256（写成 HS256）；typ属性表示这个令牌（token）的类型（type），JWT 令牌统一写为JWT。</p>
+<p>最后，将上面的 JSON 对象使用 Base64URL 算法（详见后文）转成字符串。</p>
+<h4 id="Payload"><a href="#Payload" class="headerlink" title="Payload"></a>Payload</h4><p>Payload 部分也是一个 JSON 对象，用来存放实际需要传递的数据。JWT 规定了7个官方字段，供选用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">iss (issuer)：签发人</span><br><span class="line">exp (expiration time)：过期时间</span><br><span class="line">sub (subject)：主题</span><br><span class="line">aud (audience)：受众</span><br><span class="line">nbf (Not Before)：生效时间</span><br><span class="line">iat (Issued At)：签发时间</span><br><span class="line">jti (JWT ID)：编号</span><br></pre></td></tr></table></figure>
+<p>除了官方字段，你还可以在这个部分定义私有字段，下面就是一个例子。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;sub&quot;: &quot;1234567890&quot;,</span><br><span class="line">  &quot;name&quot;: &quot;John Doe&quot;,</span><br><span class="line">  &quot;admin&quot;: true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意，JWT 默认是不加密的，任何人都可以读到，所以不要把秘密信息放在这个部分。</p>
+<p>这个 JSON 对象也要使用 Base64URL 算法转成字符串。</p>
+<h4 id="Signature"><a href="#Signature" class="headerlink" title="Signature"></a>Signature</h4><p>Signature 部分是对前两部分的签名，防止数据篡改。</p>
+<p>首先，需要指定一个密钥（secret）。这个密钥只有服务器才知道，不能泄露给用户。然后，使用 Header 里面指定的签名算法（默认是 HMAC SHA256），按照下面的公式产生签名。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HMACSHA256(</span><br><span class="line">  base64UrlEncode(header) + &quot;.&quot; +</span><br><span class="line">  base64UrlEncode(payload),</span><br><span class="line">  secret)</span><br></pre></td></tr></table></figure>
+<p>算出签名以后，把 Header、Payload、Signature 三个部分拼成一个字符串，每个部分之间用”点”（.）分隔，就可以返回给用户。</p>
+<h3 id="Base64URL"><a href="#Base64URL" class="headerlink" title="Base64URL"></a>Base64URL</h3><p>前面提到，Header 和 Payload 串型化的算法是 Base64URL。这个算法跟 Base64 算法基本类似，但有一些小的不同。</p>
+<p>JWT 作为一个令牌（token），有些场合可能会放到 URL（比如 api.example.com/?token=xxx）。Base64 有三个字符+、/和=，在 URL 里面有特殊含义，所以要被替换掉：=被省略、+替换成-，/替换成_ 。这就是 Base64URL 算法。</p>
+<h3 id="JWT-的使用方式"><a href="#JWT-的使用方式" class="headerlink" title="JWT 的使用方式"></a>JWT 的使用方式</h3><p>客户端收到服务器返回的 JWT，可以储存在 Cookie 里面，也可以储存在 localStorage。</p>
+<p>此后，客户端每次与服务器通信，都要带上这个 JWT。你可以把它放在 Cookie 里面自动发送，但是这样不能跨域，所以更好的做法是放在 HTTP 请求的头信息Authorization字段里面。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Authorization: Bearer &lt;token&gt;</span><br></pre></td></tr></table></figure>
+
+<p>另一种做法是，跨域的时候，JWT 就放在 POST 请求的数据体里面。</p>
+<h3 id="JWT-的几个特点"><a href="#JWT-的几个特点" class="headerlink" title="JWT 的几个特点"></a>JWT 的几个特点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">（1）JWT 默认是不加密，但也是可以加密的。生成原始 Token 以后，可以用密钥再加密一次。</span><br><span class="line"></span><br><span class="line">（2）JWT 不加密的情况下，不能将秘密数据写入 JWT。</span><br><span class="line"></span><br><span class="line">（3）JWT 不仅可以用于认证，也可以用于交换信息。有效使用 JWT，可以降低服务器查询数据库的次数。</span><br><span class="line"></span><br><span class="line">（4）JWT 的最大缺点是，由于服务器不保存 session 状态，因此无法在使用过程中废止某个 token，或者更改 token 的权限。也就是说，一旦 JWT 签发了，在到期之前就会始终有效，除非服务器部署额外的逻辑。</span><br><span class="line"></span><br><span class="line">（5）JWT 本身包含了认证信息，一旦泄露，任何人都可以获得该令牌的所有权限。为了减少盗用，JWT 的有效期应该设置得比较短。对于一些比较重要的权限，使用时应该再次对用户进行认证。</span><br><span class="line"></span><br><span class="line">（6）为了减少盗用，JWT 不应该使用 HTTP 协议明码传输，要使用 HTTPS 协议传输。</span><br></pre></td></tr></table></figure>
+
       
 
       
@@ -348,7 +389,33 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h3 id="为什么需要实时加载？"><a href="#为什么需要实时加载？" class="headerlink" title="为什么需要实时加载？"></a>为什么需要实时加载？</h3><p>之前使用Python编写Web项目的时候，常见的Flask或Django框架都是支持实时加载的，你修改了项目代码之后，程序能够自动重新加载并执行（live-reload），这在日常的开发阶段是十分方便的。</p>
+<p>在使用Go语言的gin框架在本地做开发调试的时候，经常需要在变更代码之后频繁的按下Ctrl+C停止程序并重新编译再执行，这样就不是很方便。</p>
+<h3 id="Air介绍"><a href="#Air介绍" class="headerlink" title="Air介绍"></a>Air介绍</h3><p>怎样才能在基于gin框架开发时实现实时加载功能呢？像这种烦恼肯定不会只是你一个人的烦恼，所以我报着肯定有现成轮子的心态开始了全网大搜索。果不其然就在Github上找到了一个工具：<a href="https://github.com/cosmtrek/air" target="_blank" rel="noopener">Air</a>。它支持以下特性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">彩色日志输出</span><br><span class="line">自定义构建或二进制命令</span><br><span class="line">支持忽略子目录</span><br><span class="line">启动后支持监听新目录</span><br><span class="line">更好的构建过程</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装air"><a href="#安装air" class="headerlink" title="安装air"></a>安装air</h3><p>Go</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get -u github.com&#x2F;cosmtrek&#x2F;air</span><br></pre></td></tr></table></figure>
+<p>MacOS</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fLo air https:&#x2F;&#x2F;git.io&#x2F;darwin_air</span><br></pre></td></tr></table></figure>
+<p>Linux</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fLo air https:&#x2F;&#x2F;git.io&#x2F;linux_air</span><br></pre></td></tr></table></figure>
+<p>Windows</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fLo air.exe https:&#x2F;&#x2F;git.io&#x2F;windows_air</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用Air"><a href="#使用Air" class="headerlink" title="使用Air"></a>使用Air</h3><p>为了敲命令时更简单更方便，你应该把alias air=’~/.air’加到你的.bashrc或.zshrc中。</p>
+<p>首先进入你的项目目录：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;path&#x2F;to&#x2F;your_project</span><br></pre></td></tr></table></figure>
+<p>最简单的用法就是直接执行下面的命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 首先在当前目录下查找 &#96;.air.conf&#96;配置文件，如果找不到就使用默认的</span><br><span class="line">air -c .air.conf</span><br></pre></td></tr></table></figure>
+<p>推荐的使用方法是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 1. 在当前目录创建一个新的配置文件.air.conf</span><br><span class="line">touch .air.conf</span><br><span class="line"></span><br><span class="line"># 2. 复制 &#96;air.conf.example&#96; 中的内容到这个文件，然后根据你的需要去修改它</span><br><span class="line"></span><br><span class="line"># 3. 使用你的配置运行 air, 如果文件名是 &#96;.air.conf&#96;，只需要执行 &#96;air&#96;。</span><br><span class="line">air</span><br></pre></td></tr></table></figure>
+
+<h4 id="air-example-conf示例"><a href="#air-example-conf示例" class="headerlink" title="air_example.conf示例"></a>air_example.conf示例</h4><p>完整的<code>air_example.conf</code>示例配置如下，可以根据自己的需要修改。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"># [Air](https:&#x2F;&#x2F;github.com&#x2F;cosmtrek&#x2F;air) TOML 格式的配置文件</span><br><span class="line"></span><br><span class="line"># 工作目录</span><br><span class="line"># 使用 . 或绝对路径，请注意 &#96;tmp_dir&#96; 目录必须在 &#96;root&#96; 目录下</span><br><span class="line">root &#x3D; &quot;.&quot;</span><br><span class="line">tmp_dir &#x3D; &quot;tmp&quot;</span><br><span class="line"></span><br><span class="line">[build]</span><br><span class="line"># 只需要写你平常编译使用的shell命令。你也可以使用 &#96;make&#96;</span><br><span class="line">cmd &#x3D; &quot;go build -o .&#x2F;tmp&#x2F;main .&quot;</span><br><span class="line"># 由&#96;cmd&#96;命令得到的二进制文件名</span><br><span class="line">bin &#x3D; &quot;tmp&#x2F;main&quot;</span><br><span class="line"># 自定义的二进制，可以添加额外的编译标识例如添加 GIN_MODE&#x3D;release</span><br><span class="line">full_bin &#x3D; &quot;APP_ENV&#x3D;dev APP_USER&#x3D;air .&#x2F;tmp&#x2F;main&quot;</span><br><span class="line"># 监听以下文件扩展名的文件.</span><br><span class="line">include_ext &#x3D; [&quot;go&quot;, &quot;tpl&quot;, &quot;tmpl&quot;, &quot;html&quot;]</span><br><span class="line"># 忽略这些文件扩展名或目录</span><br><span class="line">exclude_dir &#x3D; [&quot;assets&quot;, &quot;tmp&quot;, &quot;vendor&quot;, &quot;frontend&#x2F;node_modules&quot;]</span><br><span class="line"># 监听以下指定目录的文件</span><br><span class="line">include_dir &#x3D; []</span><br><span class="line"># 排除以下文件</span><br><span class="line">exclude_file &#x3D; []</span><br><span class="line"># 如果文件更改过于频繁，则没有必要在每次更改时都触发构建。可以设置触发构建的延迟时间</span><br><span class="line">delay &#x3D; 1000 # ms</span><br><span class="line"># 发生构建错误时，停止运行旧的二进制文件。</span><br><span class="line">stop_on_error &#x3D; true</span><br><span class="line"># air的日志文件名，该日志文件放置在你的&#96;tmp_dir&#96;中</span><br><span class="line">log &#x3D; &quot;air_errors.log&quot;</span><br><span class="line"></span><br><span class="line">[log]</span><br><span class="line"># 显示日志时间</span><br><span class="line">time &#x3D; true</span><br><span class="line"></span><br><span class="line">[color]</span><br><span class="line"># 自定义每个部分显示的颜色。如果找不到颜色，使用原始的应用程序日志。</span><br><span class="line">main &#x3D; &quot;magenta&quot;</span><br><span class="line">watcher &#x3D; &quot;cyan&quot;</span><br><span class="line">build &#x3D; &quot;yellow&quot;</span><br><span class="line">runner &#x3D; &quot;green&quot;</span><br><span class="line"></span><br><span class="line">[misc]</span><br><span class="line"># 退出时删除tmp目录</span><br><span class="line">clean_on_exit &#x3D; true</span><br></pre></td></tr></table></figure>
+
+<h3 id="效果图"><a href="#效果图" class="headerlink" title="效果图"></a>效果图</h3><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ggrnaui0m5g30xc0k042d.gif" alt=""></p>
+
       
 
       

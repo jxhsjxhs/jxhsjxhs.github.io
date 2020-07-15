@@ -178,6 +178,103 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-穷逼K8S用户的负载均衡LB支持" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/01/20/%E7%A9%B7%E9%80%BCK8S%E7%94%A8%E6%88%B7%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1LB%E6%94%AF%E6%8C%81/">穷逼K8S用户的负载均衡LB支持</a>
+</h1>
+
+
+
+        
+        <a href="/2020/01/20/%E7%A9%B7%E9%80%BCK8S%E7%94%A8%E6%88%B7%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1LB%E6%94%AF%E6%8C%81/" class="archive-article-date">
+  	<time datetime="2020-01-20T08:38:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-20</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="背景项目"><a href="#背景项目" class="headerlink" title="背景项目"></a>背景项目</h3><p>很多公司使用k8s都是私有云方式,在没钱玩NMB的社会.连k8s都会歧视你。 服务的暴露方式只有nodeport、ExternalIP(直接使用主机网络)和ingress。剥夺了LoadBalance模式的权利</p>
+<h3 id="metallb-简介"><a href="#metallb-简介" class="headerlink" title="metallb 简介"></a>metallb 简介</h3><p>这里简单介绍下它的实现原理，具体可以参考<a href="https://metallb.universe.tf/" target="_blank" rel="noopener">metallb官网</a>，文档非常简洁、清晰。目前有如下的使用限制：</p>
+<blockquote>
+<p>Kubernetes v1.9.0版本以上，暂不支持ipvs模式<br>支持网络组件 (flannel/weave/romana), calico 部分支持<br>layer2和bgp两种模式，其中bgp模式需要外部网络设备支持bgp协议</p>
+</blockquote>
+<p>metallb主要实现了两个功能：地址分配和对外宣告</p>
+<blockquote>
+<p>地址分配：需要向网络管理员申请一段ip地址，如果是layer2模式需要这段地址与node节点地址同个网段（同一个二层）；如果是bgp模式没有这个限制。<br>对外宣告：layer2模式使用arp协议，利用节点的mac额外宣告一个loadbalancer的ip（同mac多ip）；bgp模式下节点利用bgp协议与外部网络设备建立邻居，宣告loadbalancer的地址段给外部网络。</p>
+</blockquote>
+<h3 id="演示环境信息"><a href="#演示环境信息" class="headerlink" title="演示环境信息"></a>演示环境信息</h3><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb4ghrhg6ij31xo068q9o.jpg" alt=""></p>
+<h3 id="部署过程"><a href="#部署过程" class="headerlink" title="部署过程"></a>部署过程</h3><p>注: 因bgp模式需要外部路由器的支持，这里主要选用layer2模式（如需选择bgp模式，相应修改roles/cluster-addon/templates/metallb/bgp.yaml.j2）。</p>
+<blockquote>
+<p>Metallb 支持 Helm 和 YAML 两种安装方法，这里我们使用第二种：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">wget https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;google&#x2F;metallb&#x2F;v0.7.3&#x2F;manifests&#x2F;metallb.yaml</span><br><span class="line">kubectl apply -f metallb.yaml</span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">kubectl get pod -n metallb-system  -o wide</span><br><span class="line"></span><br><span class="line">NAME                          READY   STATUS    RESTARTS   AGE   IP               NODE     </span><br><span class="line">controller-67496974d9-wpgw8   1&#x2F;1     Running   0          75m   100.108.11.251   node2    </span><br><span class="line">speaker-4cscj                 1&#x2F;1     Running   0          75m   10.6.204.2       node1    </span><br><span class="line">speaker-9s55h                 1&#x2F;1     Running   0          75m   10.6.204.3       node2    </span><br><span class="line">speaker-kr2bm                 1&#x2F;1     Running   0          75m   10.6.204.1       master</span><br></pre></td></tr></table></figure>
+<p>kubectl get daemonset -n metallb-system</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NAME      DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                 </span><br><span class="line">speaker   3         3         3       3            3           beta.kubernetes.io&#x2F;os&#x3D;linux</span><br></pre></td></tr></table></figure>
+
+<p>kubectl get deployment -n metallb-system</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NAME         READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">controller   1&#x2F;1     1            1           76m</span><br></pre></td></tr></table></figure>
+
+<p>创建config.yaml提供IP池<br>wget <a href="https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/example-layer2-config.yaml" target="_blank" rel="noopener">https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/example-layer2-config.yaml</a><br>修改ip地址池和集群节点网段相同</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[centos@k8s-master ~]$ vim example-layer2-config.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">  namespace: metallb-system</span><br><span class="line">  name: config</span><br><span class="line">data:</span><br><span class="line">  config: |</span><br><span class="line">    address-pools:</span><br><span class="line">    - name: default</span><br><span class="line">      protocol: layer2</span><br><span class="line">      addresses:</span><br><span class="line">      - 10.6.204.20-10.6.204.22</span><br></pre></td></tr></table></figure>
+
+<p>执行yaml文件<br>kubectl apply -f example-layer2-config.yaml</p>
+<p>创建后端应用和服务测试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ wget https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;google&#x2F;metallb&#x2F;master&#x2F;manifests&#x2F;tutorial-2.yaml</span><br><span class="line">$ kubectl apply -f tutorial-2.yaml</span><br></pre></td></tr></table></figure>
+
+<p>查看svc对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kubectl get service </span><br><span class="line"></span><br><span class="line">NAME                TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE</span><br><span class="line">front-end-service   NodePort       10.101.75.133    &lt;none&gt;        80:31402&#x2F;TCP     48d</span><br><span class="line">gogs                NodePort       10.104.31.59     &lt;none&gt;        3000:30064&#x2F;TCP   19d</span><br><span class="line">kubernetes          ClusterIP      10.96.0.1        &lt;none&gt;        443&#x2F;TCP          54d</span><br><span class="line">nexus3              NodePort       10.98.65.125     &lt;none&gt;        8082:31899&#x2F;TCP   8h</span><br><span class="line">nginx               LoadBalancer   10.98.137.237    10.6.204.20   80:31909&#x2F;TCP     28m</span><br><span class="line">nginx-random        NodePort       10.111.254.203   &lt;none&gt;        80:31691&#x2F;TCP     48d</span><br></pre></td></tr></table></figure>
+
+<p>在集群内访问 10.6.204.20:80</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">curl 10.6.204.20</span><br><span class="line"></span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;title&gt;Welcome to nginx!&lt;&#x2F;title&gt;</span><br><span class="line">&lt;style&gt;</span><br><span class="line">    body &#123;</span><br><span class="line">        width: 35em;</span><br><span class="line">        margin: 0 auto;</span><br><span class="line">        font-family: Tahoma, Verdana, Arial, sans-serif;</span><br><span class="line">    &#125;</span><br><span class="line">&lt;&#x2F;style&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;h1&gt;Welcome to nginx!&lt;&#x2F;h1&gt;</span><br><span class="line">&lt;p&gt;If you see this page, the nginx web server is successfully installed and</span><br><span class="line">working. Further configuration is required.&lt;&#x2F;p&gt;</span><br><span class="line"></span><br><span class="line">&lt;p&gt;For online documentation and support please refer to</span><br><span class="line">&lt;a href&#x3D;&quot;http:&#x2F;&#x2F;nginx.org&#x2F;&quot;&gt;nginx.org&lt;&#x2F;a&gt;.&lt;br&#x2F;&gt;</span><br><span class="line">Commercial support is available at</span><br><span class="line">&lt;a href&#x3D;&quot;http:&#x2F;&#x2F;nginx.com&#x2F;&quot;&gt;nginx.com&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;</span><br><span class="line"></span><br><span class="line">&lt;p&gt;&lt;em&gt;Thank you for using nginx.&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
+<p>在集群外部访问<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gb4goj0mqmj31vs0kgn1k.jpg" alt=""></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/01/20/%E7%A9%B7%E9%80%BCK8S%E7%94%A8%E6%88%B7%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1LB%E6%94%AF%E6%8C%81/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-kube-dns与CoreDNS有何差异？" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1056,120 +1153,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2019/12/11/%E5%AF%B9%E4%BA%8E%E7%A8%8B%E5%BA%8F%E5%91%98%E6%9D%A5%E8%AF%B4%E4%B8%AA%E4%BA%BA%E5%AE%BD%E5%B8%A6%E5%8F%AF%E4%BB%A5%E6%80%8E%E4%B9%88%E5%88%A9%E7%94%A8/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-命令行翻墙" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/12/11/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99/">命令行翻墙</a>
-</h1>
-
-
-
-        
-        <a href="/2019/12/11/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99/" class="archive-article-date">
-  	<time datetime="2019-12-11T02:45:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-11</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="痛点"><a href="#痛点" class="headerlink" title="痛点"></a>痛点</h2><blockquote>
-<p>啥也不说，先上图。这样的痛苦 国内程序员应该都体会过<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9t78ifnifj30to04gdhe.jpg" alt="git clone"></p>
-</blockquote>
-<h2 id="共具介绍"><a href="#共具介绍" class="headerlink" title="共具介绍"></a>共具介绍</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">对于技术人员shadowsocks应该不陌生，shadowsocks实质上也是一种socks5代理服务，类似于ssh代理。</span><br><span class="line"></span><br><span class="line">与vpn的全局代理不同，shadowsocks仅针对浏览器代理，不能代理应用软件，比如curl、wget等一些命令行软件。如果要让终端下的命令行工具都能支持代理，这时我们就要用上proxychains-ng这款神器了。</span><br></pre></td></tr></table></figure>
-
-<h3 id="什么是-proxychains-ng"><a href="#什么是-proxychains-ng" class="headerlink" title="什么是 proxychains-ng"></a>什么是 proxychains-ng</h3><p>项目主页：<a href="https://github.com/rofl0r/proxychains-ng" target="_blank" rel="noopener">https://github.com/rofl0r/proxychains-ng</a></p>
-<h3 id="proxychains-ng-介绍"><a href="#proxychains-ng-介绍" class="headerlink" title="proxychains-ng 介绍"></a>proxychains-ng 介绍</h3><blockquote>
-<p>proxychains ng (new generation) - a preloader which hooks calls to sockets in dynamically linked programs and redirects it through one or more socks/http proxies. continuation of the unmaintained proxychains project.</p>
-</blockquote>
-<p>proxychains-ng是proxychains的加强版，主要有以下功能和不足：</p>
-<ul>
-<li>支持http/https/socks4/socks5</li>
-<li>支持认证</li>
-<li>远端dns查询</li>
-<li>多种代理模式</li>
-<li>不支持udp/icmp转发</li>
-<li>少部分程序和在后台运行的可能无法代理</li>
-</ul>
-<h3 id="proxychains-ng-原理"><a href="#proxychains-ng-原理" class="headerlink" title="proxychains-ng 原理"></a>proxychains-ng 原理</h3><p>简单的说就是这个程序 Hook 了 sockets 相关的操作，让普通程序的 sockets 数据走 SOCKS/HTTP 代理。</p>
-<p>其核心就是利用了 LD_PRELOAD 这个环境变量（Mac 上是 DYLD_INSERT_LIBRARIES）。</p>
-<p>在 Unix 系统中，如果设置了 LD_PRELOAD 环境变量，那么在程序运行时，动态链接器会先加载该环境变量所指定的动态库。也就是说，这个动态库的加载优先于任何其它的库，包括 libc。</p>
-<p>ProxyChains 创建了一个叫 libproxychains4.so（Mac 上是 libproxychains4.dylib）的动态库。里面重写了 connect、close 以及 sendto 等与 socket 相关的函数，通过这些函数发出的数据将会走代理，详细代码可以参考 libproxychains.c。</p>
-<p>在主程序里，它会读取配置文件，查找 libproxychains4 所在位置，把这些信息存入环境变量后执行子程序。这样子程序里对 socket 相关的函数调用就会被 Hook 了，对子程序来说，跟代理相关的东西都是透明的。</p>
-<h2 id="安装-proxychains-ng"><a href="#安装-proxychains-ng" class="headerlink" title="安装 proxychains-ng"></a>安装 proxychains-ng</h2><h3 id="源代码安装"><a href="#源代码安装" class="headerlink" title="源代码安装"></a>源代码安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;rofl0r&#x2F;proxychains-ng</span><br><span class="line">.&#x2F;configure --prefix&#x3D;&#x2F;usr --sysconfdir&#x3D;&#x2F;etc</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line">make install-config (安装proxychains.conf配置文件)</span><br></pre></td></tr></table></figure>
-
-<h3 id="MAC下安装"><a href="#MAC下安装" class="headerlink" title="MAC下安装"></a>MAC下安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install proxychains-ng</span><br></pre></td></tr></table></figure>
-
-<h3 id="配置-proxychains-ng"><a href="#配置-proxychains-ng" class="headerlink" title="配置 proxychains-ng"></a>配置 proxychains-ng</h3><p>proxychains-ng默认配置文件名为<code>proxychains.conf</code></p>
-<ul>
-<li>通过源代码编译安装的默认为<code>/etc/proxychains.conf</code></li>
-<li>Mac下用Homebrew安装的默认为<code>/usr/local/etc/proxychains.conf</code></li>
-</ul>
-<p>proxychains-ng的配置非常简单，只需将代理加入[ProxyList]中即可。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ vim proxychains.conf</span><br><span class="line"></span><br><span class="line">quiet_mode</span><br><span class="line">dynamic_chain</span><br><span class="line">chain_len &#x3D; 1 #round_robin_chain和random_chain使用</span><br><span class="line">proxy_dns</span><br><span class="line">remote_dns_subnet 224</span><br><span class="line">tcp_read_time_out 15000</span><br><span class="line">tcp_connect_time_out 8000</span><br><span class="line">localnet 127.0.0.0&#x2F;255.0.0.0</span><br><span class="line">localnet 10.0.0.0&#x2F;255.0.0.0</span><br><span class="line">localnet 172.16.0.0&#x2F;255.240.0.0</span><br><span class="line">localnet 192.168.0.0&#x2F;255.255.0.0</span><br><span class="line"></span><br><span class="line">[ProxyList]</span><br><span class="line">socks5  127.0.0.1 1086</span><br><span class="line">http    127.0.0.1 1087</span><br></pre></td></tr></table></figure>
-
-
-<p>proxychains-ng支持多种代理模式,默认是选择 strict_chain。</p>
-<ul>
-<li>dynamic_chain ：动态模式,按照代理列表顺序自动选取可用代理</li>
-<li>strict_chain ：严格模式,严格按照代理列表顺序使用代理，所有代理必须可用</li>
-<li>round_robin_chain ：轮询模式，自动跳过不可用代理</li>
-<li>random_chain ：随机模式,随机使用代理<h3 id="proxychains-ng-使用"><a href="#proxychains-ng-使用" class="headerlink" title="proxychains-ng 使用"></a>proxychains-ng 使用</h3></li>
-</ul>
-<p>proxychains-ng用法非常简单，使用格式如下:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 程序 参数</span><br></pre></td></tr></table></figure>
-
-<h3 id="proxychains-ng-测试"><a href="#proxychains-ng-测试" class="headerlink" title="proxychains-ng 测试"></a>proxychains-ng 测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 curl ip.sb</span><br></pre></td></tr></table></figure>
-
-<h3 id="proxychains-ng-优化"><a href="#proxychains-ng-优化" class="headerlink" title="proxychains-ng 优化"></a>proxychains-ng 优化</h3><p>给proxychains4增加一个别名，在 /.zshrc或/.bashrc末尾加入如下行：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alias pc&#x3D;&#39;proxychains4&#39;</span><br></pre></td></tr></table></figure>
-<p>以后就可以类似$ pc curl <a href="http://www.google.com" target="_blank" rel="noopener">http://www.google.com</a>  这样调用proxychains4，简化了输入。</p>
-<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/12/11/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99/">展开全文 >></a>
         </p>
       
 

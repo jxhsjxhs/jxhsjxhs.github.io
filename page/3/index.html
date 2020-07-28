@@ -66,7 +66,7 @@
         
         <li><a href="/jxhsjxhs">个人简历</a></li>
         
-        <li><a href="/leetcode">每日一题</a></li>
+        <li><a href="/leetcode">个人项目</a></li>
         
       </ul>
     </nav>
@@ -179,7 +179,7 @@
 		        
 					<li style="width: 25%"><a href="/jxhsjxhs">个人简历</a></li>
 		        
-					<li style="width: 25%"><a href="/leetcode">每日一题</a></li>
+					<li style="width: 25%"><a href="/leetcode">个人项目</a></li>
 		        
 				</ul>
 			</nav>
@@ -195,6 +195,166 @@
           </div>
           <div id="js-content" class="content-ll">
             
+  
+    <article id="post-获取k8sadmin的token" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/05/21/%E8%8E%B7%E5%8F%96k8sadmin%E7%9A%84token/">获取k8sadmin的token</a>
+</h1>
+
+
+
+        
+        <a href="/2020/05/21/%E8%8E%B7%E5%8F%96k8sadmin%E7%9A%84token/" class="archive-article-date">
+  	<time datetime="2020-05-21T10:52:07.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-21</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="创建token"><a href="#创建token" class="headerlink" title="创建token"></a>创建token</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">vim k8s-admin.yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: dashboard-admin</span><br><span class="line">  namespace: kube-system</span><br><span class="line">---</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">apiVersion: rbac.authorization.k8s.io&#x2F;v1beta1</span><br><span class="line">metadata:</span><br><span class="line">  name: dashboard-admin</span><br><span class="line">subjects:</span><br><span class="line">  - kind: ServiceAccount</span><br><span class="line">    name: dashboard-admin</span><br><span class="line">    namespace: kube-system</span><br><span class="line">roleRef:</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: cluster-admin</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line"></span><br><span class="line">kubectl apply -f k8s-admin.yaml</span><br></pre></td></tr></table></figure>
+<h3 id="获取secretname"><a href="#获取secretname" class="headerlink" title="获取secretname"></a>获取secretname</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret -n kube-system</span><br><span class="line">NAME                                             TYPE                                  DATA   AGE</span><br><span class="line">dashboard-admin-token-dhhmc                      kubernetes.io&#x2F;service-account-token   3      69s</span><br></pre></td></tr></table></figure>
+
+<h3 id="查询token"><a href="#查询token" class="headerlink" title="查询token"></a>查询token</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@k8s-master ~]#  kubectl describe secret dashboard-admin-token-dhhmc   -n kube-system</span><br><span class="line">Name:         dashboard-admin-token-dhhmc</span><br><span class="line">Namespace:    kube-system</span><br><span class="line">Labels:       &lt;none&gt;</span><br><span class="line">Annotations:  kubernetes.io&#x2F;service-account.name: dashboard-admin</span><br><span class="line">              kubernetes.io&#x2F;service-account.uid: 98d070eb-875c-11e9-a538-000c297b4fe7</span><br><span class="line"></span><br><span class="line">Type:  kubernetes.io&#x2F;service-account-token</span><br><span class="line"></span><br><span class="line">Data</span><br><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">ca.crt:     1025 bytes</span><br><span class="line">namespace:  11 bytes</span><br><span class="line">token:      eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkYXNoYm9hcmQtYWRtaW4tdG9rZW4tZGhobWMiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGFzaGJvYXJkLWFkbWluIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiOThkMDcwZWItODc1Yy0xMWU5LWE1MzgtMDAwYzI5N2I0ZmU3Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRhc2hib2FyZC1hZG1pbiJ9.XDFpez2E84R_zlopt_uEHPvVGUtSavypyix6UcYJO3J4imHdJy7MEkfV-wltBA1H8x0TT2AW64rLlXaRJ8OkFWJ0myedfKdjnf7i0oLQ8j-7lw6rT3A0e2pKmpnOaBQfgzRm83-t2I5MMp3Iu9VNUiAbqQpjql4AKwRuJEEGCs99tKStUxzIsJKusmUHh9KAK4BAxySn9h16T2URZ7czLP4mty2crYWNV4KwSwFPthGhFPsl8mnet_hiV5k4me5a8frmXytOy64MmGW8w3TBgiM-7hBYSxt84QGGnyi84LU0EFgtLwBWEOTZeUKKQ6IkoAprMmNcSxX8WUJFlx_uJg</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="token干啥用的"><a href="#token干啥用的" class="headerlink" title="token干啥用的"></a>token干啥用的</h3><p>不知道干啥用的你看这个干啥,浪费生命。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">k8s</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/05/21/%E8%8E%B7%E5%8F%96k8sadmin%E7%9A%84token/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-装逼编程键盘最佳实践" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/04/28/%E8%A3%85%E9%80%BC%E7%BC%96%E7%A8%8B%E9%94%AE%E7%9B%98%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">装逼编程键盘最佳实践</a>
+</h1>
+
+
+
+        
+        <a href="/2020/04/28/%E8%A3%85%E9%80%BC%E7%BC%96%E7%A8%8B%E9%94%AE%E7%9B%98%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" class="archive-article-date">
+  	<time datetime="2020-04-28T01:23:28.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>之前逛淘宝,发现一款贼鸡儿好看的键盘. 心动以后脑子一热就买了<br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge980l3kedj30m80dw3z0.jpg" alt=""><br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge9815yk2aj30m80eqdg9.jpg" alt=""></p>
+<p>U1S1 确实好看。</p>
+<h3 id="问题来了"><a href="#问题来了" class="headerlink" title="问题来了"></a>问题来了</h3><p>第一次使用这种可编程键盘 我发现完全不会用 因为首先按键不够的情况下 很多东西只能用组合键来触发 所以一旦设置的按键不合理。可能常用的一行代码 或者一句话 可能要非常麻烦才能打出来。<br>不仅不好打出来  按键还不好记住。使用成本贼高 </p>
+<p>于是乎在家三个晚上设计出来了程序员的键盘方式。分享一下过程</p>
+<hr>
+<p>先上一下我的按键设计图<br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge984q0qduj30zy0plgmq.jpg" alt=""><br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge984wguuhj30y80q93zn.jpg" alt=""><br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge9851hbs2j31430qy75h.jpg" alt=""><br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge9856tt29j310n0q9my9.jpg" alt=""></p>
+<p>如上图  我这次设置的键盘有四个层级(每个层级的按键都可以是不同的效果)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">层级0:</span><br><span class="line">    在层级0中 设置了常用的英文按键以及逗号跟点,这俩不管是写代码还是聊天都是最常用的。并且设置了三个触发层 </span><br><span class="line">        1.左空格  作为第一层的触发按键 (所以第一层所需要的所有按键都需要提前按左空格触发)</span><br><span class="line">        2.右空格  作为第二层的触发按键</span><br><span class="line">        3.ENTER  作为第三层的触发按键 (本来是一直吧ALT作为第三层的触发键,但是发现很多东西都跟设置的不一样 开始以为是我windows或者mac的问题  设置了都不行  后来猜想到可能是 ALT本身就是一个组合键的触发 比如 ALT + Q 这种 于是设置为ENTER 以后发现ok)</span><br><span class="line"></span><br><span class="line">层级1:</span><br><span class="line">    在层级1中 设置0到9的数字,以及常用的标点符号。</span><br><span class="line">    第三排是(+-*&#x2F;) 应该比较好记</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">层级2:</span><br><span class="line">    在层级2中 设置的是F1-F12</span><br><span class="line">    以及四个在编程中常用的括号 由优先级大小排序,实测发现很容易打出来 并且好记</span><br><span class="line"></span><br><span class="line">层级3:</span><br><span class="line">    在层级3中 设置的是几个标点符号</span><br><span class="line">        1.(:;&#x3D;这三是放在一排 因为这三个在实际聊天需求较少 并且在写代码需求较高 放在这儿很好触发)</span><br><span class="line">        2.(~&quot;&#39;&#96;)这四个放在左上角需要一些肌肉记忆才能记住  跟层级1的标点一样 需要长期使用记忆。</span><br><span class="line">        3._? 这俩是为了跟普通键盘一样的放置位置 基本不需要记忆 直接能触发</span><br><span class="line">        4.｜&#x2F;\ 这三个 因为放到方向键 很容易就能记住他们的区别 方便记忆</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">放置方式基本就是这样 以上的按键设置满足了目前的使用键盘的需求。</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><p>首先在gtithub上下载本系统的键盘编程驱动以及程序(mac自带驱动)<br><a href="https://github.com/qmk/qmk_toolbox/releases" target="_blank" rel="noopener">github下载地址</a></p>
+<p>使用方法介绍<br>链接: <a href="https://pan.baidu.com/s/1J9_QfP22LtYEnH6z0ZPdpw" target="_blank" rel="noopener">https://pan.baidu.com/s/1J9_QfP22LtYEnH6z0ZPdpw</a>  密码: o2n2 (使用方法pdf)</p>
+<p>然后 拿着 基础键盘模版去<a href="KBfirmware.com">网站</a>上编辑你自己的键盘排列方式 </p>
+<p>基础键盘模版   链接: <a href="https://pan.baidu.com/s/1QDBm07WbEuDAs69zoTmV5w" target="_blank" rel="noopener">https://pan.baidu.com/s/1QDBm07WbEuDAs69zoTmV5w</a>  密码: 874u</p>
+<p>编辑完以后点击下载就能拿到刚刚编辑好的东西 在用键盘编程程序写入键盘</p>
+<h3 id="写入过程"><a href="#写入过程" class="headerlink" title="写入过程"></a>写入过程</h3><p>打开编程软件,连接上键盘<br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge98x7jp63j305z05e3yo.jpg" alt=""><br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge98zgrknaj30in0dtzmi.jpg" alt=""><br>ok</p>
+<h3 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h3><p>此类似键盘使用者需要内心强大,不然容易走火入魔,类似周伯通的左右手互博。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/04/28/%E8%A3%85%E9%80%BC%E7%BC%96%E7%A8%8B%E9%94%AE%E7%9B%98%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
   
     <article id="post-Istio是个啥" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
@@ -753,132 +913,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2020/03/13/%E5%85%B3%E4%BA%8E%E7%BC%96%E7%A8%8B%E4%B8%AD%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%9A%84%E7%89%B9%E6%80%A7%E7%9A%84%E7%90%86%E8%A7%A3/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-做游戏是不是挺有意思的" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/03/08/%E5%81%9A%E6%B8%B8%E6%88%8F%E6%98%AF%E4%B8%8D%E6%98%AF%E6%8C%BA%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84/">做游戏是不是挺有意思的</a>
-</h1>
-
-
-
-        
-        <a href="/2020/03/08/%E5%81%9A%E6%B8%B8%E6%88%8F%E6%98%AF%E4%B8%8D%E6%98%AF%E6%8C%BA%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84/" class="archive-article-date">
-  	<time datetime="2020-03-08T11:06:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/08/%E5%81%9A%E6%B8%B8%E6%88%8F%E6%98%AF%E4%B8%8D%E6%98%AF%E6%8C%BA%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-分布式存储系统Minio简介" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/02/26/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9FMinio%E7%AE%80%E4%BB%8B/">分布式存储系统Minio简介</a>
-</h1>
-
-
-
-        
-        <a href="/2020/02/26/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9FMinio%E7%AE%80%E4%BB%8B/" class="archive-article-date">
-  	<time datetime="2020-02-26T11:33:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-02-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/02/26/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9FMinio%E7%AE%80%E4%BB%8B/">展开全文 >></a>
         </p>
       
 

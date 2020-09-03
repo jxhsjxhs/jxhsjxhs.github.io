@@ -196,150 +196,6 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-python3使用sqlit3文档记录" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/06/12/python3%E4%BD%BF%E7%94%A8sqlit3%E6%96%87%E6%A1%A3%E8%AE%B0%E5%BD%95/">python3使用sqlit3文档记录</a>
-</h1>
-
-
-
-        
-        <a href="/2020/06/12/python3%E4%BD%BF%E7%94%A8sqlit3%E6%96%87%E6%A1%A3%E8%AE%B0%E5%BD%95/" class="archive-article-date">
-  	<time datetime="2020-06-12T06:24:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>使用python3内置的sqlite3库，首先连接到数据库，创建并使用游标Cursor，再执行SQL语句，最后提交事务以实现sqlite3数据库中的CRUD新增数据，查询数据，更新数据和删除数据的常用操作。</p>
-<p>SQLite是一种嵌入式数据库，它的数据库就是一个文件，SQLite能保存可以保存空值、整数、浮点数、字符串和blob 。sqlite相关教程动手学sqlite。</p>
-<h3 id="连接数据库-如果不存在则创建"><a href="#连接数据库-如果不存在则创建" class="headerlink" title="连接数据库(如果不存在则创建)"></a>连接数据库(如果不存在则创建)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">import sqlite3</span><br><span class="line"> </span><br><span class="line"># 连接数据库(如果不存在则创建)</span><br><span class="line">conn &#x3D; sqlite3.connect(&#39;test.db&#39;)</span><br><span class="line">print(&quot;Opened database successfully&quot;)</span><br><span class="line"> </span><br><span class="line"># 创建游标</span><br><span class="line">cursor &#x3D; conn.cursor()</span><br><span class="line"># 关闭游标</span><br><span class="line">cursor.close()</span><br><span class="line"># 提交事物</span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">#关闭游标</span><br><span class="line">cursor.close()</span><br><span class="line"></span><br><span class="line">#关闭连接</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
-
-<h3 id="创建表"><a href="#创建表" class="headerlink" title="创建表"></a>创建表</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">import sqlite3</span><br><span class="line"> </span><br><span class="line"># 连接数据库(如果不存在则创建)</span><br><span class="line">conn &#x3D; sqlite3.connect(&#39;test.db&#39;)</span><br><span class="line"></span><br><span class="line"># 创建游标</span><br><span class="line">cursor &#x3D; conn.cursor()</span><br><span class="line"> </span><br><span class="line"># 创建表</span><br><span class="line">sql &#x3D; &#39;CREATE TABLE Student(id integer PRIMARY KEY autoincrement, Name  varchar(30), Age integer)&#39;</span><br><span class="line">cursor.execute(sql)</span><br><span class="line"> </span><br><span class="line"># 提交事物</span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">#关闭游标</span><br><span class="line">cursor.close()</span><br><span class="line"></span><br><span class="line">#关闭连接</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
-
-<h3 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">import sqlite3</span><br><span class="line"> </span><br><span class="line"># 连接数据库(如果不存在则创建)</span><br><span class="line">conn &#x3D; sqlite3.connect(&#39;test.db&#39;)</span><br><span class="line"></span><br><span class="line"># 创建游标</span><br><span class="line">cursor &#x3D; conn.cursor()</span><br><span class="line"> </span><br><span class="line"># 插入数据1</span><br><span class="line">sql &#x3D; &quot;INSERT INTO Student(Name, Age) VALUES(&#39;lucy&#39;, 22)&quot;</span><br><span class="line">cursor.execute(sql)</span><br><span class="line"> </span><br><span class="line"># 插入数据 2</span><br><span class="line">data &#x3D; (&#39;jack&#39;, 21) </span><br><span class="line">sql &#x3D; &quot;INSERT INTO Student(Name, Age) VALUES(?, ?)&quot;</span><br><span class="line">cursor.execute(sql, data)</span><br><span class="line"> </span><br><span class="line"># 提交事物</span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">#关闭游标</span><br><span class="line">cursor.close()</span><br><span class="line"></span><br><span class="line">#关闭连接</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
-<h3 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">import sqlite3</span><br><span class="line"> </span><br><span class="line"># 连接数据库(如果不存在则创建)</span><br><span class="line">conn &#x3D; sqlite3.connect(&#39;test.db&#39;)</span><br><span class="line"></span><br><span class="line"># 创建游标</span><br><span class="line">cursor &#x3D; conn.cursor()</span><br><span class="line"> </span><br><span class="line">cursor.execute(&quot;UPDATE Student SET name &#x3D; ? where id &#x3D; ?&quot;,(&quot;lily&quot;,&quot;3&quot;))</span><br><span class="line"></span><br><span class="line"># 提交事物</span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">#关闭游标</span><br><span class="line">cursor.close()</span><br><span class="line"></span><br><span class="line">#关闭连接</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
-
-<h3 id="删除记录"><a href="#删除记录" class="headerlink" title="删除记录"></a>删除记录</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">import sqlite3</span><br><span class="line"> </span><br><span class="line"># 连接数据库(如果不存在则创建)</span><br><span class="line">conn &#x3D; sqlite3.connect(&#39;test.db&#39;)</span><br><span class="line"></span><br><span class="line"># 创建游标</span><br><span class="line">cursor &#x3D; conn.cursor()</span><br><span class="line"> </span><br><span class="line">cursor.execute(&quot;delete from Student where id&#x3D;?&quot;,(&quot;1&quot;,)) #逗号不能省，元组元素只有一个的时候一定要加逗号,将删除lucy</span><br><span class="line"></span><br><span class="line"># 提交事物</span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">#关闭游标</span><br><span class="line">cursor.close()</span><br><span class="line"></span><br><span class="line">#关闭连接</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="查询数据"><a href="#查询数据" class="headerlink" title="查询数据"></a>查询数据</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">import sqlite3</span><br><span class="line"> </span><br><span class="line"># 连接数据库(如果不存在则创建)</span><br><span class="line">conn &#x3D; sqlite3.connect(&#39;test.db&#39;)</span><br><span class="line"></span><br><span class="line"># 创建游标</span><br><span class="line">cursor &#x3D; conn.cursor()</span><br><span class="line"> </span><br><span class="line"># 查询数据1</span><br><span class="line">sql &#x3D; &quot;select * from Student&quot;</span><br><span class="line">values &#x3D; cursor.execute(sql)</span><br><span class="line">for i in values:</span><br><span class="line">    print(i)</span><br><span class="line"> </span><br><span class="line"># 查询数据 2</span><br><span class="line">sql &#x3D; &quot;select * from Student where id&#x3D;?&quot;</span><br><span class="line">values &#x3D; cursor.execute(sql, (1,))</span><br><span class="line">for i in values:</span><br><span class="line">    print(&#39;id:&#39;, i[0])</span><br><span class="line">    print(&#39;name:&#39;, i[1])</span><br><span class="line">    print(&#39;age:&#39;, i[2])</span><br><span class="line"> </span><br><span class="line"># 提交事物</span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">#关闭游标</span><br><span class="line">cursor.close()</span><br><span class="line"></span><br><span class="line">#关闭连接</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
-
-<h3 id="删除表格"><a href="#删除表格" class="headerlink" title="删除表格"></a>删除表格</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">import sqlite3</span><br><span class="line"></span><br><span class="line"># 连接数据库(如果不存在则创建)</span><br><span class="line">conn &#x3D; sqlite3.connect(&#39;test.db&#39;)</span><br><span class="line"></span><br><span class="line"># 创建游标</span><br><span class="line">cursor &#x3D; conn.cursor()</span><br><span class="line"></span><br><span class="line">#删除表格Student</span><br><span class="line">cursor.execute(&quot;DROP TABLE Student&quot;)</span><br><span class="line"></span><br><span class="line"># 提交事物</span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">#关闭游标</span><br><span class="line">cursor.close()</span><br><span class="line"></span><br><span class="line">#关闭连接</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
-
-<p>通过以上的demo可以精炼出函数来执行增删改查。demo如下</p>
-<h3 id="增加"><a href="#增加" class="headerlink" title="增加"></a>增加</h3>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/06/12/python3%E4%BD%BF%E7%94%A8sqlit3%E6%96%87%E6%A1%A3%E8%AE%B0%E5%BD%95/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-VS2019打包程序到docker仓库" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/06/04/VS2019%E6%89%93%E5%8C%85%E7%A8%8B%E5%BA%8F%E5%88%B0docker%E4%BB%93%E5%BA%93/">VS2019打包程序到docker仓库</a>
-</h1>
-
-
-
-        
-        <a href="/2020/06/04/VS2019%E6%89%93%E5%8C%85%E7%A8%8B%E5%BA%8F%E5%88%B0docker%E4%BB%93%E5%BA%93/" class="archive-article-date">
-  	<time datetime="2020-06-04T08:23:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-04</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>1</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/06/04/VS2019%E6%89%93%E5%8C%85%E7%A8%8B%E5%BA%8F%E5%88%B0docker%E4%BB%93%E5%BA%93/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-一次简单的pod-Evicted排查" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1482,6 +1338,177 @@ deployment.apps/webapp<br>REVISION  CHANGE-CAUSE<br>2         <none><br>3       
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2020/05/23/kubernetes-%E6%8B%89%E5%8F%96%E7%A7%81%E6%9C%89%E9%95%9C%E5%83%8F-imagepullsecrets/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-k8s部署mysql单节点到sotrageclass" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/05/23/k8s%E9%83%A8%E7%BD%B2mysql%E5%8D%95%E8%8A%82%E7%82%B9%E5%88%B0sotrageclass/">k8s部署mysql单节点到sotrageclass</a>
+</h1>
+
+
+
+        
+        <a href="/2020/05/23/k8s%E9%83%A8%E7%BD%B2mysql%E5%8D%95%E8%8A%82%E7%82%B9%E5%88%B0sotrageclass/" class="archive-article-date">
+  	<time datetime="2020-05-23T07:26:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="mysql5-7-单节点部署"><a href="#mysql5-7-单节点部署" class="headerlink" title="mysql5.7 单节点部署"></a>mysql5.7 单节点部署</h2><blockquote>
+<p>记录一下方便以后复制粘贴</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">未经过强调说明的话都是以default租户下部署，有存储的话用的都是名为nfs-storage的storageclass.</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2020/05/23/SB1KbhiX8D4HZ6T.png" alt="DeepinScreenshot_select-area_20200523161014.png"></p>
+<p>首先创建mysql的configmap</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@master conf]# cat mysqld.cnf </span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">pid-file	&#x3D; &#x2F;var&#x2F;run&#x2F;mysqld&#x2F;mysqld.pid</span><br><span class="line">socket		&#x3D; &#x2F;var&#x2F;run&#x2F;mysqld&#x2F;mysqld.sock</span><br><span class="line">datadir		&#x3D; &#x2F;var&#x2F;lib&#x2F;mysql</span><br><span class="line">#log-error	&#x3D; &#x2F;var&#x2F;log&#x2F;mysql&#x2F;error.log</span><br><span class="line"># By default we only accept connections from localhost</span><br><span class="line">#bind-address	&#x3D; 127.0.0.1</span><br><span class="line"># Disabling symbolic-links is recommended to prevent assorted security risks</span><br><span class="line">symbolic-links&#x3D;0</span><br><span class="line">sql_mode&#x3D;STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION</span><br></pre></td></tr></table></figure>
+<p>注意  因为mysql5.7默认关闭了<code>group by</code>相关命令 需要在配置文件中加上sql_mode打开。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create configmap mysql-config  --from-file&#x3D;mysql.cnf</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2020/05/23/KfmWpMvNdBbunkC.png" alt="DeepinScreenshot_select-area_20200523161014.png"></p>
+<p>查看创建的configmap,接下来创建使用storageclass的deloyment</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  name: mysqldata</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteMany</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 20G</span><br><span class="line">  storageClassName: nfs-storage</span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">apiVersion: apps&#x2F;v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  labels:</span><br><span class="line">    app: mysql57</span><br><span class="line">  name: mysql57</span><br><span class="line">spec:</span><br><span class="line">  replicas: 1</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: mysql57</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: mysql57</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - env:</span><br><span class="line">        - name: MYSQL_ROOT_PASSWORD</span><br><span class="line">          value: &quot;2020520.pst&quot;</span><br><span class="line">        - name: MYSQL_USER</span><br><span class="line">          value: &quot;daocloud&quot;</span><br><span class="line">        - name: MYSQL_PASSWORD</span><br><span class="line">          value: &quot;daocloud@123456&quot;</span><br><span class="line">        image: &quot;mysql:5.7&quot;</span><br><span class="line">        name: mysql57</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 3306</span><br><span class="line">          protocol: TCP</span><br><span class="line">          name: http</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: mysqldata</span><br><span class="line">          mountPath: &quot;&#x2F;var&#x2F;lib&#x2F;mysql&quot;</span><br><span class="line">          readOnly: false</span><br><span class="line">          subPath: mysql57</span><br><span class="line">        - name: mysql-config</span><br><span class="line">          mountPath: &#x2F;etc&#x2F;mysql&#x2F;mysql.conf.d</span><br><span class="line">      volumes:</span><br><span class="line">      - name: mysqldata</span><br><span class="line">        persistentVolumeClaim:</span><br><span class="line">          claimName: mysqldata</span><br><span class="line">      - name: mysql-config</span><br><span class="line">        configMap:</span><br><span class="line">          name: mysql-config</span><br></pre></td></tr></table></figure>
+<p>查看创建的服务以及pvc<br><img src="https://i.loli.net/2020/05/23/u3LmVFZPGSylkDT.png" alt="DeepinScreenshot_select-area_20200523161856.png"></p>
+<p>当然如果外部用的话也可以用service或者ingress映射出来.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: mysql57</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    app: mysql57</span><br><span class="line">  ports:</span><br><span class="line">    - name: mysql3306</span><br><span class="line">      port: 3306</span><br><span class="line">      protocol: TCP</span><br><span class="line">      targetPort: 3306</span><br><span class="line">      nodePort: 30881</span><br><span class="line">  type: NodePort</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2020/05/23/GLTzpdcrSgn7iv3.png" alt="DeepinScreenshot_select-area_20200523162141.png"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">k8s, 中间件, mysql</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/05/23/k8s%E9%83%A8%E7%BD%B2mysql%E5%8D%95%E8%8A%82%E7%82%B9%E5%88%B0sotrageclass/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-获取k8sadmin的token" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/05/21/%E8%8E%B7%E5%8F%96k8sadmin%E7%9A%84token/">获取k8sadmin的token</a>
+</h1>
+
+
+
+        
+        <a href="/2020/05/21/%E8%8E%B7%E5%8F%96k8sadmin%E7%9A%84token/" class="archive-article-date">
+  	<time datetime="2020-05-21T10:52:07.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-21</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="创建token"><a href="#创建token" class="headerlink" title="创建token"></a>创建token</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">vim k8s-admin.yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: dashboard-admin</span><br><span class="line">  namespace: kube-system</span><br><span class="line">---</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">apiVersion: rbac.authorization.k8s.io&#x2F;v1beta1</span><br><span class="line">metadata:</span><br><span class="line">  name: dashboard-admin</span><br><span class="line">subjects:</span><br><span class="line">  - kind: ServiceAccount</span><br><span class="line">    name: dashboard-admin</span><br><span class="line">    namespace: kube-system</span><br><span class="line">roleRef:</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: cluster-admin</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line"></span><br><span class="line">kubectl apply -f k8s-admin.yaml</span><br></pre></td></tr></table></figure>
+<h3 id="获取secretname"><a href="#获取secretname" class="headerlink" title="获取secretname"></a>获取secretname</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret -n kube-system</span><br><span class="line">NAME                                             TYPE                                  DATA   AGE</span><br><span class="line">dashboard-admin-token-dhhmc                      kubernetes.io&#x2F;service-account-token   3      69s</span><br></pre></td></tr></table></figure>
+
+<h3 id="查询token"><a href="#查询token" class="headerlink" title="查询token"></a>查询token</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@k8s-master ~]#  kubectl describe secret dashboard-admin-token-dhhmc   -n kube-system</span><br><span class="line">Name:         dashboard-admin-token-dhhmc</span><br><span class="line">Namespace:    kube-system</span><br><span class="line">Labels:       &lt;none&gt;</span><br><span class="line">Annotations:  kubernetes.io&#x2F;service-account.name: dashboard-admin</span><br><span class="line">              kubernetes.io&#x2F;service-account.uid: 98d070eb-875c-11e9-a538-000c297b4fe7</span><br><span class="line"></span><br><span class="line">Type:  kubernetes.io&#x2F;service-account-token</span><br><span class="line"></span><br><span class="line">Data</span><br><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">ca.crt:     1025 bytes</span><br><span class="line">namespace:  11 bytes</span><br><span class="line">token:      eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkYXNoYm9hcmQtYWRtaW4tdG9rZW4tZGhobWMiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGFzaGJvYXJkLWFkbWluIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiOThkMDcwZWItODc1Yy0xMWU5LWE1MzgtMDAwYzI5N2I0ZmU3Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRhc2hib2FyZC1hZG1pbiJ9.XDFpez2E84R_zlopt_uEHPvVGUtSavypyix6UcYJO3J4imHdJy7MEkfV-wltBA1H8x0TT2AW64rLlXaRJ8OkFWJ0myedfKdjnf7i0oLQ8j-7lw6rT3A0e2pKmpnOaBQfgzRm83-t2I5MMp3Iu9VNUiAbqQpjql4AKwRuJEEGCs99tKStUxzIsJKusmUHh9KAK4BAxySn9h16T2URZ7czLP4mty2crYWNV4KwSwFPthGhFPsl8mnet_hiV5k4me5a8frmXytOy64MmGW8w3TBgiM-7hBYSxt84QGGnyi84LU0EFgtLwBWEOTZeUKKQ6IkoAprMmNcSxX8WUJFlx_uJg</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="token干啥用的"><a href="#token干啥用的" class="headerlink" title="token干啥用的"></a>token干啥用的</h3><p>不知道干啥用的你看这个干啥,浪费生命。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">k8s</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/05/21/%E8%8E%B7%E5%8F%96k8sadmin%E7%9A%84token/">展开全文 >></a>
         </p>
       
 

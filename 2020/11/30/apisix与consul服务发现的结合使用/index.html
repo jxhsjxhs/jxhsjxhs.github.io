@@ -6,13 +6,15 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.jxhs.me">
-  <title>jame_xhs&#39;s blog</title>
+  <title>apisix与consul服务发现的结合使用 | jame_xhs&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="jame_xhs&#39;s blog">
-<meta property="og:url" content="http://www.jxhs.me/page/6/index.html">
+  <meta property="og:type" content="article">
+<meta property="og:title" content="apisix与consul服务发现的结合使用">
+<meta property="og:url" content="http://www.jxhs.me/2020/11/30/apisix%E4%B8%8Econsul%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E7%9A%84%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/index.html">
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-11-30T09:05:18.000Z">
+<meta property="article:modified_time" content="2020-11-30T09:05:18.112Z">
 <meta property="article:author" content="jame_xhs">
 <meta name="twitter:card" content="summary">
   
@@ -194,59 +196,28 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-kubernetes笔记-HostAliases" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-apisix与consul服务发现的结合使用" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
 
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/01/03/kubernetes%E7%AC%94%E8%AE%B0-HostAliases/">kubernetes笔记: HostAliases</a>
+<h1 class="article-title" itemprop="name">
+  apisix与consul服务发现的结合使用
 </h1>
 
 
 
         
-        <a href="/2020/01/03/kubernetes%E7%AC%94%E8%AE%B0-HostAliases/" class="archive-article-date">
-  	<time datetime="2020-01-03T10:07:09.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-03</time>
+        <a href="/2020/11/30/apisix%E4%B8%8Econsul%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E7%9A%84%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/" class="archive-article-date">
+  	<time datetime="2020-11-30T09:05:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-30</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>k8s上不同服务之间可以通过service的域名来互相访问。域名的解析是一般是通过在集群中的kube-dns（主要是dnsmasq）或者coredns完成的。k8s的dns也可以向上级联dns服务器。</p>
-<p>有的时候，我们希望给运行在k8s上的Pod增加一些域名的解析（例如宿主机的主机名），但又不想对dns模块动太多，有没有什么比较方便的办法呢？<br>方法如下:</p>
-<blockquote>
-<p>容器挂载宿主机/etc/hosts 并设置亲和性。让此pod只在该主机上<br>用k8s特性 .spec.hostAliases。hostAliases字段<br>更改集群中的coredns的记录</p>
-</blockquote>
-<p>此篇主要讲解hostAliases方法。</p>
-<h2 id="使用-HostAliases-向-Pod-etc-hosts-文件添加条目"><a href="#使用-HostAliases-向-Pod-etc-hosts-文件添加条目" class="headerlink" title="使用 HostAliases 向 Pod /etc/hosts 文件添加条目"></a>使用 HostAliases 向 Pod /etc/hosts 文件添加条目</h2><p>当 DNS 配置以及其它选项不合理的时候，通过向 Pod 的 /etc/hosts 文件中添加条目，可以在 Pod 级别覆盖对主机名的解析。在 1.7 版本，用户可以通过 PodSpec 的 HostAliases 字段来添加这些自定义的条目。</p>
-<p>建议通过使用 HostAliases 来进行修改，因为该文件由 Kubelet 管理，并且可以在 Pod 创建/重启过程中被重写。</p>
-<h3 id="默认-hosts-文件内容"><a href="#默认-hosts-文件内容" class="headerlink" title="默认 hosts 文件内容"></a>默认 hosts 文件内容</h3><p>让我们从一个 Nginx Pod 开始，给该 Pod 分配一个 IP：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl run nginx --image nginx --generator&#x3D;run-pod&#x2F;v1</span><br><span class="line">pod&#x2F;nginx created</span><br></pre></td></tr></table></figure>
-
-<p>检查Pod IP：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods --output&#x3D;wide</span><br><span class="line"></span><br><span class="line">NAME     READY     STATUS    RESTARTS   AGE    IP           NODE</span><br><span class="line">nginx    1&#x2F;1       Running   0          13s    10.200.0.4   worker0</span><br></pre></td></tr></table></figure>
-<p>主机文件的内容如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">kubectl exec nginx -- cat &#x2F;etc&#x2F;hosts</span><br><span class="line"></span><br><span class="line"># Kubernetes-managed hosts file.</span><br><span class="line">127.0.0.1	localhost</span><br><span class="line">::1	localhost ip6-localhost ip6-loopback</span><br><span class="line">fe00::0	ip6-localnet</span><br><span class="line">fe00::0	ip6-mcastprefix</span><br><span class="line">fe00::1	ip6-allnodes</span><br><span class="line">fe00::2	ip6-allrouters</span><br><span class="line">10.200.0.4	nginx</span><br></pre></td></tr></table></figure>
-
-<p>默认，hosts 文件只包含 ipv4 和 ipv6 的样板内容，像 localhost 和主机名称。</p>
-<h3 id="通过-HostAliases-增加额外的条目"><a href="#通过-HostAliases-增加额外的条目" class="headerlink" title="通过 HostAliases 增加额外的条目"></a>通过 HostAliases 增加额外的条目</h3><p>除了默认的样板内容，我们可以向 hosts 文件添加额外的条目，将 foo.local、 bar.local 解析为127.0.0.1， 将 foo.remote、 bar.remote 解析为 10.1.2.3，我们可以在 .spec.hostAliases 下为 Pod 添加 HostAliases。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">service&#x2F;networking&#x2F;hostaliases-pod.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: hostaliases-pod</span><br><span class="line">spec:</span><br><span class="line">  restartPolicy: Never</span><br><span class="line">  hostAliases:</span><br><span class="line">  - ip: &quot;127.0.0.1&quot;</span><br><span class="line">    hostnames:</span><br><span class="line">    - &quot;foo.local&quot;</span><br><span class="line">    - &quot;bar.local&quot;</span><br><span class="line">  - ip: &quot;10.1.2.3&quot;</span><br><span class="line">    hostnames:</span><br><span class="line">    - &quot;foo.remote&quot;</span><br><span class="line">    - &quot;bar.remote&quot;</span><br><span class="line">  containers:</span><br><span class="line">  - name: cat-hosts</span><br><span class="line">    image: busybox</span><br><span class="line">    command:</span><br><span class="line">    - cat</span><br><span class="line">    args:</span><br><span class="line">    - &quot;&#x2F;etc&#x2F;hosts&quot;</span><br></pre></td></tr></table></figure>
-<p>可以使用以下命令启动此Pod：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f hostaliases-pod.yaml</span><br><span class="line"></span><br><span class="line">pod&#x2F;hostaliases-pod created</span><br></pre></td></tr></table></figure>
-<p>检查Pod IP 和状态：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod --output&#x3D;wide</span><br><span class="line"></span><br><span class="line">NAME                           READY     STATUS      RESTARTS   AGE       IP              NODE</span><br><span class="line">hostaliases-pod                0&#x2F;1       Completed   0          6s        10.200.0.5      worker0</span><br></pre></td></tr></table></figure>
-<p>hosts 文件的内容看起来类似如下这样：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs hostaliases-pod</span><br><span class="line"></span><br><span class="line"># Kubernetes-managed hosts file.</span><br><span class="line">127.0.0.1	localhost</span><br><span class="line">::1	localhost ip6-localhost ip6-loopback</span><br><span class="line">fe00::0	ip6-localnet</span><br><span class="line">fe00::0	ip6-mcastprefix</span><br><span class="line">fe00::1	ip6-allnodes</span><br><span class="line">fe00::2	ip6-allrouters</span><br><span class="line">10.200.0.5	hostaliases-pod</span><br><span class="line"></span><br><span class="line"># Entries added by HostAliases.</span><br><span class="line">127.0.0.1	foo.local	bar.local</span><br><span class="line">10.1.2.3	foo.remote	bar.remote</span><br></pre></td></tr></table></figure>
-
-<p>在最下面额外添加了一些条目</p>
-<h3 id="为什么-Kubelet-管理-hosts文件？"><a href="#为什么-Kubelet-管理-hosts文件？" class="headerlink" title="为什么 Kubelet 管理 hosts文件？"></a>为什么 Kubelet 管理 hosts文件？</h3><p>kubelet 管理 Pod 中每个容器的 hosts 文件，避免 Docker 在容器已经启动之后去 修改 该文件。</p>
-<p>因为该文件是托管性质的文件，无论容器重启或 Pod 重新调度，用户修改该 hosts 文件的任何内容，都会在 Kubelet 重新安装后被覆盖。因此，不建议修改该文件的内容。</p>
-
+        
       
 
       
@@ -257,16 +228,75 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/01/03/kubernetes%E7%AC%94%E8%AE%B0-HostAliases/">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.jxhs.me/2020/11/30/apisix%E4%B8%8Econsul%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E7%9A%84%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2020/11/30/apisix%E6%98%AF%E5%95%A5-%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">apisix是啥&amp;&amp;以及食用方法</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -286,1000 +316,14 @@
 
 
 
-
-  
-    <article id="post-云原生的CICD工具-drone" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/01/02/%E4%BA%91%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7-drone/">云原声的CICD工具-drone</a>
-</h1>
-
-
-
-        
-        <a href="/2020/01/02/%E4%BA%91%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7-drone/" class="archive-article-date">
-  	<time datetime="2020-01-02T14:28:09.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-02</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/01/02/%E4%BA%91%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7-drone/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-2019最后一次出游记录" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/12/28/2019%E6%9C%80%E5%90%8E%E4%B8%80%E6%AC%A1%E5%87%BA%E6%B8%B8%E8%AE%B0%E5%BD%95/">2019最后一次出游记录</a>
-</h1>
-
-
-
-        
-        <a href="/2019/12/28/2019%E6%9C%80%E5%90%8E%E4%B8%80%E6%AC%A1%E5%87%BA%E6%B8%B8%E8%AE%B0%E5%BD%95/" class="archive-article-date">
-  	<time datetime="2019-12-28T14:49:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>时间过得很快,转眼2019已经接近尾声.为了抓住今年的尾巴 跟小伙伴们一起自驾游。</p>
-<h2 id="行程"><a href="#行程" class="headerlink" title="行程"></a>行程</h2><p>原计划的行程如下:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">周五晚上:</span><br><span class="line">香楠小区</span><br><span class="line">宁国市政府</span><br><span class="line">青龙湖景区</span><br><span class="line"></span><br><span class="line">周六一天:</span><br><span class="line">红杉林景区</span><br><span class="line">六道湾观景台</span><br><span class="line">水墨汀溪风景区</span><br><span class="line"></span><br><span class="line">周日(预计)</span><br><span class="line">月亮湾生态旅游风景区</span><br><span class="line">敬亭山风景名胜区</span><br><span class="line">香楠小区</span><br></pre></td></tr></table></figure>
-<p>总体来讲就是按照皖南川藏线的路线。主要是体验大自然,都基本是山路。<br>理论路线如下:<br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacvq55d7xj30zk0ngx23.jpg" alt="理论路线"></p>
-<blockquote>
-<p>当然计划就是拿来执行的,执行总可能有点差错……</p>
-</blockquote>
-<h3 id="第一天"><a href="#第一天" class="headerlink" title="第一天"></a>第一天</h3><p>周五晚上没啥子问题。我们租了两个车,一个五座一个七座。满满12个人 出发前往青龙湖景区的青龙池山庄</p>
-<hr>
-<p>这是出发前的照片,满满三箱子零食<br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacu5ea7d8j31hc0om1az.jpg" alt="出发"></p>
-<p>我们晚上九点从上海出发,到凌晨三点才到青龙池山庄。进去就洗澡睡觉了.因为第二天还比较赶<br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacu3hdgi9j31400u015k.jpg" alt="青龙池山庄-1"><br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacu3s1jzbj31400u07em.jpg" alt="青龙池山庄-2"></p>
-<blockquote>
-<p>老板人不错,因为是淡季 房间从200每间讲价到120每间,还带早餐。提供包子馒头稀饭和咸菜 管够…忘记拍照了 冯睿一个人吃了五个包子三碗稀饭还吃了若干个鸡蛋…..</p>
-</blockquote>
-<h3 id="第二天"><a href="#第二天" class="headerlink" title="第二天"></a>第二天</h3><p>早餐吃完我们就出发到红杉林景区的码头停下,斟酌半天以后 全员登上快艇然后去湖对面玩儿。<br>码头上快艇<br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacvtrwrwzj30u014078c.jpg" alt="码头"><br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacvub0bwoj30u0140npf.jpg" alt="fr"><br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacvuk7rckj31400u04qu.jpg" alt="水花"><br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacvv3xsvxj31400u0420.jpg" alt=""></p>
-<p>到了湖对面合影<br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacuqvlep1j31400u047h.jpg" alt="到了湖对面以后"></p>
-<p>爬山遛狗<br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacvhatn16j30u0140gyu.jpg" alt="爬山遛狗"></p>
-<p>反正景色真的不错。然后天公作美,拍出来的照片就像windows XP的壁纸<br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacvwg7oi1j31400u0whf.jpg" alt="bz1"><br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacvwkv76zj31400u076k.jpg" alt="bz2"><br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacvws226qj31400u0mz1.jpg" alt="bz3"></p>
-<p>总计玩了一个小时左右，大家都饿了 听说码头边上有一个农家乐,菜都比较新鲜 都是自己家产的。<br>点完菜以后,农家阿姨去做饭 我们在这边嗮太阳，聊天。<br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacuuwwb2mj31400u0dkx.jpg" alt="吃饭前聊天"></p>
-<p>等了大概一个小时，才吃上饭 因为只有阿姨一个人做饭,并且我们前面还有一桌。<br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacuvgn0loj31400u0q6y.jpg" alt="吃饭"></p>
-<blockquote>
-<p>不得不说 真的好吃。原滋原味的农家菜，在加上阿姨做饭手艺比较牛皮。(你们看刘磊的眼睛是不是比我的小啊….毋庸置疑的事情)</p>
-</blockquote>
-<hr>
-<p>下午停车偶遇直升飞机,可以体验的那种.带着女朋友我俩去试了试,怎么说呢 感觉像坐公交车…不是很刺激 但是上面风景真的好，特别是下面是个风景区的情况下。<br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacvgsboulj31400u0ae1.jpg" alt="飞机1"><br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacvgzst7jj31400u0gp7.jpg" alt="飞机2"></p>
-<p>问题来了 我们码头游玩以及吃饭大概花了四五个小时。导致计划的后面六道湾观景台根本没有时间去品。并且天还下起了小雨,一个同伴还晕车不舒服。于是一路快马加鞭飞奔到下一个酒店。<br>理论上的六道湾观景台的样子<br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacw1ttshsj30go09cjsk.jpg" alt="理论1"><br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacw2fk356j30go0b374u.jpg" alt="理论2"></p>
-<p>我们看到的样子<br><img src="https://tva1.sinaimg.cn/large/006tNbRwly1gacvsj7kvaj30hs0a00sl.jpg" alt="我们看到的"></p>
-<blockquote>
-<p>蜜汁尴尬,还好袁昭车技牛皮….不然都出不来了。</p>
-</blockquote>
-<p>到了酒店已经晚上8点,安置完行李就出去找了个地方吃东西, 可能是中午的饭菜太好吃了,晚上的这一顿饭菜总感觉没啥子印象。印象最深的倒是老板 挨个发烟,然后还给我们本地的芝麻糖吃。 </p>
-<p>吃完回来以后,说好的晚上玩玩牌或者狼人杀来着,结果一会儿大家都睡了。估计都累了</p>
-<hr>
-<p>周日一早,我们一行人(除了李刚夫妇,一大早也不知道在干啥)出去吃早餐。订餐之前老板说这个地方吃早餐可多了…结果一早问他去哪儿吃，他说两公里以外的地方有一个桥 过了桥就有吃的……<br>出发前看到一只小黑</p>
-<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gaet24wh6vj31400u00zj.jpg" alt="小黑"><br>吃完早饭去了茶山瞧瞧</p>
-<p>早上的样子<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gaet6et94wj31400u0aeq.jpg" alt="早上"></p>
-<p>吃完早饭出发去了茶山<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gaet501cglj31hc0omqgf.jpg" alt="茶山"></p>
-<hr>
-<p>临近中午去了蹦蹦床玩<br>吃了最后一顿午饭<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gaetmlf8y1j30u0140whw.jpg" alt=""><br>出发回上海<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gaetmwyfjij30u01t0thz.jpg" alt=""><br>圆满结束此次行程。</p>
-<h2 id="统计此次旅游花销"><a href="#统计此次旅游花销" class="headerlink" title="统计此次旅游花销"></a>统计此次旅游花销</h2><table>
-<thead>
-<tr>
-<th>用途</th>
-<th>费用</th>
-<th>费用链接</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>租车</td>
-<td>1585</td>
-<td><a href="https://tva1.sinaimg.cn/large/006tNbRwgy1gadzv3kfawj30u01hcjtp.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwgy1gadzv3kfawj30u01hcjtp.jpg</a> <br> <a href="https://tva1.sinaimg.cn/large/006tNbRwgy1gadzvht35qj30u01hcdi0.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwgy1gadzvht35qj30u01hcdi0.jpg</a></td>
-<td>无</td>
-</tr>
-<tr>
-<td>提前买的零食水果</td>
-<td>637.7</td>
-<td><a href="https://tva1.sinaimg.cn/large/006tNbRwly1gacweq4klwj30ku112ad4.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwly1gacweq4klwj30ku112ad4.jpg</a> <br> <a href="https://tva1.sinaimg.cn/large/006tNbRwly1gacwfa1tqhj30ku112mzr.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwly1gacwfa1tqhj30ku112mzr.jpg</a> <br> <a href="https://tva1.sinaimg.cn/large/006tNbRwly1gacwffkh95j30ku112776.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwly1gacwffkh95j30ku112776.jpg</a> <br> <a href="https://tva1.sinaimg.cn/large/006tNbRwly1gacwfkbayuj30ku0t90v0.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwly1gacwfkbayuj30ku0t90v0.jpg</a> <br> <a href="https://tva1.sinaimg.cn/large/006tNbRwly1gacwfsxpcmj30ku112jt6.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwly1gacwfsxpcmj30ku112jt6.jpg</a></td>
-<td>买的有点多…下次主意</td>
-</tr>
-<tr>
-<td>出发前买的两箱水和槟榔</td>
-<td>144</td>
-<td><a href="https://tva1.sinaimg.cn/large/006tNbRwly1gacwi8yuk1j30hs0i5mxl.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwly1gacwi8yuk1j30hs0i5mxl.jpg</a></td>
-<td>无</td>
-</tr>
-<tr>
-<td>七座车停车高速加油以及零食</td>
-<td>420</td>
-<td><a href="https://tva1.sinaimg.cn/large/006tNbRwly1gacwm2zgocj30u00rzdh0.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwly1gacwm2zgocj30u00rzdh0.jpg</a> <br> <a href="https://tva1.sinaimg.cn/large/006tNbRwly1gacwmdji4rj30u01t0juy.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwly1gacwmdji4rj30u01t0juy.jpg</a> <br> <a href="https://tva1.sinaimg.cn/large/006tNbRwly1gacwjm7or2j30ac03qt8t.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwly1gacwjm7or2j30ac03qt8t.jpg</a></td>
-<td>无</td>
-</tr>
-<tr>
-<td>五座车停车高速加油以及零食</td>
-<td>594</td>
-<td><a href="https://tva1.sinaimg.cn/large/006tNbRwly1gacwob90cxj315k0ne0wd.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwly1gacwob90cxj315k0ne0wd.jpg</a> <br> <a href="https://tva1.sinaimg.cn/large/006tNbRwly1gacwp1igzhj30n80gqthu.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwly1gacwp1igzhj30n80gqthu.jpg</a></td>
-<td>无</td>
-</tr>
-<tr>
-<td>周五住宿</td>
-<td>720</td>
-<td>图随后补上</td>
-<td>无</td>
-</tr>
-<tr>
-<td>快艇,以及停车</td>
-<td>740</td>
-<td><a href="https://tva1.sinaimg.cn/large/006tNbRwly1gacwr8zl7rj30gc0agjth.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwly1gacwr8zl7rj30gc0agjth.jpg</a> <br> <a href="https://tva1.sinaimg.cn/large/006tNbRwly1gacwryed83j30hs0fwq38.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwly1gacwryed83j30hs0fwq38.jpg</a></td>
-<td>无</td>
-</tr>
-<tr>
-<td>码头农家乐</td>
-<td>500</td>
-<td><a href="https://tva1.sinaimg.cn/large/006tNbRwly1gacwt8jmh2j30hs093q30.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwly1gacwt8jmh2j30hs093q30.jpg</a></td>
-<td>老板只收微信,冯睿先给的.我转他支付宝</td>
-</tr>
-<tr>
-<td>周六住宿</td>
-<td>720</td>
-<td>图随后补上</td>
-<td>无</td>
-</tr>
-<tr>
-<td>周六晚餐</td>
-<td>400</td>
-<td><a href="https://tva1.sinaimg.cn/large/006tNbRwly1gacwuwb6b2j30hs0vk0u2.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwly1gacwuwb6b2j30hs0vk0u2.jpg</a></td>
-<td>袁昭没吃,结算的时候去掉他</td>
-</tr>
-<tr>
-<td>周日早餐</td>
-<td>145</td>
-<td><a href="https://tva1.sinaimg.cn/large/006tNbRwgy1gadznrxc2xj30hs0ifmxu.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwgy1gadznrxc2xj30hs0ifmxu.jpg</a>  <br> <a href="https://tva1.sinaimg.cn/large/006tNbRwgy1gadzox818ej30ku112tah.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwgy1gadzox818ej30ku112tah.jpg</a></td>
-<td>李刚夫妇没吃,结算去掉</td>
-</tr>
-<tr>
-<td>早上牛奶</td>
-<td>156</td>
-<td><a href="https://tva1.sinaimg.cn/large/006tNbRwgy1gadzyc5pwjj30u01t0wkw.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwgy1gadzyc5pwjj30u01t0wkw.jpg</a></td>
-<td>订单跟私人订单混合,下次主意分开。</td>
-</tr>
-<tr>
-<td>蹦床娱乐费用</td>
-<td>731</td>
-<td><a href="https://tva1.sinaimg.cn/large/006tNbRwgy1gadzs30pe7j30hs0gs3z0.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwgy1gadzs30pe7j30hs0gs3z0.jpg</a> <br> <a href="https://tva1.sinaimg.cn/large/006tNbRwgy1gadzs9mzn9j30hs0vkab9.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwgy1gadzs9mzn9j30hs0vkab9.jpg</a></td>
-<td>向莉没去 结算去掉</td>
-</tr>
-<tr>
-<td>周日午饭</td>
-<td>272</td>
-<td><a href="https://tva1.sinaimg.cn/large/006tNbRwgy1gadzs9mzn9j30hs0vkab9.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwgy1gadzs9mzn9j30hs0vkab9.jpg</a></td>
-<td>老湿自己付的钱 单独给了 但是都吃了</td>
-</tr>
-<tr>
-<td>回来加油费用</td>
-<td>665</td>
-<td><a href="https://tva1.sinaimg.cn/large/006tNbRwgy1gadzxnp4njj30u01t0q6l.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwgy1gadzxnp4njj30u01t0q6l.jpg</a> <br> <a href="https://tva1.sinaimg.cn/large/006tNbRwgy1gadzxtkjyfj309k0a3dg5.jpg" target="_blank" rel="noopener">https://tva1.sinaimg.cn/large/006tNbRwgy1gadzxtkjyfj309k0a3dg5.jpg</a></td>
-<td>无</td>
-</tr>
-</tbody></table>
-<p>总计  8429.7<br>向莉 : 596.2 +  13.2 + 36.4   =  645.4<br>李刚夫妇: 596.2 + 66.5 + 36.4  =  699.1<br>袁昭: 596.2  + 66.5 + 13.2    =  675.9</p>
-<p>其他人<br>596.2 +  66.5 + 13.2 + 36.4 = 712.3</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/12/28/2019%E6%9C%80%E5%90%8E%E4%B8%80%E6%AC%A1%E5%87%BA%E6%B8%B8%E8%AE%B0%E5%BD%95/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-kubernetes源码分析专栏" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/12/20/kubernetes%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%93%E6%A0%8F/">kubernetes源码分析专栏</a>
-</h1>
-
-
-
-        
-        <a href="/2019/12/20/kubernetes%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%93%E6%A0%8F/" class="archive-article-date">
-  	<time datetime="2019-12-20T02:32:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-20</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/12/20/kubernetes%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%93%E6%A0%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-对于程序员来说个人宽带可以怎么利用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/12/11/%E5%AF%B9%E4%BA%8E%E7%A8%8B%E5%BA%8F%E5%91%98%E6%9D%A5%E8%AF%B4%E4%B8%AA%E4%BA%BA%E5%AE%BD%E5%B8%A6%E5%8F%AF%E4%BB%A5%E6%80%8E%E4%B9%88%E5%88%A9%E7%94%A8/">对于程序员来说个人宽带可以怎么利用?</a>
-</h1>
-
-
-
-        
-        <a href="/2019/12/11/%E5%AF%B9%E4%BA%8E%E7%A8%8B%E5%BA%8F%E5%91%98%E6%9D%A5%E8%AF%B4%E4%B8%AA%E4%BA%BA%E5%AE%BD%E5%B8%A6%E5%8F%AF%E4%BB%A5%E6%80%8E%E4%B9%88%E5%88%A9%E7%94%A8/" class="archive-article-date">
-  	<time datetime="2019-12-11T14:17:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-11</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">目前在上海，家里有一个nas 和一些中日老师的学习视频，想在任何地方都获取知识.目前了解到的现状如下:</span><br><span class="line">上海用的宽带都是SDN网络,全是内网</span><br><span class="line">家里200M的网虽然上下不对等，但是上行也有30多M。如果用NAT穿透只能用我阿里云1M小水管。不甘心</span><br></pre></td></tr></table></figure>
-
-<h3 id="各种打听"><a href="#各种打听" class="headerlink" title="各种打听"></a>各种打听</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">首先打听到SDN网络可以让运营商转为桥接,跟他说光纤转桥接就行(电信运营商电话打到人工客服真不容易)</span><br><span class="line">然后就有人跟你约时间上门调试,结果发现只是签字。网是后台直接调的。</span><br><span class="line">然后你会发现，给你的网是内网。这时候继续给电信运营商打电话，说需要一个工网ip</span><br><span class="line">他们会问你为啥需要工网balbalabala的。告诉他我家里有一个NAS需要在办公室访问就OK</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>此时路由器外面的就是工网IP了。然后路由器映射一下。就OK了。</p>
-</blockquote>
-<hr>
-<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9vhy02n31j31w10u07ab.jpg" alt="路由器"><br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9vhyizmjvj31z20ms795.jpg" alt="nginx"><br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9vhze8ngxj316a0jsad9.jpg" alt="ip"><br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9vhyizmjvj31z20ms795.jpg" alt="外部nginx"></p>
-<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9vhzw9ijhj31yk0m4gqn.jpg" alt="docker内部架构图"></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/12/11/%E5%AF%B9%E4%BA%8E%E7%A8%8B%E5%BA%8F%E5%91%98%E6%9D%A5%E8%AF%B4%E4%B8%AA%E4%BA%BA%E5%AE%BD%E5%B8%A6%E5%8F%AF%E4%BB%A5%E6%80%8E%E4%B9%88%E5%88%A9%E7%94%A8/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-命令行翻墙" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/12/11/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99/">命令行翻墙</a>
-</h1>
-
-
-
-        
-        <a href="/2019/12/11/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99/" class="archive-article-date">
-  	<time datetime="2019-12-11T02:45:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-11</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="痛点"><a href="#痛点" class="headerlink" title="痛点"></a>痛点</h2><blockquote>
-<p>啥也不说，先上图。这样的痛苦 国内程序员应该都体会过<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9t78ifnifj30to04gdhe.jpg" alt="git clone"></p>
-</blockquote>
-<h2 id="共具介绍"><a href="#共具介绍" class="headerlink" title="共具介绍"></a>共具介绍</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">对于技术人员shadowsocks应该不陌生，shadowsocks实质上也是一种socks5代理服务，类似于ssh代理。</span><br><span class="line"></span><br><span class="line">与vpn的全局代理不同，shadowsocks仅针对浏览器代理，不能代理应用软件，比如curl、wget等一些命令行软件。如果要让终端下的命令行工具都能支持代理，这时我们就要用上proxychains-ng这款神器了。</span><br></pre></td></tr></table></figure>
-
-<h3 id="什么是-proxychains-ng"><a href="#什么是-proxychains-ng" class="headerlink" title="什么是 proxychains-ng"></a>什么是 proxychains-ng</h3><p>项目主页：<a href="https://github.com/rofl0r/proxychains-ng" target="_blank" rel="noopener">https://github.com/rofl0r/proxychains-ng</a></p>
-<h3 id="proxychains-ng-介绍"><a href="#proxychains-ng-介绍" class="headerlink" title="proxychains-ng 介绍"></a>proxychains-ng 介绍</h3><blockquote>
-<p>proxychains ng (new generation) - a preloader which hooks calls to sockets in dynamically linked programs and redirects it through one or more socks/http proxies. continuation of the unmaintained proxychains project.</p>
-</blockquote>
-<p>proxychains-ng是proxychains的加强版，主要有以下功能和不足：</p>
-<ul>
-<li>支持http/https/socks4/socks5</li>
-<li>支持认证</li>
-<li>远端dns查询</li>
-<li>多种代理模式</li>
-<li>不支持udp/icmp转发</li>
-<li>少部分程序和在后台运行的可能无法代理</li>
-</ul>
-<h3 id="proxychains-ng-原理"><a href="#proxychains-ng-原理" class="headerlink" title="proxychains-ng 原理"></a>proxychains-ng 原理</h3><p>简单的说就是这个程序 Hook 了 sockets 相关的操作，让普通程序的 sockets 数据走 SOCKS/HTTP 代理。</p>
-<p>其核心就是利用了 LD_PRELOAD 这个环境变量（Mac 上是 DYLD_INSERT_LIBRARIES）。</p>
-<p>在 Unix 系统中，如果设置了 LD_PRELOAD 环境变量，那么在程序运行时，动态链接器会先加载该环境变量所指定的动态库。也就是说，这个动态库的加载优先于任何其它的库，包括 libc。</p>
-<p>ProxyChains 创建了一个叫 libproxychains4.so（Mac 上是 libproxychains4.dylib）的动态库。里面重写了 connect、close 以及 sendto 等与 socket 相关的函数，通过这些函数发出的数据将会走代理，详细代码可以参考 libproxychains.c。</p>
-<p>在主程序里，它会读取配置文件，查找 libproxychains4 所在位置，把这些信息存入环境变量后执行子程序。这样子程序里对 socket 相关的函数调用就会被 Hook 了，对子程序来说，跟代理相关的东西都是透明的。</p>
-<h2 id="安装-proxychains-ng"><a href="#安装-proxychains-ng" class="headerlink" title="安装 proxychains-ng"></a>安装 proxychains-ng</h2><h3 id="源代码安装"><a href="#源代码安装" class="headerlink" title="源代码安装"></a>源代码安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;rofl0r&#x2F;proxychains-ng</span><br><span class="line">.&#x2F;configure --prefix&#x3D;&#x2F;usr --sysconfdir&#x3D;&#x2F;etc</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line">make install-config (安装proxychains.conf配置文件)</span><br></pre></td></tr></table></figure>
-
-<h3 id="MAC下安装"><a href="#MAC下安装" class="headerlink" title="MAC下安装"></a>MAC下安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install proxychains-ng</span><br></pre></td></tr></table></figure>
-
-<h3 id="配置-proxychains-ng"><a href="#配置-proxychains-ng" class="headerlink" title="配置 proxychains-ng"></a>配置 proxychains-ng</h3><p>proxychains-ng默认配置文件名为<code>proxychains.conf</code></p>
-<ul>
-<li>通过源代码编译安装的默认为<code>/etc/proxychains.conf</code></li>
-<li>Mac下用Homebrew安装的默认为<code>/usr/local/etc/proxychains.conf</code></li>
-</ul>
-<p>proxychains-ng的配置非常简单，只需将代理加入[ProxyList]中即可。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ vim proxychains.conf</span><br><span class="line"></span><br><span class="line">quiet_mode</span><br><span class="line">dynamic_chain</span><br><span class="line">chain_len &#x3D; 1 #round_robin_chain和random_chain使用</span><br><span class="line">proxy_dns</span><br><span class="line">remote_dns_subnet 224</span><br><span class="line">tcp_read_time_out 15000</span><br><span class="line">tcp_connect_time_out 8000</span><br><span class="line">localnet 127.0.0.0&#x2F;255.0.0.0</span><br><span class="line">localnet 10.0.0.0&#x2F;255.0.0.0</span><br><span class="line">localnet 172.16.0.0&#x2F;255.240.0.0</span><br><span class="line">localnet 192.168.0.0&#x2F;255.255.0.0</span><br><span class="line"></span><br><span class="line">[ProxyList]</span><br><span class="line">socks5  127.0.0.1 1086</span><br><span class="line">http    127.0.0.1 1087</span><br></pre></td></tr></table></figure>
-
-
-<p>proxychains-ng支持多种代理模式,默认是选择 strict_chain。</p>
-<ul>
-<li>dynamic_chain ：动态模式,按照代理列表顺序自动选取可用代理</li>
-<li>strict_chain ：严格模式,严格按照代理列表顺序使用代理，所有代理必须可用</li>
-<li>round_robin_chain ：轮询模式，自动跳过不可用代理</li>
-<li>random_chain ：随机模式,随机使用代理<h3 id="proxychains-ng-使用"><a href="#proxychains-ng-使用" class="headerlink" title="proxychains-ng 使用"></a>proxychains-ng 使用</h3></li>
-</ul>
-<p>proxychains-ng用法非常简单，使用格式如下:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 程序 参数</span><br></pre></td></tr></table></figure>
-
-<h3 id="proxychains-ng-测试"><a href="#proxychains-ng-测试" class="headerlink" title="proxychains-ng 测试"></a>proxychains-ng 测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 curl ip.sb</span><br></pre></td></tr></table></figure>
-
-<h3 id="proxychains-ng-优化"><a href="#proxychains-ng-优化" class="headerlink" title="proxychains-ng 优化"></a>proxychains-ng 优化</h3><p>给proxychains4增加一个别名，在 /.zshrc或/.bashrc末尾加入如下行：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alias pc&#x3D;&#39;proxychains4&#39;</span><br></pre></td></tr></table></figure>
-<p>以后就可以类似$ pc curl <a href="http://www.google.com" target="_blank" rel="noopener">http://www.google.com</a>  这样调用proxychains4，简化了输入。</p>
-<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/12/11/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-小米路由器3增强版刷机踩坑记录" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/12/07/%E5%B0%8F%E7%B1%B3%E8%B7%AF%E7%94%B1%E5%99%A83%E5%A2%9E%E5%BC%BA%E7%89%88%E5%88%B7%E6%9C%BA%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/">小米路由器3增强版刷机踩坑记录</a>
-</h1>
-
-
-
-        
-        <a href="/2019/12/07/%E5%B0%8F%E7%B1%B3%E8%B7%AF%E7%94%B1%E5%99%A83%E5%A2%9E%E5%BC%BA%E7%89%88%E5%88%B7%E6%9C%BA%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/" class="archive-article-date">
-  	<time datetime="2019-12-07T15:22:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-07</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><code>首先我想说明一点，本博客是踩坑的记录。安装文档网上的基本都能用，为了文章的完整性还是写上安装步骤。</code></p>
-<h2 id="排坑过程"><a href="#排坑过程" class="headerlink" title="排坑过程"></a>排坑过程</h2><p>本次主要以为小米路由器3G(R3G)为例</p>
-<h3 id="坑1"><a href="#坑1" class="headerlink" title="坑1"></a>坑1</h3><p>原版路由器先刷官方开发版ROM（开发版才能打开ssh通道）小米路由器ROM</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">坑1:小米官方以及下架了刷ROM开发版的页面,已经找不到了。</span><br><span class="line">解决方案: 万能的网友有存档。我也在百度存了一份</span><br><span class="line">链接:https:&#x2F;&#x2F;pan.baidu.com&#x2F;s&#x2F;1MGL8dJ_QfU4ytY8U0xz6fw  密码:oc9b</span><br></pre></td></tr></table></figure>
-<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9omfgrukyj316i0ac40u.jpg" alt="百度云"></p>
-<h3 id="坑2"><a href="#坑2" class="headerlink" title="坑2"></a>坑2</h3><p>刷完开发版系统以后,就可以安装官方的ssh插件开启ssh功能了<a href="https://d.miwifi.com/rom/ssh" target="_blank" rel="noopener">ssh</a></p>
-<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9omhu2hjqj319i0rytds.jpg" alt="ssh"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">坑2:官网提醒下载miwifi_ssh.bin,结果我手贱点了两下，并且还把第一个删掉了只剩下一个这个</span><br><span class="line">坑的就是这个括号前面还有一个空格........导致怎么都开启不了ssh。光这个就折腾了两天</span><br></pre></td></tr></table></figure>
-<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9omlhqsrbj30ci02k3yi.jpg" alt="ssh1"></p>
-<h3 id="坑3"><a href="#坑3" class="headerlink" title="坑3"></a>坑3</h3><p>开启完ssh 放入不死boot刷完以后。备份原来的系统就可以刷新系统了，比如我提供的潘多拉。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">刷完以后看到网上都能直接以 http:&#x2F;&#x2F;192.168.123.1 admin&#x2F;admin 访问</span><br><span class="line">可是我这边怎么都不行，但是路由器已经能使得连上他的能上网了。</span><br><span class="line">一直以为是功能没刷完整导致的。于是各种搜各种刷，无济于事。</span><br><span class="line">最后特么发现是chrome不支持而已。。firefox以及mac自带的safari都可以打开........</span><br></pre></td></tr></table></figure>
-<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9omri1nklj31nl0u0qoi.jpg" alt="chrome vs firefox"></p>
-<p>最后上一张刷好以后的后台界面,目前支持的功能非常多。要是碰巧你在会玩点儿，那就简直牛的离谱了。(以后别买小米的路由器…)<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9omvt373hj31i30u048u.jpg" alt="chrome vs firefox"></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">杂项</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/12/07/%E5%B0%8F%E7%B1%B3%E8%B7%AF%E7%94%B1%E5%99%A83%E5%A2%9E%E5%BC%BA%E7%89%88%E5%88%B7%E6%9C%BA%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-热重启docker" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/11/29/%E7%83%AD%E9%87%8D%E5%90%AFdocker/">热重启docker</a>
-</h1>
-
-
-
-        
-        <a href="/2019/11/29/%E7%83%AD%E9%87%8D%E5%90%AFdocker/" class="archive-article-date">
-  	<time datetime="2019-11-29T03:13:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-29</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>众所周知，由于docker架构原因,docker是有守护进程的。而所有的容器进程父进程都是这个守护进程,如下图:<br><img src="https://i.loli.net/2019/11/29/JrG9j7QxCK1HpAL.png" alt="docker架构"></p>
-<p>这样的蠢架构导致了很多问题:</p>
-<ul>
-<li>生产环境docker内存泄漏无法处理或者处理繁琐</li>
-<li>升级生产docker版本繁琐</li>
-</ul>
-<p>从docker 1.12以后更新了热更新的配置,虽然架构还是不咋地,但是至少解决了以上问题</p>
-<h2 id="热更新配置"><a href="#热更新配置" class="headerlink" title="热更新配置"></a>热更新配置</h2><h3 id="Step-1-使用-docker-live-restore-amp-amp-SIGHU-reload-配置"><a href="#Step-1-使用-docker-live-restore-amp-amp-SIGHU-reload-配置" class="headerlink" title="Step 1. 使用 docker live restore &amp;&amp; SIGHU reload 配置"></a>Step 1. 使用 docker live restore &amp;&amp; SIGHU reload 配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">配置 live restore 到 &#x2F;etc&#x2F;docker&#x2F;daemon.json （注意加逗号）</span><br><span class="line">&#123; &quot;live-restore&quot;: true &#125;</span><br><span class="line">reload  docker 配置【⚠️：要先做这步，才能重启！！】</span><br><span class="line">kill -SIGHUP $(pidof dockerd)</span><br><span class="line">检查配置</span><br><span class="line">docker info | grep -i Live</span><br></pre></td></tr></table></figure>
-<p>应该能看到如下配置</p>
-<p><img src="https://i.loli.net/2019/11/29/sY31qC4miSgWGHF.png" alt="image.png"></p>
-<p>重启 docker<br>systemctl restart docker</p>
-<p>注意 </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">重启 docker 后请 disable live-restore ！</span><br></pre></td></tr></table></figure>
-
-<p>设置  /etc/docker/daemon.json 参数 live-restore 为 false， “live-restore”: false<br>reload： kill -SIGHUP $(pidof dockerd)<br>检查：docker info | grep Live，确认是false</p>
-<h3 id="Step-2-重启直接挂载-var-run-docker-sock的容器"><a href="#Step-2-重启直接挂载-var-run-docker-sock的容器" class="headerlink" title="Step 2. 重启直接挂载/var/run/docker.sock的容器"></a>Step 2. 重启直接挂载/var/run/docker.sock的容器</h3><p>查看该主机上直接挂载 docker.sock 的容器   </p>
-<p>docker inspect $(docker ps -q)|grep ‘Source.*docker.sock|Name”: “/‘|grep sock -B1|grep Name<br>重启之</p>
-<p>【理论分析】<br>[原因] 因为挂载了/var/run/docker.sock文件，docker机制是绑定主机上该文件的 inode。当docker-engine热重启，该文件的inode改变，所以容器内部所认的这个inode事实上已经木有用了。 所以跟docker.sock相关的功能：容器控制台/容器日志等都无法工作。（例如你的docker的挂载了一个主机文件，当你删除该主机文件并重建之后，docker内部是看不到新文件的！ 如果挂载的是其目录则不会有这个问题。）</p>
-<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><p>重启完之后，记得把配置再改回去</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/11/29/%E7%83%AD%E9%87%8D%E5%90%AFdocker/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-k8s-v1-17-新特性预告-拓扑感知服务路由" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/11/28/k8s-v1-17-%E6%96%B0%E7%89%B9%E6%80%A7%E9%A2%84%E5%91%8A-%E6%8B%93%E6%89%91%E6%84%9F%E7%9F%A5%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1/">k8s v1.17 新特性预告: 拓扑感知服务路由</a>
-</h1>
-
-
-
-        
-        <a href="/2019/11/28/k8s-v1-17-%E6%96%B0%E7%89%B9%E6%80%A7%E9%A2%84%E5%91%8A-%E6%8B%93%E6%89%91%E6%84%9F%E7%9F%A5%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1/" class="archive-article-date">
-  	<time datetime="2019-11-28T03:00:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p align="right">转摘自roc   https://imroc.io</p>
-
-
-<h2 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h2><ul>
-<li>拓扑域: 表示在集群中的某一类 “地方”，比如某节点、某机架、某可用区或某地域等，这些都可以作为某种拓扑域。</li>
-<li>endpoint: k8s 某个服务的某个 ip+port，通常是 pod 的 ip+port。</li>
-<li>service: k8s 的 service 资源(服务)，关联一组 endpoint ，访问 service 会被转发到关联的某个 endpoint 上。</li>
-</ul>
-<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>拓扑感知服务路由，此特性最初由杜军大佬提出并设计。为什么要设计此特性呢？想象一下，k8s 集群节点分布在不同的地方，service 对应的 endpoints 分布在不同节点，传统转发策略会对所有 endpoint 做负载均衡，通常会等概率转发，当访问 service 时，流量就可能被分散打到这些不同的地方。虽然 service 转发做了负载均衡，但如果 endpoint 距离比较远，流量转发过去网络时延就相对比较高，会影响网络性能，在某些情况下甚至还可能会付出额外的流量费用。要是如能实现 service 就近转发 endpoint，是不是就可以实现降低网络时延，提升网络性能了呢？是的！这也正是该特性所提出的目的和意义。</p>
-<h2 id="k8s-亲和性"><a href="#k8s-亲和性" class="headerlink" title="k8s 亲和性"></a>k8s 亲和性</h2><p>service 的就近转发实际就是一种网络的亲和性，倾向于转发到离自己比较近的 endpoint。在此特性之前，已经在调度和存储方面有一些亲和性的设计与实现:</p>
-<ul>
-<li>节点亲和性 (Node Affinity): 让 Pod 被调度到符合一些期望条件的 Node 上，比如限制调度到某一可用区，或者要求节点支持 GPU，这算是调度亲和，调度结果取决于节点属性。</li>
-<li>Pod 亲和性与反亲和性 (Pod Affinity/AntiAffinity): 让一组 Pod 调度到同一拓扑域的节点上，或者打散到不同拓扑域的节点， 这也算是调度亲和，调度结果取决于其它 Pod。</li>
-<li>数据卷拓扑感知调度 (Volume Topology-aware Scheduling): 让 Pod 只被调度到符合其绑定的存储所在拓扑域的节点上，这算是调度与存储的亲和，调度结果取决于存储的拓扑域。</li>
-<li>本地数据卷 (Local Persistent Volume): 让 Pod 使用本地数据卷，比如高性能 SSD，在某些需要高 IOPS 低时延的场景很有用，它还会保证 Pod 始终被调度到同一节点，数据就不会不丢失，这也算是调度与存储的亲和，调度结果取决于存储所在节点。</li>
-<li>数据卷拓扑感知动态创建 (Topology-Aware Volume Dynamic Provisioning): 先调度 Pod，再根据 Pod 所在节点的拓扑域来创建存储，这算是存储与调度的亲和，存储的创建取决于调度的结果。</li>
-</ul>
-<p>而 k8s 目前在网络方面还没有亲和性能力，拓扑感知服务路由这个新特性恰好可以补齐这个的空缺，此特性使得 service 可以实现就近转发而不是所有 endpoint 等概率转发。</p>
-<h2 id="如何实现"><a href="#如何实现" class="headerlink" title="如何实现"></a>如何实现</h2><p>我们知道，service 转发主要是 node 上的 kube-proxy 进程通过 watch apiserver 获取 service 对应的 endpoint，再写入 iptables 或 ipvs 规则来实现的; 对于 headless service，主要是通过 kube-dns 或 coredns 动态解析到不同 endpoint ip 来实现的。实现 service 就近转发的关键点就在于如何将流量转发到跟当前节点在同一拓扑域的 endpoint 上，也就是会进行一次 endpoint 筛选，选出一部分符合当前节点拓扑域的 endpoint 进行转发。</p>
-<p>那么如何判断 endpoint 跟当前节点是否在同一拓扑域里呢？只要能获取到 endpoint 的拓扑信息，用它跟当前节点拓扑对比下就可以知道了。那又如何获取 endpoint 的拓扑信息呢？答案是通过 endpoint 所在节点的 label，我们可以使用 node label 来描述拓扑域。</p>
-<p>通常在节点初始化的时候，controller-manager 就会为节点打上许多 label，比如 <code>kubernetes.io/hostname</code> 表示节点的 hostname 来区分节点；另外，在云厂商提供的 k8s 服务，或者使用 cloud-controller-manager 的自建集群，通常还会给节点打上 <code>failure-domain.beta.kubernetes.io/zone</code> 和 <code>failure-domain.beta.kubernetes.io/region</code> 以区分节点所在可用区和所在地域，但自 v1.17 开始将会改名成 <code>topology.kubernetes.io/zon</code>e 和 <code>topology.kubernetes.io/region</code>，参见 <a href="https://github.com/kubernetes/kubernetes/pull/81431" target="_blank" rel="noopener">PR #81431</a>。</p>
-<p>如何根据 endpoint 查到它所在节点的这些 label 呢？答案是通过 <code>Endpoint Slice</code>，该特性在 v1.16 发布了 alpha，在 v1.17 将会进入 beta，它相当于 Endpoint API 增强版，通过将 endpoint 做数据分片来解决大规模 endpoint 的性能问题，并且可以携带更多的信息，包括 endpoint 所在节点的拓扑信息，拓扑感知服务路由特性会通过 <code>Endpoint Slice</code> 获取这些拓扑信息实现 endpoint 筛选 (过滤出在同一拓扑域的 endpoint)，然后再转换为 iptables 或 ipvs 规则写入节点以实现拓扑感知的路由转发。</p>
-<p>细心的你可能已经发现，之前每个节点上转发 service 的 iptables/ipvs 规则基本是一样的，但启用了拓扑感知服务路由特性之后，每个节点上的转发规则就可能不一样了，因为不同节点的拓扑信息不一样，导致过滤出的 endpoint 就不一样，也正是因为这样，service 转发变得不再等概率，灵活的就近转发才得以实现。</p>
-<p>当前还不支持 headless service 的拓扑路由，计划在 beta 阶段支持。由于 headless service 不是通过 kube-proxy 生成转发规则，而是通过 dns 动态解析实现的，所以需要改 kube-dns/coredns 来支持这个特性。</p>
-<h2 id="前提条件"><a href="#前提条件" class="headerlink" title="前提条件"></a>前提条件</h2><p>启用当前 alpha 实现的拓扑感知服务路由特性需要满足以下前提条件:</p>
-<ul>
-<li>集群版本在 v1.17 及其以上。</li>
-<li>Kube-proxy 以 iptables 或 IPVS 模式运行 (alpha 阶段暂时只实现了这两种模式)。</li>
-<li>启用了 <a href="https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/" target="_blank" rel="noopener">Endpoint Slices</a> (此特性虽然在 v1.17 进入 beta，但没有默认开启)。</li>
-</ul>
-<h2 id="如何启用此特性"><a href="#如何启用此特性" class="headerlink" title="如何启用此特性"></a>如何启用此特性</h2><p>给所有 k8s 组件打开 <code>ServiceTopology</code> 和 <code>EndpointSlice</code> 这两个 feature:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--feature-gates&#x3D;&quot;ServiceTopology&#x3D;true,EndpointSlice&#x3D;true&quot;</span><br></pre></td></tr></table></figure>
-
-<h2 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h2><p>在 Service spec 里加上 <code>topologyKeys</code> 字段，表示该 Service 优先顺序选用的拓扑域列表，对应节点标签的 key；当访问此 Service 时，会找是否有 endpoint 有对应 topology key 的拓扑信息并且 value 跟当前节点也一样，如果是，那就选定此 topology key 作为当前转发的拓扑域，并且筛选出其余所有在这个拓扑域的 endpoint 来进行转发；如果没有找到任何 endpoint 在当前 topology key 对应拓扑域，就会尝试第二个 topology key，依此类推；如果遍历完所有 topology key 也没有匹配到 endpoint 就会拒绝转发，就像此 service 没有后端 endpoint 一样。</p>
-<p>有一个特殊的 topology key “<em>“，它可以匹配所有 endpoint，如果 <code>topologyKeys</code> 包含了 `</em>`，它必须在列表末尾，通常是在没有匹配到合适的拓扑域来实现就近转发时，就打消就近转发的念头，可以转发到任意 endpoint 上。</p>
-<p>当前 topology key 支持以下可能的值（未来会增加更多）:</p>
-<ul>
-<li>kubernetes.io/hostname: 节点的 hostname，通常将它放列表中第一个，表示如果本机有 endpoint 就直接转发到本机的 endpoint。</li>
-<li>topology.kubernetes.io/zone: 节点所在的可用区，通常将它放在 kubernetes.io/hostname 后面，表示如果本机没有对应 endpoint，就转发到当前可用区其它节点上的 endpoint（部分云厂商跨可用区通信会收取额外的流量费用）。</li>
-<li>topology.kubernetes.io/region: 表示节点所在的地域，表示转发到当前地域的 endpoint，这个用的应该会比较少，因为通常集群所有节点都只会在同一个地域，如果节点跨地域了，节点之间通信延时将会很高。</li>
-<li>*: 忽略拓扑域，匹配所有 endpoint，相当于一个保底策略，避免丢包，只能放在列表末尾。</li>
-</ul>
-<p>除此之外，还有以下约束:</p>
-<ul>
-<li>topologyKeys 与 externalTrafficPolicy=Local 不兼容，是互斥的，如果 externalTrafficPolicy 为 Local，就不能定义 topologyKeys，反之亦然。</li>
-<li>topology key 必须是合法的 label 格式，并且最多定义 16 个 key。</li>
-</ul>
-<p>这里给出一个简单的 Service 示例:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx</span><br><span class="line">spec:</span><br><span class="line">  type: ClusterIP</span><br><span class="line">  ports:</span><br><span class="line">  - name: http</span><br><span class="line">    port: 80</span><br><span class="line">    protocol: TCP</span><br><span class="line">    targetPort: 80</span><br><span class="line">  selector:</span><br><span class="line">    app: nginx</span><br><span class="line">  topologyKeys: [&quot;kubernetes.io&#x2F;hostname&quot;, &quot;topology.kubernetes.io&#x2F;zone&quot;, &quot;*&quot;]</span><br></pre></td></tr></table></figure>
-
-<p>解释: 当访问 nginx 服务时，首先看本机是否有这个服务的 endpoint，如果有就直接本机路由过去；如果没有，就看是否有 endpoint 位于当前节点所在可用区，如果有，就转发过去，如果还是没有，就转发给任意 endpoint。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g9dkunyvsqj30na0h20sy.jpg" alt="endpoint"></p>
-<p>上图就是其中一次转发的例子：Pod 访问 nginx 这个 service 时，发现本机没有 endpoint，就找当前可用区的，找到了就转发过去，也就不会考虑转发给另一可用区的 endpoint。</p>
-<h2 id="背后小故事"><a href="#背后小故事" class="headerlink" title="背后小故事"></a>背后小故事</h2><p>此特性的 KEP Proposal 最终被认可（合并）时的设计与当前最终的代码实现已经有一些差别，实现方案历经一变再变，但同时也推动了其它特性的发展，我来讲下这其中的故事。</p>
-<p>一开始设计是在 alpha 时，让 kube-proxy 直接暴力 watch node，每个节点都有一份全局的 node 的缓存，通过 endpoint 的 <code>nodeName</code> 字段找到对应的 node 缓存，再查 node 包含的 label 就可以知道该 endpoint 的拓扑域了，但在集群节点数量多的情况下，kube-proxy 将会消耗大量资源，不过优点是实现上很简单，可以作为 alpha 阶段的实现，beta 时再从 watch node 切换到 watch 一个新设计的 PodLocator API，作为拓扑信息存储的中介，避免 watch 庞大的 node。</p>
-<p>实际上一开始我也是按照 watch node 的方式，花了九牛二虎之力终于实现了这个特性，后来 v1.15 时 k8s 又支持了 metadata-only watch，参见 PR 71548，利用此特性可以仅仅 watch node 的 metadata，而不用 watch 整个 node，可以极大减小传输和缓存的数据量，然后我就将实现切成了 watch node metadata; 即便如此，metadata 还是会更新比较频繁，主要是 <code>resourceVersion</code> 会经常变 (kubelet 经常上报 node 状态)，所以虽然 watch node metadata 比 watch node 要好，但也还是可能会造成大量不必要的网络流量，但作为 alpha 实现是可以接受的。</p>
-<p>可惜在 v1.16 code freeze 之前没能将此特性合进去，只因有一点小细节还没讨论清楚。 实际在实现 watch node 方案期间，Endpoint Slice 特性就提出来了，在这个特性讨论的阶段，我们就想到了可以利用它来携带拓扑信息，以便让拓扑感知服务路由这个特性后续可以直接利用 Endpoint Slice 来获取拓扑信息，也就可以替代之前设计的 PodLocator API，但由于它还处于很早期阶段，并且代码还未合并进去，所以 alpha 阶段先不考虑 watch Endpint Slice。后来，Endpoint Slice 特性在 v1.16 发布了 alpha。</p>
-<p>由于 v1.16 没能将拓扑感知服务路由特性合进去，在 v1.17 周期开始后，有更多时间来讨论小细节，并且 Endpoint Slice 代码已经合并，我就干脆直接又将实现从 watch node metadata 切成了 watch Endpint Slice，在 alpha 阶段就做了打算在 beta 阶段做的事情，终于，此特性实现代码最终合进了主干。</p>
-<h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>拓扑感知服务路由可以实现 service 就近转发，减少网络延时，进一步提升 k8s 的网络性能，此特性将于 k8s v1.17 发布 alpha，时间是 12 月上旬，让我们一起期待吧！k8s 网络是块难啃的硬骨头，感兴趣的同学可以看下杜军的新书 《Kubernetes 网络权威指南》，整理巩固一下 k8s 的网络知识。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">k8s</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/11/28/k8s-v1-17-%E6%96%B0%E7%89%B9%E6%80%A7%E9%A2%84%E5%91%8A-%E6%8B%93%E6%89%91%E6%84%9F%E7%9F%A5%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-ip协议簇" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/11/25/ip%E5%8D%8F%E8%AE%AE%E7%B0%87/">ip协议簇</a>
-</h1>
-
-
-
-        
-        <a href="/2019/11/25/ip%E5%8D%8F%E8%AE%AE%E7%B0%87/" class="archive-article-date">
-  	<time datetime="2019-11-25T05:45:19.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>今天，也就是 2019-11-25日，全世界所有的ipv4已经分配完毕。这一天终于到来了！<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g9ckh60znsj30mq0rsju1.jpg" alt="网络协调中心宣布ipv4的43亿个ip已经完全分配完毕"><br>以后的日子中，ipv6的占比会越来越大，网络也会越来越复杂。作为IT从业人员，网络知识的掌握是必不可少的。<br>网络是我们工程师的基础技能之一, 毕竟没有网络我们什么也干不了! 从各大公司的招聘要求上看,网络也是重点的考核部分. 今天就和大家一起复习下(还)大学里的课程(欠下的债)! TCP/IP协议簇的IP协议.</p>
-<hr>
-<h2 id="理解网络模型"><a href="#理解网络模型" class="headerlink" title="理解网络模型"></a>理解网络模型</h2><p>网络的设计大佬们想出了分层的设计,将各个功能分开,交付给不同的层,这样的好处是便于更新和维护(IPv6的到来并没有使整个网络重新设计),也便于我们的学习和理解.下面是各个版本的网络体系的结构图:<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g9cl89028zj30i309itb2.jpg" alt="网络结构图"></p>
-<p>让我们明确下各层的工作职责(以五层协议为例):</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">应用层,该层协议主要负责各个应用程序之间交互的规则.如HTTP,DNS,其交互的数据单元可以称为”报文”.</span><br><span class="line">运输层,为应用层提供通用的数据传输服务.为上层跑腿的.TCP,UDP均是运输层协议.</span><br><span class="line">网络层,为网络中不同的主机提供通信服务.IP协议工作在该层.</span><br><span class="line">数据链路层,负责相邻两点的数据传送.</span><br><span class="line">物理层, 传输比特流, 0 或 1.</span><br></pre></td></tr></table></figure>
-<p>每一层将数据封装成自己能理解的数据格式,交付给下一层,下一层将收到的作为自己的数据再次添加本层的必要数据,向下交付,直到链路层,传递到目的地后,每层再将该层的必要数据去掉,交付给上层.如下图:<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g9cljgokpwj30hw08ugoh.jpg" alt="数据包传递过程"></p>
-<h2 id="理解IP协议"><a href="#理解IP协议" class="headerlink" title="理解IP协议"></a>理解IP协议</h2><p>在理解了网络模型和各层直接的配合之后,下面进入今天的正题,网际协议(IP).</p>
-<p>该节主要理解IP协议给我们提供的功能有哪些,说白了就是它能干嘛.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">为网络中的主机(PC或路由或网关)提供身份证.</span><br><span class="line">定义了网络主机的基本交流方式, 从IP数据报的格式可以看出.</span><br><span class="line">为路由寻址提供方便, 从路由表结构可以看出.</span><br></pre></td></tr></table></figure>
-<p>任何一个协议都可以由语法,语义和同步三部分组成.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">语法,交换信息的格式,对于IP协议,就是IP报文的格式.</span><br><span class="line">语义,即需要发出何种控制信息,以及接收到信息后如何响应.</span><br><span class="line">同步,对事件顺序的详细说明.</span><br></pre></td></tr></table></figure>
-<p>也就是定义了使用IP协议进行交流的法则.</p>
-<h3 id="IPv4"><a href="#IPv4" class="headerlink" title="IPv4"></a>IPv4</h3><p>IPv4是IP协议的第4个版本,就是我们现在使用的.下面从多个方面了解下该版本.</p>
-<h3 id="IP地址"><a href="#IP地址" class="headerlink" title="IP地址"></a>IP地址</h3><p>网络上的主机都需要一个IP地址,这样才能知道彼此的位置.IPv4地址由32bit构成,常使用<code>点分十进制表示(192.168.1.1)</code>.</p>
-<h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p>IP地址的分类就是把所有IP划分为若干类别, 每一类都由固定长度的字段组成.分别为网络号和主机号.下面是各类地址组成示意图:<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g9clmthbynj30cw07n75r.jpg" alt="ip分类"></p>
-<ul>
-<li>A类地址,8位网络号,第一位固定为0,可用的网络号只有126个(2^7-2),网络号从0到127. 减去2是因为:IP地址全为0表示”本网络”,保留; 网络号为127作为软件回环测试使用, 若主机发出目的地为127.0.0.1的数据时,该数据不会向任何网络上的主机发送.也就是说127开头的地址不能使用. 对于A类地址中的每一个网络号,对应的主机号有(2^24-2)个: 主机号全0表示,其网络号对应的网络地址, 全1表示所有主机的意思.</li>
-<li>B类地址网络号为16位,但前面2位以固定为1 0.无论怎么取值,无法出现全0或全1的情况.128.0.0.0的网络是不使用的,实际使用的最小B类网络地址为128.1.0.0.所以B类的网络地址有(2^14-1)个.</li>
-<li>C类的地址有24位的网络号,最前面的3位固定为1 1 0.192.0.0.0的网络地址也是不使用的,最小的C类地址为192.0.1.0</li>
-</ul>
-<h3 id="总结如下"><a href="#总结如下" class="headerlink" title="总结如下:"></a>总结如下:</h3><p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g9cltkpc7hj30hu06edg5.jpg" alt="ip分类总结"><br>分类的好处:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">方便管理,IP地址管理机构只需管理网络号,剩下的可以由下级管理.</span><br><span class="line">路由寻址时根据网络地址转发分组,减小路由表.</span><br></pre></td></tr></table></figure>
-
-<h3 id="数据报格式"><a href="#数据报格式" class="headerlink" title="数据报格式"></a>数据报格式</h3><p>先看下IP数据报的基本格式:<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g9clulcooyj30id09jq58.jpg" alt="数据包格式"><br>可以看到IP数据报包含了首部和数据部分. 其中首部包含固定的20字节和可变的部分. 下面是各部分的解释:</p>
-<ul>
-<li>版本,占4位,IP协议的版本号,通信双方需要相同.</li>
-<li>首部长度,占4位, 单位4字节.最大能表示(2^4-1) * 4 = 60字节.当IP分组的首部长度不是4的整数倍时,需要使用填充字段填充.</li>
-<li>区分服务,占8位, 表示服务类型,未使用.</li>
-<li>总长度, 占16位,表示首部和数据部分的总长度(单位字节).因此数据报的最大总长度为(2^16-1 = 65535)字节.</li>
-<li>标识(identification), 占16位.当数据报长度超过下层的MTU时,需要分片, 被分片的数据报的标识一样,这样可以进行重组.</li>
-<li>标志(Flag), 占3位, 目前只有2位有意义</li>
-<li>最低位,MF(More Fragment) = 1 表示后面还有分片. MF = 0 表示分片中的最后一个.</li>
-<li>中间一位,DF(Don’t Fragment),不要分片,只有当DF=0才允许分片</li>
-<li>片偏移, 占13位.较长的分组在分片后, 某片在原分组的相对位置.必须是8字节的整数倍.</li>
-<li>生存时间, 占8位, Time To Live(TTL),开始指生存的秒数,后来变为经过路由的跳数,每经过一个路由,TTL减小1,当为0时,丢弃该数据.显然,最大跳数为255, 为1时就只能在局域网中传播了.</li>
-<li>协议, 占8位.支出该数据报的数据是使用何种协议, 以便目的主机IP层知道将数据交付给哪个协议处理.</li>
-</ul>
-<p>常用的协议及对应数值:</p>
-<table>
-<thead>
-<tr>
-<th>议名称</th>
-<th>ICMP</th>
-<th>IGMP</th>
-<th>IP</th>
-<th>TCP</th>
-<th>EGP</th>
-<th>IGP</th>
-<th>UDP</th>
-<th>IPV6</th>
-<th>ESP</th>
-<th>OSPF</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>议字段值</td>
-<td>1</td>
-<td>2</td>
-<td>4</td>
-<td>6</td>
-<td>8</td>
-<td>9</td>
-<td>17</td>
-<td>41</td>
-<td>50</td>
-<td>89</td>
-</tr>
-</tbody></table>
-<ul>
-<li>首部校验和, 占16位.数据报的首部校验和,不包括数据部分.</li>
-<li>源地址, 目的地址, 各占32位</li>
-</ul>
-<h3 id="IPV6"><a href="#IPV6" class="headerlink" title="IPV6"></a>IPV6</h3><p>IPv6的出现是解决IPv4资源枯竭的问题.其仍然支持无连接的传送, 但传送的是PDU分组,而不是IPv4的数据报.</p>
-<h3 id="IP地址-1"><a href="#IP地址-1" class="headerlink" title="IP地址"></a>IP地址</h3><p>IPv6的地址是128bit,在可预见的未来是够用的.但和IPv4版本并不兼容, 若使用IPv4版本的主机A和使用IPv6版本的主机B之间通信是需要特殊处理的,在后面会介绍方法.</p>
-<h3 id="IPv6的地址表示"><a href="#IPv6的地址表示" class="headerlink" title="IPv6的地址表示"></a>IPv6的地址表示</h3><p>IPv6的地址采用<code>冒号十六进制记法</code> , 8组4个16进制数字,中间使用冒号隔开.例如:</p>
-<p><code>6845:8C64:FFFF:FFFF:0:1180:9000:FFFF</code></p>
-<p>若一组中全是0,可以省略三个.<br>若存在连续多组0,可以使用冒号取代,但只能压缩一次 <code>FF05:0:0:0:0:0:0:B3 可以压缩为 FF05::B3 1090:0:0:0:8:800:200C:417A  可以压缩为 1090::8:800:200C:417A</code> <code>全零可记为 ::</code></p>
-<p>最后的2组可以使用IPv4的点分十进制表示 <code>0:0:0:0:0:0:128.10.2.1 可表示为 ::128.10.2.1</code></p>
-<h2 id="数据报格式-1"><a href="#数据报格式-1" class="headerlink" title="数据报格式"></a>数据报格式</h2><p>IPv6数据报由两大部分组成, <code>基本首部</code>和<code>有效载荷</code>.有效载荷运行有0个或多个扩展首部.<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g9cvt2bxkaj30h30amgoa.jpg" alt="数据包格式"></p>
-<p>可以看到,IPv6的首部是固定的40字节,和IPv4不同;在组成上也有很大区别,下面看下各部分的意思.</p>
-<ul>
-<li>版本, 占4位, 协议的版本,通信双方需要相同</li>
-<li>通信量类, 占8位.区分不同的IPv6的数据报或优先级.</li>
-<li>流标号, 占20位. IPv6一个新机制就是支持资源预分配, 运行路由把每个数据报与特定的资源分配和联系.IPv6提出流的概念.指互联网上从 特定源点到特定终点的一系列数据报(如实时的音频或视频传输), 在这个流经过的路径上路由都保证指明的服务质量.所有属于同一个流的数据报具有相同的流标号.赋值为0即为关闭.</li>
-<li>有效载荷长度, 占16位.指明除基本首部以外的字节数.最大64KB.</li>
-<li>下一首部, 占8位.相当于IPv4的协议字段或可选字段.</li>
-<li>当IPv6没有扩展首部时, 该字段和IPv4的协议字段一样.</li>
-<li>有扩展首部时,表示第一个扩展首部的类型.</li>
-<li>跳数限制, 和IPv4的TTL一样</li>
-<li>源地址,目的地址, 各占128位</li>
-</ul>
-<h2 id="从IPv4向IPv6过渡"><a href="#从IPv4向IPv6过渡" class="headerlink" title="从IPv4向IPv6过渡"></a>从IPv4向IPv6过渡</h2><p>网络如此庞大,从IPv4向IPv6的变换不可能一蹴而就.若要在两个版本的协议下通信,有下面的2个方法</p>
-<h3 id="双协议栈"><a href="#双协议栈" class="headerlink" title="双协议栈"></a>双协议栈</h3><p>简单的说就是一个主机能够理解两个版本的内容,这样主机也要有2个版本对应的IP地址.具有双协议栈的主机, 可以通过DNS系统知道目的主机使用的协议版本.</p>
-<p>下面是两台使用IPv6的主机通信示意图,它们之间需要通过IPv4网络, 在必要的时候经过双协议栈的主机进行协议的转换,当然转换的时候有些信息可能丢失,这也是不可避免的.<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g9cvtpahpgj30hf08d414.jpg" alt="双栈"></p>
-<h3 id="使用隧道技术"><a href="#使用隧道技术" class="headerlink" title="使用隧道技术"></a>使用隧道技术</h3><p>隧道技术的原理是,在IPv6的数据需要进入IPv4网络时,将IPv6的数据报(准确的说是PDU)当成IPv4数据报的数据部分,使用IPv4版本传输,在离开IPv4网络时在此组装成IPv6的数据,发往目的地.下面是一个示意图:</p>
-<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g9cvtw1j80j30gy08fq5z.jpg" alt="隧道"></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">网络</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/11/25/ip%E5%8D%8F%E8%AE%AE%E7%B0%87/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
   
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/5/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/7/">Next &amp;raquo;</a>
-    </nav>
+  
+
+  
+
+  
+
   
 
 
@@ -1304,8 +348,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,

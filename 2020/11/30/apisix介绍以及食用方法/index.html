@@ -6,17 +6,21 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.jxhs.me">
-  <title>apisix是啥&amp;&amp;以及食用方法 | jame_xhs&#39;s blog</title>
+  <title>apisix介绍以及食用方法 | jame_xhs&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="article">
-<meta property="og:title" content="apisix是啥&amp;&amp;以及食用方法">
-<meta property="og:url" content="http://www.jxhs.me/2020/11/30/apisix%E6%98%AF%E5%95%A5-%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/index.html">
+  <meta name="description" content="Apache APISIX 是什么？Apache APISIX 是一个动态、实时、高性能的 API 网关，基于 Nginx 网络库和 etcd 实现，提供负载均衡、动态上游、灰度发布、服务熔断、身份认证、可观测性等丰富的流量管理功能。 你可以使用 Apache APISIX 来处理传统的南北向流量，以及服务间的东西向流量，也可以当做 k8s ingress controller 来使用。 Apac">
+<meta property="og:type" content="article">
+<meta property="og:title" content="apisix介绍以及食用方法">
+<meta property="og:url" content="http://www.jxhs.me/2020/11/30/apisix%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/index.html">
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
+<meta property="og:description" content="Apache APISIX 是什么？Apache APISIX 是一个动态、实时、高性能的 API 网关，基于 Nginx 网络库和 etcd 实现，提供负载均衡、动态上游、灰度发布、服务熔断、身份认证、可观测性等丰富的流量管理功能。 你可以使用 Apache APISIX 来处理传统的南北向流量，以及服务间的东西向流量，也可以当做 k8s ingress controller 来使用。 Apac">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-11-30T09:04:59.000Z">
-<meta property="article:modified_time" content="2020-11-30T09:04:59.585Z">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/0081Kckwgy1gl85xhdvnoj30th0fmju8.jpg">
+<meta property="article:published_time" content="2020-11-30T02:27:25.000Z">
+<meta property="article:modified_time" content="2020-12-01T02:59:08.789Z">
 <meta property="article:author" content="jame_xhs">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/0081Kckwgy1gl85xhdvnoj30th0fmju8.jpg">
   
     <link rel="alternative" href="/atom.xml" title="jame_xhs&#39;s blog" type="application/atom+xml">
   
@@ -196,28 +200,302 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-apisix是啥-以及食用方法" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-apisix介绍以及食用方法" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
 
 <h1 class="article-title" itemprop="name">
-  apisix是啥&amp;&amp;以及食用方法
+  apisix介绍以及食用方法
 </h1>
 
 
 
         
-        <a href="/2020/11/30/apisix%E6%98%AF%E5%95%A5-%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/" class="archive-article-date">
-  	<time datetime="2020-11-30T09:04:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-30</time>
+        <a href="/2020/11/30/apisix%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/" class="archive-article-date">
+  	<time datetime="2020-11-30T02:27:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-30</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h2 id="Apache-APISIX-是什么？"><a href="#Apache-APISIX-是什么？" class="headerlink" title="Apache APISIX 是什么？"></a>Apache APISIX 是什么？</h2><p>Apache APISIX 是一个动态、实时、高性能的 API 网关，基于 Nginx 网络库和 etcd 实现，<br>提供负载均衡、动态上游、灰度发布、服务熔断、身份认证、可观测性等丰富的流量管理功能。</p>
+<p>你可以使用 Apache APISIX 来处理传统的南北向流量，以及服务间的东西向流量，<br>也可以当做 k8s ingress controller 来使用。</p>
+<p>Apache APISIX 的技术架构如下图所示：</p>
+<p><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1gl85xhdvnoj30th0fmju8.jpg" alt=""></p>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li><a href="#特性">特性</a></li>
+<li><a href="#立刻开始">立刻开始</a></li>
+<li><a href="#控制台">控制台</a></li>
+<li><a href="#性能测试">性能测试</a></li>
+<li><a href="#apache-apisix-和-kong-的比较">Apache APISIX 和 Kong 的比较</a></li>
+<li><a href="#开放治理">开放治理</a></li>
+<li><a href="#社区">社区</a></li>
+<li><a href="#视频和文章">视频和文章</a></li>
+</ul>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><p>你可以把 Apache APISIX 当做流量入口，来处理所有的业务数据，包括动态路由、动态上游、动态证书、<br>A/B 测试、金丝雀发布(灰度发布)、蓝绿部署、限流限速、抵御恶意攻击、监控报警、服务可观测性、服务治理等。</p>
+<ul>
+<li><p><strong>全平台</strong></p>
+<ul>
+<li>云原生: 平台无关，没有供应商锁定，无论裸机还是 Kubernetes，APISIX 都可以运行。</li>
+<li>运行环境: OpenResty 和 Tengine 都支持。</li>
+<li>支持 ARM64: 不用担心底层技术的锁定。</li>
+</ul>
+</li>
+<li><p><strong>多协议</strong></p>
+<ul>
+<li><a href="doc/zh-cn/stream-proxy.md">TCP/UDP 代理</a>: 动态 TCP/UDP 代理。</li>
+<li><a href="doc/zh-cn/plugins/mqtt-proxy.md">动态 MQTT 代理</a>: 支持用 <code>client_id</code> 对 MQTT 进行负载均衡，同时支持 MQTT <a href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html" target="_blank" rel="noopener">3.1.*</a> 和 <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html" target="_blank" rel="noopener">5.0</a> 两个协议标准。</li>
+<li><a href="doc/zh-cn/grpc-proxy.md">gRPC 代理</a>：通过 APISIX 代理 gRPC 连接，并使用 APISIX 的大部分特性管理你的 gRPC 服务。</li>
+<li><a href="doc/zh-cn/plugins/grpc-transcode.md">gRPC 协议转换</a>：支持协议的转换，这样客户端可以通过 HTTP/JSON 来访问你的 gRPC API。</li>
+<li>Websocket 代理</li>
+<li>Proxy Protocol</li>
+<li>Dubbo 代理：基于 Tengine，可以实现 Dubbo 请求的代理。</li>
+<li>HTTP(S) 反向代理</li>
+<li><a href="doc/zh-cn/https.md">SSL</a>：动态加载 SSL 证书。</li>
+</ul>
+</li>
+<li><p><strong>全动态能力</strong></p>
+<ul>
+<li><a href="doc/zh-cn/plugins.md">热更新和热插件</a>: 无需重启服务，就可以持续更新配置和插件。</li>
+<li><a href="doc/zh-cn/plugins/proxy-rewrite.md">代理请求重写</a>: 支持重写请求上游的<code>host</code>、<code>uri</code>、<code>schema</code>、<code>enable_websocket</code>、<code>headers</code>信息。</li>
+<li><a href="doc/zh-cn/plugins/response-rewrite.md">输出内容重写</a>: 支持自定义修改返回内容的 <code>status code</code>、<code>body</code>、<code>headers</code>。</li>
+<li><a href="doc/zh-cn/plugins/serverless.md">Serverless</a>: 在 APISIX 的每一个阶段，你都可以添加并调用自己编写的函数。</li>
+<li>动态负载均衡：动态支持有权重的 round-robin 负载平衡。</li>
+<li>支持一致性 hash 的负载均衡：动态支持一致性 hash 的负载均衡。</li>
+<li><a href="doc/zh-cn/health-check.md">健康检查</a>：启用上游节点的健康检查，将在负载均衡期间自动过滤不健康的节点，以确保系统稳定性。</li>
+<li>熔断器: 智能跟踪不健康上游服务。</li>
+<li><a href="doc/zh-cn/plugins/proxy-mirror.md">代理镜像</a>: 提供镜像客户端请求的能力。</li>
+</ul>
+</li>
+<li><p><strong>精细化路由</strong></p>
+<ul>
+<li><a href="doc/router-radixtree.md#how-to-use-libradixtree-in-apisix">支持全路径匹配和前缀匹配</a></li>
+<li><a href="/doc/router-radixtree.md#how-to-filter-route-by-nginx-builtin-variable">支持使用 Nginx 所有内置变量做为路由的条件</a>，所以你可以使用 <code>cookie</code>, <code>args</code> 等做为路由的条件，来实现灰度发布、A/B 测试等功能</li>
+<li>支持<a href="https://github.com/iresty/lua-resty-radixtree#operator-list" target="_blank" rel="noopener">各类操作符做为路由的判断条件</a>，比如 <code>{&quot;arg_age&quot;, &quot;&gt;&quot;, 24}</code></li>
+<li>支持<a href="https://github.com/iresty/lua-resty-radixtree/blob/master/t/filter-fun.t#L10" target="_blank" rel="noopener">自定义路由匹配函数</a></li>
+<li>IPv6：支持使用 IPv6 格式匹配路由</li>
+<li>支持路由的<a href="doc/zh-cn/admin-api.md#route">自动过期(TTL)</a></li>
+<li><a href="doc/router-radixtree.md#3-match-priority">支持路由的优先级</a></li>
+<li><a href="doc/zh-cn/plugins/batch-requests.md">支持批量 Http 请求</a></li>
+</ul>
+</li>
+<li><p><strong>安全防护</strong></p>
+<ul>
+<li>多种身份认证方式: <a href="doc/zh-cn/plugins/key-auth.md">key-auth</a>, <a href="doc/zh-cn/plugins/jwt-auth.md">JWT</a>, <a href="doc/zh-cn/plugins/basic-auth.md">basic-auth</a>, <a href="doc/zh-cn/plugins/wolf-rbac.md">wolf-rbac</a>。</li>
+<li><a href="doc/zh-cn/plugins/ip-restriction.md">IP 黑白名单</a></li>
+<li><a href="doc/zh-cn/plugins/referer-restriction.md">Referer 白名单</a></li>
+<li><a href="doc/plugins/openid-connect.md">IdP 支持</a>: 支持外部的身份认证服务，比如 Auth0，Okta，Authing 等，用户可以借此来对接 Oauth2.0 等认证方式。</li>
+<li><a href="doc/zh-cn/plugins/limit-req.md">限制速率</a></li>
+<li><a href="doc/zh-cn/plugins/limit-count.md">限制请求数</a></li>
+<li><a href="doc/zh-cn/plugins/limit-conn.md">限制并发</a></li>
+<li>防御 ReDoS(正则表达式拒绝服务)：内置策略，无需配置即可抵御 ReDoS。</li>
+<li><a href="doc/zh-cn/plugins/cors.md">CORS</a>：为你的 API 启用 CORS。</li>
+<li><a href="doc/zh-cn/plugins/uri-blocker.md">URI 拦截器</a>：根据 URI 拦截用户请求。</li>
+<li><a href="doc/zh-cn/plugins/request-validation.md">请求验证器</a>。</li>
+</ul>
+</li>
+<li><p><strong>运维友好</strong></p>
+<ul>
+<li>OpenTracing 可观测性: 支持 <a href="doc/zh-cn/plugins/skywalking.md">Apache Skywalking</a> 和 <a href="doc/zh-cn/plugins/zipkin.md">Zipkin</a>。</li>
+<li>对接外部服务发现：除了内置的 etcd 外，还支持 <code>Consul</code> 和 <code>Nacos</code> 的 <a href="https://github.com/apache/apisix/issues/1731#issuecomment-646392129" target="_blank" rel="noopener">DNS 发现模式</a>，以及 <a href="doc/zh-cn/discovery.md">Eureka</a>。</li>
+<li>监控和指标: <a href="doc/zh-cn/plugins/prometheus.md">Prometheus</a></li>
+<li>集群：APISIX 节点是无状态的，创建配置中心集群请参考 <a href="https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/clustering.md" target="_blank" rel="noopener">etcd Clustering Guide</a>。</li>
+<li>高可用：支持配置同一个集群内的多个 etcd 地址。</li>
+<li>控制台: 内置控制台来操作 APISIX 集群。</li>
+<li>版本控制：支持操作的多次回滚。</li>
+<li>CLI: 使用命令行来启动、关闭和重启 APISIX。</li>
+<li><a href="doc/zh-cn/stand-alone.md">单机模式</a>: 支持从本地配置文件中加载路由规则，在 kubernetes(k8s) 等环境下更友好。</li>
+<li><a href="doc/zh-cn/architecture-design.md#Global-Rule">全局规则</a>：允许对所有请求执行插件，比如黑白名单、限流限速等。</li>
+<li>高性能：在单核上 QPS 可以达到 18k，同时延迟只有 0.2 毫秒。</li>
+<li><a href="doc/zh-cn/plugins/fault-injection.md">故障注入</a></li>
+<li><a href="doc/zh-cn/admin-api.md">REST Admin API</a>: 使用 REST Admin API 来控制 Apache APISIX，默认只允许 127.0.0.1 访问，你可以修改 <code>conf/config.yaml</code> 中的 <code>allow_admin</code> 字段，指定允许调用 Admin API 的 IP 列表。同时需要注意的是，Admin API 使用 key auth 来校验调用者身份，<strong>在部署前需要修改 <code>conf/config.yaml</code> 中的 <code>admin_key</code> 字段，来保证安全。</strong></li>
+<li>外部日志记录器：将访问日志导出到外部日志管理工具。(<a href="doc/plugins/http-logger.md">HTTP Logger</a>, <a href="doc/plugins/tcp-logger.md">TCP Logger</a>, <a href="doc/plugins/kafka-logger.md">Kafka Logger</a>, <a href="doc/plugins/udp-logger.md">UDP Logger</a>)</li>
+</ul>
+</li>
+<li><p><strong>高度可扩展</strong></p>
+<ul>
+<li><a href="doc/zh-cn/plugin-develop.md">自定义插件</a>: 允许挂载常见阶段，例如<code>init</code>, <code>rewrite</code>，<code>access</code>，<code>balancer</code>,<code>header filer</code>，<code>body filter</code> 和 <code>log</code> 阶段。</li>
+<li>自定义负载均衡算法：可以在 <code>balancer</code> 阶段使用自定义负载均衡算法。</li>
+<li>自定义路由: 支持用户自己实现路由算法。</li>
+</ul>
+</li>
+</ul>
+<h2 id="Apache-APISIX-和-Kong-的比较"><a href="#Apache-APISIX-和-Kong-的比较" class="headerlink" title="Apache APISIX 和 Kong 的比较"></a>Apache APISIX 和 Kong 的比较</h2><h4 id="API-网关核心功能点，两者均已覆盖"><a href="#API-网关核心功能点，两者均已覆盖" class="headerlink" title="API 网关核心功能点，两者均已覆盖"></a>API 网关核心功能点，两者均已覆盖</h4><table>
+<thead>
+<tr>
+<th align="left"><strong>功能</strong></th>
+<th align="left"><strong>Apache APISIX</strong></th>
+<th align="left"><strong>KONG</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>动态上游</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left"><strong>动态路由</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left"><strong>健康检查和熔断器</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left"><strong>动态 SSL 证书</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left"><strong>七层和四层代理</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left"><strong>分布式追踪</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left"><strong>自定义插件</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left"><strong>REST API</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left"><strong>CLI</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+</tbody></table>
+<h4 id="Apache-APISIX-的优势"><a href="#Apache-APISIX-的优势" class="headerlink" title="Apache APISIX 的优势"></a>Apache APISIX 的优势</h4><table>
+<thead>
+<tr>
+<th align="left"><strong>功能</strong></th>
+<th align="left"><strong>Apache APISIX</strong></th>
+<th align="left"><strong>KONG</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">项目归属</td>
+<td align="left">Apache 软件基金会</td>
+<td align="left">Kong Inc.</td>
+</tr>
+<tr>
+<td align="left">技术架构</td>
+<td align="left">Nginx + etcd</td>
+<td align="left">Nginx + postgres</td>
+</tr>
+<tr>
+<td align="left">交流渠道</td>
+<td align="left">微信群、QQ 群、邮件列表、Github、meetup</td>
+<td align="left">Github、论坛、freenode</td>
+</tr>
+<tr>
+<td align="left">单核 QPS (开启限流和 prometheus 插件)</td>
+<td align="left">18000</td>
+<td align="left">1700</td>
+</tr>
+<tr>
+<td align="left">平均延迟</td>
+<td align="left">0.2 毫秒</td>
+<td align="left">2 毫秒</td>
+</tr>
+<tr>
+<td align="left">支持 Dubbo 代理</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">配置回滚</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">支持生命周期的路由</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">插件热更新</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">用户自定义：负载均衡算法、路由</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">resty &lt;–&gt; gRPC 转码</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">支持 Tengine 作为运行时</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">MQTT 协议支持</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">配置生效时间</td>
+<td align="left">事件通知，低于 1 毫秒更新</td>
+<td align="left">定期轮询，5 秒</td>
+</tr>
+<tr>
+<td align="left">自带控制台</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">对接外部身份认证服务</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">配置中心高可用(HA)</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">指定时间窗口的限速</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">支持任何 Nginx 变量做路由条件</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+</tbody></table>
+<p>性能对比测试<a href="https://gist.github.com/membphis/137db97a4bf64d3653aa42f3e016bd01" target="_blank" rel="noopener">详细内容如下</a>。</p>
+<h2 id="视频和文章"><a href="#视频和文章" class="headerlink" title="视频和文章"></a>视频和文章</h2><ul>
+<li>2020.10.16 <a href="https://www.youtube.com/watch?v=iEegNXOtEhQ" target="_blank" rel="noopener">Apache APISIX: How to implement plugin orchestration in API Gateway</a></li>
+<li>2020.10.16 <a href="https://www.youtube.com/watch?v=DleVJwPs4i4" target="_blank" rel="noopener">Improve Apache APISIX observability with Apache Skywalking</a></li>
+<li>2020.1.17 <a href="https://mp.weixin.qq.com/s/c51apneVj0O9yxiZAHF34Q" target="_blank" rel="noopener">API 网关 Apache APISIX 和 Kong 的选型对比</a></li>
+<li>2019.12.14 <a href="https://zhuanlan.zhihu.com/p/99620158" target="_blank" rel="noopener">从 0 到 1：Apache APISIX 的 Apache 之路</a></li>
+<li>2019.12.14 <a href="https://www.upyun.com/opentalk/445.html" target="_blank" rel="noopener">基于 Apache APISIX 的下一代微服务架构</a></li>
+<li>2019.10.30 <a href="https://www.upyun.com/opentalk/440.html" target="_blank" rel="noopener">Apache APISIX 微服务架构极致性能架构解析</a></li>
+<li>2019.9.27 <a href="https://zhuanlan.zhihu.com/p/84467919" target="_blank" rel="noopener">想把 APISIX 运行在 ARM64 平台上？只要三步</a></li>
+<li>2019.8.31 <a href="https://www.upyun.com/opentalk/433.html" target="_blank" rel="noopener">APISIX 技术选型、测试和持续集成</a></li>
+<li>2019.8.31 <a href="https://www.upyun.com/opentalk/437.html" target="_blank" rel="noopener">APISIX 高性能实战 2</a></li>
+<li>2019.7.6 <a href="https://www.upyun.com/opentalk/429.html" target="_blank" rel="noopener">APISIX 高性能实战</a></li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总的来说 apisix作为云原生网关,比其他的性能好的同时，稳定性可扩展性 都有质的提升。作为新一代网关的考虑范围内。</p>
+
       
 
       
@@ -275,7 +553,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://www.jxhs.me/2020/11/30/apisix%E6%98%AF%E5%95%A5-%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.jxhs.me/2020/11/30/apisix%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -299,8 +577,8 @@
     </a>
   
   
-    <a href="/2020/11/03/JetSonNano%E4%B8%8A%E5%AE%89%E8%A3%85opencv/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">JetSonNano上安装opencv</div>
+    <a href="/2020/10/26/%E5%AE%89%E8%A3%85docker/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">安装docker</div>
       <i class="icon-circle-right"></i>
     </a>
   

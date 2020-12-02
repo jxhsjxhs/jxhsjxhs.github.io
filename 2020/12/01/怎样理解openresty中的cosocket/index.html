@@ -6,13 +6,15 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.jxhs.me">
-  <title>jame_xhs&#39;s blog</title>
+  <title>怎样理解openresty中的cosocket | jame_xhs&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="jame_xhs&#39;s blog">
-<meta property="og:url" content="http://www.jxhs.me/index.html">
+  <meta property="og:type" content="article">
+<meta property="og:title" content="怎样理解openresty中的cosocket">
+<meta property="og:url" content="http://www.jxhs.me/2020/12/01/%E6%80%8E%E6%A0%B7%E7%90%86%E8%A7%A3openresty%E4%B8%AD%E7%9A%84cosocket/index.html">
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-12-01T07:22:35.000Z">
+<meta property="article:modified_time" content="2020-12-01T07:22:35.249Z">
 <meta property="article:author" content="jame_xhs">
 <meta name="twitter:card" content="summary">
   
@@ -194,16 +196,14 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-怎样理解openresty中的cosocket" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-怎样理解openresty中的cosocket" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
 
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/12/01/%E6%80%8E%E6%A0%B7%E7%90%86%E8%A7%A3openresty%E4%B8%AD%E7%9A%84cosocket/">怎样理解openresty中的cosocket</a>
+<h1 class="article-title" itemprop="name">
+  怎样理解openresty中的cosocket
 </h1>
 
 
@@ -228,16 +228,75 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/12/01/%E6%80%8E%E6%A0%B7%E7%90%86%E8%A7%A3openresty%E4%B8%AD%E7%9A%84cosocket/">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.jxhs.me/2020/12/01/%E6%80%8E%E6%A0%B7%E7%90%86%E8%A7%A3openresty%E4%B8%AD%E7%9A%84cosocket/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2020/11/30/apisix%E4%B8%8Econsul%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E7%9A%84%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">apisix与consul服务发现的结合使用</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -257,955 +316,14 @@
 
 
 
-
-  
-    <article id="post-apisix与consul服务发现的结合使用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/11/30/apisix%E4%B8%8Econsul%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E7%9A%84%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/">apisix与consul服务发现的结合使用</a>
-</h1>
-
-
-
-        
-        <a href="/2020/11/30/apisix%E4%B8%8Econsul%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E7%9A%84%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/" class="archive-article-date">
-  	<time datetime="2020-11-30T09:05:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-30</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/11/30/apisix%E4%B8%8Econsul%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E7%9A%84%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-apisix介绍以及食用方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/11/30/apisix%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/">apisix介绍以及食用方法</a>
-</h1>
-
-
-
-        
-        <a href="/2020/11/30/apisix%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/" class="archive-article-date">
-  	<time datetime="2020-11-30T02:27:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-30</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Apache-APISIX-是什么？"><a href="#Apache-APISIX-是什么？" class="headerlink" title="Apache APISIX 是什么？"></a>Apache APISIX 是什么？</h2><p>Apache APISIX 是一个动态、实时、高性能的 API 网关，基于 Nginx 网络库和 etcd 实现，<br>提供负载均衡、动态上游、灰度发布、服务熔断、身份认证、可观测性等丰富的流量管理功能。</p>
-<p>你可以使用 Apache APISIX 来处理传统的南北向流量，以及服务间的东西向流量，<br>也可以当做 k8s ingress controller 来使用。</p>
-<p>Apache APISIX 的技术架构如下图所示：</p>
-<p><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1gl85xhdvnoj30th0fmju8.jpg" alt=""></p>
-<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
-<li><a href="#特性">特性</a></li>
-<li><a href="#立刻开始">立刻开始</a></li>
-<li><a href="#控制台">控制台</a></li>
-<li><a href="#性能测试">性能测试</a></li>
-<li><a href="#apache-apisix-和-kong-的比较">Apache APISIX 和 Kong 的比较</a></li>
-<li><a href="#开放治理">开放治理</a></li>
-<li><a href="#社区">社区</a></li>
-<li><a href="#视频和文章">视频和文章</a></li>
-</ul>
-<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><p>你可以把 Apache APISIX 当做流量入口，来处理所有的业务数据，包括动态路由、动态上游、动态证书、<br>A/B 测试、金丝雀发布(灰度发布)、蓝绿部署、限流限速、抵御恶意攻击、监控报警、服务可观测性、服务治理等。</p>
-<ul>
-<li><p><strong>全平台</strong></p>
-<ul>
-<li>云原生: 平台无关，没有供应商锁定，无论裸机还是 Kubernetes，APISIX 都可以运行。</li>
-<li>运行环境: OpenResty 和 Tengine 都支持。</li>
-<li>支持 ARM64: 不用担心底层技术的锁定。</li>
-</ul>
-</li>
-<li><p><strong>多协议</strong></p>
-<ul>
-<li><a href="doc/zh-cn/stream-proxy.md">TCP/UDP 代理</a>: 动态 TCP/UDP 代理。</li>
-<li><a href="doc/zh-cn/plugins/mqtt-proxy.md">动态 MQTT 代理</a>: 支持用 <code>client_id</code> 对 MQTT 进行负载均衡，同时支持 MQTT <a href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html" target="_blank" rel="noopener">3.1.*</a> 和 <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html" target="_blank" rel="noopener">5.0</a> 两个协议标准。</li>
-<li><a href="doc/zh-cn/grpc-proxy.md">gRPC 代理</a>：通过 APISIX 代理 gRPC 连接，并使用 APISIX 的大部分特性管理你的 gRPC 服务。</li>
-<li><a href="doc/zh-cn/plugins/grpc-transcode.md">gRPC 协议转换</a>：支持协议的转换，这样客户端可以通过 HTTP/JSON 来访问你的 gRPC API。</li>
-<li>Websocket 代理</li>
-<li>Proxy Protocol</li>
-<li>Dubbo 代理：基于 Tengine，可以实现 Dubbo 请求的代理。</li>
-<li>HTTP(S) 反向代理</li>
-<li><a href="doc/zh-cn/https.md">SSL</a>：动态加载 SSL 证书。</li>
-</ul>
-</li>
-<li><p><strong>全动态能力</strong></p>
-<ul>
-<li><a href="doc/zh-cn/plugins.md">热更新和热插件</a>: 无需重启服务，就可以持续更新配置和插件。</li>
-<li><a href="doc/zh-cn/plugins/proxy-rewrite.md">代理请求重写</a>: 支持重写请求上游的<code>host</code>、<code>uri</code>、<code>schema</code>、<code>enable_websocket</code>、<code>headers</code>信息。</li>
-<li><a href="doc/zh-cn/plugins/response-rewrite.md">输出内容重写</a>: 支持自定义修改返回内容的 <code>status code</code>、<code>body</code>、<code>headers</code>。</li>
-<li><a href="doc/zh-cn/plugins/serverless.md">Serverless</a>: 在 APISIX 的每一个阶段，你都可以添加并调用自己编写的函数。</li>
-<li>动态负载均衡：动态支持有权重的 round-robin 负载平衡。</li>
-<li>支持一致性 hash 的负载均衡：动态支持一致性 hash 的负载均衡。</li>
-<li><a href="doc/zh-cn/health-check.md">健康检查</a>：启用上游节点的健康检查，将在负载均衡期间自动过滤不健康的节点，以确保系统稳定性。</li>
-<li>熔断器: 智能跟踪不健康上游服务。</li>
-<li><a href="doc/zh-cn/plugins/proxy-mirror.md">代理镜像</a>: 提供镜像客户端请求的能力。</li>
-</ul>
-</li>
-<li><p><strong>精细化路由</strong></p>
-<ul>
-<li><a href="doc/router-radixtree.md#how-to-use-libradixtree-in-apisix">支持全路径匹配和前缀匹配</a></li>
-<li><a href="/doc/router-radixtree.md#how-to-filter-route-by-nginx-builtin-variable">支持使用 Nginx 所有内置变量做为路由的条件</a>，所以你可以使用 <code>cookie</code>, <code>args</code> 等做为路由的条件，来实现灰度发布、A/B 测试等功能</li>
-<li>支持<a href="https://github.com/iresty/lua-resty-radixtree#operator-list" target="_blank" rel="noopener">各类操作符做为路由的判断条件</a>，比如 <code>{&quot;arg_age&quot;, &quot;&gt;&quot;, 24}</code></li>
-<li>支持<a href="https://github.com/iresty/lua-resty-radixtree/blob/master/t/filter-fun.t#L10" target="_blank" rel="noopener">自定义路由匹配函数</a></li>
-<li>IPv6：支持使用 IPv6 格式匹配路由</li>
-<li>支持路由的<a href="doc/zh-cn/admin-api.md#route">自动过期(TTL)</a></li>
-<li><a href="doc/router-radixtree.md#3-match-priority">支持路由的优先级</a></li>
-<li><a href="doc/zh-cn/plugins/batch-requests.md">支持批量 Http 请求</a></li>
-</ul>
-</li>
-<li><p><strong>安全防护</strong></p>
-<ul>
-<li>多种身份认证方式: <a href="doc/zh-cn/plugins/key-auth.md">key-auth</a>, <a href="doc/zh-cn/plugins/jwt-auth.md">JWT</a>, <a href="doc/zh-cn/plugins/basic-auth.md">basic-auth</a>, <a href="doc/zh-cn/plugins/wolf-rbac.md">wolf-rbac</a>。</li>
-<li><a href="doc/zh-cn/plugins/ip-restriction.md">IP 黑白名单</a></li>
-<li><a href="doc/zh-cn/plugins/referer-restriction.md">Referer 白名单</a></li>
-<li><a href="doc/plugins/openid-connect.md">IdP 支持</a>: 支持外部的身份认证服务，比如 Auth0，Okta，Authing 等，用户可以借此来对接 Oauth2.0 等认证方式。</li>
-<li><a href="doc/zh-cn/plugins/limit-req.md">限制速率</a></li>
-<li><a href="doc/zh-cn/plugins/limit-count.md">限制请求数</a></li>
-<li><a href="doc/zh-cn/plugins/limit-conn.md">限制并发</a></li>
-<li>防御 ReDoS(正则表达式拒绝服务)：内置策略，无需配置即可抵御 ReDoS。</li>
-<li><a href="doc/zh-cn/plugins/cors.md">CORS</a>：为你的 API 启用 CORS。</li>
-<li><a href="doc/zh-cn/plugins/uri-blocker.md">URI 拦截器</a>：根据 URI 拦截用户请求。</li>
-<li><a href="doc/zh-cn/plugins/request-validation.md">请求验证器</a>。</li>
-</ul>
-</li>
-<li><p><strong>运维友好</strong></p>
-<ul>
-<li>OpenTracing 可观测性: 支持 <a href="doc/zh-cn/plugins/skywalking.md">Apache Skywalking</a> 和 <a href="doc/zh-cn/plugins/zipkin.md">Zipkin</a>。</li>
-<li>对接外部服务发现：除了内置的 etcd 外，还支持 <code>Consul</code> 和 <code>Nacos</code> 的 <a href="https://github.com/apache/apisix/issues/1731#issuecomment-646392129" target="_blank" rel="noopener">DNS 发现模式</a>，以及 <a href="doc/zh-cn/discovery.md">Eureka</a>。</li>
-<li>监控和指标: <a href="doc/zh-cn/plugins/prometheus.md">Prometheus</a></li>
-<li>集群：APISIX 节点是无状态的，创建配置中心集群请参考 <a href="https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/clustering.md" target="_blank" rel="noopener">etcd Clustering Guide</a>。</li>
-<li>高可用：支持配置同一个集群内的多个 etcd 地址。</li>
-<li>控制台: 内置控制台来操作 APISIX 集群。</li>
-<li>版本控制：支持操作的多次回滚。</li>
-<li>CLI: 使用命令行来启动、关闭和重启 APISIX。</li>
-<li><a href="doc/zh-cn/stand-alone.md">单机模式</a>: 支持从本地配置文件中加载路由规则，在 kubernetes(k8s) 等环境下更友好。</li>
-<li><a href="doc/zh-cn/architecture-design.md#Global-Rule">全局规则</a>：允许对所有请求执行插件，比如黑白名单、限流限速等。</li>
-<li>高性能：在单核上 QPS 可以达到 18k，同时延迟只有 0.2 毫秒。</li>
-<li><a href="doc/zh-cn/plugins/fault-injection.md">故障注入</a></li>
-<li><a href="doc/zh-cn/admin-api.md">REST Admin API</a>: 使用 REST Admin API 来控制 Apache APISIX，默认只允许 127.0.0.1 访问，你可以修改 <code>conf/config.yaml</code> 中的 <code>allow_admin</code> 字段，指定允许调用 Admin API 的 IP 列表。同时需要注意的是，Admin API 使用 key auth 来校验调用者身份，<strong>在部署前需要修改 <code>conf/config.yaml</code> 中的 <code>admin_key</code> 字段，来保证安全。</strong></li>
-<li>外部日志记录器：将访问日志导出到外部日志管理工具。(<a href="doc/plugins/http-logger.md">HTTP Logger</a>, <a href="doc/plugins/tcp-logger.md">TCP Logger</a>, <a href="doc/plugins/kafka-logger.md">Kafka Logger</a>, <a href="doc/plugins/udp-logger.md">UDP Logger</a>)</li>
-</ul>
-</li>
-<li><p><strong>高度可扩展</strong></p>
-<ul>
-<li><a href="doc/zh-cn/plugin-develop.md">自定义插件</a>: 允许挂载常见阶段，例如<code>init</code>, <code>rewrite</code>，<code>access</code>，<code>balancer</code>,<code>header filer</code>，<code>body filter</code> 和 <code>log</code> 阶段。</li>
-<li>自定义负载均衡算法：可以在 <code>balancer</code> 阶段使用自定义负载均衡算法。</li>
-<li>自定义路由: 支持用户自己实现路由算法。</li>
-</ul>
-</li>
-</ul>
-<h2 id="Apache-APISIX-和-Kong-的比较"><a href="#Apache-APISIX-和-Kong-的比较" class="headerlink" title="Apache APISIX 和 Kong 的比较"></a>Apache APISIX 和 Kong 的比较</h2><h4 id="API-网关核心功能点，两者均已覆盖"><a href="#API-网关核心功能点，两者均已覆盖" class="headerlink" title="API 网关核心功能点，两者均已覆盖"></a>API 网关核心功能点，两者均已覆盖</h4><table>
-<thead>
-<tr>
-<th align="left"><strong>功能</strong></th>
-<th align="left"><strong>Apache APISIX</strong></th>
-<th align="left"><strong>KONG</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><strong>动态上游</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-<tr>
-<td align="left"><strong>动态路由</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-<tr>
-<td align="left"><strong>健康检查和熔断器</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-<tr>
-<td align="left"><strong>动态 SSL 证书</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-<tr>
-<td align="left"><strong>七层和四层代理</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-<tr>
-<td align="left"><strong>分布式追踪</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-<tr>
-<td align="left"><strong>自定义插件</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-<tr>
-<td align="left"><strong>REST API</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-<tr>
-<td align="left"><strong>CLI</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-</tbody></table>
-<h4 id="Apache-APISIX-的优势"><a href="#Apache-APISIX-的优势" class="headerlink" title="Apache APISIX 的优势"></a>Apache APISIX 的优势</h4><table>
-<thead>
-<tr>
-<th align="left"><strong>功能</strong></th>
-<th align="left"><strong>Apache APISIX</strong></th>
-<th align="left"><strong>KONG</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">项目归属</td>
-<td align="left">Apache 软件基金会</td>
-<td align="left">Kong Inc.</td>
-</tr>
-<tr>
-<td align="left">技术架构</td>
-<td align="left">Nginx + etcd</td>
-<td align="left">Nginx + postgres</td>
-</tr>
-<tr>
-<td align="left">交流渠道</td>
-<td align="left">微信群、QQ 群、邮件列表、Github、meetup</td>
-<td align="left">Github、论坛、freenode</td>
-</tr>
-<tr>
-<td align="left">单核 QPS (开启限流和 prometheus 插件)</td>
-<td align="left">18000</td>
-<td align="left">1700</td>
-</tr>
-<tr>
-<td align="left">平均延迟</td>
-<td align="left">0.2 毫秒</td>
-<td align="left">2 毫秒</td>
-</tr>
-<tr>
-<td align="left">支持 Dubbo 代理</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">配置回滚</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">支持生命周期的路由</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">插件热更新</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">用户自定义：负载均衡算法、路由</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">resty &lt;–&gt; gRPC 转码</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">支持 Tengine 作为运行时</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">MQTT 协议支持</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">配置生效时间</td>
-<td align="left">事件通知，低于 1 毫秒更新</td>
-<td align="left">定期轮询，5 秒</td>
-</tr>
-<tr>
-<td align="left">自带控制台</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">对接外部身份认证服务</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">配置中心高可用(HA)</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">指定时间窗口的限速</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">支持任何 Nginx 变量做路由条件</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-</tbody></table>
-<p>性能对比测试<a href="https://gist.github.com/membphis/137db97a4bf64d3653aa42f3e016bd01" target="_blank" rel="noopener">详细内容如下</a>。</p>
-<h2 id="视频和文章"><a href="#视频和文章" class="headerlink" title="视频和文章"></a>视频和文章</h2><ul>
-<li>2020.10.16 <a href="https://www.youtube.com/watch?v=iEegNXOtEhQ" target="_blank" rel="noopener">Apache APISIX: How to implement plugin orchestration in API Gateway</a></li>
-<li>2020.10.16 <a href="https://www.youtube.com/watch?v=DleVJwPs4i4" target="_blank" rel="noopener">Improve Apache APISIX observability with Apache Skywalking</a></li>
-<li>2020.1.17 <a href="https://mp.weixin.qq.com/s/c51apneVj0O9yxiZAHF34Q" target="_blank" rel="noopener">API 网关 Apache APISIX 和 Kong 的选型对比</a></li>
-<li>2019.12.14 <a href="https://zhuanlan.zhihu.com/p/99620158" target="_blank" rel="noopener">从 0 到 1：Apache APISIX 的 Apache 之路</a></li>
-<li>2019.12.14 <a href="https://www.upyun.com/opentalk/445.html" target="_blank" rel="noopener">基于 Apache APISIX 的下一代微服务架构</a></li>
-<li>2019.10.30 <a href="https://www.upyun.com/opentalk/440.html" target="_blank" rel="noopener">Apache APISIX 微服务架构极致性能架构解析</a></li>
-<li>2019.9.27 <a href="https://zhuanlan.zhihu.com/p/84467919" target="_blank" rel="noopener">想把 APISIX 运行在 ARM64 平台上？只要三步</a></li>
-<li>2019.8.31 <a href="https://www.upyun.com/opentalk/433.html" target="_blank" rel="noopener">APISIX 技术选型、测试和持续集成</a></li>
-<li>2019.8.31 <a href="https://www.upyun.com/opentalk/437.html" target="_blank" rel="noopener">APISIX 高性能实战 2</a></li>
-<li>2019.7.6 <a href="https://www.upyun.com/opentalk/429.html" target="_blank" rel="noopener">APISIX 高性能实战</a></li>
-</ul>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总的来说 apisix作为云原生网关,比其他的性能好的同时，稳定性可扩展性 都有质的提升。作为新一代网关的考虑范围内。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/11/30/apisix%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-安装docker" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/10/26/%E5%AE%89%E8%A3%85docker/">安装docker</a>
-</h1>
-
-
-
-        
-        <a href="/2020/10/26/%E5%AE%89%E8%A3%85docker/" class="archive-article-date">
-  	<time datetime="2020-10-26T14:57:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-10-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在物联网以及arm板子安装docker比较麻烦。直接用官方的安装脚本然后用阿里的源安装会比较方便<br>hin简单</p>
-<p>curl -fsSL <a href="https://get.docker.com" target="_blank" rel="noopener">https://get.docker.com</a> | bash -s docker –mirror Aliyun</p>
-<p>完事。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/10/26/%E5%AE%89%E8%A3%85docker/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-pi4B-kubelet-Following-Cgroup-subsystem-not-mounted" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/10/22/pi4B-kubelet-Following-Cgroup-subsystem-not-mounted/">pi4B  kubelet  Following Cgroup subsystem not mounted </a>
-</h1>
-
-
-
-        
-        <a href="/2020/10/22/pi4B-kubelet-Following-Cgroup-subsystem-not-mounted/" class="archive-article-date">
-  	<time datetime="2020-10-22T04:10:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-10-22</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在树莓派4B中安装了ubuntu 20.04.1 LTS 然后接入k8s(kubeedge)集群。</span><br></pre></td></tr></table></figure>
-
-<h3 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h3><p><img src="https://i.loli.net/2020/10/22/GhPvMuNeEfdtKF4.png" alt="pi4.png"></p>
-<p>发现kubelet一直启动不起来,报错为 <code>Following Cgroup subsystem not mounted: [memory]</code><br>大概意思是主机没有挂载内存的Cgroup，但是kubelet是需要控制cpu以及内存的Cgroup。所以启动不起来</p>
-<h3 id="处理过程"><a href="#处理过程" class="headerlink" title="处理过程"></a>处理过程</h3><p>知道问题了,但是百度了半天大家都说是需要在<code>/boot/cmdline.txt</code> 中加入<code>cgroup_enable=memory cgroup_memory=1</code>然后重启即可。<br>但是重启问题依旧，然后查看引导</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;boot&#x2F;firmware&#x2F;config.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://i.loli.net/2020/10/22/kXeqVdLz6iRJQgO.png" alt="image.png"></p>
-<p>发现还是这个名字,最后实在没办法就吧<code>cmdline.txt</code>放到了<code>/boot/firmware/</code>下。然后就成功了 </p>
-<h3 id="心得"><a href="#心得" class="headerlink" title="心得"></a>心得</h3><p>只是记录一下坑，毫无卵用。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/10/22/pi4B-kubelet-Following-Cgroup-subsystem-not-mounted/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-gin源码解读" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/09/03/gin%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/">gin源码解读</a>
-</h1>
-
-
-
-        
-        <a href="/2020/09/03/gin%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/" class="archive-article-date">
-  	<time datetime="2020-09-03T06:30:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-09-03</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/09/03/gin%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Proxmox介绍以及安装使用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/07/22/Proxmox%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/">Proxmox介绍以及安装使用</a>
-</h1>
-
-
-
-        
-        <a href="/2020/07/22/Proxmox%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/" class="archive-article-date">
-  	<time datetime="2020-07-22T01:49:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-22</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/07/22/Proxmox%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-使用-skopeo-操作容器镜像" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/07/15/%E4%BD%BF%E7%94%A8-skopeo-%E6%93%8D%E4%BD%9C%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F/">使用 skopeo 操作容器镜像</a>
-</h1>
-
-
-
-        
-        <a href="/2020/07/15/%E4%BD%BF%E7%94%A8-skopeo-%E6%93%8D%E4%BD%9C%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F/" class="archive-article-date">
-  	<time datetime="2020-07-15T05:28:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>今天项目组突然提出一个需求,跟其他应用放对接的时候提供一个镜像仓库。对接放把应用上传完以后。我们需要将这些镜像都打成tar包存到oss中。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">问题如下:</span><br><span class="line">  镜像仓库每个都很大(内部是数据模型以及算法)怎么能保证完整下下来不影响业务网络</span><br><span class="line">  镜像都得打tar包，但是本地存储限制 没那么大  并且耗时</span><br><span class="line">  后续扩展跟其他库同步麻烦。需要一个个load进去然后倒入</span><br></pre></td></tr></table></figure>
-<p>根据以上的需求进行分析,目的很明确 </p>
-<blockquote>
-<p>1.需要找到一个能直接下载docker镜像并且最好是直接打tar包的工具<br>2.最好能镜像库与库之间的同步<br>3.这个工具最好不依赖docker</p>
-</blockquote>
-<p>为啥说最好不依赖docker呢，这里并不是对docker有啥歧视的地方,见下图<br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ggrlwuw4j9j317g04g0va.jpg" alt=""><br>我明明只需要个命令行工具来进行镜像的下载上传，并不需要真正的run起来。但是docker傻乎乎的需要程序进行守护启动才能进行镜像下载  增大维护度</p>
-<h3 id="skopeo的使用"><a href="#skopeo的使用" class="headerlink" title="skopeo的使用"></a>skopeo的使用</h3><p>到github找了找,发现官方已经有这样的工具了 并且完美支持我的需求 <a href="https://github.com/containers/skopeo" target="_blank" rel="noopener">项目地址</a></p>
-<h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># centos</span><br><span class="line">yum install skopeo</span><br></pre></td></tr></table></figure>
-<p>其他系统安装见<a href="https://github.com/containers/skopeo/blob/master/install.md" target="_blank" rel="noopener">安装文档</a></p>
-<h5 id="不借助-docker-下载镜像"><a href="#不借助-docker-下载镜像" class="headerlink" title="不借助 docker 下载镜像"></a>不借助 docker 下载镜像</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">skopeo --insecure-policy copy docker:&#x2F;&#x2F;nginx:1.17.6 docker-archive:&#x2F;tmp&#x2F;nginx.tar</span><br></pre></td></tr></table></figure>
-<p><code>--insecure-policy</code> 选项用于忽略安全策略配置文件，该命令将会直接通过 http 下载目标镜像并存储为 <code>/tmp/nginx.tar</code>，此文件可以直接通过 <code>docker load</code> 命令导入</p>
-<h5 id="从-docker-daemon-导出镜像"><a href="#从-docker-daemon-导出镜像" class="headerlink" title="从 docker daemon 导出镜像"></a>从 docker daemon 导出镜像</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">skopeo --insecure-policy copy docker-daemon:nginx:1.17.6 docker-archive:&#x2F;tmp&#x2F;nginx.tar</span><br></pre></td></tr></table></figure>
-<p>该命令将会从 docker daemon 导出镜像到 <code>/tmp/nginx.tar</code>；为什么不用 docker save？因为我是偷懒 dest 也是 docker-archive，实际上 skopeo 可以导出为其他格式比如 <code>oci</code>、<code>oci-archive</code>、<code>ostree</code> 等</p>
-<h5 id="远程获取镜像的信息"><a href="#远程获取镜像的信息" class="headerlink" title="远程获取镜像的信息"></a>远程获取镜像的信息</h5><p>skopeo 可以在不用下载镜像的情况下，获取镜像信息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"># skopeo inspect docker:&#x2F;&#x2F;docker.io&#x2F;centos</span><br><span class="line">&#123;</span><br><span class="line">    &quot;Name&quot;: &quot;docker.io&#x2F;library&#x2F;centos&quot;,</span><br><span class="line">    &quot;Digest&quot;: &quot;sha256:fe8d824220415eed5477b63addf40fb06c3b049404242b31982106ac204f6700&quot;,</span><br><span class="line">    &quot;RepoTags&quot;: [</span><br><span class="line">        &quot;5.11&quot;,</span><br><span class="line">        &quot;5&quot;,</span><br><span class="line">        &quot;6.10&quot;,</span><br><span class="line">        &quot;6.6&quot;,</span><br><span class="line">        &quot;6.7&quot;,</span><br><span class="line">        &quot;6.8&quot;,</span><br><span class="line">        &quot;6.9&quot;,</span><br><span class="line">        &quot;6&quot;,</span><br><span class="line">        &quot;7.0.1406&quot;,</span><br><span class="line">        &quot;7.1.1503&quot;,</span><br><span class="line">        &quot;7.2.1511&quot;,</span><br><span class="line">        &quot;7.3.1611&quot;,</span><br><span class="line">        &quot;7.4.1708&quot;,</span><br><span class="line">        &quot;7.5.1804&quot;,</span><br><span class="line">        &quot;7.6.1810&quot;,</span><br><span class="line">        &quot;7.7.1908&quot;,</span><br><span class="line">        &quot;7&quot;,</span><br><span class="line">        &quot;8.1.1911&quot;,</span><br><span class="line">        &quot;8&quot;,</span><br><span class="line">        &quot;centos5.11&quot;,</span><br><span class="line">        &quot;centos5&quot;,</span><br><span class="line">        &quot;centos6.10&quot;,</span><br><span class="line">        &quot;centos6.6&quot;,</span><br><span class="line">        &quot;centos6.7&quot;,</span><br><span class="line">        &quot;centos6.8&quot;,</span><br><span class="line">        &quot;centos6.9&quot;,</span><br><span class="line">        &quot;centos6&quot;,</span><br><span class="line">        &quot;centos7.0.1406&quot;,</span><br><span class="line">        &quot;centos7.1.1503&quot;,</span><br><span class="line">        &quot;centos7.2.1511&quot;,</span><br><span class="line">        &quot;centos7.3.1611&quot;,</span><br><span class="line">        &quot;centos7.4.1708&quot;,</span><br><span class="line">        &quot;centos7.5.1804&quot;,</span><br><span class="line">        &quot;centos7.6.1810&quot;,</span><br><span class="line">        &quot;centos7.7.1908&quot;,</span><br><span class="line">        &quot;centos7&quot;,</span><br><span class="line">        &quot;centos8.1.1911&quot;,</span><br><span class="line">        &quot;centos8&quot;,</span><br><span class="line">        &quot;latest&quot;</span><br><span class="line">    ],</span><br><span class="line">    &quot;Created&quot;: &quot;2020-01-18T00:26:46.850750902Z&quot;,</span><br><span class="line">    &quot;DockerVersion&quot;: &quot;18.06.1-ce&quot;,</span><br><span class="line">    &quot;Labels&quot;: &#123;</span><br><span class="line">        &quot;org.label-schema.build-date&quot;: &quot;20200114&quot;,</span><br><span class="line">        &quot;org.label-schema.license&quot;: &quot;GPLv2&quot;,</span><br><span class="line">        &quot;org.label-schema.name&quot;: &quot;CentOS Base Image&quot;,</span><br><span class="line">        &quot;org.label-schema.schema-version&quot;: &quot;1.0&quot;,</span><br><span class="line">        &quot;org.label-schema.vendor&quot;: &quot;CentOS&quot;,</span><br><span class="line">        &quot;org.opencontainers.image.created&quot;: &quot;2020-01-14 00:00:00-08:00&quot;,</span><br><span class="line">        &quot;org.opencontainers.image.licenses&quot;: &quot;GPL-2.0-only&quot;,</span><br><span class="line">        &quot;org.opencontainers.image.title&quot;: &quot;CentOS Base Image&quot;,</span><br><span class="line">        &quot;org.opencontainers.image.vendor&quot;: &quot;CentOS&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;Architecture&quot;: &quot;amd64&quot;,</span><br><span class="line">    &quot;Os&quot;: &quot;linux&quot;,</span><br><span class="line">    &quot;Layers&quot;: [</span><br><span class="line">        &quot;sha256:8a29a15cefaeccf6545f7ecf11298f9672d2f0cdaf9e357a95133ac3ad3e1f07&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>docker://: 是使用 Docker Registry HTTP API V2 进行连接远端<br>docker.io: 远程仓库<br>centos: 镜像名称</p>
-<h5 id="镜像仓的认证文件"><a href="#镜像仓的认证文件" class="headerlink" title="镜像仓的认证文件"></a>镜像仓的认证文件</h5><p>认证文件默认存放在 $HOME/.docker/config.json<br>文件内容</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	&quot;auths&quot;: &#123;</span><br><span class="line">		&quot;myregistrydomain.com:5000&quot;: &#123;</span><br><span class="line">			&quot;auth&quot;: &quot;dGVzdHVzZXI6dGVzdHBhc3N3b3Jk&quot;,</span><br><span class="line">			&quot;email&quot;: &quot;stuf@ex.cm&quot;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h5 id="其他命令"><a href="#其他命令" class="headerlink" title="其他命令"></a>其他命令</h5><p>skopeo 还有一些其他的实用命令，比如 sync 可以在两个位置之间同步镜像.</p>
-<h3 id="源码赏析"><a href="#源码赏析" class="headerlink" title="源码赏析"></a>源码赏析</h3><p>暂时先埋个坑 以后再写</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/07/15/%E4%BD%BF%E7%94%A8-skopeo-%E6%93%8D%E4%BD%9C%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-JWT的原理和用法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/07/14/JWT%E7%9A%84%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%A8%E6%B3%95/">JWT的原理和用法</a>
-</h1>
-
-
-
-        
-        <a href="/2020/07/14/JWT%E7%9A%84%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%A8%E6%B3%95/" class="archive-article-date">
-  	<time datetime="2020-07-14T07:03:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-14</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="啥是JWT"><a href="#啥是JWT" class="headerlink" title="啥是JWT"></a>啥是JWT</h3><p>JSON Web Token（缩写 JWT）是目前最流行的跨域认证解决方案。</p>
-<h3 id="为啥会有JWT"><a href="#为啥会有JWT" class="headerlink" title="为啥会有JWT"></a>为啥会有JWT</h3><p>互联网服务离不开用户认证。一般流程是下面这样。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1、用户向服务器发送用户名和密码。</span><br><span class="line"></span><br><span class="line">2、服务器验证通过后，在当前对话（session）里面保存相关数据，比如用户角色、登录时间等等。</span><br><span class="line"></span><br><span class="line">3、服务器向用户返回一个 session_id，写入用户的 Cookie。</span><br><span class="line"></span><br><span class="line">4、用户随后的每一次请求，都会通过 Cookie，将 session_id 传回服务器。</span><br><span class="line"></span><br><span class="line">5、服务器收到 session_id，找到前期保存的数据，由此得知用户的身份。</span><br></pre></td></tr></table></figure>
-
-<p>这种模式的问题在于，扩展性（scaling）不好。单机当然没有问题，如果是服务器集群，或者是跨域的服务导向架构，就要求 session 数据共享，每台服务器都能够读取 session。</p>
-<p>举例来说，A 网站和 B 网站是同一家公司的关联服务。现在要求，用户只要在其中一个网站登录，再访问另一个网站就会自动登录，请问怎么实现？</p>
-<p>一种解决方案是 session 数据持久化，写入数据库或别的持久层。各种服务收到请求后，都向持久层请求数据。这种方案的优点是架构清晰，缺点是工程量比较大。另外，持久层万一挂了，就会单点失败。</p>
-<p>另一种方案是服务器索性不保存 session 数据了，所有数据都保存在客户端，每次请求都发回服务器。JWT 就是这种方案的一个代表。</p>
-<h3 id="JWT-的原理"><a href="#JWT-的原理" class="headerlink" title="JWT 的原理"></a>JWT 的原理</h3><p>JWT 的原理是，服务器认证以后，生成一个 JSON 对象，发回给用户，就像下面这样。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;姓名&quot;: &quot;dashabi&quot;,</span><br><span class="line">  &quot;角色&quot;: &quot;管理员&quot;,</span><br><span class="line">  &quot;到期时间&quot;: &quot;2020年7月15日0点0分&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>以后，用户与服务端通信的时候，都要发回这个 JSON 对象。服务器完全只靠这个对象认定用户身份。为了防止用户篡改数据，服务器在生成这个对象的时候，会加上签名（详见后文）。</p>
-<p>服务器就不保存任何 session 数据了，也就是说，服务器变成无状态了，从而比较容易实现扩展。</p>
-<h3 id="JWT-的数据结构"><a href="#JWT-的数据结构" class="headerlink" title="JWT 的数据结构"></a>JWT 的数据结构</h3><p>实际的 JWT 大概就像下面这样。<br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ggrmz6bwctj315e096n7h.jpg" alt=""></p>
-<p>它是一个很长的字符串，中间用点<code>（.）</code>分隔成三个部分。注意，JWT 内部是没有换行的，这里只是为了便于展示，将它写成了几行。</p>
-<p>JWT 的三个部分依次如下。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Header（头部）</span><br><span class="line">Payload（负载）</span><br><span class="line">Signature（签名）</span><br></pre></td></tr></table></figure>
-<p>写成一行，就是下面的样子。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Header.Payload.Signature</span><br></pre></td></tr></table></figure>
-
-<h3 id="具体讲解JWT三部分"><a href="#具体讲解JWT三部分" class="headerlink" title="具体讲解JWT三部分"></a>具体讲解JWT三部分</h3><h4 id="Header"><a href="#Header" class="headerlink" title="Header"></a>Header</h4><p>Header 部分是一个 JSON 对象，描述 JWT 的元数据，通常是下面的样子。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;alg&quot;: &quot;HS256&quot;,</span><br><span class="line">  &quot;typ&quot;: &quot;JWT&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面代码中，alg属性表示签名的算法（algorithm），默认是 HMAC SHA256（写成 HS256）；typ属性表示这个令牌（token）的类型（type），JWT 令牌统一写为JWT。</p>
-<p>最后，将上面的 JSON 对象使用 Base64URL 算法（详见后文）转成字符串。</p>
-<h4 id="Payload"><a href="#Payload" class="headerlink" title="Payload"></a>Payload</h4><p>Payload 部分也是一个 JSON 对象，用来存放实际需要传递的数据。JWT 规定了7个官方字段，供选用。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">iss (issuer)：签发人</span><br><span class="line">exp (expiration time)：过期时间</span><br><span class="line">sub (subject)：主题</span><br><span class="line">aud (audience)：受众</span><br><span class="line">nbf (Not Before)：生效时间</span><br><span class="line">iat (Issued At)：签发时间</span><br><span class="line">jti (JWT ID)：编号</span><br></pre></td></tr></table></figure>
-<p>除了官方字段，你还可以在这个部分定义私有字段，下面就是一个例子。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;sub&quot;: &quot;1234567890&quot;,</span><br><span class="line">  &quot;name&quot;: &quot;John Doe&quot;,</span><br><span class="line">  &quot;admin&quot;: true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注意，JWT 默认是不加密的，任何人都可以读到，所以不要把秘密信息放在这个部分。</p>
-<p>这个 JSON 对象也要使用 Base64URL 算法转成字符串。</p>
-<h4 id="Signature"><a href="#Signature" class="headerlink" title="Signature"></a>Signature</h4><p>Signature 部分是对前两部分的签名，防止数据篡改。</p>
-<p>首先，需要指定一个密钥（secret）。这个密钥只有服务器才知道，不能泄露给用户。然后，使用 Header 里面指定的签名算法（默认是 HMAC SHA256），按照下面的公式产生签名。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HMACSHA256(</span><br><span class="line">  base64UrlEncode(header) + &quot;.&quot; +</span><br><span class="line">  base64UrlEncode(payload),</span><br><span class="line">  secret)</span><br></pre></td></tr></table></figure>
-<p>算出签名以后，把 Header、Payload、Signature 三个部分拼成一个字符串，每个部分之间用”点”（.）分隔，就可以返回给用户。</p>
-<h3 id="Base64URL"><a href="#Base64URL" class="headerlink" title="Base64URL"></a>Base64URL</h3><p>前面提到，Header 和 Payload 串型化的算法是 Base64URL。这个算法跟 Base64 算法基本类似，但有一些小的不同。</p>
-<p>JWT 作为一个令牌（token），有些场合可能会放到 URL（比如 api.example.com/?token=xxx）。Base64 有三个字符+、/和=，在 URL 里面有特殊含义，所以要被替换掉：=被省略、+替换成-，/替换成_ 。这就是 Base64URL 算法。</p>
-<h3 id="JWT-的使用方式"><a href="#JWT-的使用方式" class="headerlink" title="JWT 的使用方式"></a>JWT 的使用方式</h3><p>客户端收到服务器返回的 JWT，可以储存在 Cookie 里面，也可以储存在 localStorage。</p>
-<p>此后，客户端每次与服务器通信，都要带上这个 JWT。你可以把它放在 Cookie 里面自动发送，但是这样不能跨域，所以更好的做法是放在 HTTP 请求的头信息Authorization字段里面。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Authorization: Bearer &lt;token&gt;</span><br></pre></td></tr></table></figure>
-
-<p>另一种做法是，跨域的时候，JWT 就放在 POST 请求的数据体里面。</p>
-<h3 id="JWT-的几个特点"><a href="#JWT-的几个特点" class="headerlink" title="JWT 的几个特点"></a>JWT 的几个特点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">（1）JWT 默认是不加密，但也是可以加密的。生成原始 Token 以后，可以用密钥再加密一次。</span><br><span class="line"></span><br><span class="line">（2）JWT 不加密的情况下，不能将秘密数据写入 JWT。</span><br><span class="line"></span><br><span class="line">（3）JWT 不仅可以用于认证，也可以用于交换信息。有效使用 JWT，可以降低服务器查询数据库的次数。</span><br><span class="line"></span><br><span class="line">（4）JWT 的最大缺点是，由于服务器不保存 session 状态，因此无法在使用过程中废止某个 token，或者更改 token 的权限。也就是说，一旦 JWT 签发了，在到期之前就会始终有效，除非服务器部署额外的逻辑。</span><br><span class="line"></span><br><span class="line">（5）JWT 本身包含了认证信息，一旦泄露，任何人都可以获得该令牌的所有权限。为了减少盗用，JWT 的有效期应该设置得比较短。对于一些比较重要的权限，使用时应该再次对用户进行认证。</span><br><span class="line"></span><br><span class="line">（6）为了减少盗用，JWT 不应该使用 HTTP 协议明码传输，要使用 HTTPS 协议传输。</span><br></pre></td></tr></table></figure>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/07/14/JWT%E7%9A%84%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%A8%E6%B3%95/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-使用Air实现gin框架实时重新加载" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/07/14/%E4%BD%BF%E7%94%A8Air%E5%AE%9E%E7%8E%B0gin%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%97%B6%E9%87%8D%E6%96%B0%E5%8A%A0%E8%BD%BD/">使用Air实现gin框架实时重新加载</a>
-</h1>
-
-
-
-        
-        <a href="/2020/07/14/%E4%BD%BF%E7%94%A8Air%E5%AE%9E%E7%8E%B0gin%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%97%B6%E9%87%8D%E6%96%B0%E5%8A%A0%E8%BD%BD/" class="archive-article-date">
-  	<time datetime="2020-07-14T06:54:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-14</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="为什么需要实时加载？"><a href="#为什么需要实时加载？" class="headerlink" title="为什么需要实时加载？"></a>为什么需要实时加载？</h3><p>之前使用Python编写Web项目的时候，常见的Flask或Django框架都是支持实时加载的，你修改了项目代码之后，程序能够自动重新加载并执行（live-reload），这在日常的开发阶段是十分方便的。</p>
-<p>在使用Go语言的gin框架在本地做开发调试的时候，经常需要在变更代码之后频繁的按下Ctrl+C停止程序并重新编译再执行，这样就不是很方便。</p>
-<h3 id="Air介绍"><a href="#Air介绍" class="headerlink" title="Air介绍"></a>Air介绍</h3><p>怎样才能在基于gin框架开发时实现实时加载功能呢？像这种烦恼肯定不会只是你一个人的烦恼，所以我报着肯定有现成轮子的心态开始了全网大搜索。果不其然就在Github上找到了一个工具：<a href="https://github.com/cosmtrek/air" target="_blank" rel="noopener">Air</a>。它支持以下特性：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">彩色日志输出</span><br><span class="line">自定义构建或二进制命令</span><br><span class="line">支持忽略子目录</span><br><span class="line">启动后支持监听新目录</span><br><span class="line">更好的构建过程</span><br></pre></td></tr></table></figure>
-
-<h3 id="安装air"><a href="#安装air" class="headerlink" title="安装air"></a>安装air</h3><p>Go</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get -u github.com&#x2F;cosmtrek&#x2F;air</span><br></pre></td></tr></table></figure>
-<p>MacOS</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fLo air https:&#x2F;&#x2F;git.io&#x2F;darwin_air</span><br></pre></td></tr></table></figure>
-<p>Linux</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fLo air https:&#x2F;&#x2F;git.io&#x2F;linux_air</span><br></pre></td></tr></table></figure>
-<p>Windows</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fLo air.exe https:&#x2F;&#x2F;git.io&#x2F;windows_air</span><br></pre></td></tr></table></figure>
-
-<h3 id="使用Air"><a href="#使用Air" class="headerlink" title="使用Air"></a>使用Air</h3><p>为了敲命令时更简单更方便，你应该把alias air=’~/.air’加到你的.bashrc或.zshrc中。</p>
-<p>首先进入你的项目目录：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;path&#x2F;to&#x2F;your_project</span><br></pre></td></tr></table></figure>
-<p>最简单的用法就是直接执行下面的命令：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 首先在当前目录下查找 &#96;.air.conf&#96;配置文件，如果找不到就使用默认的</span><br><span class="line">air -c .air.conf</span><br></pre></td></tr></table></figure>
-<p>推荐的使用方法是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 1. 在当前目录创建一个新的配置文件.air.conf</span><br><span class="line">touch .air.conf</span><br><span class="line"></span><br><span class="line"># 2. 复制 &#96;air.conf.example&#96; 中的内容到这个文件，然后根据你的需要去修改它</span><br><span class="line"></span><br><span class="line"># 3. 使用你的配置运行 air, 如果文件名是 &#96;.air.conf&#96;，只需要执行 &#96;air&#96;。</span><br><span class="line">air</span><br></pre></td></tr></table></figure>
-
-<h4 id="air-example-conf示例"><a href="#air-example-conf示例" class="headerlink" title="air_example.conf示例"></a>air_example.conf示例</h4><p>完整的<code>air_example.conf</code>示例配置如下，可以根据自己的需要修改。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"># [Air](https:&#x2F;&#x2F;github.com&#x2F;cosmtrek&#x2F;air) TOML 格式的配置文件</span><br><span class="line"></span><br><span class="line"># 工作目录</span><br><span class="line"># 使用 . 或绝对路径，请注意 &#96;tmp_dir&#96; 目录必须在 &#96;root&#96; 目录下</span><br><span class="line">root &#x3D; &quot;.&quot;</span><br><span class="line">tmp_dir &#x3D; &quot;tmp&quot;</span><br><span class="line"></span><br><span class="line">[build]</span><br><span class="line"># 只需要写你平常编译使用的shell命令。你也可以使用 &#96;make&#96;</span><br><span class="line">cmd &#x3D; &quot;go build -o .&#x2F;tmp&#x2F;main .&quot;</span><br><span class="line"># 由&#96;cmd&#96;命令得到的二进制文件名</span><br><span class="line">bin &#x3D; &quot;tmp&#x2F;main&quot;</span><br><span class="line"># 自定义的二进制，可以添加额外的编译标识例如添加 GIN_MODE&#x3D;release</span><br><span class="line">full_bin &#x3D; &quot;APP_ENV&#x3D;dev APP_USER&#x3D;air .&#x2F;tmp&#x2F;main&quot;</span><br><span class="line"># 监听以下文件扩展名的文件.</span><br><span class="line">include_ext &#x3D; [&quot;go&quot;, &quot;tpl&quot;, &quot;tmpl&quot;, &quot;html&quot;]</span><br><span class="line"># 忽略这些文件扩展名或目录</span><br><span class="line">exclude_dir &#x3D; [&quot;assets&quot;, &quot;tmp&quot;, &quot;vendor&quot;, &quot;frontend&#x2F;node_modules&quot;]</span><br><span class="line"># 监听以下指定目录的文件</span><br><span class="line">include_dir &#x3D; []</span><br><span class="line"># 排除以下文件</span><br><span class="line">exclude_file &#x3D; []</span><br><span class="line"># 如果文件更改过于频繁，则没有必要在每次更改时都触发构建。可以设置触发构建的延迟时间</span><br><span class="line">delay &#x3D; 1000 # ms</span><br><span class="line"># 发生构建错误时，停止运行旧的二进制文件。</span><br><span class="line">stop_on_error &#x3D; true</span><br><span class="line"># air的日志文件名，该日志文件放置在你的&#96;tmp_dir&#96;中</span><br><span class="line">log &#x3D; &quot;air_errors.log&quot;</span><br><span class="line"></span><br><span class="line">[log]</span><br><span class="line"># 显示日志时间</span><br><span class="line">time &#x3D; true</span><br><span class="line"></span><br><span class="line">[color]</span><br><span class="line"># 自定义每个部分显示的颜色。如果找不到颜色，使用原始的应用程序日志。</span><br><span class="line">main &#x3D; &quot;magenta&quot;</span><br><span class="line">watcher &#x3D; &quot;cyan&quot;</span><br><span class="line">build &#x3D; &quot;yellow&quot;</span><br><span class="line">runner &#x3D; &quot;green&quot;</span><br><span class="line"></span><br><span class="line">[misc]</span><br><span class="line"># 退出时删除tmp目录</span><br><span class="line">clean_on_exit &#x3D; true</span><br></pre></td></tr></table></figure>
-
-<h3 id="效果图"><a href="#效果图" class="headerlink" title="效果图"></a>效果图</h3><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ggrnaui0m5g30xc0k042d.gif" alt=""></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/07/14/%E4%BD%BF%E7%94%A8Air%E5%AE%9E%E7%8E%B0gin%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%97%B6%E9%87%8D%E6%96%B0%E5%8A%A0%E8%BD%BD/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
   
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
-    </nav>
+  
+
+  
+
+  
+
   
 
 
@@ -1230,8 +348,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,

@@ -196,6 +196,95 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-使用Air实现gin框架实时重新加载" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/07/14/%E4%BD%BF%E7%94%A8Air%E5%AE%9E%E7%8E%B0gin%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%97%B6%E9%87%8D%E6%96%B0%E5%8A%A0%E8%BD%BD/">使用Air实现gin框架实时重新加载</a>
+</h1>
+
+
+
+        
+        <a href="/2020/07/14/%E4%BD%BF%E7%94%A8Air%E5%AE%9E%E7%8E%B0gin%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%97%B6%E9%87%8D%E6%96%B0%E5%8A%A0%E8%BD%BD/" class="archive-article-date">
+  	<time datetime="2020-07-14T06:54:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-14</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="为什么需要实时加载？"><a href="#为什么需要实时加载？" class="headerlink" title="为什么需要实时加载？"></a>为什么需要实时加载？</h3><p>之前使用Python编写Web项目的时候，常见的Flask或Django框架都是支持实时加载的，你修改了项目代码之后，程序能够自动重新加载并执行（live-reload），这在日常的开发阶段是十分方便的。</p>
+<p>在使用Go语言的gin框架在本地做开发调试的时候，经常需要在变更代码之后频繁的按下Ctrl+C停止程序并重新编译再执行，这样就不是很方便。</p>
+<h3 id="Air介绍"><a href="#Air介绍" class="headerlink" title="Air介绍"></a>Air介绍</h3><p>怎样才能在基于gin框架开发时实现实时加载功能呢？像这种烦恼肯定不会只是你一个人的烦恼，所以我报着肯定有现成轮子的心态开始了全网大搜索。果不其然就在Github上找到了一个工具：<a href="https://github.com/cosmtrek/air" target="_blank" rel="noopener">Air</a>。它支持以下特性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">彩色日志输出</span><br><span class="line">自定义构建或二进制命令</span><br><span class="line">支持忽略子目录</span><br><span class="line">启动后支持监听新目录</span><br><span class="line">更好的构建过程</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装air"><a href="#安装air" class="headerlink" title="安装air"></a>安装air</h3><p>Go</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get -u github.com&#x2F;cosmtrek&#x2F;air</span><br></pre></td></tr></table></figure>
+<p>MacOS</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fLo air https:&#x2F;&#x2F;git.io&#x2F;darwin_air</span><br></pre></td></tr></table></figure>
+<p>Linux</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fLo air https:&#x2F;&#x2F;git.io&#x2F;linux_air</span><br></pre></td></tr></table></figure>
+<p>Windows</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fLo air.exe https:&#x2F;&#x2F;git.io&#x2F;windows_air</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用Air"><a href="#使用Air" class="headerlink" title="使用Air"></a>使用Air</h3><p>为了敲命令时更简单更方便，你应该把alias air=’~/.air’加到你的.bashrc或.zshrc中。</p>
+<p>首先进入你的项目目录：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;path&#x2F;to&#x2F;your_project</span><br></pre></td></tr></table></figure>
+<p>最简单的用法就是直接执行下面的命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 首先在当前目录下查找 &#96;.air.conf&#96;配置文件，如果找不到就使用默认的</span><br><span class="line">air -c .air.conf</span><br></pre></td></tr></table></figure>
+<p>推荐的使用方法是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 1. 在当前目录创建一个新的配置文件.air.conf</span><br><span class="line">touch .air.conf</span><br><span class="line"></span><br><span class="line"># 2. 复制 &#96;air.conf.example&#96; 中的内容到这个文件，然后根据你的需要去修改它</span><br><span class="line"></span><br><span class="line"># 3. 使用你的配置运行 air, 如果文件名是 &#96;.air.conf&#96;，只需要执行 &#96;air&#96;。</span><br><span class="line">air</span><br></pre></td></tr></table></figure>
+
+<h4 id="air-example-conf示例"><a href="#air-example-conf示例" class="headerlink" title="air_example.conf示例"></a>air_example.conf示例</h4><p>完整的<code>air_example.conf</code>示例配置如下，可以根据自己的需要修改。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"># [Air](https:&#x2F;&#x2F;github.com&#x2F;cosmtrek&#x2F;air) TOML 格式的配置文件</span><br><span class="line"></span><br><span class="line"># 工作目录</span><br><span class="line"># 使用 . 或绝对路径，请注意 &#96;tmp_dir&#96; 目录必须在 &#96;root&#96; 目录下</span><br><span class="line">root &#x3D; &quot;.&quot;</span><br><span class="line">tmp_dir &#x3D; &quot;tmp&quot;</span><br><span class="line"></span><br><span class="line">[build]</span><br><span class="line"># 只需要写你平常编译使用的shell命令。你也可以使用 &#96;make&#96;</span><br><span class="line">cmd &#x3D; &quot;go build -o .&#x2F;tmp&#x2F;main .&quot;</span><br><span class="line"># 由&#96;cmd&#96;命令得到的二进制文件名</span><br><span class="line">bin &#x3D; &quot;tmp&#x2F;main&quot;</span><br><span class="line"># 自定义的二进制，可以添加额外的编译标识例如添加 GIN_MODE&#x3D;release</span><br><span class="line">full_bin &#x3D; &quot;APP_ENV&#x3D;dev APP_USER&#x3D;air .&#x2F;tmp&#x2F;main&quot;</span><br><span class="line"># 监听以下文件扩展名的文件.</span><br><span class="line">include_ext &#x3D; [&quot;go&quot;, &quot;tpl&quot;, &quot;tmpl&quot;, &quot;html&quot;]</span><br><span class="line"># 忽略这些文件扩展名或目录</span><br><span class="line">exclude_dir &#x3D; [&quot;assets&quot;, &quot;tmp&quot;, &quot;vendor&quot;, &quot;frontend&#x2F;node_modules&quot;]</span><br><span class="line"># 监听以下指定目录的文件</span><br><span class="line">include_dir &#x3D; []</span><br><span class="line"># 排除以下文件</span><br><span class="line">exclude_file &#x3D; []</span><br><span class="line"># 如果文件更改过于频繁，则没有必要在每次更改时都触发构建。可以设置触发构建的延迟时间</span><br><span class="line">delay &#x3D; 1000 # ms</span><br><span class="line"># 发生构建错误时，停止运行旧的二进制文件。</span><br><span class="line">stop_on_error &#x3D; true</span><br><span class="line"># air的日志文件名，该日志文件放置在你的&#96;tmp_dir&#96;中</span><br><span class="line">log &#x3D; &quot;air_errors.log&quot;</span><br><span class="line"></span><br><span class="line">[log]</span><br><span class="line"># 显示日志时间</span><br><span class="line">time &#x3D; true</span><br><span class="line"></span><br><span class="line">[color]</span><br><span class="line"># 自定义每个部分显示的颜色。如果找不到颜色，使用原始的应用程序日志。</span><br><span class="line">main &#x3D; &quot;magenta&quot;</span><br><span class="line">watcher &#x3D; &quot;cyan&quot;</span><br><span class="line">build &#x3D; &quot;yellow&quot;</span><br><span class="line">runner &#x3D; &quot;green&quot;</span><br><span class="line"></span><br><span class="line">[misc]</span><br><span class="line"># 退出时删除tmp目录</span><br><span class="line">clean_on_exit &#x3D; true</span><br></pre></td></tr></table></figure>
+
+<h3 id="效果图"><a href="#效果图" class="headerlink" title="效果图"></a>效果图</h3><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ggrnaui0m5g30xc0k042d.gif" alt=""></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/07/14/%E4%BD%BF%E7%94%A8Air%E5%AE%9E%E7%8E%B0gin%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%97%B6%E9%87%8D%E6%96%B0%E5%8A%A0%E8%BD%BD/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-go闭包中局部变量逃逸的简单分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -910,72 +999,9 @@
 
 
   
-    <article id="post-drone使用手册" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/05/29/drone%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">drone使用手册</a>
-</h1>
-
-
-
-        
-        <a href="/2020/05/29/drone%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/" class="archive-article-date">
-  	<time datetime="2020-05-29T13:03:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-29</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/05/29/drone%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
+      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
     </nav>
   
 

@@ -196,6 +196,421 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-命令行翻墙" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/12/11/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99/">命令行翻墙</a>
+</h1>
+
+
+
+        
+        <a href="/2019/12/11/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99/" class="archive-article-date">
+  	<time datetime="2019-12-11T02:45:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="痛点"><a href="#痛点" class="headerlink" title="痛点"></a>痛点</h2><blockquote>
+<p>啥也不说，先上图。这样的痛苦 国内程序员应该都体会过<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9t78ifnifj30to04gdhe.jpg" alt="git clone"></p>
+</blockquote>
+<h2 id="共具介绍"><a href="#共具介绍" class="headerlink" title="共具介绍"></a>共具介绍</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">对于技术人员shadowsocks应该不陌生，shadowsocks实质上也是一种socks5代理服务，类似于ssh代理。</span><br><span class="line"></span><br><span class="line">与vpn的全局代理不同，shadowsocks仅针对浏览器代理，不能代理应用软件，比如curl、wget等一些命令行软件。如果要让终端下的命令行工具都能支持代理，这时我们就要用上proxychains-ng这款神器了。</span><br></pre></td></tr></table></figure>
+
+<h3 id="什么是-proxychains-ng"><a href="#什么是-proxychains-ng" class="headerlink" title="什么是 proxychains-ng"></a>什么是 proxychains-ng</h3><p>项目主页：<a href="https://github.com/rofl0r/proxychains-ng" target="_blank" rel="noopener">https://github.com/rofl0r/proxychains-ng</a></p>
+<h3 id="proxychains-ng-介绍"><a href="#proxychains-ng-介绍" class="headerlink" title="proxychains-ng 介绍"></a>proxychains-ng 介绍</h3><blockquote>
+<p>proxychains ng (new generation) - a preloader which hooks calls to sockets in dynamically linked programs and redirects it through one or more socks/http proxies. continuation of the unmaintained proxychains project.</p>
+</blockquote>
+<p>proxychains-ng是proxychains的加强版，主要有以下功能和不足：</p>
+<ul>
+<li>支持http/https/socks4/socks5</li>
+<li>支持认证</li>
+<li>远端dns查询</li>
+<li>多种代理模式</li>
+<li>不支持udp/icmp转发</li>
+<li>少部分程序和在后台运行的可能无法代理</li>
+</ul>
+<h3 id="proxychains-ng-原理"><a href="#proxychains-ng-原理" class="headerlink" title="proxychains-ng 原理"></a>proxychains-ng 原理</h3><p>简单的说就是这个程序 Hook 了 sockets 相关的操作，让普通程序的 sockets 数据走 SOCKS/HTTP 代理。</p>
+<p>其核心就是利用了 LD_PRELOAD 这个环境变量（Mac 上是 DYLD_INSERT_LIBRARIES）。</p>
+<p>在 Unix 系统中，如果设置了 LD_PRELOAD 环境变量，那么在程序运行时，动态链接器会先加载该环境变量所指定的动态库。也就是说，这个动态库的加载优先于任何其它的库，包括 libc。</p>
+<p>ProxyChains 创建了一个叫 libproxychains4.so（Mac 上是 libproxychains4.dylib）的动态库。里面重写了 connect、close 以及 sendto 等与 socket 相关的函数，通过这些函数发出的数据将会走代理，详细代码可以参考 libproxychains.c。</p>
+<p>在主程序里，它会读取配置文件，查找 libproxychains4 所在位置，把这些信息存入环境变量后执行子程序。这样子程序里对 socket 相关的函数调用就会被 Hook 了，对子程序来说，跟代理相关的东西都是透明的。</p>
+<h2 id="安装-proxychains-ng"><a href="#安装-proxychains-ng" class="headerlink" title="安装 proxychains-ng"></a>安装 proxychains-ng</h2><h3 id="源代码安装"><a href="#源代码安装" class="headerlink" title="源代码安装"></a>源代码安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;rofl0r&#x2F;proxychains-ng</span><br><span class="line">.&#x2F;configure --prefix&#x3D;&#x2F;usr --sysconfdir&#x3D;&#x2F;etc</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line">make install-config (安装proxychains.conf配置文件)</span><br></pre></td></tr></table></figure>
+
+<h3 id="MAC下安装"><a href="#MAC下安装" class="headerlink" title="MAC下安装"></a>MAC下安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install proxychains-ng</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置-proxychains-ng"><a href="#配置-proxychains-ng" class="headerlink" title="配置 proxychains-ng"></a>配置 proxychains-ng</h3><p>proxychains-ng默认配置文件名为<code>proxychains.conf</code></p>
+<ul>
+<li>通过源代码编译安装的默认为<code>/etc/proxychains.conf</code></li>
+<li>Mac下用Homebrew安装的默认为<code>/usr/local/etc/proxychains.conf</code></li>
+</ul>
+<p>proxychains-ng的配置非常简单，只需将代理加入[ProxyList]中即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ vim proxychains.conf</span><br><span class="line"></span><br><span class="line">quiet_mode</span><br><span class="line">dynamic_chain</span><br><span class="line">chain_len &#x3D; 1 #round_robin_chain和random_chain使用</span><br><span class="line">proxy_dns</span><br><span class="line">remote_dns_subnet 224</span><br><span class="line">tcp_read_time_out 15000</span><br><span class="line">tcp_connect_time_out 8000</span><br><span class="line">localnet 127.0.0.0&#x2F;255.0.0.0</span><br><span class="line">localnet 10.0.0.0&#x2F;255.0.0.0</span><br><span class="line">localnet 172.16.0.0&#x2F;255.240.0.0</span><br><span class="line">localnet 192.168.0.0&#x2F;255.255.0.0</span><br><span class="line"></span><br><span class="line">[ProxyList]</span><br><span class="line">socks5  127.0.0.1 1086</span><br><span class="line">http    127.0.0.1 1087</span><br></pre></td></tr></table></figure>
+
+
+<p>proxychains-ng支持多种代理模式,默认是选择 strict_chain。</p>
+<ul>
+<li>dynamic_chain ：动态模式,按照代理列表顺序自动选取可用代理</li>
+<li>strict_chain ：严格模式,严格按照代理列表顺序使用代理，所有代理必须可用</li>
+<li>round_robin_chain ：轮询模式，自动跳过不可用代理</li>
+<li>random_chain ：随机模式,随机使用代理<h3 id="proxychains-ng-使用"><a href="#proxychains-ng-使用" class="headerlink" title="proxychains-ng 使用"></a>proxychains-ng 使用</h3></li>
+</ul>
+<p>proxychains-ng用法非常简单，使用格式如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 程序 参数</span><br></pre></td></tr></table></figure>
+
+<h3 id="proxychains-ng-测试"><a href="#proxychains-ng-测试" class="headerlink" title="proxychains-ng 测试"></a>proxychains-ng 测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 curl ip.sb</span><br></pre></td></tr></table></figure>
+
+<h3 id="proxychains-ng-优化"><a href="#proxychains-ng-优化" class="headerlink" title="proxychains-ng 优化"></a>proxychains-ng 优化</h3><p>给proxychains4增加一个别名，在 /.zshrc或/.bashrc末尾加入如下行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alias pc&#x3D;&#39;proxychains4&#39;</span><br></pre></td></tr></table></figure>
+<p>以后就可以类似$ pc curl <a href="http://www.google.com" target="_blank" rel="noopener">http://www.google.com</a>  这样调用proxychains4，简化了输入。</p>
+<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/12/11/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-小米路由器3增强版刷机踩坑记录" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/12/07/%E5%B0%8F%E7%B1%B3%E8%B7%AF%E7%94%B1%E5%99%A83%E5%A2%9E%E5%BC%BA%E7%89%88%E5%88%B7%E6%9C%BA%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/">小米路由器3增强版刷机踩坑记录</a>
+</h1>
+
+
+
+        
+        <a href="/2019/12/07/%E5%B0%8F%E7%B1%B3%E8%B7%AF%E7%94%B1%E5%99%A83%E5%A2%9E%E5%BC%BA%E7%89%88%E5%88%B7%E6%9C%BA%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/" class="archive-article-date">
+  	<time datetime="2019-12-07T15:22:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-07</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>首先我想说明一点，本博客是踩坑的记录。安装文档网上的基本都能用，为了文章的完整性还是写上安装步骤。</code></p>
+<h2 id="排坑过程"><a href="#排坑过程" class="headerlink" title="排坑过程"></a>排坑过程</h2><p>本次主要以为小米路由器3G(R3G)为例</p>
+<h3 id="坑1"><a href="#坑1" class="headerlink" title="坑1"></a>坑1</h3><p>原版路由器先刷官方开发版ROM（开发版才能打开ssh通道）小米路由器ROM</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">坑1:小米官方以及下架了刷ROM开发版的页面,已经找不到了。</span><br><span class="line">解决方案: 万能的网友有存档。我也在百度存了一份</span><br><span class="line">链接:https:&#x2F;&#x2F;pan.baidu.com&#x2F;s&#x2F;1MGL8dJ_QfU4ytY8U0xz6fw  密码:oc9b</span><br></pre></td></tr></table></figure>
+<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9omfgrukyj316i0ac40u.jpg" alt="百度云"></p>
+<h3 id="坑2"><a href="#坑2" class="headerlink" title="坑2"></a>坑2</h3><p>刷完开发版系统以后,就可以安装官方的ssh插件开启ssh功能了<a href="https://d.miwifi.com/rom/ssh" target="_blank" rel="noopener">ssh</a></p>
+<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9omhu2hjqj319i0rytds.jpg" alt="ssh"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">坑2:官网提醒下载miwifi_ssh.bin,结果我手贱点了两下，并且还把第一个删掉了只剩下一个这个</span><br><span class="line">坑的就是这个括号前面还有一个空格........导致怎么都开启不了ssh。光这个就折腾了两天</span><br></pre></td></tr></table></figure>
+<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9omlhqsrbj30ci02k3yi.jpg" alt="ssh1"></p>
+<h3 id="坑3"><a href="#坑3" class="headerlink" title="坑3"></a>坑3</h3><p>开启完ssh 放入不死boot刷完以后。备份原来的系统就可以刷新系统了，比如我提供的潘多拉。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">刷完以后看到网上都能直接以 http:&#x2F;&#x2F;192.168.123.1 admin&#x2F;admin 访问</span><br><span class="line">可是我这边怎么都不行，但是路由器已经能使得连上他的能上网了。</span><br><span class="line">一直以为是功能没刷完整导致的。于是各种搜各种刷，无济于事。</span><br><span class="line">最后特么发现是chrome不支持而已。。firefox以及mac自带的safari都可以打开........</span><br></pre></td></tr></table></figure>
+<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9omri1nklj31nl0u0qoi.jpg" alt="chrome vs firefox"></p>
+<p>最后上一张刷好以后的后台界面,目前支持的功能非常多。要是碰巧你在会玩点儿，那就简直牛的离谱了。(以后别买小米的路由器…)<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1g9omvt373hj31i30u048u.jpg" alt="chrome vs firefox"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">杂项</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/12/07/%E5%B0%8F%E7%B1%B3%E8%B7%AF%E7%94%B1%E5%99%A83%E5%A2%9E%E5%BC%BA%E7%89%88%E5%88%B7%E6%9C%BA%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-热重启docker" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/11/29/%E7%83%AD%E9%87%8D%E5%90%AFdocker/">热重启docker</a>
+</h1>
+
+
+
+        
+        <a href="/2019/11/29/%E7%83%AD%E9%87%8D%E5%90%AFdocker/" class="archive-article-date">
+  	<time datetime="2019-11-29T03:13:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-29</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>众所周知，由于docker架构原因,docker是有守护进程的。而所有的容器进程父进程都是这个守护进程,如下图:<br><img src="https://i.loli.net/2019/11/29/JrG9j7QxCK1HpAL.png" alt="docker架构"></p>
+<p>这样的蠢架构导致了很多问题:</p>
+<ul>
+<li>生产环境docker内存泄漏无法处理或者处理繁琐</li>
+<li>升级生产docker版本繁琐</li>
+</ul>
+<p>从docker 1.12以后更新了热更新的配置,虽然架构还是不咋地,但是至少解决了以上问题</p>
+<h2 id="热更新配置"><a href="#热更新配置" class="headerlink" title="热更新配置"></a>热更新配置</h2><h3 id="Step-1-使用-docker-live-restore-amp-amp-SIGHU-reload-配置"><a href="#Step-1-使用-docker-live-restore-amp-amp-SIGHU-reload-配置" class="headerlink" title="Step 1. 使用 docker live restore &amp;&amp; SIGHU reload 配置"></a>Step 1. 使用 docker live restore &amp;&amp; SIGHU reload 配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">配置 live restore 到 &#x2F;etc&#x2F;docker&#x2F;daemon.json （注意加逗号）</span><br><span class="line">&#123; &quot;live-restore&quot;: true &#125;</span><br><span class="line">reload  docker 配置【⚠️：要先做这步，才能重启！！】</span><br><span class="line">kill -SIGHUP $(pidof dockerd)</span><br><span class="line">检查配置</span><br><span class="line">docker info | grep -i Live</span><br></pre></td></tr></table></figure>
+<p>应该能看到如下配置</p>
+<p><img src="https://i.loli.net/2019/11/29/sY31qC4miSgWGHF.png" alt="image.png"></p>
+<p>重启 docker<br>systemctl restart docker</p>
+<p>注意 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">重启 docker 后请 disable live-restore ！</span><br></pre></td></tr></table></figure>
+
+<p>设置  /etc/docker/daemon.json 参数 live-restore 为 false， “live-restore”: false<br>reload： kill -SIGHUP $(pidof dockerd)<br>检查：docker info | grep Live，确认是false</p>
+<h3 id="Step-2-重启直接挂载-var-run-docker-sock的容器"><a href="#Step-2-重启直接挂载-var-run-docker-sock的容器" class="headerlink" title="Step 2. 重启直接挂载/var/run/docker.sock的容器"></a>Step 2. 重启直接挂载/var/run/docker.sock的容器</h3><p>查看该主机上直接挂载 docker.sock 的容器   </p>
+<p>docker inspect $(docker ps -q)|grep ‘Source.*docker.sock|Name”: “/‘|grep sock -B1|grep Name<br>重启之</p>
+<p>【理论分析】<br>[原因] 因为挂载了/var/run/docker.sock文件，docker机制是绑定主机上该文件的 inode。当docker-engine热重启，该文件的inode改变，所以容器内部所认的这个inode事实上已经木有用了。 所以跟docker.sock相关的功能：容器控制台/容器日志等都无法工作。（例如你的docker的挂载了一个主机文件，当你删除该主机文件并重建之后，docker内部是看不到新文件的！ 如果挂载的是其目录则不会有这个问题。）</p>
+<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><p>重启完之后，记得把配置再改回去</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/11/29/%E7%83%AD%E9%87%8D%E5%90%AFdocker/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-k8s-v1-17-新特性预告-拓扑感知服务路由" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/11/28/k8s-v1-17-%E6%96%B0%E7%89%B9%E6%80%A7%E9%A2%84%E5%91%8A-%E6%8B%93%E6%89%91%E6%84%9F%E7%9F%A5%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1/">k8s v1.17 新特性预告: 拓扑感知服务路由</a>
+</h1>
+
+
+
+        
+        <a href="/2019/11/28/k8s-v1-17-%E6%96%B0%E7%89%B9%E6%80%A7%E9%A2%84%E5%91%8A-%E6%8B%93%E6%89%91%E6%84%9F%E7%9F%A5%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1/" class="archive-article-date">
+  	<time datetime="2019-11-28T03:00:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p align="right">转摘自roc   https://imroc.io</p>
+
+
+<h2 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h2><ul>
+<li>拓扑域: 表示在集群中的某一类 “地方”，比如某节点、某机架、某可用区或某地域等，这些都可以作为某种拓扑域。</li>
+<li>endpoint: k8s 某个服务的某个 ip+port，通常是 pod 的 ip+port。</li>
+<li>service: k8s 的 service 资源(服务)，关联一组 endpoint ，访问 service 会被转发到关联的某个 endpoint 上。</li>
+</ul>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>拓扑感知服务路由，此特性最初由杜军大佬提出并设计。为什么要设计此特性呢？想象一下，k8s 集群节点分布在不同的地方，service 对应的 endpoints 分布在不同节点，传统转发策略会对所有 endpoint 做负载均衡，通常会等概率转发，当访问 service 时，流量就可能被分散打到这些不同的地方。虽然 service 转发做了负载均衡，但如果 endpoint 距离比较远，流量转发过去网络时延就相对比较高，会影响网络性能，在某些情况下甚至还可能会付出额外的流量费用。要是如能实现 service 就近转发 endpoint，是不是就可以实现降低网络时延，提升网络性能了呢？是的！这也正是该特性所提出的目的和意义。</p>
+<h2 id="k8s-亲和性"><a href="#k8s-亲和性" class="headerlink" title="k8s 亲和性"></a>k8s 亲和性</h2><p>service 的就近转发实际就是一种网络的亲和性，倾向于转发到离自己比较近的 endpoint。在此特性之前，已经在调度和存储方面有一些亲和性的设计与实现:</p>
+<ul>
+<li>节点亲和性 (Node Affinity): 让 Pod 被调度到符合一些期望条件的 Node 上，比如限制调度到某一可用区，或者要求节点支持 GPU，这算是调度亲和，调度结果取决于节点属性。</li>
+<li>Pod 亲和性与反亲和性 (Pod Affinity/AntiAffinity): 让一组 Pod 调度到同一拓扑域的节点上，或者打散到不同拓扑域的节点， 这也算是调度亲和，调度结果取决于其它 Pod。</li>
+<li>数据卷拓扑感知调度 (Volume Topology-aware Scheduling): 让 Pod 只被调度到符合其绑定的存储所在拓扑域的节点上，这算是调度与存储的亲和，调度结果取决于存储的拓扑域。</li>
+<li>本地数据卷 (Local Persistent Volume): 让 Pod 使用本地数据卷，比如高性能 SSD，在某些需要高 IOPS 低时延的场景很有用，它还会保证 Pod 始终被调度到同一节点，数据就不会不丢失，这也算是调度与存储的亲和，调度结果取决于存储所在节点。</li>
+<li>数据卷拓扑感知动态创建 (Topology-Aware Volume Dynamic Provisioning): 先调度 Pod，再根据 Pod 所在节点的拓扑域来创建存储，这算是存储与调度的亲和，存储的创建取决于调度的结果。</li>
+</ul>
+<p>而 k8s 目前在网络方面还没有亲和性能力，拓扑感知服务路由这个新特性恰好可以补齐这个的空缺，此特性使得 service 可以实现就近转发而不是所有 endpoint 等概率转发。</p>
+<h2 id="如何实现"><a href="#如何实现" class="headerlink" title="如何实现"></a>如何实现</h2><p>我们知道，service 转发主要是 node 上的 kube-proxy 进程通过 watch apiserver 获取 service 对应的 endpoint，再写入 iptables 或 ipvs 规则来实现的; 对于 headless service，主要是通过 kube-dns 或 coredns 动态解析到不同 endpoint ip 来实现的。实现 service 就近转发的关键点就在于如何将流量转发到跟当前节点在同一拓扑域的 endpoint 上，也就是会进行一次 endpoint 筛选，选出一部分符合当前节点拓扑域的 endpoint 进行转发。</p>
+<p>那么如何判断 endpoint 跟当前节点是否在同一拓扑域里呢？只要能获取到 endpoint 的拓扑信息，用它跟当前节点拓扑对比下就可以知道了。那又如何获取 endpoint 的拓扑信息呢？答案是通过 endpoint 所在节点的 label，我们可以使用 node label 来描述拓扑域。</p>
+<p>通常在节点初始化的时候，controller-manager 就会为节点打上许多 label，比如 <code>kubernetes.io/hostname</code> 表示节点的 hostname 来区分节点；另外，在云厂商提供的 k8s 服务，或者使用 cloud-controller-manager 的自建集群，通常还会给节点打上 <code>failure-domain.beta.kubernetes.io/zone</code> 和 <code>failure-domain.beta.kubernetes.io/region</code> 以区分节点所在可用区和所在地域，但自 v1.17 开始将会改名成 <code>topology.kubernetes.io/zon</code>e 和 <code>topology.kubernetes.io/region</code>，参见 <a href="https://github.com/kubernetes/kubernetes/pull/81431" target="_blank" rel="noopener">PR #81431</a>。</p>
+<p>如何根据 endpoint 查到它所在节点的这些 label 呢？答案是通过 <code>Endpoint Slice</code>，该特性在 v1.16 发布了 alpha，在 v1.17 将会进入 beta，它相当于 Endpoint API 增强版，通过将 endpoint 做数据分片来解决大规模 endpoint 的性能问题，并且可以携带更多的信息，包括 endpoint 所在节点的拓扑信息，拓扑感知服务路由特性会通过 <code>Endpoint Slice</code> 获取这些拓扑信息实现 endpoint 筛选 (过滤出在同一拓扑域的 endpoint)，然后再转换为 iptables 或 ipvs 规则写入节点以实现拓扑感知的路由转发。</p>
+<p>细心的你可能已经发现，之前每个节点上转发 service 的 iptables/ipvs 规则基本是一样的，但启用了拓扑感知服务路由特性之后，每个节点上的转发规则就可能不一样了，因为不同节点的拓扑信息不一样，导致过滤出的 endpoint 就不一样，也正是因为这样，service 转发变得不再等概率，灵活的就近转发才得以实现。</p>
+<p>当前还不支持 headless service 的拓扑路由，计划在 beta 阶段支持。由于 headless service 不是通过 kube-proxy 生成转发规则，而是通过 dns 动态解析实现的，所以需要改 kube-dns/coredns 来支持这个特性。</p>
+<h2 id="前提条件"><a href="#前提条件" class="headerlink" title="前提条件"></a>前提条件</h2><p>启用当前 alpha 实现的拓扑感知服务路由特性需要满足以下前提条件:</p>
+<ul>
+<li>集群版本在 v1.17 及其以上。</li>
+<li>Kube-proxy 以 iptables 或 IPVS 模式运行 (alpha 阶段暂时只实现了这两种模式)。</li>
+<li>启用了 <a href="https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/" target="_blank" rel="noopener">Endpoint Slices</a> (此特性虽然在 v1.17 进入 beta，但没有默认开启)。</li>
+</ul>
+<h2 id="如何启用此特性"><a href="#如何启用此特性" class="headerlink" title="如何启用此特性"></a>如何启用此特性</h2><p>给所有 k8s 组件打开 <code>ServiceTopology</code> 和 <code>EndpointSlice</code> 这两个 feature:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--feature-gates&#x3D;&quot;ServiceTopology&#x3D;true,EndpointSlice&#x3D;true&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h2><p>在 Service spec 里加上 <code>topologyKeys</code> 字段，表示该 Service 优先顺序选用的拓扑域列表，对应节点标签的 key；当访问此 Service 时，会找是否有 endpoint 有对应 topology key 的拓扑信息并且 value 跟当前节点也一样，如果是，那就选定此 topology key 作为当前转发的拓扑域，并且筛选出其余所有在这个拓扑域的 endpoint 来进行转发；如果没有找到任何 endpoint 在当前 topology key 对应拓扑域，就会尝试第二个 topology key，依此类推；如果遍历完所有 topology key 也没有匹配到 endpoint 就会拒绝转发，就像此 service 没有后端 endpoint 一样。</p>
+<p>有一个特殊的 topology key “<em>“，它可以匹配所有 endpoint，如果 <code>topologyKeys</code> 包含了 `</em>`，它必须在列表末尾，通常是在没有匹配到合适的拓扑域来实现就近转发时，就打消就近转发的念头，可以转发到任意 endpoint 上。</p>
+<p>当前 topology key 支持以下可能的值（未来会增加更多）:</p>
+<ul>
+<li>kubernetes.io/hostname: 节点的 hostname，通常将它放列表中第一个，表示如果本机有 endpoint 就直接转发到本机的 endpoint。</li>
+<li>topology.kubernetes.io/zone: 节点所在的可用区，通常将它放在 kubernetes.io/hostname 后面，表示如果本机没有对应 endpoint，就转发到当前可用区其它节点上的 endpoint（部分云厂商跨可用区通信会收取额外的流量费用）。</li>
+<li>topology.kubernetes.io/region: 表示节点所在的地域，表示转发到当前地域的 endpoint，这个用的应该会比较少，因为通常集群所有节点都只会在同一个地域，如果节点跨地域了，节点之间通信延时将会很高。</li>
+<li>*: 忽略拓扑域，匹配所有 endpoint，相当于一个保底策略，避免丢包，只能放在列表末尾。</li>
+</ul>
+<p>除此之外，还有以下约束:</p>
+<ul>
+<li>topologyKeys 与 externalTrafficPolicy=Local 不兼容，是互斥的，如果 externalTrafficPolicy 为 Local，就不能定义 topologyKeys，反之亦然。</li>
+<li>topology key 必须是合法的 label 格式，并且最多定义 16 个 key。</li>
+</ul>
+<p>这里给出一个简单的 Service 示例:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx</span><br><span class="line">spec:</span><br><span class="line">  type: ClusterIP</span><br><span class="line">  ports:</span><br><span class="line">  - name: http</span><br><span class="line">    port: 80</span><br><span class="line">    protocol: TCP</span><br><span class="line">    targetPort: 80</span><br><span class="line">  selector:</span><br><span class="line">    app: nginx</span><br><span class="line">  topologyKeys: [&quot;kubernetes.io&#x2F;hostname&quot;, &quot;topology.kubernetes.io&#x2F;zone&quot;, &quot;*&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>解释: 当访问 nginx 服务时，首先看本机是否有这个服务的 endpoint，如果有就直接本机路由过去；如果没有，就看是否有 endpoint 位于当前节点所在可用区，如果有，就转发过去，如果还是没有，就转发给任意 endpoint。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g9dkunyvsqj30na0h20sy.jpg" alt="endpoint"></p>
+<p>上图就是其中一次转发的例子：Pod 访问 nginx 这个 service 时，发现本机没有 endpoint，就找当前可用区的，找到了就转发过去，也就不会考虑转发给另一可用区的 endpoint。</p>
+<h2 id="背后小故事"><a href="#背后小故事" class="headerlink" title="背后小故事"></a>背后小故事</h2><p>此特性的 KEP Proposal 最终被认可（合并）时的设计与当前最终的代码实现已经有一些差别，实现方案历经一变再变，但同时也推动了其它特性的发展，我来讲下这其中的故事。</p>
+<p>一开始设计是在 alpha 时，让 kube-proxy 直接暴力 watch node，每个节点都有一份全局的 node 的缓存，通过 endpoint 的 <code>nodeName</code> 字段找到对应的 node 缓存，再查 node 包含的 label 就可以知道该 endpoint 的拓扑域了，但在集群节点数量多的情况下，kube-proxy 将会消耗大量资源，不过优点是实现上很简单，可以作为 alpha 阶段的实现，beta 时再从 watch node 切换到 watch 一个新设计的 PodLocator API，作为拓扑信息存储的中介，避免 watch 庞大的 node。</p>
+<p>实际上一开始我也是按照 watch node 的方式，花了九牛二虎之力终于实现了这个特性，后来 v1.15 时 k8s 又支持了 metadata-only watch，参见 PR 71548，利用此特性可以仅仅 watch node 的 metadata，而不用 watch 整个 node，可以极大减小传输和缓存的数据量，然后我就将实现切成了 watch node metadata; 即便如此，metadata 还是会更新比较频繁，主要是 <code>resourceVersion</code> 会经常变 (kubelet 经常上报 node 状态)，所以虽然 watch node metadata 比 watch node 要好，但也还是可能会造成大量不必要的网络流量，但作为 alpha 实现是可以接受的。</p>
+<p>可惜在 v1.16 code freeze 之前没能将此特性合进去，只因有一点小细节还没讨论清楚。 实际在实现 watch node 方案期间，Endpoint Slice 特性就提出来了，在这个特性讨论的阶段，我们就想到了可以利用它来携带拓扑信息，以便让拓扑感知服务路由这个特性后续可以直接利用 Endpoint Slice 来获取拓扑信息，也就可以替代之前设计的 PodLocator API，但由于它还处于很早期阶段，并且代码还未合并进去，所以 alpha 阶段先不考虑 watch Endpint Slice。后来，Endpoint Slice 特性在 v1.16 发布了 alpha。</p>
+<p>由于 v1.16 没能将拓扑感知服务路由特性合进去，在 v1.17 周期开始后，有更多时间来讨论小细节，并且 Endpoint Slice 代码已经合并，我就干脆直接又将实现从 watch node metadata 切成了 watch Endpint Slice，在 alpha 阶段就做了打算在 beta 阶段做的事情，终于，此特性实现代码最终合进了主干。</p>
+<h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>拓扑感知服务路由可以实现 service 就近转发，减少网络延时，进一步提升 k8s 的网络性能，此特性将于 k8s v1.17 发布 alpha，时间是 12 月上旬，让我们一起期待吧！k8s 网络是块难啃的硬骨头，感兴趣的同学可以看下杜军的新书 《Kubernetes 网络权威指南》，整理巩固一下 k8s 的网络知识。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">k8s</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/11/28/k8s-v1-17-%E6%96%B0%E7%89%B9%E6%80%A7%E9%A2%84%E5%91%8A-%E6%8B%93%E6%89%91%E6%84%9F%E7%9F%A5%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-ip协议簇" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1013,432 +1428,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2019/11/02/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E4%B9%8B-%E8%87%AA%E5%B7%B1%E5%8A%A8%E6%89%8B%E4%B8%B0%E8%A1%A3%E8%B6%B3%E9%A3%9F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-使用client-go包访问KubernetesCRD" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/10/27/%E4%BD%BF%E7%94%A8client-go%E5%8C%85%E8%AE%BF%E9%97%AEKubernetesCRD/">使用client-go包访问KubernetesCRD</a>
-</h1>
-
-
-
-        
-        <a href="/2019/10/27/%E4%BD%BF%E7%94%A8client-go%E5%8C%85%E8%AE%BF%E9%97%AEKubernetesCRD/" class="archive-article-date">
-  	<time datetime="2019-10-26T18:53:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">golang</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/编程//" class="article-tag-list-link color3">编程</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/10/27/%E4%BD%BF%E7%94%A8client-go%E5%8C%85%E8%AE%BF%E9%97%AEKubernetesCRD/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-利用动态存储卷StorageClass使用nfs" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/10/27/%E5%88%A9%E7%94%A8%E5%8A%A8%E6%80%81%E5%AD%98%E5%82%A8%E5%8D%B7StorageClass%E4%BD%BF%E7%94%A8nfs/">利用动态存储卷StorageClass使用nfs</a>
-</h1>
-
-
-
-        
-        <a href="/2019/10/27/%E5%88%A9%E7%94%A8%E5%8A%A8%E6%80%81%E5%AD%98%E5%82%A8%E5%8D%B7StorageClass%E4%BD%BF%E7%94%A8nfs/" class="archive-article-date">
-  	<time datetime="2019-10-26T18:36:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>之前我们部署了PV 和 PVC 的使用方法，但是前面的 PV 都是静态的，什么意思？就是我要使用的一个 PVC 的话就必须手动去创建一个 PV，我们也说过这种方式在很大程度上并不能满足我们的需求，比如我们有一个应用需要对存储的并发度要求比较高，而另外一个应用对读写速度又要求比较高，特别是对于 StatefulSet 类型的应用简单的来使用静态的 PV 就很不合适了，这种情况下我们就需要用到动态 PV，也就是我们今天要讲解的 StorageClass。</p>
-<p>我们这里演示一下NFS的动态PV创建</p>
-<h3 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h3><p>要使用 StorageClass，我们就得安装对应的自动配置程序，比如我们这里存储后端使用的是 nfs，那么我们就需要使用到一个 nfs-client 的自动配置程序，我们也叫它 Provisioner，这个程序使用我们已经配置好的 nfs 服务器，来自动创建持久卷，也就是自动帮我们创建 PV。</p>
-<p>自动创建的 PV 以${namespace}-${pvcName}-${pvName}这样的命名格式创建在 NFS 服务器上的共享数据目录中<br>而当这个 PV 被回收后会以archieved-${namespace}-${pvcName}-${pvName}这样的命名格式存在 NFS 服务器上。</p>
-<blockquote>
-<p>kubernetes本身支持的动态PV创建不包括nfs，所以需要使用额外插件实现。nfs-client</p>
-</blockquote>
-<hr>
-<p>第一步：配置 Deployment，将里面的对应的参数替换成我们自己的 nfs 配置（nfs-client.yaml）<br>第二步：将环境变量 NFS_SERVER 和 NFS_PATH 替换，当然也包括下面的 nfs 配置，我们可以看到我们这里使用了一个名为 nfs-client-provisioner 的serviceAccount，所以我们也需要创建一个 sa，然后绑定上对应的权限：（nfs-client-sa.yaml）<br>第三步：nfs-client 的 Deployment 声明完成后，我们就可以来创建一个StorageClass对象了：（nfs-client-class.yaml）</p>
-<blockquote>
-<p>我们整合三个配置，如下</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-client-provisioner</span><br><span class="line">  namespace: kube-system</span><br><span class="line">---</span><br><span class="line">kind: ClusterRole</span><br><span class="line">apiVersion: rbac.authorization.k8s.io&#x2F;v1</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-client-provisioner-runner</span><br><span class="line">rules:</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;persistentvolumes&quot;]</span><br><span class="line">    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;, &quot;create&quot;, &quot;delete&quot;]</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;persistentvolumeclaims&quot;]</span><br><span class="line">    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;, &quot;update&quot;]</span><br><span class="line">  - apiGroups: [&quot;storage.k8s.io&quot;]</span><br><span class="line">    resources: [&quot;storageclasses&quot;]</span><br><span class="line">    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;]</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;events&quot;]</span><br><span class="line">    verbs: [&quot;list&quot;, &quot;watch&quot;, &quot;create&quot;, &quot;update&quot;, &quot;patch&quot;]</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">apiVersion: rbac.authorization.k8s.io&#x2F;v1</span><br><span class="line">metadata:</span><br><span class="line">  name: run-nfs-client-provisioner</span><br><span class="line">subjects:</span><br><span class="line">  - kind: ServiceAccount</span><br><span class="line">    name: nfs-client-provisioner</span><br><span class="line">    namespace: kube-system</span><br><span class="line">roleRef:</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: nfs-client-provisioner-runner</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">kind: Deployment</span><br><span class="line">apiVersion: apps&#x2F;v1</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-client-provisioner</span><br><span class="line">  namespace: kube-system</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: nfs-client-provisioner</span><br><span class="line">  replicas: 1</span><br><span class="line">  strategy:</span><br><span class="line">    type: Recreate</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nfs-client-provisioner</span><br><span class="line">    spec:</span><br><span class="line">      serviceAccount: nfs-client-provisioner</span><br><span class="line">      containers:</span><br><span class="line">        - name: nfs-client-provisioner</span><br><span class="line">          image: jmgao1983&#x2F;nfs-client-provisioner</span><br><span class="line">          volumeMounts:</span><br><span class="line">            - name: nfs-client-root</span><br><span class="line">              mountPath: &#x2F;persistentvolumes</span><br><span class="line">          resources:</span><br><span class="line">            requests:</span><br><span class="line">              cpu: &quot;0.4&quot;</span><br><span class="line">              memory: &quot;1Gi&quot;</span><br><span class="line">            limits:</span><br><span class="line">              cpu: &quot;1&quot;</span><br><span class="line">              memory: &quot;1Gi&quot;</span><br><span class="line">          env:</span><br><span class="line">            - name: PROVISIONER_NAME</span><br><span class="line">              value: fuseim.pri&#x2F;ifs2</span><br><span class="line">            - name: NFS_SERVER</span><br><span class="line">              value: 10.6.204.1</span><br><span class="line">            - name: NFS_PATH</span><br><span class="line">              value: &#x2F;data&#x2F;nfs</span><br><span class="line">      volumes:</span><br><span class="line">        - name: nfs-client-root</span><br><span class="line">          nfs:</span><br><span class="line">            server: 10.6.204.1</span><br><span class="line">            path: &#x2F;data&#x2F;nfs</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">apiVersion: storage.k8s.io&#x2F;v1</span><br><span class="line">kind: StorageClass</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-storage</span><br><span class="line">provisioner: fuseim.pri&#x2F;ifs2</span><br></pre></td></tr></table></figure>
-
-<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>查看创建好的storageclass<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1ga9zbr3jiwj30ls050js9.jpg" alt="storageclass"></p>
-<p>创建pvc,查看是否自动创建相应的pv</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-pvc001</span><br><span class="line">  namespace: default</span><br><span class="line">spec:</span><br><span class="line">  storageClassName: nfs-storage  # 匹配pvc名</span><br><span class="line">  accessModes:  </span><br><span class="line">  - ReadWriteMany</span><br><span class="line">  resources: </span><br><span class="line">    requests:</span><br><span class="line">      storage: 500Mi  # 定义要求有多大空间</span><br></pre></td></tr></table></figure>
-
-<p>执行可以发现，创建pvc请求以后，pvc已经绑定上自动创建的pv中。<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1ga9zf0kl7aj31yw0deqjn.jpg" alt="bond"></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">k8s,nfs</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/容器//" class="article-tag-list-link color3">容器</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/10/27/%E5%88%A9%E7%94%A8%E5%8A%A8%E6%80%81%E5%AD%98%E5%82%A8%E5%8D%B7StorageClass%E4%BD%BF%E7%94%A8nfs/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-用nfs作为k8s持久化存储" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/10/25/%E7%94%A8nfs%E4%BD%9C%E4%B8%BAk8s%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A8/">用nfs作为k8s持久化存储</a>
-</h1>
-
-
-
-        
-        <a href="/2019/10/25/%E7%94%A8nfs%E4%BD%9C%E4%B8%BAk8s%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A8/" class="archive-article-date">
-  	<time datetime="2019-10-25T05:57:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="kubernetes部署NFS持久存储"><a href="#kubernetes部署NFS持久存储" class="headerlink" title="kubernetes部署NFS持久存储"></a>kubernetes部署NFS持久存储</h2><h3 id="NFS简介"><a href="#NFS简介" class="headerlink" title="NFS简介"></a>NFS简介</h3><blockquote>
-<p>NFS是网络文件系统Network File System的缩写，NFS服务器可以让PC将网络中的NFS服务器共享的目录挂载到本地的文件系统中，而在本地的系统中来看，那个远程主机的目录就好像是自己的一个磁盘分区一样。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubernetes使用NFS共享存储有两种方式：</span><br><span class="line">手动方式静态创建所需要的PV和PVC。</span><br><span class="line">通过创建PVC动态地创建对应PV，无需手动创建PV。</span><br><span class="line">这条博客是写的静态创建方法</span><br></pre></td></tr></table></figure>
-<p>可以发现k8s中的Volume（无论何种类型）和使用它的Pod都是一种静态绑定关系，在Pod定义文件中，同时定义了它使用的Volume。在这种情况下，Volume是Pod的附属品，我们无法像创建其他资源（例如Pod，Node，Deployment等等）一样创建一个Volume。</p>
-</blockquote>
-<p>因此Kubernetes提出了PersistentVolume（PV）的概念。PersistentVolume和Volume一样，代表了集群中的一块存储区域，然而Kubernetes将PersistentVolume抽象成了一种集群资源，类似于集群中的Node对象，这意味着我们可以使用Kubernetes API来创建PersistentVolume对象。PV与Volume最大的不同是PV拥有着独立于Pod的生命周期。</p>
-<p>而PersistentVolumeClaim（PVC）代表了用户对PV资源的请求。用户需要使用PV资源时，只需要创建一个PVC对象（包括指定使用何种存储资源，使用多少GB，以何种模式使用PV等信息），Kubernetes会自动为我们分配我们所需的PV。如果把PersistentVolume类比成集群中的Node，那么PersistentVolumeClaim就相当于集群中的Pod，Kubernetes为Pod分配可用的Node，为PersistentVolumeClaim分配可用的PersistentVolume。</p>
-<h3 id="搭建nfs服务器"><a href="#搭建nfs服务器" class="headerlink" title="搭建nfs服务器"></a>搭建nfs服务器</h3><p>这里作为测试，临时在master节点上部署NFS服务器。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">#master节点安装nfs</span><br><span class="line">yum -y install nfs-utils</span><br><span class="line"></span><br><span class="line">#创建nfs目录</span><br><span class="line">mkdir -p &#x2F;data&#x2F;nfs&#x2F;</span><br><span class="line"></span><br><span class="line">#修改权限</span><br><span class="line">chmod -R 777 &#x2F;data&#x2F;nfs</span><br><span class="line"></span><br><span class="line">#编辑export文件</span><br><span class="line">vim &#x2F;etc&#x2F;exports</span><br><span class="line">&#x2F;data&#x2F;nfs *(rw,no_root_squash,sync)</span><br><span class="line"></span><br><span class="line">#配置生效</span><br><span class="line">exportfs -r</span><br><span class="line">#查看生效</span><br><span class="line">exportfs</span><br><span class="line"></span><br><span class="line">#启动rpcbind、nfs服务</span><br><span class="line">systemctl restart rpcbind &amp;&amp; systemctl enable rpcbind</span><br><span class="line">systemctl restart nfs &amp;&amp; systemctl enable nfs</span><br><span class="line"></span><br><span class="line">#查看 RPC 服务的注册状况</span><br><span class="line">rpcinfo -p localhost</span><br><span class="line"></span><br><span class="line">#showmount测试</span><br><span class="line">showmount -e 10.7.150.112</span><br><span class="line"></span><br><span class="line">#所有node节点安装客户端</span><br><span class="line">yum -y install nfs-utils</span><br><span class="line">systemctl start nfs &amp;&amp; systemctl enable nfs</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>作为准备工作，我们已经在 k8s-master 节点上搭建了一个 NFS 服务器，目录为 /data/nfs.</p>
-</blockquote>
-<h3 id="静态申请PV卷"><a href="#静态申请PV卷" class="headerlink" title="静态申请PV卷"></a>静态申请PV卷</h3><h4 id="添加pv卷对应目录-作为挂载点"><a href="#添加pv卷对应目录-作为挂载点" class="headerlink" title="添加pv卷对应目录,作为挂载点"></a>添加pv卷对应目录,作为挂载点</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#创建pv卷对应的目录</span><br><span class="line">mkdir -p &#x2F;nfs&#x2F;data&#x2F;pv001</span><br><span class="line"></span><br><span class="line">#配置exportrs</span><br><span class="line">vim &#x2F;etc&#x2F;exports</span><br><span class="line">&#x2F;nfs&#x2F;data *(rw,no_root_squash,sync)</span><br><span class="line">&#x2F;nfs&#x2F;data&#x2F;pv001 *(rw,no_root_squash,sync)</span><br><span class="line"></span><br><span class="line">#配置生效</span><br><span class="line">exportfs -r</span><br><span class="line">#重启rpcbind、nfs服务</span><br><span class="line">systemctl restart rpcbind &amp;&amp; systemctl restart nfs</span><br></pre></td></tr></table></figure>
-
-<h4 id="创建PV"><a href="#创建PV" class="headerlink" title="创建PV"></a>创建PV</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#96;</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-pv</span><br><span class="line">  labels:</span><br><span class="line">    pv: nfs-pv</span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 1Gi</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  persistentVolumeReclaimPolicy: Recycle</span><br><span class="line">  storageClassName: nfs</span><br><span class="line">  nfs:</span><br><span class="line">    path: &#x2F;nfs&#x2F;data&#x2F;pv</span><br><span class="line">    server: 10.7.150.112</span><br><span class="line">&#96;</span><br></pre></td></tr></table></figure>
-<hr>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#96;配置说明&#96;：</span><br><span class="line">capacity 指定 PV 的容量为 1G。</span><br><span class="line">accessModes 指定访问模式为 ReadWriteOnce，支持的访问模式有：</span><br><span class="line">ReadWriteOnce – PV 能以 read-write 模式 mount 到单个节点。</span><br><span class="line">ReadOnlyMany – PV 能以 read-only 模式 mount 到多个节点。</span><br><span class="line">ReadWriteMany – PV 能以 read-write 模式 mount 到多个节点。</span><br><span class="line">persistentVolumeReclaimPolicy 指定当 PV 的回收策略为 Recycle，支持的策略有：</span><br><span class="line">Retain – 需要管理员手工回收。</span><br><span class="line">Recycle – 清除 PV 中的数据，效果相当于执行 rm -rf &#x2F;thevolume&#x2F;*。</span><br><span class="line">Delete – 删除 Storage Provider 上的对应存储资源，例如 AWS EBS、GCE PD、Azure</span><br><span class="line">Disk、OpenStack Cinder Volume 等。</span><br><span class="line">storageClassName 指定 PV 的 class 为 nfs。相当于为 PV 设置了一个分类，PVC 可以指定 class 申请相应 class 的 PV。</span><br><span class="line">指定 PV 在 NFS 服务器上对应的目录。</span><br></pre></td></tr></table></figure>
-<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8ctzzzc76j30wm03kaaq.jpg" alt="create PV"></p>
-<blockquote>
-<p>STATUS 为 Available，表示 pv就绪，可以被 PVC 申请。</p>
-</blockquote>
-<h4 id="创建PVC"><a href="#创建PVC" class="headerlink" title="创建PVC"></a>创建PVC</h4><p>接下来创建一个名为pvc的PVC，配置文件 pvc.yaml</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-pvc</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 1Gi</span><br><span class="line">  storageClassName: nfs</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      pv: nfs-pv</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cu33t8lsj30xo06kmyk.jpg" alt="Bound PVC"></p>
-<blockquote>
-<p>从 kubectl get pvc 和 kubectl get pv 的输出可以看到pvc绑定成功，注意pvc绑定到对应pv通过labels标签方式实现，也可以不指定，将随机绑定到pv。</p>
-</blockquote>
-<hr>
-<p>接下来就可以在 Pod 中使用存储了，Pod 配置文件 pod.yaml</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">kind: Pod</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-pod001</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">    - name: myfrontend</span><br><span class="line">      image: nginx</span><br><span class="line">      volumeMounts:</span><br><span class="line">      - mountPath: &quot;&#x2F;var&#x2F;www&#x2F;html&quot;</span><br><span class="line">        name: nfs-pv</span><br><span class="line">  volumes:</span><br><span class="line">    - name: nfs-pv</span><br><span class="line">      persistentVolumeClaim:</span><br><span class="line">        claimName: nfs-pvc</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>与使用普通 Volume 的格式类似，在 volumes 中通过 persistentVolumeClaim 指定使用nfs-pvc 申请的 Volume</p>
-</blockquote>
-<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cu7x6628j30go03tt97.jpg" alt="create pod"></p>
-<p>验证PV是否可用<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cu8qrjnpj30pg02yjrt.jpg" alt="file"><br>进入pod查看情况<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cu9hb48qj30u0092abz.jpg" alt="exec pod"></p>
-<h4 id="删除pv"><a href="#删除pv" class="headerlink" title="删除pv"></a>删除pv</h4><p>删除pod，pv和pvc不会被删除，nfs存储的数据不会被删除。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cub06m8qj30hd03iq3d.jpg" alt="del pod "><br>继续删除pvc，pv将被释放，处于 Available 可用状态，并且nfs存储中的数据被删除。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cucndzf7j30us05175e.jpg" alt="del pvc "><br>继续删除pv<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8cud8vkzpj30gf026dg2.jpg" alt="del pv"></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">k8s,nfs</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/容器//" class="article-tag-list-link color3">容器</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/10/25/%E7%94%A8nfs%E4%BD%9C%E4%B8%BAk8s%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A8/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-hexo换电脑怎么继续写作" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/10/25/hexo%E6%8D%A2%E7%94%B5%E8%84%91%E6%80%8E%E4%B9%88%E7%BB%A7%E7%BB%AD%E5%86%99%E4%BD%9C/">hexo换电脑怎么继续写作</a>
-</h1>
-
-
-
-        
-        <a href="/2019/10/25/hexo%E6%8D%A2%E7%94%B5%E8%84%91%E6%80%8E%E4%B9%88%E7%BB%A7%E7%BB%AD%E5%86%99%E4%BD%9C/" class="archive-article-date">
-  	<time datetime="2019-10-24T16:00:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>惭愧 – 博客写了俩月才想到这个话题，换电脑了咋继续写博客。</p>
-<hr>
-<h3 id="首先说说我写博客用的东西："><a href="#首先说说我写博客用的东西：" class="headerlink" title="首先说说我写博客用的东西："></a>首先说说我写博客用的东西：</h3><blockquote>
-<ol>
-<li>博客使用hexo，使用3-hexo主题</li>
-<li>我把博客代码跟编译出来的静态页面分为两个仓库。写完以后分别提交。<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8aut185bdj309d026dft.jpg" alt="git仓库"></li>
-</ol>
-</blockquote>
-<h3 id="正文来了"><a href="#正文来了" class="headerlink" title="正文来了"></a>正文来了</h3><blockquote>
-<ol>
-<li>走了的好多弯路，一开始博客的图片用的都是本地图片，第一是加载慢。并且换电脑以后 用hexo g &amp;&amp; hexo s  居然显示不了图片。</li>
-<li>然后图片就换了图床—(这里推荐一个mac下的图床工具ipic,免费 好用)利用的是新浪的图床  也不知道能用多久。。打算自己用oss搭建一个图床<br><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g8avadnznpj306205z756.jpg" alt="图床软件"></li>
-</ol>
-</blockquote>
-<hr>
-<h3 id="真的正文"><a href="#真的正文" class="headerlink" title="真的正文"></a>真的正文</h3><blockquote>
-<ol>
-<li>安装必要软件<br>git  nodejs  </li>
-<li>github免密</li>
-<li>拷贝之前的电脑的以下文件(git clone也行 但是一般比较慢)<br>_config.yml  package.json   scaffolds/    source/    themes/</li>
-<li>在新的电脑上执行  npm install hexo-cli -g</li>
-<li>进入新电脑中想放博客代码的目录，把步骤三中拷贝的文件放入其中</li>
-<li>执行以下命令</li>
-</ol>
-</blockquote>
-<hr>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br><span class="line">npm install hexo-deployer-git --save  &#x2F;&#x2F; 文章部署到 git 的模块</span><br><span class="line">(下面为选择安装)</span><br><span class="line">npm install hexo-generator-feed --save  &#x2F;&#x2F; 建立 RSS 订阅</span><br><span class="line">npm install hexo-generator-sitemap --save &#x2F;&#x2F; 建立站点地图</span><br></pre></td></tr></table></figure>
-
-<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>这时候使用 hexo s 基本可以看到你新添加的文章了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">部署发布文章</span><br><span class="line">hexo clean   &#x2F;&#x2F; 清除缓存 网页正常情况下可以忽略此条命令</span><br><span class="line">hexo g       &#x2F;&#x2F; 生成静态网页</span><br><span class="line">hexo d       &#x2F;&#x2F; 开始部署</span><br></pre></td></tr></table></figure>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">hexo</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/杂项//" class="article-tag-list-link color3">杂项</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/10/25/hexo%E6%8D%A2%E7%94%B5%E8%84%91%E6%80%8E%E4%B9%88%E7%BB%A7%E7%BB%AD%E5%86%99%E4%BD%9C/">展开全文 >></a>
         </p>
       
 

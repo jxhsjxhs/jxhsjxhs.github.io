@@ -196,6 +196,100 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-科学上网之-自己动手丰衣足食" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2019/11/02/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E4%B9%8B-%E8%87%AA%E5%B7%B1%E5%8A%A8%E6%89%8B%E4%B8%B0%E8%A1%A3%E8%B6%B3%E9%A3%9F/">科学上网之-自己动手丰衣足食</a>
+</h1>
+
+
+
+        
+        <a href="/2019/11/02/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E4%B9%8B-%E8%87%AA%E5%B7%B1%E5%8A%A8%E6%89%8B%E4%B8%B0%E8%A1%A3%E8%B6%B3%E9%A3%9F/" class="archive-article-date">
+  	<time datetime="2019-11-02T06:18:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="自建ss-ssr教程很简单，整个教程分三步："><a href="#自建ss-ssr教程很简单，整个教程分三步：" class="headerlink" title="自建ss/ssr教程很简单，整个教程分三步："></a>自建ss/ssr教程很简单，整个教程分三步：</h2><blockquote>
+<p>第一步：购买VPS服务器</p>
+<p>第二步：一键部署VPS服务器</p>
+<p>第三步：一键加速VPS服务器</p>
+</blockquote>
+<h3 id="第一步-购买服务器"><a href="#第一步-购买服务器" class="headerlink" title="第一步:购买服务器"></a>第一步:购买服务器</h3><blockquote>
+<p>购买一个非大陆的服务器(目前全世界只有朝鲜和其他国家坚持封杀google)<br>比如搬瓦工 或者阿里云香港 都行<br>阿里云香港的 阿里云的推荐轻量服务器 贼鸡儿便宜 24块钱一个月…<br><img src="https://i.loli.net/2019/11/02/u4CcOfZRkwqthHi.png" alt="阿里云轻量服务器"><br>好了 这里其他的就不说了 买centos7的服务器就完事了</p>
+</blockquote>
+<h3 id="第二步-安装ss服务端"><a href="#第二步-安装ss服务端" class="headerlink" title="第二步:安装ss服务端"></a>第二步:安装ss服务端</h3><blockquote>
+<p>yum -y install wget<br>wget –no-check-certificate <a href="https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocksR.sh" target="_blank" rel="noopener">https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocksR.sh</a><br>chmod +x shadowsocksR.sh<br>./shadowsocksR.sh 2&gt;&amp;1 | tee shadowsocksR.log<br><img src="https://i.loli.net/2019/11/02/d9ADGxQ4B7TzVXN.png" alt="安装"><br>如上图出现管理界面后，输入数字1来安装SSR服务端。<br><img src="https://i.loli.net/2019/11/02/sg1YX9zLcrtPRhU.png" alt="设置端口"><br>根据上图提示，依次输入自己想设置的端口和密码 (密码建议用复杂点的字母组合，端口号为40-65535之间的数字)，回车键用于确认<br><img src="https://i.loli.net/2019/11/02/6IwaMfy9UsqoGYA.png" alt="加密方式"><br>如上图，选择想设置的加密方式，比如10，按回车键确认<br><img src="https://i.loli.net/2019/11/02/VwO49t6hcrgEdsL.png" alt="下载相关文件"><br>提示你下载文件，输入：y<br><img src="https://i.loli.net/2019/11/02/stL3oluRCArhyeV.png" alt="安装完成"><br>耐心等待一会，出现上面的界面即部署完成：</p>
+</blockquote>
+<hr>
+<h3 id="第三步-安装加速器"><a href="#第三步-安装加速器" class="headerlink" title="第三步:安装加速器"></a>第三步:安装加速器</h3><blockquote>
+<p>centos6不支持bbr加速 只能用破解版锐速加速</p>
+<p>yum -y install wget</p>
+<p>wget –no-check-certificate <a href="https://github.com/teddysun/across/raw/master/&gt;" target="_blank" rel="noopener">https://github.com/teddysun/across/raw/master/&gt;</a> bbr.sh</p>
+<p>chmod +x bbr.sh</p>
+<p>./bbr.sh</p>
+</blockquote>
+<p>把上面整个代码复制后粘贴进去，不动的时候按回车，然后耐心等待，最后重启vps服务器即可。<br>安装完成以后重启<br>服务器重启成功并重新连接服务器后，输入命令lsmod | grep bbr 如果出现tcp_bbr字样表示bbr已安装并启动成功。如图：<br><img src="https://i.loli.net/2019/11/02/dWR1oeF6Mk4L35x.png" alt="bbr"></p>
+<h3 id="为中华之崛起而翻墙"><a href="#为中华之崛起而翻墙" class="headerlink" title="为中华之崛起而翻墙 :-)"></a>为中华之崛起而翻墙 :-)</h3>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/杂项//" class="article-tag-list-link color3">杂项</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/11/02/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E4%B9%8B-%E8%87%AA%E5%B7%B1%E5%8A%A8%E6%89%8B%E4%B8%B0%E8%A1%A3%E8%B6%B3%E9%A3%9F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-使用client-go包访问KubernetesCRD" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1178,70 +1272,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2019/10/14/%E6%98%AF%E6%97%B6%E5%80%99%E6%9B%BF%E6%8D%A2%E4%BD%A0%E7%9A%84docker%E4%BA%86/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Kuma" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2019/09/12/Kuma/">Kuma</a>
-</h1>
-
-
-
-        
-        <a href="/2019/09/12/Kuma/" class="archive-article-date">
-  	<time datetime="2019-09-12T12:24:02.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Kong 发布新项目 Kuma</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/09/12/Kuma/">展开全文 >></a>
         </p>
       
 

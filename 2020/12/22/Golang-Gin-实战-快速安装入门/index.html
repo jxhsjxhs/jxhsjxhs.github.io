@@ -6,13 +6,15 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.jxhs.me">
-  <title>jame_xhs&#39;s blog</title>
+  <title>Golang Gin 实战(-)|快速安装入门 | jame_xhs&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="jame_xhs&#39;s blog">
-<meta property="og:url" content="http://www.jxhs.me/page/4/index.html">
+  <meta property="og:type" content="article">
+<meta property="og:title" content="Golang Gin 实战(-)|快速安装入门">
+<meta property="og:url" content="http://www.jxhs.me/2020/12/22/Golang-Gin-%E5%AE%9E%E6%88%98-%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85%E5%85%A5%E9%97%A8/index.html">
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-12-22T06:54:14.000Z">
+<meta property="article:modified_time" content="2020-12-22T06:54:14.678Z">
 <meta property="article:author" content="jame_xhs">
 <meta name="twitter:card" content="summary">
   
@@ -194,37 +196,28 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-获取k8sadmin的token" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-Golang-Gin-实战-快速安装入门" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
 
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/05/21/%E8%8E%B7%E5%8F%96k8sadmin%E7%9A%84token/">获取k8sadmin的token</a>
+<h1 class="article-title" itemprop="name">
+  Golang Gin 实战(-)|快速安装入门
 </h1>
 
 
 
         
-        <a href="/2020/05/21/%E8%8E%B7%E5%8F%96k8sadmin%E7%9A%84token/" class="archive-article-date">
-  	<time datetime="2020-05-21T10:52:07.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-21</time>
+        <a href="/2020/12/22/Golang-Gin-%E5%AE%9E%E6%88%98-%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85%E5%85%A5%E9%97%A8/" class="archive-article-date">
+  	<time datetime="2020-12-22T06:54:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-22</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="创建token"><a href="#创建token" class="headerlink" title="创建token"></a>创建token</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">vim k8s-admin.yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: dashboard-admin</span><br><span class="line">  namespace: kube-system</span><br><span class="line">---</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">apiVersion: rbac.authorization.k8s.io&#x2F;v1beta1</span><br><span class="line">metadata:</span><br><span class="line">  name: dashboard-admin</span><br><span class="line">subjects:</span><br><span class="line">  - kind: ServiceAccount</span><br><span class="line">    name: dashboard-admin</span><br><span class="line">    namespace: kube-system</span><br><span class="line">roleRef:</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: cluster-admin</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line"></span><br><span class="line">kubectl apply -f k8s-admin.yaml</span><br></pre></td></tr></table></figure>
-<h3 id="获取secretname"><a href="#获取secretname" class="headerlink" title="获取secretname"></a>获取secretname</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret -n kube-system</span><br><span class="line">NAME                                             TYPE                                  DATA   AGE</span><br><span class="line">dashboard-admin-token-dhhmc                      kubernetes.io&#x2F;service-account-token   3      69s</span><br></pre></td></tr></table></figure>
-
-<h3 id="查询token"><a href="#查询token" class="headerlink" title="查询token"></a>查询token</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@k8s-master ~]#  kubectl describe secret dashboard-admin-token-dhhmc   -n kube-system</span><br><span class="line">Name:         dashboard-admin-token-dhhmc</span><br><span class="line">Namespace:    kube-system</span><br><span class="line">Labels:       &lt;none&gt;</span><br><span class="line">Annotations:  kubernetes.io&#x2F;service-account.name: dashboard-admin</span><br><span class="line">              kubernetes.io&#x2F;service-account.uid: 98d070eb-875c-11e9-a538-000c297b4fe7</span><br><span class="line"></span><br><span class="line">Type:  kubernetes.io&#x2F;service-account-token</span><br><span class="line"></span><br><span class="line">Data</span><br><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">ca.crt:     1025 bytes</span><br><span class="line">namespace:  11 bytes</span><br><span class="line">token:      eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkYXNoYm9hcmQtYWRtaW4tdG9rZW4tZGhobWMiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGFzaGJvYXJkLWFkbWluIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiOThkMDcwZWItODc1Yy0xMWU5LWE1MzgtMDAwYzI5N2I0ZmU3Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRhc2hib2FyZC1hZG1pbiJ9.XDFpez2E84R_zlopt_uEHPvVGUtSavypyix6UcYJO3J4imHdJy7MEkfV-wltBA1H8x0TT2AW64rLlXaRJ8OkFWJ0myedfKdjnf7i0oLQ8j-7lw6rT3A0e2pKmpnOaBQfgzRm83-t2I5MMp3Iu9VNUiAbqQpjql4AKwRuJEEGCs99tKStUxzIsJKusmUHh9KAK4BAxySn9h16T2URZ7czLP4mty2crYWNV4KwSwFPthGhFPsl8mnet_hiV5k4me5a8frmXytOy64MmGW8w3TBgiM-7hBYSxt84QGGnyi84LU0EFgtLwBWEOTZeUKKQ6IkoAprMmNcSxX8WUJFlx_uJg</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="token干啥用的"><a href="#token干啥用的" class="headerlink" title="token干啥用的"></a>token干啥用的</h3><p>不知道干啥用的你看这个干啥,浪费生命。</p>
-
+        
       
 
       
@@ -232,30 +225,78 @@
     <div class="article-info article-info-index">
       
       
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">k8s</a>
-        		</li>
-      		
-		</ul>
-	</div>
+      
 
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/05/21/%E8%8E%B7%E5%8F%96k8sadmin%E7%9A%84token/">展开全文 >></a>
-        </p>
-      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
 
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.jxhs.me/2020/12/22/Golang-Gin-%E5%AE%9E%E6%88%98-%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85%E5%85%A5%E9%97%A8/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2020/12/21/GitHub-OAuth-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95%E7%A4%BA%E4%BE%8B%E6%95%99%E7%A8%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">GitHub OAuth 第三方登录示例教程</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -275,677 +316,14 @@
 
 
 
-
-  
-    <article id="post-装逼编程键盘最佳实践" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/04/28/%E8%A3%85%E9%80%BC%E7%BC%96%E7%A8%8B%E9%94%AE%E7%9B%98%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">装逼编程键盘最佳实践</a>
-</h1>
-
-
-
-        
-        <a href="/2020/04/28/%E8%A3%85%E9%80%BC%E7%BC%96%E7%A8%8B%E9%94%AE%E7%9B%98%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" class="archive-article-date">
-  	<time datetime="2020-04-28T01:23:28.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>之前逛淘宝,发现一款贼鸡儿好看的键盘. 心动以后脑子一热就买了<br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge980l3kedj30m80dw3z0.jpg" alt=""><br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge9815yk2aj30m80eqdg9.jpg" alt=""></p>
-<p>U1S1 确实好看。</p>
-<h3 id="问题来了"><a href="#问题来了" class="headerlink" title="问题来了"></a>问题来了</h3><p>第一次使用这种可编程键盘 我发现完全不会用 因为首先按键不够的情况下 很多东西只能用组合键来触发 所以一旦设置的按键不合理。可能常用的一行代码 或者一句话 可能要非常麻烦才能打出来。<br>不仅不好打出来  按键还不好记住。使用成本贼高 </p>
-<p>于是乎在家三个晚上设计出来了程序员的键盘方式。分享一下过程</p>
-<hr>
-<p>先上一下我的按键设计图<br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge984q0qduj30zy0plgmq.jpg" alt=""><br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge984wguuhj30y80q93zn.jpg" alt=""><br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge9851hbs2j31430qy75h.jpg" alt=""><br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge9856tt29j310n0q9my9.jpg" alt=""></p>
-<p>如上图  我这次设置的键盘有四个层级(每个层级的按键都可以是不同的效果)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">层级0:</span><br><span class="line">    在层级0中 设置了常用的英文按键以及逗号跟点,这俩不管是写代码还是聊天都是最常用的。并且设置了三个触发层 </span><br><span class="line">        1.左空格  作为第一层的触发按键 (所以第一层所需要的所有按键都需要提前按左空格触发)</span><br><span class="line">        2.右空格  作为第二层的触发按键</span><br><span class="line">        3.ENTER  作为第三层的触发按键 (本来是一直吧ALT作为第三层的触发键,但是发现很多东西都跟设置的不一样 开始以为是我windows或者mac的问题  设置了都不行  后来猜想到可能是 ALT本身就是一个组合键的触发 比如 ALT + Q 这种 于是设置为ENTER 以后发现ok)</span><br><span class="line"></span><br><span class="line">层级1:</span><br><span class="line">    在层级1中 设置0到9的数字,以及常用的标点符号。</span><br><span class="line">    第三排是(+-*&#x2F;) 应该比较好记</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">层级2:</span><br><span class="line">    在层级2中 设置的是F1-F12</span><br><span class="line">    以及四个在编程中常用的括号 由优先级大小排序,实测发现很容易打出来 并且好记</span><br><span class="line"></span><br><span class="line">层级3:</span><br><span class="line">    在层级3中 设置的是几个标点符号</span><br><span class="line">        1.(:;&#x3D;这三是放在一排 因为这三个在实际聊天需求较少 并且在写代码需求较高 放在这儿很好触发)</span><br><span class="line">        2.(~&quot;&#39;&#96;)这四个放在左上角需要一些肌肉记忆才能记住  跟层级1的标点一样 需要长期使用记忆。</span><br><span class="line">        3._? 这俩是为了跟普通键盘一样的放置位置 基本不需要记忆 直接能触发</span><br><span class="line">        4.｜&#x2F;\ 这三个 因为放到方向键 很容易就能记住他们的区别 方便记忆</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">放置方式基本就是这样 以上的按键设置满足了目前的使用键盘的需求。</span><br></pre></td></tr></table></figure>
-
-<h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><p>首先在gtithub上下载本系统的键盘编程驱动以及程序(mac自带驱动)<br><a href="https://github.com/qmk/qmk_toolbox/releases" target="_blank" rel="noopener">github下载地址</a></p>
-<p>使用方法介绍<br>链接: <a href="https://pan.baidu.com/s/1J9_QfP22LtYEnH6z0ZPdpw" target="_blank" rel="noopener">https://pan.baidu.com/s/1J9_QfP22LtYEnH6z0ZPdpw</a>  密码: o2n2 (使用方法pdf)</p>
-<p>然后 拿着 基础键盘模版去<a href="KBfirmware.com">网站</a>上编辑你自己的键盘排列方式 </p>
-<p>基础键盘模版   链接: <a href="https://pan.baidu.com/s/1QDBm07WbEuDAs69zoTmV5w" target="_blank" rel="noopener">https://pan.baidu.com/s/1QDBm07WbEuDAs69zoTmV5w</a>  密码: 874u</p>
-<p>编辑完以后点击下载就能拿到刚刚编辑好的东西 在用键盘编程程序写入键盘</p>
-<h3 id="写入过程"><a href="#写入过程" class="headerlink" title="写入过程"></a>写入过程</h3><p>打开编程软件,连接上键盘<br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge98x7jp63j305z05e3yo.jpg" alt=""><br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ge98zgrknaj30in0dtzmi.jpg" alt=""><br>ok</p>
-<h3 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h3><p>此类似键盘使用者需要内心强大,不然容易走火入魔,类似周伯通的左右手互博。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/04/28/%E8%A3%85%E9%80%BC%E7%BC%96%E7%A8%8B%E9%94%AE%E7%9B%98%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Istio是个啥" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/04/26/Istio%E6%98%AF%E4%B8%AA%E5%95%A5/">Istio是个啥</a>
-</h1>
-
-
-
-        
-        <a href="/2020/04/26/Istio%E6%98%AF%E4%B8%AA%E5%95%A5/" class="archive-article-date">
-  	<time datetime="2020-04-26T07:27:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">istio</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/04/26/Istio%E6%98%AF%E4%B8%AA%E5%95%A5/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Csharp-中Abstract和Virtual" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/04/24/Csharp-%E4%B8%ADAbstract%E5%92%8CVirtual/">Csharp 中Abstract和Virtual</a>
-</h1>
-
-
-
-        
-        <a href="/2020/04/24/Csharp-%E4%B8%ADAbstract%E5%92%8CVirtual/" class="archive-article-date">
-  	<time datetime="2020-04-24T08:07:09.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Csharp</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/04/24/Csharp-%E4%B8%ADAbstract%E5%92%8CVirtual/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Csharp-的方法重载-overload-、重写-override-、隐藏-new" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/04/24/Csharp-%E7%9A%84%E6%96%B9%E6%B3%95%E9%87%8D%E8%BD%BD-overload-%E3%80%81%E9%87%8D%E5%86%99-override-%E3%80%81%E9%9A%90%E8%97%8F-new/">Csharp 的方法重载(overload)、重写(override)、隐藏(new)</a>
-</h1>
-
-
-
-        
-        <a href="/2020/04/24/Csharp-%E7%9A%84%E6%96%B9%E6%B3%95%E9%87%8D%E8%BD%BD-overload-%E3%80%81%E9%87%8D%E5%86%99-override-%E3%80%81%E9%9A%90%E8%97%8F-new/" class="archive-article-date">
-  	<time datetime="2020-04-24T03:12:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Csharp</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/04/24/Csharp-%E7%9A%84%E6%96%B9%E6%B3%95%E9%87%8D%E8%BD%BD-overload-%E3%80%81%E9%87%8D%E5%86%99-override-%E3%80%81%E9%9A%90%E8%97%8F-new/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-树莓派4的-ubuntu-18-04-LTS-源" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/04/23/%E6%A0%91%E8%8E%93%E6%B4%BE4%E7%9A%84-ubuntu-18-04-LTS-%E6%BA%90/">树莓派4的 ubuntu 18.04 LTS 源</a>
-</h1>
-
-
-
-        
-        <a href="/2020/04/23/%E6%A0%91%E8%8E%93%E6%B4%BE4%E7%9A%84-ubuntu-18-04-LTS-%E6%BA%90/" class="archive-article-date">
-  	<time datetime="2020-04-23T05:20:28.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-23</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>#阿里云源<br>deb <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic main restricted universe multiverse<br>deb-src <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic main restricted universe multiverse<br>deb <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic-security main restricted universe multiverse<br>deb-src <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic-security main restricted universe multiverse<br>deb <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic-updates main restricted universe multiverse<br>deb-src <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic-updates main restricted universe multiverse<br>deb <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic-backports main restricted universe multiverse<br>deb-src <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic-backports main restricted universe multiverse<br>deb <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic-proposed main restricted universe multiverse<br>deb-src <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic-proposed main restricted universe multiverse</p>
-<p>#中科大源<br>deb <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic main restricted universe multiverse<br>deb-src <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic main restricted universe multiverse<br>deb <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic-updates main restricted universe multiverse<br>deb-src <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic-updates main restricted universe multiverse<br>deb <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic-backports main restricted universe multiverse<br>deb-src <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic-backports main restricted universe multiverse<br>deb <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic-security main restricted universe multiverse<br>deb-src <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic-security main restricted universe multiverse<br>deb <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic-proposed main restricted universe multiverse<br>deb-src <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic-proposed main restricted universe multiverse</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/04/23/%E6%A0%91%E8%8E%93%E6%B4%BE4%E7%9A%84-ubuntu-18-04-LTS-%E6%BA%90/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-谈一谈值类型与引用类型和装箱与拆箱" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/03/31/%E8%B0%88%E4%B8%80%E8%B0%88%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1/">谈一谈值类型与引用类型和装箱与拆箱</a>
-</h1>
-
-
-
-        
-        <a href="/2020/03/31/%E8%B0%88%E4%B8%80%E8%B0%88%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1/" class="archive-article-date">
-  	<time datetime="2020-03-31T10:45:28.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-31</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="值类型与引用类型"><a href="#值类型与引用类型" class="headerlink" title="值类型与引用类型"></a>值类型与引用类型</h2><p>首先说一说什么是值类型和引用类型</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">值类型直接存储其值。</span><br><span class="line">引用类型存储对值的引用。</span><br></pre></td></tr></table></figure>
-<p>粗俗点儿翻译的就是值类型就是现金，要用直接用；引用类型是存折，要用还得先去银行取现。</p>
-<p>衍生出几个问题:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.为什么能直接直接用</span><br><span class="line">2.引用类型怎么引用的</span><br><span class="line">3.有啥区别</span><br></pre></td></tr></table></figure>
-<h3 id="问题1-为什么值类型的能直接用"><a href="#问题1-为什么值类型的能直接用" class="headerlink" title="问题1 为什么值类型的能直接用"></a>问题1 为什么值类型的能直接用</h3><blockquote>
-<p>基础扎实的同学知道。栈空间是某个进程启动的时候所内置的内存空间,我们经常听到的比如局部变量。这类型信息就存在栈当中,所以可以直接使用。但是栈的空间比较小。如果有其他需求我们只能放到堆内存当中。</p>
-</blockquote>
-<h3 id="问题2-引用类型怎么引用的"><a href="#问题2-引用类型怎么引用的" class="headerlink" title="问题2 引用类型怎么引用的"></a>问题2 引用类型怎么引用的</h3><p><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gddc3pkcflj30mw0jy0uq.jpg" alt=""></p>
-<blockquote>
-<p>如图,我们创建<code>Name</code>类就是在堆内存中,而我们如果需要使用。实例化以后。如下图所示<br><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gddc8328sjj31480l2wfs.jpg" alt=""><br>obj这个变量存储的东西只是Name对象的地址.(这个引用过程就是传说中的指针)</p>
-</blockquote>
-<h3 id="问题3-有啥区别"><a href="#问题3-有啥区别" class="headerlink" title="问题3 有啥区别"></a>问题3 有啥区别</h3><p><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gddch6bnphj313i0oan0i.jpg" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">值类型通常被人们称为轻量级的类型，因为在大多数情况下，值类型的的实例都分配在线程栈中，因此它不受垃圾回收的控制，缓解了托管堆中的压力，减少了应用程序的垃圾回收的次数，提高性能。</span><br><span class="line"></span><br><span class="line">所有的引用类型的实例都分配在托管堆上，c#中new操作符会返回一个内存地址指向当前的对象。所以当你在创建个一个引用类型实例的时候，你必须要考虑以下问题：</span><br><span class="line"></span><br><span class="line">&gt; 内存是在托管堆上分配的</span><br><span class="line">&gt; 在分配每一个对象时都会包含一些额外的成员（类型对象指针，同步块索引），这些成员必须初始化</span><br><span class="line">&gt; 对象中的其他字节总是设为零</span><br><span class="line">&gt; 在分配对象时，可能会进行一次垃圾回收操作（如果托管堆上的内存不够分配一次对象时）</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="装箱与拆箱"><a href="#装箱与拆箱" class="headerlink" title="装箱与拆箱"></a>装箱与拆箱</h2><p>简单解释</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">装箱 就是把“值类型”转换成“引用类型”(Object)；</span><br><span class="line"></span><br><span class="line">拆箱 就是把“引用类型”转换成“值类型”；</span><br></pre></td></tr></table></figure>
-<p>举个例子</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;装箱 boxing</span><br><span class="line">int i &#x3D; 3 ;  &#x2F;&#x2F;分配在栈上</span><br><span class="line">object o &#x3D; i ;&#x2F;&#x2F;隐式装箱操作，int i 在堆上</span><br><span class="line">object b &#x3D; (object)i ; &#x2F;&#x2F;显示装箱操作</span><br><span class="line">&#x2F;&#x2F;拆箱 unboxing</span><br><span class="line">int j &#x3D; (int) o ;&#x2F;&#x2F;显示拆箱（将对象o拆箱为int类型）</span><br><span class="line"> </span><br><span class="line">int k &#x3D; b ;&#x2F;&#x2F;error!!, 不能隐式拆箱</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">值类型和引用类型理解透彻后，我们知道C#里面是值传递，但是有些变量是引用类型的，在传递和拷贝时需要特别注意。方法传递参数时加上ref(out)，为引用传递参数。</span><br><span class="line"></span><br><span class="line">值传递仅仅传递的是值，不影响原始值。</span><br><span class="line"></span><br><span class="line">引用传递，传递的是内存地址，修改后会改变内存地址对应储存的值</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">C#</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/31/%E8%B0%88%E4%B8%80%E8%B0%88%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Thinkpad-L440双系统记录" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/03/29/Thinkpad-L440%E5%8F%8C%E7%B3%BB%E7%BB%9F%E8%AE%B0%E5%BD%95/">Thinkpad L440双系统记录</a>
-</h1>
-
-
-
-        
-        <a href="/2020/03/29/Thinkpad-L440%E5%8F%8C%E7%B3%BB%E7%BB%9F%E8%AE%B0%E5%BD%95/" class="archive-article-date">
-  	<time datetime="2020-03-29T15:59:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-29</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>驱动过程没啥好说的,EFI我整理好了如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">EFI如下</span><br><span class="line">链接:https:&#x2F;&#x2F;pan.baidu.com&#x2F;s&#x2F;1X1r5warmKrzWX423YdSMMw  密码:kdnc</span><br><span class="line">镜像地址如下</span><br><span class="line">链接:https:&#x2F;&#x2F;pan.baidu.com&#x2F;s&#x2F;170PKgxP-emez_BibOIHyhg  密码:qrj3</span><br></pre></td></tr></table></figure>
-<h3 id="坑"><a href="#坑" class="headerlink" title="坑"></a>坑</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">中间有意思的说一下做个记录</span><br><span class="line">我这个笔记本有两个盘，想的一个盘做好mac以后 用四叶草驱动作为windows的启动项引导。</span><br><span class="line">然后呢 装黑苹果的时候 Bios得开启AHIC模式,开启到这个模式以后,windows怎么都启动不起来。</span><br><span class="line">win7直接蓝屏然后0x0000...忘记了 </span><br><span class="line">win10报错以后可以进入那种引导修复的状态。</span><br><span class="line">重点来了</span><br><span class="line">在这种状态中 进入高级设置里面 然后点击类似重装系统这种修复。</span><br><span class="line">重装完以后 就可以在AHIC模式下启动windows了 我也不晓得为啥 试出来的</span><br></pre></td></tr></table></figure>
-<p>上双系统的图瞧瞧<br><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gdb90jbqawj31400u0di5.jpg" alt=""><br><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gdb91goay0j31hb0tz7wi.jpg" alt=""><br><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gdb91q3qc3j31hc0u0hdt.jpg" alt=""></p>
-<blockquote>
-<p>补充一句,电脑已经卖掉了….只是买来玩玩。倒手转卖赚了500.(我真他娘应该去做销售的.)</p>
-</blockquote>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/29/Thinkpad-L440%E5%8F%8C%E7%B3%BB%E7%BB%9F%E8%AE%B0%E5%BD%95/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-学习c" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/03/15/%E5%AD%A6%E4%B9%A0c/">学习c#</a>
-</h1>
-
-
-
-        
-        <a href="/2020/03/15/%E5%AD%A6%E4%B9%A0c/" class="archive-article-date">
-  	<time datetime="2020-03-15T07:10:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>链接:<a href="https://pan.baidu.com/s/1iw-tbafU6hRa6E4mV9c4Yg" target="_blank" rel="noopener">https://pan.baidu.com/s/1iw-tbafU6hRa6E4mV9c4Yg</a>  密码:3oa9</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">偷偷学习一波C#,预测一下 3年以后回来看.  .NET Core绝对是牛逼的产品。而C#也是牛逼的语言</span><br><span class="line">这次的跨平台尝试,并且看微软的发力力度，一定能有东西产出。</span><br><span class="line"></span><br><span class="line">但是不一定能影响很大，因为由于之前的微软积极闭源。导致现在的开源社区基本都是从反对微软而成立的,微软做开源阻力很大。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">如果一旦形成开源的势力 那么前后端以及APP将一统江湖.(只是可视化的一统江湖,后端还是有其他力量 比如 专门为微服务生的go 处理数据以及AI的python,虽然C#除了操作系统。什么都能做)</span><br><span class="line"></span><br><span class="line">PS:目前C#工资水平在同期的开发薪资是非常低的,中档大概低百分之35不止。但是这次尝试我会坚持3年。3年以后看再回来看这波博客。补上到时候的市场</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/15/%E5%AD%A6%E4%B9%A0c/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-关于编程中字符串不可变的特性的理解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/03/13/%E5%85%B3%E4%BA%8E%E7%BC%96%E7%A8%8B%E4%B8%AD%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%9A%84%E7%89%B9%E6%80%A7%E7%9A%84%E7%90%86%E8%A7%A3/">关于编程中字符串不可变的特性的理解</a>
-</h1>
-
-
-
-        
-        <a href="/2020/03/13/%E5%85%B3%E4%BA%8E%E7%BC%96%E7%A8%8B%E4%B8%AD%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%9A%84%E7%89%B9%E6%80%A7%E7%9A%84%E7%90%86%E8%A7%A3/" class="archive-article-date">
-  	<time datetime="2020-03-12T21:45:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-13</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/13/%E5%85%B3%E4%BA%8E%E7%BC%96%E7%A8%8B%E4%B8%AD%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%9A%84%E7%89%B9%E6%80%A7%E7%9A%84%E7%90%86%E8%A7%A3/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
   
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/3/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/5/">Next &amp;raquo;</a>
-    </nav>
+  
+
+  
+
+  
+
   
 
 
@@ -970,8 +348,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,

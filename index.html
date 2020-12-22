@@ -196,6 +196,69 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Golang-Gin-实战-快速安装入门" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/12/22/Golang-Gin-%E5%AE%9E%E6%88%98-%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85%E5%85%A5%E9%97%A8/">Golang Gin 实战(-)|快速安装入门</a>
+</h1>
+
+
+
+        
+        <a href="/2020/12/22/Golang-Gin-%E5%AE%9E%E6%88%98-%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85%E5%85%A5%E9%97%A8/" class="archive-article-date">
+  	<time datetime="2020-12-22T06:54:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-22</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/12/22/Golang-Gin-%E5%AE%9E%E6%88%98-%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85%E5%85%A5%E9%97%A8/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-GitHub-OAuth-第三方登录示例教程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1199,78 +1262,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2020/10/26/%E5%AE%89%E8%A3%85docker/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-pi4B-kubelet-Following-Cgroup-subsystem-not-mounted" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/10/22/pi4B-kubelet-Following-Cgroup-subsystem-not-mounted/">pi4B  kubelet  Following Cgroup subsystem not mounted </a>
-</h1>
-
-
-
-        
-        <a href="/2020/10/22/pi4B-kubelet-Following-Cgroup-subsystem-not-mounted/" class="archive-article-date">
-  	<time datetime="2020-10-22T04:10:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-10-22</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在树莓派4B中安装了ubuntu 20.04.1 LTS 然后接入k8s(kubeedge)集群。</span><br></pre></td></tr></table></figure>
-
-<h3 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h3><p><img src="https://i.loli.net/2020/10/22/GhPvMuNeEfdtKF4.png" alt="pi4.png"></p>
-<p>发现kubelet一直启动不起来,报错为 <code>Following Cgroup subsystem not mounted: [memory]</code><br>大概意思是主机没有挂载内存的Cgroup，但是kubelet是需要控制cpu以及内存的Cgroup。所以启动不起来</p>
-<h3 id="处理过程"><a href="#处理过程" class="headerlink" title="处理过程"></a>处理过程</h3><p>知道问题了,但是百度了半天大家都说是需要在<code>/boot/cmdline.txt</code> 中加入<code>cgroup_enable=memory cgroup_memory=1</code>然后重启即可。<br>但是重启问题依旧，然后查看引导</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;boot&#x2F;firmware&#x2F;config.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://i.loli.net/2020/10/22/kXeqVdLz6iRJQgO.png" alt="image.png"></p>
-<p>发现还是这个名字,最后实在没办法就吧<code>cmdline.txt</code>放到了<code>/boot/firmware/</code>下。然后就成功了 </p>
-<h3 id="心得"><a href="#心得" class="headerlink" title="心得"></a>心得</h3><p>只是记录一下坑，毫无卵用。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/10/22/pi4B-kubelet-Following-Cgroup-subsystem-not-mounted/">展开全文 >></a>
         </p>
       
 

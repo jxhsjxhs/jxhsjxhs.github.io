@@ -6,24 +6,15 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.jxhs.me">
-  <title>谈一谈值类型与引用类型和装箱与拆箱 | jame_xhs&#39;s blog</title>
+  <title>Tag: OAuth 2.0 | jame_xhs&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="值类型与引用类型首先说一说什么是值类型和引用类型 12值类型直接存储其值。引用类型存储对值的引用。 粗俗点儿翻译的就是值类型就是现金，要用直接用；引用类型是存折，要用还得先去银行取现。 衍生出几个问题: 1231.为什么能直接直接用2.引用类型怎么引用的3.有啥区别 问题1 为什么值类型的能直接用 基础扎实的同学知道。栈空间是某个进程启动的时候所内置的内存空间,我们经常听到的比如局部变量。这类型信">
-<meta property="og:type" content="article">
-<meta property="og:title" content="谈一谈值类型与引用类型和装箱与拆箱">
-<meta property="og:url" content="http://www.jxhs.me/2020/03/31/%E8%B0%88%E4%B8%80%E8%B0%88%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="jame_xhs&#39;s blog">
+<meta property="og:url" content="http://www.jxhs.me/tags/OAuth-2-0/index.html">
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
-<meta property="og:description" content="值类型与引用类型首先说一说什么是值类型和引用类型 12值类型直接存储其值。引用类型存储对值的引用。 粗俗点儿翻译的就是值类型就是现金，要用直接用；引用类型是存折，要用还得先去银行取现。 衍生出几个问题: 1231.为什么能直接直接用2.引用类型怎么引用的3.有啥区别 问题1 为什么值类型的能直接用 基础扎实的同学知道。栈空间是某个进程启动的时候所内置的内存空间,我们经常听到的比如局部变量。这类型信">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00831rSTgy1gddc3pkcflj30mw0jy0uq.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00831rSTgy1gddc8328sjj31480l2wfs.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00831rSTgy1gddch6bnphj313i0oan0i.jpg">
-<meta property="article:published_time" content="2020-03-31T10:45:28.000Z">
-<meta property="article:modified_time" content="2020-03-31T13:04:10.551Z">
 <meta property="article:author" content="jame_xhs">
-<meta property="article:tag" content="C#">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/00831rSTgy1gddc3pkcflj30mw0jy0uq.jpg">
   
     <link rel="alternative" href="/atom.xml" title="jame_xhs&#39;s blog" type="application/atom+xml">
   
@@ -203,183 +194,61 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-谈一谈值类型与引用类型和装箱与拆箱" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
+            
+  
+  
     
-      <header class="article-header">
-        
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2020" class="archive-year">2020</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2020/12/21/%E7%90%86%E8%A7%A3OAuth-2-0/" class="archive-article-date">
+  	<time datetime="2020-12-21T07:41:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-21</time>
+</a>
+        </div>
+    	 
 
-<h1 class="article-title" itemprop="name">
-  谈一谈值类型与引用类型和装箱与拆箱
+<h1 itemprop="name">
+  <a class="archive-article-title" href="/2020/12/21/%E7%90%86%E8%A7%A3OAuth-2-0/">理解OAuth 2.0</a>
 </h1>
 
 
 
-        
-        <a href="/2020/03/31/%E8%B0%88%E4%B8%80%E8%B0%88%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1/" class="archive-article-date">
-  	<time datetime="2020-03-31T10:45:28.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-31</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="值类型与引用类型"><a href="#值类型与引用类型" class="headerlink" title="值类型与引用类型"></a>值类型与引用类型</h2><p>首先说一说什么是值类型和引用类型</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">值类型直接存储其值。</span><br><span class="line">引用类型存储对值的引用。</span><br></pre></td></tr></table></figure>
-<p>粗俗点儿翻译的就是值类型就是现金，要用直接用；引用类型是存折，要用还得先去银行取现。</p>
-<p>衍生出几个问题:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.为什么能直接直接用</span><br><span class="line">2.引用类型怎么引用的</span><br><span class="line">3.有啥区别</span><br></pre></td></tr></table></figure>
-<h3 id="问题1-为什么值类型的能直接用"><a href="#问题1-为什么值类型的能直接用" class="headerlink" title="问题1 为什么值类型的能直接用"></a>问题1 为什么值类型的能直接用</h3><blockquote>
-<p>基础扎实的同学知道。栈空间是某个进程启动的时候所内置的内存空间,我们经常听到的比如局部变量。这类型信息就存在栈当中,所以可以直接使用。但是栈的空间比较小。如果有其他需求我们只能放到堆内存当中。</p>
-</blockquote>
-<h3 id="问题2-引用类型怎么引用的"><a href="#问题2-引用类型怎么引用的" class="headerlink" title="问题2 引用类型怎么引用的"></a>问题2 引用类型怎么引用的</h3><p><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gddc3pkcflj30mw0jy0uq.jpg" alt=""></p>
-<blockquote>
-<p>如图,我们创建<code>Name</code>类就是在堆内存中,而我们如果需要使用。实例化以后。如下图所示<br><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gddc8328sjj31480l2wfs.jpg" alt=""><br>obj这个变量存储的东西只是Name对象的地址.(这个引用过程就是传说中的指针)</p>
-</blockquote>
-<h3 id="问题3-有啥区别"><a href="#问题3-有啥区别" class="headerlink" title="问题3 有啥区别"></a>问题3 有啥区别</h3><p><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gddch6bnphj313i0oan0i.jpg" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">值类型通常被人们称为轻量级的类型，因为在大多数情况下，值类型的的实例都分配在线程栈中，因此它不受垃圾回收的控制，缓解了托管堆中的压力，减少了应用程序的垃圾回收的次数，提高性能。</span><br><span class="line"></span><br><span class="line">所有的引用类型的实例都分配在托管堆上，c#中new操作符会返回一个内存地址指向当前的对象。所以当你在创建个一个引用类型实例的时候，你必须要考虑以下问题：</span><br><span class="line"></span><br><span class="line">&gt; 内存是在托管堆上分配的</span><br><span class="line">&gt; 在分配每一个对象时都会包含一些额外的成员（类型对象指针，同步块索引），这些成员必须初始化</span><br><span class="line">&gt; 对象中的其他字节总是设为零</span><br><span class="line">&gt; 在分配对象时，可能会进行一次垃圾回收操作（如果托管堆上的内存不够分配一次对象时）</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="装箱与拆箱"><a href="#装箱与拆箱" class="headerlink" title="装箱与拆箱"></a>装箱与拆箱</h2><p>简单解释</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">装箱 就是把“值类型”转换成“引用类型”(Object)；</span><br><span class="line"></span><br><span class="line">拆箱 就是把“引用类型”转换成“值类型”；</span><br></pre></td></tr></table></figure>
-<p>举个例子</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;装箱 boxing</span><br><span class="line">int i &#x3D; 3 ;  &#x2F;&#x2F;分配在栈上</span><br><span class="line">object o &#x3D; i ;&#x2F;&#x2F;隐式装箱操作，int i 在堆上</span><br><span class="line">object b &#x3D; (object)i ; &#x2F;&#x2F;显示装箱操作</span><br><span class="line">&#x2F;&#x2F;拆箱 unboxing</span><br><span class="line">int j &#x3D; (int) o ;&#x2F;&#x2F;显示拆箱（将对象o拆箱为int类型）</span><br><span class="line"> </span><br><span class="line">int k &#x3D; b ;&#x2F;&#x2F;error!!, 不能隐式拆箱</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">值类型和引用类型理解透彻后，我们知道C#里面是值传递，但是有些变量是引用类型的，在传递和拷贝时需要特别注意。方法传递参数时加上ref(out)，为引用传递参数。</span><br><span class="line"></span><br><span class="line">值传递仅仅传递的是值，不影响原始值。</span><br><span class="line"></span><br><span class="line">引用传递，传递的是内存地址，修改后会改变内存地址对应储存的值</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">C#</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">OAuth 2.0</a>
         		</li>
       		
 		</ul>
 	</div>
 
-      
+          
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://www.jxhs.me/2020/03/31/%E8%B0%88%E4%B8%80%E8%B0%88%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2020/04/23/%E6%A0%91%E8%8E%93%E6%B4%BE4%E7%9A%84-ubuntu-18-04-LTS-%E6%BA%90/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          树莓派4的 ubuntu 18.04 LTS 源
-        
-      </div>
-    </a>
   
   
-    <a href="/2020/03/29/Thinkpad-L440%E5%8F%8C%E7%B3%BB%E7%BB%9F%E8%AE%B0%E5%BD%95/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Thinkpad L440双系统记录</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-  
-  
+    </div></section>
   
 
-  
-
-  
-
-  
+    
 
 
           </div>
@@ -404,9 +273,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
+		isPost: false,
 		isArchive: false,
-		isTag: false,
+		isTag: true,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,

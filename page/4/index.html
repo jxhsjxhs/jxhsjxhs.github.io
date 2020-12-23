@@ -196,6 +196,96 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-k8s部署mysql单节点到sotrageclass" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/05/23/k8s%E9%83%A8%E7%BD%B2mysql%E5%8D%95%E8%8A%82%E7%82%B9%E5%88%B0sotrageclass/">k8s部署mysql单节点到sotrageclass</a>
+</h1>
+
+
+
+        
+        <a href="/2020/05/23/k8s%E9%83%A8%E7%BD%B2mysql%E5%8D%95%E8%8A%82%E7%82%B9%E5%88%B0sotrageclass/" class="archive-article-date">
+  	<time datetime="2020-05-23T07:26:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="mysql5-7-单节点部署"><a href="#mysql5-7-单节点部署" class="headerlink" title="mysql5.7 单节点部署"></a>mysql5.7 单节点部署</h2><blockquote>
+<p>记录一下方便以后复制粘贴</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">未经过强调说明的话都是以default租户下部署，有存储的话用的都是名为nfs-storage的storageclass.</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2020/05/23/SB1KbhiX8D4HZ6T.png" alt="DeepinScreenshot_select-area_20200523161014.png"></p>
+<p>首先创建mysql的configmap</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@master conf]# cat mysqld.cnf </span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">pid-file	&#x3D; &#x2F;var&#x2F;run&#x2F;mysqld&#x2F;mysqld.pid</span><br><span class="line">socket		&#x3D; &#x2F;var&#x2F;run&#x2F;mysqld&#x2F;mysqld.sock</span><br><span class="line">datadir		&#x3D; &#x2F;var&#x2F;lib&#x2F;mysql</span><br><span class="line">#log-error	&#x3D; &#x2F;var&#x2F;log&#x2F;mysql&#x2F;error.log</span><br><span class="line"># By default we only accept connections from localhost</span><br><span class="line">#bind-address	&#x3D; 127.0.0.1</span><br><span class="line"># Disabling symbolic-links is recommended to prevent assorted security risks</span><br><span class="line">symbolic-links&#x3D;0</span><br><span class="line">sql_mode&#x3D;STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION</span><br></pre></td></tr></table></figure>
+<p>注意  因为mysql5.7默认关闭了<code>group by</code>相关命令 需要在配置文件中加上sql_mode打开。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create configmap mysql-config  --from-file&#x3D;mysql.cnf</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2020/05/23/KfmWpMvNdBbunkC.png" alt="DeepinScreenshot_select-area_20200523161014.png"></p>
+<p>查看创建的configmap,接下来创建使用storageclass的deloyment</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  name: mysqldata</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteMany</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 20G</span><br><span class="line">  storageClassName: nfs-storage</span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">apiVersion: apps&#x2F;v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  labels:</span><br><span class="line">    app: mysql57</span><br><span class="line">  name: mysql57</span><br><span class="line">spec:</span><br><span class="line">  replicas: 1</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: mysql57</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: mysql57</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - env:</span><br><span class="line">        - name: MYSQL_ROOT_PASSWORD</span><br><span class="line">          value: &quot;2020520.pst&quot;</span><br><span class="line">        - name: MYSQL_USER</span><br><span class="line">          value: &quot;daocloud&quot;</span><br><span class="line">        - name: MYSQL_PASSWORD</span><br><span class="line">          value: &quot;daocloud@123456&quot;</span><br><span class="line">        image: &quot;mysql:5.7&quot;</span><br><span class="line">        name: mysql57</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 3306</span><br><span class="line">          protocol: TCP</span><br><span class="line">          name: http</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: mysqldata</span><br><span class="line">          mountPath: &quot;&#x2F;var&#x2F;lib&#x2F;mysql&quot;</span><br><span class="line">          readOnly: false</span><br><span class="line">          subPath: mysql57</span><br><span class="line">        - name: mysql-config</span><br><span class="line">          mountPath: &#x2F;etc&#x2F;mysql&#x2F;mysql.conf.d</span><br><span class="line">      volumes:</span><br><span class="line">      - name: mysqldata</span><br><span class="line">        persistentVolumeClaim:</span><br><span class="line">          claimName: mysqldata</span><br><span class="line">      - name: mysql-config</span><br><span class="line">        configMap:</span><br><span class="line">          name: mysql-config</span><br></pre></td></tr></table></figure>
+<p>查看创建的服务以及pvc<br><img src="https://i.loli.net/2020/05/23/u3LmVFZPGSylkDT.png" alt="DeepinScreenshot_select-area_20200523161856.png"></p>
+<p>当然如果外部用的话也可以用service或者ingress映射出来.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: mysql57</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    app: mysql57</span><br><span class="line">  ports:</span><br><span class="line">    - name: mysql3306</span><br><span class="line">      port: 3306</span><br><span class="line">      protocol: TCP</span><br><span class="line">      targetPort: 3306</span><br><span class="line">      nodePort: 30881</span><br><span class="line">  type: NodePort</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2020/05/23/GLTzpdcrSgn7iv3.png" alt="DeepinScreenshot_select-area_20200523162141.png"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">k8s, 中间件, mysql</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/05/23/k8s%E9%83%A8%E7%BD%B2mysql%E5%8D%95%E8%8A%82%E7%82%B9%E5%88%B0sotrageclass/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-获取k8sadmin的token" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -879,69 +969,6 @@
 
 
   
-    <article id="post-关于编程中字符串不可变的特性的理解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/03/13/%E5%85%B3%E4%BA%8E%E7%BC%96%E7%A8%8B%E4%B8%AD%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%9A%84%E7%89%B9%E6%80%A7%E7%9A%84%E7%90%86%E8%A7%A3/">关于编程中字符串不可变的特性的理解</a>
-</h1>
-
-
-
-        
-        <a href="/2020/03/13/%E5%85%B3%E4%BA%8E%E7%BC%96%E7%A8%8B%E4%B8%AD%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%9A%84%E7%89%B9%E6%80%A7%E7%9A%84%E7%90%86%E8%A7%A3/" class="archive-article-date">
-  	<time datetime="2020-03-12T21:45:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-13</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/13/%E5%85%B3%E4%BA%8E%E7%BC%96%E7%A8%8B%E4%B8%AD%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%9A%84%E7%89%B9%E6%80%A7%E7%9A%84%E7%90%86%E8%A7%A3/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/3/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/5/">Next &amp;raquo;</a>
@@ -1142,6 +1169,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">CKA</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">OAuth 2.0</a>
               </li>
             
             <div class="clearfix"></div>

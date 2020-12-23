@@ -217,23 +217,16 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>本文最尴尬的地方就是   ubuntu server  默认不带连接wifi的包。需要提前联网才能装(可以插有线)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install wpasupplicant wireless-tools</span><br></pre></td></tr></table></figure>
-
-<p>wireless-tools安装完后，就可以使用iwconfig按下面步骤设置无线网络了：</p>
-<p>1、首先设置打开无线网卡并设置SSID</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo iwconfig wlan0 power on</span><br><span class="line">sudo ifconfig wlan0 up</span><br><span class="line">sudo iwconfig wlan0 essid &quot;无线名称&quot;</span><br></pre></td></tr></table></figure>
-<p>2、然后使用wpa_passphrase生成无线密钥</p>
+        <p>1、首先使用wpa_passphrase生成无线密钥</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo -i </span><br><span class="line">wpa_passphrase 无线名称 密码 &gt; &#x2F;etc&#x2F;wpa_supplicant.conf</span><br></pre></td></tr></table></figure>
 
-<p>3、接下来编辑 /etc/wpa_supplicant.conf</p>
+<p>2、接下来编辑 /etc/wpa_supplicant.conf</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">ctrl_interface&#x3D;&#x2F;var&#x2F;run&#x2F;wpa_supplicant</span><br><span class="line">ctrl_interface_group&#x3D;0</span><br><span class="line">ap_scan&#x3D;1</span><br><span class="line">network&#x3D;&#123;</span><br><span class="line">        ssid&#x3D;&quot;OpenWrt_2.4G_4680A1&quot;</span><br><span class="line">        proto&#x3D;RSN</span><br><span class="line">        key_mgmt&#x3D;WPA-PSK</span><br><span class="line">        pairwise&#x3D;CCMP TKIP</span><br><span class="line">        group&#x3D;CCMP TKIP</span><br><span class="line">        psk&#x3D;0192c3b3469fcf872387c0e069fee5731ce7f8782654e1a5caa0c165700e76c8</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">network&#x3D;&#123;</span><br><span class="line">        ssid&#x3D;&quot;my_network&quot;   #注意ssid名区分大小写。</span><br><span class="line">        proto&#x3D;RSN           #Robust Security Network:强健安全网络，表示这个网络配置比WEP模式要更安全。</span><br><span class="line">        key_mgmt&#x3D;WPA-PSK    #请无论你是使用WPA-PSK，WPA2-PSK，都请在这里输入 WPA-PSK。这在wpa_supplicant看来WPA-PSK，WPA2-PSK都是 WPA-PSK</span><br><span class="line">        pairwise&#x3D;CCMP TKIP  #关键点，wpa_supplicant目前还不认AES的加密标准</span><br><span class="line">        group&#x3D;CCMP TKIP     #同上</span><br><span class="line">        psk&#x3D;7b271c9a7c8a6ac07d12403a1f0792d7d92b5957ff8dfd56481ced43ec6a6515 #wpa_supplicant算出来的加密密码。</span><br></pre></td></tr></table></figure>
 
-
-<p>4、以上配置文件设置完成后，接下来手动应用配置</p>
+<p>3、以上配置文件设置完成后，接下来手动应用配置</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo wpa_supplicant -B -i wlan0 -c &#x2F;etc&#x2F;wpa_supplicant.conf</span><br><span class="line">sudo dhclient wlan0</span><br></pre></td></tr></table></figure>
 
-<p>5、为了开机自动开启wifi，需要将启动脚本加到自动执行服务中，首先在/etc/init.d/(任意目录)中写上需要开机启动的脚本</p>
+<p>4、为了开机自动开启wifi，需要将启动脚本加到自动执行服务中，首先在/etc/init.d/(任意目录)中写上需要开机启动的脚本</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ cat &#x2F;etc&#x2F;init.d&#x2F;wifi.sh</span><br><span class="line">#!&#x2F;bin&#x2F;bash</span><br><span class="line">sudo wpa_supplicant -i wlan0  -c &#x2F;etc&#x2F;wpa_supplicant.conf -B</span><br><span class="line">sudo dhclient  wlan0</span><br></pre></td></tr></table></figure>
 <p>在/etc/rc.local中写入以下</p>
 <p>➜  ~ cat /etc/rc.local<br>#!/bin/bash<br>sh  /etc/init.d/wifi.sh<br>exit 0<br>➜  ~ chmod +x /etc/rc.local</p>

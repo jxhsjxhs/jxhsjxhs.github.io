@@ -8,12 +8,12 @@
   <link rel="dns-prefetch" href="http://www.jxhs.me">
   <title>理解OAuth 2.0 | jame_xhs&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="(OAuth)[https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;OAuth]是一个关于授权（authorization）的开放网络标准，在全世界得到广泛应用，目前的版本是2.0版。 本文对OAuth 2.0的设计思路和运行流程，做一个简明通俗的解释，主要参考材料为(RFC 6749)[http:&#x2F;&#x2F;www.rfcreader.com&#x2F;#rfc6749]。 一、应用场景为了理解OAuth">
+  <meta name="description" content="OAuth是一个关于授权（authorization）的开放网络标准，在全世界得到广泛应用，目前的版本是2.0版。 本文对OAuth 2.0的设计思路和运行流程，做一个简明通俗的解释，主要参考材料为RFC 6749。 一、应用场景为了理解OAuth的适用场合，让我举一个假设的例子。 有一个”云冲印”的网站，可以将用户储存在Google的照片，冲印出来。用户为了使用该服务，必须让”云冲印”读取自己储">
 <meta property="og:type" content="article">
 <meta property="og:title" content="理解OAuth 2.0">
 <meta property="og:url" content="http://www.jxhs.me/2020/12/21/%E7%90%86%E8%A7%A3OAuth-2-0/index.html">
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
-<meta property="og:description" content="(OAuth)[https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;OAuth]是一个关于授权（authorization）的开放网络标准，在全世界得到广泛应用，目前的版本是2.0版。 本文对OAuth 2.0的设计思路和运行流程，做一个简明通俗的解释，主要参考材料为(RFC 6749)[http:&#x2F;&#x2F;www.rfcreader.com&#x2F;#rfc6749]。 一、应用场景为了理解OAuth">
+<meta property="og:description" content="OAuth是一个关于授权（authorization）的开放网络标准，在全世界得到广泛应用，目前的版本是2.0版。 本文对OAuth 2.0的设计思路和运行流程，做一个简明通俗的解释，主要参考材料为RFC 6749。 一、应用场景为了理解OAuth的适用场合，让我举一个假设的例子。 有一个”云冲印”的网站，可以将用户储存在Google的照片，冲印出来。用户为了使用该服务，必须让”云冲印”读取自己储">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://tva1.sinaimg.cn/large/0081Kckwgy1glxnw8oyx0j308c08ca9w.jpg">
 <meta property="og:image" content="https://tva1.sinaimg.cn/large/0081Kckwgy1glxo1y1y1tj30l80epq2u.jpg">
@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://tva1.sinaimg.cn/large/0081Kckwgy1glxoajbd2fj30m70ba0sq.jpg">
 <meta property="og:image" content="https://tva1.sinaimg.cn/large/0081Kckwgy1glxodml3s2j30ma053wec.jpg">
 <meta property="article:published_time" content="2020-12-21T07:41:15.000Z">
-<meta property="article:modified_time" content="2020-12-23T05:08:30.803Z">
+<meta property="article:modified_time" content="2020-12-23T06:46:47.746Z">
 <meta property="article:author" content="jame_xhs">
 <meta property="article:tag" content="OAuth 2.0">
 <meta name="twitter:card" content="summary">
@@ -226,8 +226,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>(OAuth)[<a href="https://en.wikipedia.org/wiki/OAuth]是一个关于授权（authorization）的开放网络标准，在全世界得到广泛应用，目前的版本是2.0版。" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/OAuth]是一个关于授权（authorization）的开放网络标准，在全世界得到广泛应用，目前的版本是2.0版。</a></p>
-<p>本文对OAuth 2.0的设计思路和运行流程，做一个简明通俗的解释，主要参考材料为(RFC 6749)[<a href="http://www.rfcreader.com/#rfc6749]。" target="_blank" rel="noopener">http://www.rfcreader.com/#rfc6749]。</a></p>
+        <p><a href="https://en.wikipedia.org/wiki/OAuth" target="_blank" rel="noopener">OAuth</a>是一个关于授权（authorization）的开放网络标准，在全世界得到广泛应用，目前的版本是2.0版。</p>
+<p>本文对OAuth 2.0的设计思路和运行流程，做一个简明通俗的解释，主要参考材料为<a href="http://www.rfcreader.com/#rfc6749" target="_blank" rel="noopener">RFC 6749</a>。</p>
 <h3 id="一、应用场景"><a href="#一、应用场景" class="headerlink" title="一、应用场景"></a>一、应用场景</h3><p>为了理解OAuth的适用场合，让我举一个假设的例子。</p>
 <p>有一个”云冲印”的网站，可以将用户储存在Google的照片，冲印出来。用户为了使用该服务，必须让”云冲印”读取自己储存在Google上的照片。<br><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glxnw8oyx0j308c08ca9w.jpg" alt=""><br>问题是只有得到用户的授权，Google才会同意”云冲印”读取这些照片。那么，”云冲印”怎样获得用户的授权呢？</p>
 <p>传统方法是，用户将自己的Google用户名和密码，告诉”云冲印”，后者就可以读取用户的照片了。这样的做法有以下几个严重的缺点。</p>
@@ -270,7 +270,8 @@
 <li>客户端模式（client credentials）</li>
 </ol>
 <h3 id="六、授权码模式"><a href="#六、授权码模式" class="headerlink" title="六、授权码模式"></a>六、授权码模式</h3><p>授权码模式（authorization code）是功能最完整、流程最严密的授权模式。它的特点就是通过客户端的后台服务器，与”服务提供商”的认证服务器进行互动。</p>
-<p><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glxo1y1y1tj30l80epq2u.jpg" alt=""><br>它的步骤如下：</p>
+<p><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glxo1y1y1tj30l80epq2u.jpg" alt=""></p>
+<p>它的步骤如下：</p>
 <blockquote>
 <p>（A）用户访问客户端，后者将前者导向认证服务器。</p>
 <p>（B）用户选择是否给予客户端授权。</p>
@@ -540,7 +541,7 @@
   <div class="outer">
     <div id="footer-info">
       <div class="footer-left">
-        &copy; 2020 jame_xhs
+        &copy; 2021 jame_xhs
       </div>
       <div class="footer-right">
         <a href="http://hexo.io/" target="_blank">jame_xhs</a> Theme <a
@@ -730,6 +731,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">OAuth 2.0</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">ubuntu</a>
               </li>
             
             <div class="clearfix"></div>

@@ -196,6 +196,280 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Golang黑科技之——string与-byte转换" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2021/01/07/Golang%E9%BB%91%E7%A7%91%E6%8A%80%E4%B9%8B%E2%80%94%E2%80%94string%E4%B8%8E-byte%E8%BD%AC%E6%8D%A2/">Golang黑科技之——string与[]byte转换</a>
+</h1>
+
+
+
+        
+        <a href="/2021/01/07/Golang%E9%BB%91%E7%A7%91%E6%8A%80%E4%B9%8B%E2%80%94%E2%80%94string%E4%B8%8E-byte%E8%BD%AC%E6%8D%A2/" class="archive-article-date">
+  	<time datetime="2021-01-06T22:39:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-07</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>我们知道，相对于C语言，golang是类型安全的语言。但是安全的代价就是性能的妥协。<br>下面我们通过Golang中的“黑科技”来一窥Golang不想让我们看到的“秘密”——string的底层数据。<br>通过reflect包，我们可以知道，在Golang底层，string和slice其实都是struct：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">type SliceHeader struct &#123;</span><br><span class="line">	Data uintptr</span><br><span class="line">	Len  int</span><br><span class="line">	Cap  int</span><br><span class="line">&#125;</span><br><span class="line">type StringHeader struct &#123;</span><br><span class="line">	Data uintptr</span><br><span class="line">	Len  int</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中Data是一个指针，指向实际的数据地址，Len表示数据长度。<br>但是，在string和[]byte转换过程中，Golang究竟悄悄帮我们做了什么，来达到安全的目的？<br>在Golang语言规范里面，string数据是禁止修改的，试图通过&amp;s[0], &amp;b[0]取得string和slice数据指针地址也是不能通过编译的。<br>下面，我们就通过Golang的“黑科技”来一窥Golang背后的“秘密”。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;return GoString&#39;s buffer slice(enable modify string)</span><br><span class="line">func StringBytes(s string) Bytes &#123;</span><br><span class="line">	var bh reflect.SliceHeader</span><br><span class="line">	sh :&#x3D; (*reflect.StringHeader)(unsafe.Pointer(&amp;s))</span><br><span class="line">	bh.Data, bh.Len, bh.Cap &#x3D; sh.Data, sh.Len, sh.Len</span><br><span class="line">	return *(*Bytes)(unsafe.Pointer(&amp;bh))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; convert b to string without copy</span><br><span class="line">func BytesString(b []byte) String &#123;</span><br><span class="line">	return *(*String)(unsafe.Pointer(&amp;b))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; returns &amp;s[0], which is not allowed in go</span><br><span class="line">func StringPointer(s string) unsafe.Pointer &#123;</span><br><span class="line">	p :&#x3D; (*reflect.StringHeader)(unsafe.Pointer(&amp;s))</span><br><span class="line">	return unsafe.Pointer(p.Data)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; returns &amp;b[0], which is not allowed in go</span><br><span class="line">func BytesPointer(b []byte) unsafe.Pointer &#123;</span><br><span class="line">	p :&#x3D; (*reflect.SliceHeader)(unsafe.Pointer(&amp;b))</span><br><span class="line">	return unsafe.Pointer(p.Data)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上4个函数的神奇之处在于，通过unsafe.Pointer和reflect.XXXHeader取到了数据首地址，并实现了string和[]byte的直接转换（这些操作在语言层面是禁止的）。<br>下面我们就通过这几个“黑科技”来测试一下语言底层的秘密：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">func TestPointer(t *testing.T) &#123;</span><br><span class="line">	s :&#x3D; []string&#123;</span><br><span class="line">		&quot;&quot;,</span><br><span class="line">		&quot;&quot;,</span><br><span class="line">		&quot;hello&quot;,</span><br><span class="line">		&quot;hello&quot;,</span><br><span class="line">		fmt.Sprintf(&quot;&quot;),</span><br><span class="line">		fmt.Sprintf(&quot;&quot;),</span><br><span class="line">		fmt.Sprintf(&quot;hello&quot;),</span><br><span class="line">		fmt.Sprintf(&quot;hello&quot;),</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(&quot;String to bytes:&quot;)</span><br><span class="line">	for i, v :&#x3D; range s &#123;</span><br><span class="line">		b :&#x3D; unsafe.StringBytes(v)</span><br><span class="line">		b2 :&#x3D; []byte(v)</span><br><span class="line">		if b.Writeable() &#123;</span><br><span class="line">			b[0] &#x3D; &#39;x&#39;</span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Printf(&quot;%d\ts&#x3D;%5s\tptr(v)&#x3D;%-12v\tptr(StringBytes(v)&#x3D;%-12v\tptr([]byte(v)&#x3D;%-12v\n&quot;,</span><br><span class="line">			i, v, unsafe.StringPointer(v), b.Pointer(), unsafe.BytesPointer(b2))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	b :&#x3D; [][]byte&#123;</span><br><span class="line">		[]byte&#123;&#125;,</span><br><span class="line">		[]byte&#123;&#39;h&#39;, &#39;e&#39;, &#39;l&#39;, &#39;l&#39;, &#39;o&#39;&#125;,</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(&quot;Bytes to string:&quot;)</span><br><span class="line">	for i, v :&#x3D; range b &#123;</span><br><span class="line">		s1 :&#x3D; unsafe.BytesString(v)</span><br><span class="line">		s2 :&#x3D; string(v)</span><br><span class="line">		fmt.Printf(&quot;%d\ts&#x3D;%5s\tptr(v)&#x3D;%-12v\tptr(StringBytes(v)&#x3D;%-12v\tptr(string(v)&#x3D;%-12v\n&quot;,</span><br><span class="line">			i, s1, unsafe.BytesPointer(v), s1.Pointer(), unsafe.StringPointer(s2))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const N &#x3D; 3000000</span><br><span class="line"></span><br><span class="line">func Benchmark_Normal(b *testing.B) &#123;</span><br><span class="line">	for i :&#x3D; 1; i &lt; N; i++ &#123;</span><br><span class="line">		s :&#x3D; fmt.Sprintf(&quot;12345678901234567890123456789012345678901234567890&quot;)</span><br><span class="line">		bb :&#x3D; []byte(s)</span><br><span class="line">		bb[0] &#x3D; &#39;x&#39;</span><br><span class="line">		s &#x3D; string(bb)</span><br><span class="line">		s &#x3D; s</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">func Benchmark_Direct(b *testing.B) &#123;</span><br><span class="line">	for i :&#x3D; 1; i &lt; N; i++ &#123;</span><br><span class="line">		s :&#x3D; fmt.Sprintf(&quot;12345678901234567890123456789012345678901234567890&quot;)</span><br><span class="line">		bb :&#x3D; unsafe.StringBytes(s)</span><br><span class="line">		bb[0] &#x3D; &#39;x&#39;</span><br><span class="line">		s &#x3D; s</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;test result</span><br><span class="line">&#x2F;&#x2F;String to bytes:</span><br><span class="line">&#x2F;&#x2F;0	s&#x3D;     	ptr(v)&#x3D;0x51bd70    	ptr(StringBytes(v)&#x3D;0x51bd70    	ptr([]byte(v)&#x3D;0xc042021c58</span><br><span class="line">&#x2F;&#x2F;1	s&#x3D;     	ptr(v)&#x3D;0x51bd70    	ptr(StringBytes(v)&#x3D;0x51bd70    	ptr([]byte(v)&#x3D;0xc042021c58</span><br><span class="line">&#x2F;&#x2F;2	s&#x3D;hello	ptr(v)&#x3D;0x51c2fa    	ptr(StringBytes(v)&#x3D;0x51c2fa    	ptr([]byte(v)&#x3D;0xc042021c58</span><br><span class="line">&#x2F;&#x2F;3	s&#x3D;hello	ptr(v)&#x3D;0x51c2fa    	ptr(StringBytes(v)&#x3D;0x51c2fa    	ptr([]byte(v)&#x3D;0xc042021c58</span><br><span class="line">&#x2F;&#x2F;4	s&#x3D;     	ptr(v)&#x3D;&lt;nil&gt;       	ptr(StringBytes(v)&#x3D;&lt;nil&gt;       	ptr([]byte(v)&#x3D;0xc042021c58</span><br><span class="line">&#x2F;&#x2F;5	s&#x3D;     	ptr(v)&#x3D;&lt;nil&gt;       	ptr(StringBytes(v)&#x3D;&lt;nil&gt;       	ptr([]byte(v)&#x3D;0xc042021c58</span><br><span class="line">&#x2F;&#x2F;6	s&#x3D;xello	ptr(v)&#x3D;0xc0420444b5	ptr(StringBytes(v)&#x3D;0xc0420444b5	ptr([]byte(v)&#x3D;0xc042021c58</span><br><span class="line">&#x2F;&#x2F;7	s&#x3D;xello	ptr(v)&#x3D;0xc0420444ba	ptr(StringBytes(v)&#x3D;0xc0420444ba	ptr([]byte(v)&#x3D;0xc042021c58</span><br><span class="line">&#x2F;&#x2F;Bytes to string:</span><br><span class="line">&#x2F;&#x2F;0	s&#x3D;     	ptr(v)&#x3D;0x5c38b8    	ptr(StringBytes(v)&#x3D;0x5c38b8    	ptr(string(v)&#x3D;&lt;nil&gt;</span><br><span class="line">&#x2F;&#x2F;1	s&#x3D;hello	ptr(v)&#x3D;0xc0420445e0	ptr(StringBytes(v)&#x3D;0xc0420445e0	ptr(string(v)&#x3D;0xc042021c38</span><br><span class="line">&#x2F;&#x2F;Benchmark_Normal-4   	1000000000	         0.87 ns&#x2F;op</span><br><span class="line">&#x2F;&#x2F;Benchmark_Direct-4   	2000000000	         0.24 ns&#x2F;op</span><br></pre></td></tr></table></figure>
+
+<p>结论如下：</p>
+<p>1.string常量会在编译期分配到只读段，对应数据地址不可写入，并且相同的string常量不会重复存储。<br>2.fmt.Sprintf生成的字符串分配在堆上，对应数据地址可修改。<br>3.常量空字符串有数据地址，动态生成的字符串没有设置数据地址<br>4.Golang string和[]byte转换,会将数据复制到堆上，返回数据指向复制的数据<br>5.动态生成的字符串，即使内容一样，数据也是在不同的空间<br>6.只有动态生成的string，数据可以被黑科技修改<br>8.string和[]byte通过复制转换，性能损失接近4倍</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">golang</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/01/07/Golang%E9%BB%91%E7%A7%91%E6%8A%80%E4%B9%8B%E2%80%94%E2%80%94string%E4%B8%8E-byte%E8%BD%AC%E6%8D%A2/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-etcd-集群恢复" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/12/24/etcd-%E9%9B%86%E7%BE%A4%E6%81%A2%E5%A4%8D/">etcd 集群恢复</a>
+</h1>
+
+
+
+        
+        <a href="/2020/12/24/etcd-%E9%9B%86%E7%BE%A4%E6%81%A2%E5%A4%8D/" class="archive-article-date">
+  	<time datetime="2020-12-24T09:15:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-24</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/12/24/etcd-%E9%9B%86%E7%BE%A4%E6%81%A2%E5%A4%8D/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-etcd-v3集群搭建" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/12/24/etcd-v3%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/">etcd  v3集群搭建</a>
+</h1>
+
+
+
+        
+        <a href="/2020/12/24/etcd-v3%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/" class="archive-article-date">
+  	<time datetime="2020-12-24T09:14:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-24</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/12/24/etcd-v3%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-如何处理容器数据磁盘被写满" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/12/23/%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E5%AE%B9%E5%99%A8%E6%95%B0%E6%8D%AE%E7%A3%81%E7%9B%98%E8%A2%AB%E5%86%99%E6%BB%A1/">如何处理容器数据磁盘被写满</a>
+</h1>
+
+
+
+        
+        <a href="/2020/12/23/%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E5%AE%B9%E5%99%A8%E6%95%B0%E6%8D%AE%E7%A3%81%E7%9B%98%E8%A2%AB%E5%86%99%E6%BB%A1/" class="archive-article-date">
+  	<time datetime="2020-12-23T08:42:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/12/23/%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E5%AE%B9%E5%99%A8%E6%95%B0%E6%8D%AE%E7%A3%81%E7%9B%98%E8%A2%AB%E5%86%99%E6%BB%A1/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-树莓派4bubuntu连wifi固定ip" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -217,7 +491,26 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>树莓派4B 安装ubuntu 20.04 LTS wifi配置固定ip</p>
+<p>每次都随机比较难找……</p>
+<p>1.首先参考之前的那篇 (树莓派 ubuntu 连wifi)</p>
+<blockquote>
+<p>ubuntu 从18.04 版本开始网络配置工具已经改为netplan了</p>
+</blockquote>
+<h3 id="编辑netplan目录下的yaml配置文件"><a href="#编辑netplan目录下的yaml配置文件" class="headerlink" title="编辑netplan目录下的yaml配置文件"></a>编辑netplan目录下的yaml配置文件</h3><p>sudo vim  /etc/netplan/50-cloud-init.yaml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">root@ubuntu:~#</span> <span class="string">cat</span> <span class="string">/etc/netplan/50-cloud-init.yaml</span></span><br><span class="line"><span class="comment"># This file is generated from information provided by the datasource.  Changes</span></span><br><span class="line"><span class="comment"># to it will not persist across an instance reboot.  To disable cloud-init's</span></span><br><span class="line"><span class="comment"># network configuration capabilities, write a file</span></span><br><span class="line"><span class="comment"># /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:</span></span><br><span class="line"><span class="comment"># network: &#123;config: disabled&#125;</span></span><br><span class="line"><span class="attr">network:</span></span><br><span class="line">    <span class="attr">ethernets:</span></span><br><span class="line">        <span class="attr">eth0:</span></span><br><span class="line">            <span class="attr">dhcp4:</span> <span class="literal">true</span></span><br><span class="line">            <span class="attr">optional:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">wifis:</span></span><br><span class="line">        <span class="attr">wlan0:</span></span><br><span class="line">            <span class="attr">access-points:</span></span><br><span class="line">                <span class="attr">"wifi name":</span></span><br><span class="line">                        <span class="attr">password:</span> <span class="string">wifi</span> <span class="string">passwd</span></span><br><span class="line">            <span class="attr">addresses:</span> <span class="string">[192.168.0.101/24]</span></span><br><span class="line">            <span class="attr">gateway4:</span> <span class="number">192.168</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line">            <span class="attr">nameservers:</span></span><br><span class="line">              <span class="attr">addresses:</span> <span class="string">[8.8.8.8,114.114.114.114]</span></span><br><span class="line">    <span class="attr">version:</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="检查语法"><a href="#检查语法" class="headerlink" title="检查语法"></a>检查语法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo netplan generate</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="使配置生效"><a href="#使配置生效" class="headerlink" title="使配置生效"></a>使配置生效</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo netplan apply</span><br></pre></td></tr></table></figure>
+
+<h1 id="查看ip地址"><a href="#查看ip地址" class="headerlink" title="查看ip地址"></a>查看ip地址</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:~# ip a</span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000</span><br><span class="line">    link&#x2F;loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1&#x2F;8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1&#x2F;128 scope host</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">2: eth0: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu 1500 qdisc mq state DOWN group default qlen 1000</span><br><span class="line">    link&#x2F;ether dc:a6:32:cc:25:ab brd ff:ff:ff:ff:ff:ff</span><br><span class="line">3: wlan0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UP group default qlen 1000</span><br><span class="line">    link&#x2F;ether dc:a6:32:cc:25:ad brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 192.168.0.101&#x2F;24 brd 192.168.0.255 scope global wlan0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::dea6:32ff:fecc:25ad&#x2F;64 scope link</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">4: docker0: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu 1500 qdisc noqueue state DOWN group default</span><br><span class="line">    link&#x2F;ether 02:42:4f:5f:9b:71 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 172.17.0.1&#x2F;16 brd 172.17.255.255 scope global docker0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+
+
       
 
       
@@ -225,6 +518,17 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">ubuntu</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -469,7 +773,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a href="http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html" target="_blank" rel="noopener">OAuth 2.0</a> 是目前最流行的授权机制，用来授权第三方应用，获取用户数据。</p>
+        <p><a href="https://www.jxhs.me/2020/12/21/%E7%90%86%E8%A7%A3OAuth-2-0/">OAuth 2.0</a> 是目前最流行的授权机制，用来授权第三方应用，获取用户数据。</p>
 <p>这个标准比较抽象，使用了很多术语，初学者不容易理解。其实说起来并不复杂，下面我就通过一个简单的类比，帮助大家轻松理解，OAuth 2.0 到底是什么。</p>
 <h3 id="一、快递员问题"><a href="#一、快递员问题" class="headerlink" title="一、快递员问题"></a>一、快递员问题</h3><p>我住在一个大型的居民小区。<br><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glvm5d78v3j30m80etq4n.jpg" alt=""></p>
 <p>小区有门禁系统。</p>
@@ -559,8 +863,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>(OAuth)[<a href="https://en.wikipedia.org/wiki/OAuth]是一个关于授权（authorization）的开放网络标准，在全世界得到广泛应用，目前的版本是2.0版。" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/OAuth]是一个关于授权（authorization）的开放网络标准，在全世界得到广泛应用，目前的版本是2.0版。</a></p>
-<p>本文对OAuth 2.0的设计思路和运行流程，做一个简明通俗的解释，主要参考材料为(RFC 6749)[<a href="http://www.rfcreader.com/#rfc6749]。" target="_blank" rel="noopener">http://www.rfcreader.com/#rfc6749]。</a></p>
+        <p><a href="https://en.wikipedia.org/wiki/OAuth" target="_blank" rel="noopener">OAuth</a>是一个关于授权（authorization）的开放网络标准，在全世界得到广泛应用，目前的版本是2.0版。</p>
+<p>本文对OAuth 2.0的设计思路和运行流程，做一个简明通俗的解释，主要参考材料为<a href="http://www.rfcreader.com/#rfc6749" target="_blank" rel="noopener">RFC 6749</a>。</p>
 <h3 id="一、应用场景"><a href="#一、应用场景" class="headerlink" title="一、应用场景"></a>一、应用场景</h3><p>为了理解OAuth的适用场合，让我举一个假设的例子。</p>
 <p>有一个”云冲印”的网站，可以将用户储存在Google的照片，冲印出来。用户为了使用该服务，必须让”云冲印”读取自己储存在Google上的照片。<br><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glxnw8oyx0j308c08ca9w.jpg" alt=""><br>问题是只有得到用户的授权，Google才会同意”云冲印”读取这些照片。那么，”云冲印”怎样获得用户的授权呢？</p>
 <p>传统方法是，用户将自己的Google用户名和密码，告诉”云冲印”，后者就可以读取用户的照片了。这样的做法有以下几个严重的缺点。</p>
@@ -603,7 +907,8 @@
 <li>客户端模式（client credentials）</li>
 </ol>
 <h3 id="六、授权码模式"><a href="#六、授权码模式" class="headerlink" title="六、授权码模式"></a>六、授权码模式</h3><p>授权码模式（authorization code）是功能最完整、流程最严密的授权模式。它的特点就是通过客户端的后台服务器，与”服务提供商”的认证服务器进行互动。</p>
-<p><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glxo1y1y1tj30l80epq2u.jpg" alt=""><br>它的步骤如下：</p>
+<p><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glxo1y1y1tj30l80epq2u.jpg" alt=""></p>
+<p>它的步骤如下：</p>
 <blockquote>
 <p>（A）用户访问客户端，后者将前者导向认证服务器。</p>
 <p>（B）用户选择是否给予客户端授权。</p>
@@ -789,696 +1094,9 @@
 
 
   
-    <article id="post-gin框架路由拆分与注册" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/12/18/gin%E6%A1%86%E6%9E%B6%E8%B7%AF%E7%94%B1%E6%8B%86%E5%88%86%E4%B8%8E%E6%B3%A8%E5%86%8C/">gin框架路由拆分与注册</a>
-</h1>
-
-
-
-        
-        <a href="/2020/12/18/gin%E6%A1%86%E6%9E%B6%E8%B7%AF%E7%94%B1%E6%8B%86%E5%88%86%E4%B8%8E%E6%B3%A8%E5%86%8C/" class="archive-article-date">
-  	<time datetime="2020-12-18T04:14:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-18</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>本文总结了我平时在项目中积累的关于gin框架路由拆分与注册的若干方法。</p>
-<h3 id="基本的路由注册"><a href="#基本的路由注册" class="headerlink" title="基本的路由注册"></a>基本的路由注册</h3><p>下面最基础的gin路由注册方式，适用于路由条目比较少的简单项目或者项目demo。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">	&quot;net&#x2F;http&quot;</span><br><span class="line"></span><br><span class="line">	&quot;github.com&#x2F;gin-gonic&#x2F;gin&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func helloHandler(c *gin.Context) &#123;</span><br><span class="line">	c.JSON(http.StatusOK, gin.H&#123;</span><br><span class="line">		&quot;message&quot;: &quot;Hello q1mi!&quot;,</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">	r :&#x3D; gin.Default()</span><br><span class="line">	r.GET(&quot;&#x2F;hello&quot;, helloHandler)</span><br><span class="line">	if err :&#x3D; r.Run(); err !&#x3D; nil &#123;</span><br><span class="line">		fmt.Println(&quot;startup service failed, err:%v\n&quot;, err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="路由拆分成单独文件或包"><a href="#路由拆分成单独文件或包" class="headerlink" title="路由拆分成单独文件或包"></a>路由拆分成单独文件或包</h3><p>当项目的规模增大后就不太适合继续在项目的<code>main.go</code>文件中去实现路由注册相关逻辑了，我们会倾向于把路由部分的代码都拆分出来，形成一个单独的文件或包：</p>
-<p>我们在<code>routers.go</code>文件中定义并注册路由信息：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">	&quot;net&#x2F;http&quot;</span><br><span class="line"></span><br><span class="line">	&quot;github.com&#x2F;gin-gonic&#x2F;gin&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func helloHandler(c *gin.Context) &#123;</span><br><span class="line">	c.JSON(http.StatusOK, gin.H&#123;</span><br><span class="line">		&quot;message&quot;: &quot;Hello q1mi!&quot;,</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func setupRouter() *gin.Engine &#123;</span><br><span class="line">	r :&#x3D; gin.Default()</span><br><span class="line">	r.GET(&quot;&#x2F;hello&quot;, helloHandler)</span><br><span class="line">	return r</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>此时<code>main.go</code>中调用上面定义好的<code>setupRouter</code>函数：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func main() &#123;</span><br><span class="line">	r :&#x3D; setupRouter()</span><br><span class="line">	if err :&#x3D; r.Run(); err !&#x3D; nil &#123;</span><br><span class="line">		fmt.Println(&quot;startup service failed, err:%v\n&quot;, err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>此时的目录结构：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gin_demo</span><br><span class="line">├── go.mod</span><br><span class="line">├── go.sum</span><br><span class="line">├── main.go</span><br><span class="line">└── routers.go</span><br></pre></td></tr></table></figure>
-<p>把路由部分的代码单独拆分成包的话也是可以的，拆分后的目录结构如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gin_demo</span><br><span class="line">├── go.mod</span><br><span class="line">├── go.sum</span><br><span class="line">├── main.go</span><br><span class="line">└── routers</span><br><span class="line">    └── routers.go</span><br></pre></td></tr></table></figure>
-
-<p><code>routers/routers.go</code>需要注意此时<code>setupRouter</code>需要改成首字母大写：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">package routers</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">	&quot;net&#x2F;http&quot;</span><br><span class="line"></span><br><span class="line">	&quot;github.com&#x2F;gin-gonic&#x2F;gin&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func helloHandler(c *gin.Context) &#123;</span><br><span class="line">	c.JSON(http.StatusOK, gin.H&#123;</span><br><span class="line">		&quot;message&quot;: &quot;Hello q1mi!&quot;,</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; SetupRouter 配置路由信息</span><br><span class="line">func SetupRouter() *gin.Engine &#123;</span><br><span class="line">	r :&#x3D; gin.Default()</span><br><span class="line">	r.GET(&quot;&#x2F;hello&quot;, helloHandler)</span><br><span class="line">	return r</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>main.go</code>文件内容如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">	&quot;fmt&quot;</span><br><span class="line">	&quot;gin_demo&#x2F;routers&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">	r :&#x3D; routers.SetupRouter()</span><br><span class="line">	if err :&#x3D; r.Run(); err !&#x3D; nil &#123;</span><br><span class="line">		fmt.Println(&quot;startup service failed, err:%v\n&quot;, err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="路由拆分成多个文件"><a href="#路由拆分成多个文件" class="headerlink" title="路由拆分成多个文件"></a>路由拆分成多个文件</h3><p>当我们的业务规模继续膨胀，单独的一个<code>routers</code>文件或包已经满足不了我们的需求了，</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func SetupRouter() *gin.Engine &#123;</span><br><span class="line">	r :&#x3D; gin.Default()</span><br><span class="line">	r.GET(&quot;&#x2F;hello&quot;, helloHandler)</span><br><span class="line">  	r.GET(&quot;&#x2F;xx1&quot;, xxHandler1)</span><br><span class="line">  	...</span><br><span class="line">  	r.GET(&quot;&#x2F;xx30&quot;, xxHandler30)</span><br><span class="line">		return r</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>因为我们把所有的路由注册都写在一个<code>SetupRouter</code>函数中的话就会太复杂了。</p>
-<p>我们可以分开定义多个路由文件，例如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">gin_demo</span><br><span class="line">├── go.mod</span><br><span class="line">├── go.sum</span><br><span class="line">├── main.go</span><br><span class="line">└── routers</span><br><span class="line">    ├── blog.go</span><br><span class="line">    └── shop.go</span><br></pre></td></tr></table></figure>
-<p><code>routers/shop.go</code>中添加一个<code>LoadShop</code>的函数，将shop相关的路由注册到指定的路由器：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func LoadShop(e *gin.Engine)  &#123;</span><br><span class="line">	e.GET(&quot;&#x2F;hello&quot;, helloHandler)</span><br><span class="line">  	e.GET(&quot;&#x2F;goods&quot;, goodsHandler)</span><br><span class="line">  	e.GET(&quot;&#x2F;checkout&quot;, checkoutHandler)</span><br><span class="line">  	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>routers/blog.go</code>中添加一个<code>LoadBlog</code>的函数，将blog相关的路由注册到指定的路由器：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">func LoadBlog(e *gin.Engine) &#123;</span><br><span class="line">	e.GET(&quot;&#x2F;post&quot;, postHandler)</span><br><span class="line">  	e.GET(&quot;&#x2F;comment&quot;, commentHandler)</span><br><span class="line">  	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在main函数中实现最终的注册逻辑如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func main() &#123;</span><br><span class="line">	r :&#x3D; gin.Default()</span><br><span class="line">	routers.LoadBlog(r)</span><br><span class="line">	routers.LoadShop(r)</span><br><span class="line">	if err :&#x3D; r.Run(); err !&#x3D; nil &#123;</span><br><span class="line">		fmt.Println(&quot;startup service failed, err:%v\n&quot;, err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="路由拆分到不同的APP"><a href="#路由拆分到不同的APP" class="headerlink" title="路由拆分到不同的APP"></a>路由拆分到不同的APP</h3><p>有时候项目规模实在太大，那么我们就更倾向于把业务拆分的更详细一些，例如把不同的业务代码拆分成不同的APP。</p>
-<p>因此我们在项目目录下单独定义一个<code>app</code>目录，用来存放我们不同业务线的代码文件，这样就很容易进行横向扩展。大致目录结构如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">gin_demo</span><br><span class="line">├── app</span><br><span class="line">│   ├── blog</span><br><span class="line">│   │   ├── handler.go</span><br><span class="line">│   │   └── router.go</span><br><span class="line">│   └── shop</span><br><span class="line">│       ├── handler.go</span><br><span class="line">│       └── router.go</span><br><span class="line">├── go.mod</span><br><span class="line">├── go.sum</span><br><span class="line">├── main.go</span><br><span class="line">└── routers</span><br><span class="line">    └── routers.go</span><br></pre></td></tr></table></figure>
-<p>其中<code>app/blog/router.go</code>用来定义post相关路由信息，具体内容如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func Routers(e *gin.Engine) &#123;</span><br><span class="line">	e.GET(&quot;&#x2F;post&quot;, postHandler)</span><br><span class="line">	e.GET(&quot;&#x2F;comment&quot;, commentHandler)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>app/shop/router.go</code>用来定义shop相关路由信息，具体内容如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func Routers(e *gin.Engine) &#123;</span><br><span class="line">	e.GET(&quot;&#x2F;goods&quot;, goodsHandler)</span><br><span class="line">	e.GET(&quot;&#x2F;checkout&quot;, checkoutHandler)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>routers/routers.go</code>中根据需要定义<code>Include</code>函数用来注册子app中定义的路由，<code>Init</code>函数用来进行路由的初始化操作：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">type Option func(*gin.Engine)</span><br><span class="line"></span><br><span class="line">var options &#x3D; []Option&#123;&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 注册app的路由配置</span><br><span class="line">func Include(opts ...Option) &#123;</span><br><span class="line">	options &#x3D; append(options, opts...)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 初始化</span><br><span class="line">func Init() *gin.Engine &#123;</span><br><span class="line">	r :&#x3D; gin.Default()</span><br><span class="line">	for _, opt :&#x3D; range options &#123;</span><br><span class="line">		opt(r)</span><br><span class="line">	&#125;</span><br><span class="line">	return r</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>main.go</code>中按如下方式先注册子app中的路由，然后再进行路由的初始化：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">func main() &#123;</span><br><span class="line">	&#x2F;&#x2F; 加载多个APP的路由配置</span><br><span class="line">	routers.Include(shop.Routers, blog.Routers)</span><br><span class="line">	&#x2F;&#x2F; 初始化路由</span><br><span class="line">	r :&#x3D; routers.Init()</span><br><span class="line">	if err :&#x3D; r.Run(); err !&#x3D; nil &#123;</span><br><span class="line">		fmt.Println(&quot;startup service failed, err:%v\n&quot;, err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>gin</code>框架是一个非常容易扩展的web框架，本文是我在日常编码中总结的一点点经验，不过web框架都差不多 flask django也是这么玩儿的。。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/12/18/gin%E6%A1%86%E6%9E%B6%E8%B7%AF%E7%94%B1%E6%8B%86%E5%88%86%E4%B8%8E%E6%B3%A8%E5%86%8C/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-怎样理解openresty中的cosocket" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/12/01/%E6%80%8E%E6%A0%B7%E7%90%86%E8%A7%A3openresty%E4%B8%AD%E7%9A%84cosocket/">怎样理解openresty中的cosocket</a>
-</h1>
-
-
-
-        
-        <a href="/2020/12/01/%E6%80%8E%E6%A0%B7%E7%90%86%E8%A7%A3openresty%E4%B8%AD%E7%9A%84cosocket/" class="archive-article-date">
-  	<time datetime="2020-12-01T07:22:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-01</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>cosocket 是各种 lua-resty-* 非阻塞库的基础，没 有 cosocket，开发者就无法用 Lua 来快速连接各种外部的网络服务。</p>
-<p>在早期的 OpenResty 版本中，如果想要去与 Redis、memcached 这些服务交互的话，需要使用 redis2-nginx-module、redis-nginx-module 和 memc-nginx-module这些 C 模块.这些模块至今仍然在 OpenResty 的发行包中。</p>
-<p>cosocket 功能加入以后，它们都已经被 lua-resty-redis 和 lua-resty-memcached 替代，基 本上没人再去使用 C 模块连接外部服务了。</p>
-<h3 id="什么是-cosocket"><a href="#什么是-cosocket" class="headerlink" title="什么是 cosocket"></a>什么是 cosocket</h3><p>cosocket是 OpenResty 中的专有名词，是把协程和网络套接字的英文 拼在一起形成的，即 cosocket = coroutine + socket。所以，可以把 cosocket 翻译为“协程套接字”。</p>
-<p>cosocket 不仅需要 Lua 协程特性的支持，也需要 Nginx 中非常重要的事件机制的支持，这两者结合在一 起，最终实现了非阻塞网络 I/O。另外，cosocket 支持 TCP、UDP 和 Unix Domain Socket。</p>
-<p>在 OpenResty 中调用一个 cosocket 相关函数，内部实现便是下面这张图的样子：<br><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glrwdfkpjvj30ye0fkjuz.jpg" alt=""><br>用户的 Lua 脚本每触发一个网络操作，都会有协程的 yield 以及 resume。</p>
-<p>遇到网络 I/O 时，它会交出控制权（yield），把网络事件注册到 Nginx 监听列表中，并把权限交给 Nginx；当有 Nginx 事件达到触发条件时，便唤醒对应的协程继续处理（resume）。</p>
-<p>OpenResty 正是以此为基础，封装实现 connect、send、receive 等操作，形成了现在的 cosocket API。以处理 TCP 的 API 为例来介绍一下。处理 UDP 和 Unix Domain Socket ，与TCP 的接口基 本是一样的。</p>
-<h3 id="cosocket-API-和指令简介"><a href="#cosocket-API-和指令简介" class="headerlink" title="cosocket API 和指令简介"></a>cosocket API 和指令简介</h3><p>TCP 相关的 cosocket API 可以分为下面这几类：</p>
-<blockquote>
-<p>创建对象：ngx.socket.tcp。<br>设置超时：tcpsock:settimeout 和 tcpsock:settimeouts。<br>建立连接：tcpsock:connect。<br>发送数据：tcpsock:send。<br>接受数据：tcpsock:receive、tcpsock:receiveany 和 tcpsock:receiveuntil。<br>连接池：tcpsock:setkeepalive。<br>关闭连接：tcpsock:close。</p>
-</blockquote>
-<p>这些 API 可以使用的上下文：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">	</span><br><span class="line">rewrite_by_lua*, access_by_lua*, content_by_lua*, ngx.timer.*, ssl_certificate_by_lua*, ssl_session_fetch_by_lua*_</span><br></pre></td></tr></table></figure>
-
-<p>由于 Nginx 内核的各种限制，cosocket API 在 set_by_lua<em>， log_by_lua*， header_filter_by_lua</em> 和 body_filter_by_lua* 中是无法使用的。而在 init_by_lua* 和 init_worker_by_lua* 中暂时也不能用，不过 Nginx 内核对这两个阶段并没有限制。</p>
-<p>此外，与这些 API 相关的，还有 8 个 lua_socket_ 开头的 Nginx 指令：</p>
-<blockquote>
-<p>lua_socket_connect_timeout：连接超时，默认 60 秒。<br>lua_socket_send_timeout：发送超时，默认 60 秒。<br>lua_socket_send_lowat：发送阈值（low water），默认为 0。<br>lua_socket_read_timeout： 读取超时，默认 60 秒。<br>lua_socket_buffer_size：读取数据的缓存区大小，默认 4k/8k。<br>lua_socket_pool_size：连接池大小，默认 30。<br>lua_socket_keepalive_timeout：连接池 cosocket 对象的空闲时间，默认 60 秒。<br>lua_socket_log_errors：cosocket 发生错误时，是否记录日志，默认为 on。</p>
-</blockquote>
-<p>有些指令和 API 的功能一样的，比如设置超时时间和连接池大小等。不过，如果两者有冲突的话，API 的优先级高于指令，会覆盖指令设置的值。所以，一般来说，都推荐使用 API来做设 置，这样也会更加灵活。 </p>
-<p>通过一个具体的例子，来理解如何使用这些 cosocket API。发送 TCP 请求到一个网站，并把返回的内容打印出来：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">resty -e &#39;local sock &#x3D; ngx.socket.tcp()</span><br><span class="line">    sock:settimeout(1000) -- one second timeout</span><br><span class="line">    local ok, err &#x3D; sock:connect(&quot;www.baidu.com&quot;, 80)</span><br><span class="line">    if not ok then</span><br><span class="line">        ngx.say(&quot;failed to connect: &quot;, err)</span><br><span class="line">        return</span><br><span class="line">    end</span><br><span class="line">local req_data &#x3D; &quot;GET &#x2F; HTTP&#x2F;1.1\r\nHost: www.baidu.com\r\n\r\n&quot;</span><br><span class="line">local bytes, err &#x3D; sock:send(req_data)</span><br><span class="line">if err then</span><br><span class="line">    ngx.say(&quot;failed to send: &quot;, err)</span><br><span class="line">    return</span><br><span class="line">end</span><br><span class="line">local data, err, partial &#x3D; sock:receive()</span><br><span class="line">if err then</span><br><span class="line">    ngx.say(&quot;failed to receive: &quot;, err)</span><br><span class="line">    return</span><br><span class="line">end</span><br><span class="line">sock:close()</span><br><span class="line">ngx.say(&quot;response is: &quot;, data)</span><br></pre></td></tr></table></figure>
-
-<p>分析下这段代码:</p>
-<blockquote>
-<p>首先，通过 ngx.socket.tcp() ，创建 TCP 的 cosocket 对象，名字是 sock。<br>然后，使用 settimeout() ，把超时时间设置为 1 秒。注这里的超时没有区分 connect、receive，是统一的设置。<br>接着，使用 connect() 去连接指定网站的 80 端口，如果失败就直接退出。<br>连接成功的话，就使用 send() 来发送构造好的数据，如果发送失败就退出。<br>发送数据成功的话，就使用 receive() 来接收网站返回的数据。这里 receive() 的默认参数值是 <em>l，也就是只返回第一行的数据；如果参数设&gt;置为了</em>a，就是持续接收数据，直到连接关闭；<br>最后，调用 close() ，主动关闭 socket 连接。</p>
-</blockquote>
-<p>接 下来，我们对这个示例再做一些调整:<br>第一个动作，对 socket 连接、发送和读取这三个动作，分别设置超时时间。</p>
-<p>settimeout() 作用是把超时时间统一设置为一个值。如果要想分开设置，就需要使用 settimeouts() 函数，比如下面这样的写法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sock:settimeouts(1000, 2000, 3000)</span><br></pre></td></tr></table></figure>
-<p>表示连接超时为 1 秒，发送超时为 2 秒，读取超时为 3 秒。在OpenResty 和 lua-resty 库中，大部分和时间相关的 API 的参数，都以毫秒为单位</p>
-<p>第二个动作，receive接收指定大小的内容。</p>
-<p>receive() 接口可以接收一行数据，也可以持续接收数据。如果只想接收 10K 大小的数据，应该使用receiveany() ，它就是专为满足这种需求而设计的</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">local data, err, partial &#x3D; sock:receiveany(10240)</span><br></pre></td></tr></table></figure>
-<p>关于receive，还有另一个很常见的用户需求，那就是一直获取数据，直到遇到指定字符串才停止。</p>
-<p>receiveuntil() 专门用来解决这类问题，它不会像 receive() 和 receiveany() 一样返回字符串， 而会返回一个迭代器。这样就可以在循环中调用它来分段读取匹配到的数据，当读取完毕时，就会返回 nil。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">local reader &#x3D; sock:receiveuntil(&quot;\r\n&quot;)</span><br><span class="line">while true do</span><br><span class="line">    local data, err, partial &#x3D; reader(4)</span><br><span class="line">    if not data then</span><br><span class="line">        if err then</span><br><span class="line">            ngx.say(&quot;failed to read the data stream: &quot;, err)</span><br><span class="line">            break</span><br><span class="line">        end</span><br><span class="line">        ngx.say(&quot;read done&quot;)</span><br><span class="line">        break</span><br><span class="line">    end</span><br><span class="line">    ngx.say(&quot;read chunk: [&quot;, data, &quot;]&quot;)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-<p>receiveuntil 会返回 \r\n 之前的数据，并通过迭代器每次读取其中的 4 个字节，</p>
-<p>第三个动作，不直接关闭 socket，而是放入连接池中。</p>
-<p>没有连接池的话，每次请求进来都要新建一个连接，就会导致 cosocket 对象被频繁地创建和销 毁，造成不必要的性能损耗。</p>
-<p>为了避免这个问题，在使用完一个 cosocket 后，可以调用 setkeepalive() 放到连接池中</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">local ok, err &#x3D; sock:setkeepalive(2 * 1000, 100)</span><br><span class="line">if not ok then</span><br><span class="line">    ngx.say(&quot;failed to set reusable: &quot;, err)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-
-<p>这段代码设置了连接的空闲时间为 2 秒，连接池的大小为 100。这样，在调用 connect() 函数时，就会优先从连接池中获取 cosocket 对象。</p>
-<p>关于连接池的使用，有两点需要注意：</p>
-<p>第一，不能把发生错误的连接放入连接池，否则下次使用时，就会导致收发数据失败。这也是为什么需要判断每一个 API 调用是否成功的一个原因。</p>
-<p>第二，要搞清楚连接的数量。连接池是 worker 级别的，每个 worker 都有自己的连接池。所以，如果有 10 个 worker，连接池大小设置为 30，那么对于后端的服务来讲，就等于有 300个连接。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/12/01/%E6%80%8E%E6%A0%B7%E7%90%86%E8%A7%A3openresty%E4%B8%AD%E7%9A%84cosocket/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-apisix与consul服务发现的结合使用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/11/30/apisix%E4%B8%8Econsul%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E7%9A%84%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/">apisix与consul服务发现的结合使用</a>
-</h1>
-
-
-
-        
-        <a href="/2020/11/30/apisix%E4%B8%8Econsul%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E7%9A%84%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/" class="archive-article-date">
-  	<time datetime="2020-11-30T09:05:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-30</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>首先简单介绍一下apisix,是一个机遇openresty开发的云原生网关。功能类比于nginx+upsync 可无reload，apisix支持自身配置放在etcd中，原生高可用架构。并且支持 <code>consul</code>  <code>eruka</code>  <code>nacos</code>。</p>
-<h2 id="实践逻辑如下"><a href="#实践逻辑如下" class="headerlink" title="实践逻辑如下"></a>实践逻辑如下</h2><h4 id="安装以下实验环境"><a href="#安装以下实验环境" class="headerlink" title="安装以下实验环境"></a>安装以下实验环境</h4><p>以下三个点作为验证环境的安装步骤。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.安装好apisix以及相关依赖(openresty,etcd)</span><br><span class="line">2.安装好consul组件作为服务注册与发现。</span><br><span class="line">3.run demo案例作为业务服务。</span><br></pre></td></tr></table></figure>
-
-<h4 id="验证逻辑"><a href="#验证逻辑" class="headerlink" title="验证逻辑"></a>验证逻辑</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1.run demo代码,本身是一个http服务,并且把自己注册到consul中,持续健康检查监听。</span><br><span class="line">2.访问 demo的http服务发现可访问</span><br><span class="line">3.在apisix中创建url,后端服务对应demo注册到consul的servername。</span><br><span class="line">4.使用apisix创建的url访问服务，发现访问结果与之前一致。</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="Install-Consul"><a href="#Install-Consul" class="headerlink" title="Install Consul"></a>Install Consul</h2><ol>
-<li><p>download consul</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https:&#x2F;&#x2F;releases.hashicorp.com&#x2F;consul&#x2F;1.7.3&#x2F;consul_1.7.3_linux_amd64.zip</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>unzip to <code>/usr/bin</code> </p>
-</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo unzip consul_1.7.3_linux_amd64.zip -d &#x2F;usr&#x2F;bin</span><br></pre></td></tr></table></figure>
-
-<ol start="3">
-<li><p>create consul service file</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sudo vim &#x2F;lib&#x2F;systemd&#x2F;system&#x2F;consul.service</span><br><span class="line"></span><br><span class="line">[Unit]</span><br><span class="line">Description&#x3D;consul</span><br><span class="line">[Service]</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;bin&#x2F;consul agent -config-dir &#x2F;etc&#x2F;consul</span><br><span class="line">KillSignal&#x3D;SIGINT</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>create server json file</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir &#x2F;etc&#x2F;consul&#x2F;</span><br><span class="line"></span><br><span class="line">sudo vim &#x2F;etc&#x2F;consul&#x2F;server.json</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">	&quot;data_dir&quot;: &quot;&#x2F;var&#x2F;consul&quot;,</span><br><span class="line">	&quot;log_level&quot;: &quot;INFO&quot;,</span><br><span class="line">	&quot;node_name&quot;: &quot;test&quot;,</span><br><span class="line">	&quot;server&quot;: true,</span><br><span class="line">	&quot;ui&quot;: true,</span><br><span class="line">	&quot;bootstrap_expect&quot;: 1,</span><br><span class="line">	&quot;client_addr&quot;: &quot;0.0.0.0&quot;,</span><br><span class="line">	&quot;advertise_addr&quot;: &quot;127.0.0.1&quot;,</span><br><span class="line">	&quot;ports&quot;: &#123;</span><br><span class="line">		&quot;dns&quot;: 53</span><br><span class="line">	&#125;,	</span><br><span class="line">	&quot;advertise_addr_wan&quot;: &quot;127.0.0.1&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>start consul</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start consul</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h2 id="start-service-golang-version"><a href="#start-service-golang-version" class="headerlink" title="start service - golang version"></a>start service - golang version</h2><p><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glwqp0m8muj30qj0qbjvm.jpg" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;api7&#x2F;consul-test-golang.git</span><br><span class="line"></span><br><span class="line">yum -y install glang </span><br><span class="line"></span><br><span class="line">go env -w GO111MODULE&#x3D;on</span><br><span class="line"></span><br><span class="line">go env -w GOPROXY&#x3D;https:&#x2F;&#x2F;goproxy.io,direct</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">cd consul-test-golang</span><br><span class="line"></span><br><span class="line">nohup go run main.go &amp;</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="install-etcd-–-need-by-Apache-APISIX"><a href="#install-etcd-–-need-by-Apache-APISIX" class="headerlink" title="install etcd  – need by Apache APISIX"></a>install etcd  – need by Apache APISIX</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install etcd</span><br><span class="line"></span><br><span class="line">nohup &#x2F;usr&#x2F;bin&#x2F;etcd --enable-v2&#x3D;true &amp;</span><br></pre></td></tr></table></figure>
-
-<h2 id="install-openresty-–-need-by-Apache-APISIX"><a href="#install-openresty-–-need-by-Apache-APISIX" class="headerlink" title="install openresty – need by Apache APISIX"></a>install openresty – need by Apache APISIX</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget https:&#x2F;&#x2F;openresty.org&#x2F;package&#x2F;centos&#x2F;openresty.repo</span><br><span class="line"></span><br><span class="line">sudo mv openresty.repo &#x2F;etc&#x2F;yum.repos.d&#x2F;</span><br><span class="line"></span><br><span class="line">sudo yum install openresty -y</span><br></pre></td></tr></table></figure>
-
-<h2 id="install-Apache-APISIX"><a href="#install-Apache-APISIX" class="headerlink" title="install Apache APISIX"></a>install Apache APISIX</h2><ol>
-<li>install from RPM, and you can get the latest version from <a href="https://github.com/apache/incubator-apisix/releases" target="_blank" rel="noopener">https://github.com/apache/incubator-apisix/releases</a></li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;incubator-apisix&#x2F;releases&#x2F;download&#x2F;1.3&#x2F;apisix-1.3-0.el7.noarch.rpm</span><br><span class="line"></span><br><span class="line">sudo yum install apisix-1.3-0.el7.noarch.rpm -y</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>change config.yaml</li>
-</ol>
-<p>vi /usr/local/apisix/conf/config.yaml</p>
-<p>add consul address to <code>dns_resolver</code>：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dns_resolver:</span><br><span class="line"> - 127.0.0.1</span><br></pre></td></tr></table></figure>
-
-<ol start="3">
-<li>start Apache APISIX:<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apisix start</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h2 id="Test"><a href="#Test" class="headerlink" title="Test"></a>Test</h2><ol>
-<li>add route in Apache APISIX:<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">curl http:&#x2F;&#x2F;127.0.0.1:9080&#x2F;apisix&#x2F;admin&#x2F;routes&#x2F;1 -H &#39;X-API-KEY: edd1c9f034335f136f87ad84b625c8f1&#39; -X PUT -i -d &#39;</span><br><span class="line">&#123;</span><br><span class="line">    &quot;uri&quot;: &quot;&#x2F;healthz&quot;,</span><br><span class="line">    &quot;upstream&quot;: &#123;</span><br><span class="line">        &quot;type&quot;: &quot;roundrobin&quot;,</span><br><span class="line">        &quot;nodes&quot;: &#123;</span><br><span class="line">            &quot;go-consul-test.service.consul:8080&quot;: 1</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;&#39;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<p><strong>go-consul-test.service.consul is registered DNS SRV by consul-test-golang service</strong></p>
-<ol start="2">
-<li>test：<br><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glwqqxoe77j313y086q47.jpg" alt=""></li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http:&#x2F;&#x2F;127.0.0.1:8080&#x2F;healthz | jq</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glwqsd3qemj314g07u75i.jpg" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http:&#x2F;&#x2F;127.0.0.1:9080&#x2F;healthz | jq</span><br></pre></td></tr></table></figure>
-<p>能看该运行的demo已经被apisix给封装起来了。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/11/30/apisix%E4%B8%8Econsul%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E7%9A%84%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-apisix介绍以及食用方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/11/30/apisix%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/">apisix介绍以及食用方法</a>
-</h1>
-
-
-
-        
-        <a href="/2020/11/30/apisix%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/" class="archive-article-date">
-  	<time datetime="2020-11-30T02:27:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-30</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Apache-APISIX-是什么？"><a href="#Apache-APISIX-是什么？" class="headerlink" title="Apache APISIX 是什么？"></a>Apache APISIX 是什么？</h2><p>Apache APISIX 是一个动态、实时、高性能的 API 网关，基于 Nginx 网络库和 etcd 实现，<br>提供负载均衡、动态上游、灰度发布、服务熔断、身份认证、可观测性等丰富的流量管理功能。</p>
-<p>你可以使用 Apache APISIX 来处理传统的南北向流量，以及服务间的东西向流量，<br>也可以当做 k8s ingress controller 来使用。</p>
-<p>Apache APISIX 的技术架构如下图所示：</p>
-<p><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1gl85xhdvnoj30th0fmju8.jpg" alt=""></p>
-<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
-<li><a href="#特性">特性</a></li>
-<li><a href="#立刻开始">立刻开始</a></li>
-<li><a href="#控制台">控制台</a></li>
-<li><a href="#性能测试">性能测试</a></li>
-<li><a href="#apache-apisix-和-kong-的比较">Apache APISIX 和 Kong 的比较</a></li>
-<li><a href="#开放治理">开放治理</a></li>
-<li><a href="#社区">社区</a></li>
-<li><a href="#视频和文章">视频和文章</a></li>
-</ul>
-<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><p>你可以把 Apache APISIX 当做流量入口，来处理所有的业务数据，包括动态路由、动态上游、动态证书、<br>A/B 测试、金丝雀发布(灰度发布)、蓝绿部署、限流限速、抵御恶意攻击、监控报警、服务可观测性、服务治理等。</p>
-<ul>
-<li><p><strong>全平台</strong></p>
-<ul>
-<li>云原生: 平台无关，没有供应商锁定，无论裸机还是 Kubernetes，APISIX 都可以运行。</li>
-<li>运行环境: OpenResty 和 Tengine 都支持。</li>
-<li>支持 ARM64: 不用担心底层技术的锁定。</li>
-</ul>
-</li>
-<li><p><strong>多协议</strong></p>
-<ul>
-<li><a href="doc/zh-cn/stream-proxy.md">TCP/UDP 代理</a>: 动态 TCP/UDP 代理。</li>
-<li><a href="doc/zh-cn/plugins/mqtt-proxy.md">动态 MQTT 代理</a>: 支持用 <code>client_id</code> 对 MQTT 进行负载均衡，同时支持 MQTT <a href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html" target="_blank" rel="noopener">3.1.*</a> 和 <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html" target="_blank" rel="noopener">5.0</a> 两个协议标准。</li>
-<li><a href="doc/zh-cn/grpc-proxy.md">gRPC 代理</a>：通过 APISIX 代理 gRPC 连接，并使用 APISIX 的大部分特性管理你的 gRPC 服务。</li>
-<li><a href="doc/zh-cn/plugins/grpc-transcode.md">gRPC 协议转换</a>：支持协议的转换，这样客户端可以通过 HTTP/JSON 来访问你的 gRPC API。</li>
-<li>Websocket 代理</li>
-<li>Proxy Protocol</li>
-<li>Dubbo 代理：基于 Tengine，可以实现 Dubbo 请求的代理。</li>
-<li>HTTP(S) 反向代理</li>
-<li><a href="doc/zh-cn/https.md">SSL</a>：动态加载 SSL 证书。</li>
-</ul>
-</li>
-<li><p><strong>全动态能力</strong></p>
-<ul>
-<li><a href="doc/zh-cn/plugins.md">热更新和热插件</a>: 无需重启服务，就可以持续更新配置和插件。</li>
-<li><a href="doc/zh-cn/plugins/proxy-rewrite.md">代理请求重写</a>: 支持重写请求上游的<code>host</code>、<code>uri</code>、<code>schema</code>、<code>enable_websocket</code>、<code>headers</code>信息。</li>
-<li><a href="doc/zh-cn/plugins/response-rewrite.md">输出内容重写</a>: 支持自定义修改返回内容的 <code>status code</code>、<code>body</code>、<code>headers</code>。</li>
-<li><a href="doc/zh-cn/plugins/serverless.md">Serverless</a>: 在 APISIX 的每一个阶段，你都可以添加并调用自己编写的函数。</li>
-<li>动态负载均衡：动态支持有权重的 round-robin 负载平衡。</li>
-<li>支持一致性 hash 的负载均衡：动态支持一致性 hash 的负载均衡。</li>
-<li><a href="doc/zh-cn/health-check.md">健康检查</a>：启用上游节点的健康检查，将在负载均衡期间自动过滤不健康的节点，以确保系统稳定性。</li>
-<li>熔断器: 智能跟踪不健康上游服务。</li>
-<li><a href="doc/zh-cn/plugins/proxy-mirror.md">代理镜像</a>: 提供镜像客户端请求的能力。</li>
-</ul>
-</li>
-<li><p><strong>精细化路由</strong></p>
-<ul>
-<li><a href="doc/router-radixtree.md#how-to-use-libradixtree-in-apisix">支持全路径匹配和前缀匹配</a></li>
-<li><a href="/doc/router-radixtree.md#how-to-filter-route-by-nginx-builtin-variable">支持使用 Nginx 所有内置变量做为路由的条件</a>，所以你可以使用 <code>cookie</code>, <code>args</code> 等做为路由的条件，来实现灰度发布、A/B 测试等功能</li>
-<li>支持<a href="https://github.com/iresty/lua-resty-radixtree#operator-list" target="_blank" rel="noopener">各类操作符做为路由的判断条件</a>，比如 <code>{&quot;arg_age&quot;, &quot;&gt;&quot;, 24}</code></li>
-<li>支持<a href="https://github.com/iresty/lua-resty-radixtree/blob/master/t/filter-fun.t#L10" target="_blank" rel="noopener">自定义路由匹配函数</a></li>
-<li>IPv6：支持使用 IPv6 格式匹配路由</li>
-<li>支持路由的<a href="doc/zh-cn/admin-api.md#route">自动过期(TTL)</a></li>
-<li><a href="doc/router-radixtree.md#3-match-priority">支持路由的优先级</a></li>
-<li><a href="doc/zh-cn/plugins/batch-requests.md">支持批量 Http 请求</a></li>
-</ul>
-</li>
-<li><p><strong>安全防护</strong></p>
-<ul>
-<li>多种身份认证方式: <a href="doc/zh-cn/plugins/key-auth.md">key-auth</a>, <a href="doc/zh-cn/plugins/jwt-auth.md">JWT</a>, <a href="doc/zh-cn/plugins/basic-auth.md">basic-auth</a>, <a href="doc/zh-cn/plugins/wolf-rbac.md">wolf-rbac</a>。</li>
-<li><a href="doc/zh-cn/plugins/ip-restriction.md">IP 黑白名单</a></li>
-<li><a href="doc/zh-cn/plugins/referer-restriction.md">Referer 白名单</a></li>
-<li><a href="doc/plugins/openid-connect.md">IdP 支持</a>: 支持外部的身份认证服务，比如 Auth0，Okta，Authing 等，用户可以借此来对接 Oauth2.0 等认证方式。</li>
-<li><a href="doc/zh-cn/plugins/limit-req.md">限制速率</a></li>
-<li><a href="doc/zh-cn/plugins/limit-count.md">限制请求数</a></li>
-<li><a href="doc/zh-cn/plugins/limit-conn.md">限制并发</a></li>
-<li>防御 ReDoS(正则表达式拒绝服务)：内置策略，无需配置即可抵御 ReDoS。</li>
-<li><a href="doc/zh-cn/plugins/cors.md">CORS</a>：为你的 API 启用 CORS。</li>
-<li><a href="doc/zh-cn/plugins/uri-blocker.md">URI 拦截器</a>：根据 URI 拦截用户请求。</li>
-<li><a href="doc/zh-cn/plugins/request-validation.md">请求验证器</a>。</li>
-</ul>
-</li>
-<li><p><strong>运维友好</strong></p>
-<ul>
-<li>OpenTracing 可观测性: 支持 <a href="doc/zh-cn/plugins/skywalking.md">Apache Skywalking</a> 和 <a href="doc/zh-cn/plugins/zipkin.md">Zipkin</a>。</li>
-<li>对接外部服务发现：除了内置的 etcd 外，还支持 <code>Consul</code> 和 <code>Nacos</code> 的 <a href="https://github.com/apache/apisix/issues/1731#issuecomment-646392129" target="_blank" rel="noopener">DNS 发现模式</a>，以及 <a href="doc/zh-cn/discovery.md">Eureka</a>。</li>
-<li>监控和指标: <a href="doc/zh-cn/plugins/prometheus.md">Prometheus</a></li>
-<li>集群：APISIX 节点是无状态的，创建配置中心集群请参考 <a href="https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/clustering.md" target="_blank" rel="noopener">etcd Clustering Guide</a>。</li>
-<li>高可用：支持配置同一个集群内的多个 etcd 地址。</li>
-<li>控制台: 内置控制台来操作 APISIX 集群。</li>
-<li>版本控制：支持操作的多次回滚。</li>
-<li>CLI: 使用命令行来启动、关闭和重启 APISIX。</li>
-<li><a href="doc/zh-cn/stand-alone.md">单机模式</a>: 支持从本地配置文件中加载路由规则，在 kubernetes(k8s) 等环境下更友好。</li>
-<li><a href="doc/zh-cn/architecture-design.md#Global-Rule">全局规则</a>：允许对所有请求执行插件，比如黑白名单、限流限速等。</li>
-<li>高性能：在单核上 QPS 可以达到 18k，同时延迟只有 0.2 毫秒。</li>
-<li><a href="doc/zh-cn/plugins/fault-injection.md">故障注入</a></li>
-<li><a href="doc/zh-cn/admin-api.md">REST Admin API</a>: 使用 REST Admin API 来控制 Apache APISIX，默认只允许 127.0.0.1 访问，你可以修改 <code>conf/config.yaml</code> 中的 <code>allow_admin</code> 字段，指定允许调用 Admin API 的 IP 列表。同时需要注意的是，Admin API 使用 key auth 来校验调用者身份，<strong>在部署前需要修改 <code>conf/config.yaml</code> 中的 <code>admin_key</code> 字段，来保证安全。</strong></li>
-<li>外部日志记录器：将访问日志导出到外部日志管理工具。(<a href="doc/plugins/http-logger.md">HTTP Logger</a>, <a href="doc/plugins/tcp-logger.md">TCP Logger</a>, <a href="doc/plugins/kafka-logger.md">Kafka Logger</a>, <a href="doc/plugins/udp-logger.md">UDP Logger</a>)</li>
-</ul>
-</li>
-<li><p><strong>高度可扩展</strong></p>
-<ul>
-<li><a href="doc/zh-cn/plugin-develop.md">自定义插件</a>: 允许挂载常见阶段，例如<code>init</code>, <code>rewrite</code>，<code>access</code>，<code>balancer</code>,<code>header filer</code>，<code>body filter</code> 和 <code>log</code> 阶段。</li>
-<li>自定义负载均衡算法：可以在 <code>balancer</code> 阶段使用自定义负载均衡算法。</li>
-<li>自定义路由: 支持用户自己实现路由算法。</li>
-</ul>
-</li>
-</ul>
-<h2 id="Apache-APISIX-和-Kong-的比较"><a href="#Apache-APISIX-和-Kong-的比较" class="headerlink" title="Apache APISIX 和 Kong 的比较"></a>Apache APISIX 和 Kong 的比较</h2><h4 id="API-网关核心功能点，两者均已覆盖"><a href="#API-网关核心功能点，两者均已覆盖" class="headerlink" title="API 网关核心功能点，两者均已覆盖"></a>API 网关核心功能点，两者均已覆盖</h4><table>
-<thead>
-<tr>
-<th align="left"><strong>功能</strong></th>
-<th align="left"><strong>Apache APISIX</strong></th>
-<th align="left"><strong>KONG</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><strong>动态上游</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-<tr>
-<td align="left"><strong>动态路由</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-<tr>
-<td align="left"><strong>健康检查和熔断器</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-<tr>
-<td align="left"><strong>动态 SSL 证书</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-<tr>
-<td align="left"><strong>七层和四层代理</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-<tr>
-<td align="left"><strong>分布式追踪</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-<tr>
-<td align="left"><strong>自定义插件</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-<tr>
-<td align="left"><strong>REST API</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-<tr>
-<td align="left"><strong>CLI</strong></td>
-<td align="left">支持</td>
-<td align="left">支持</td>
-</tr>
-</tbody></table>
-<h4 id="Apache-APISIX-的优势"><a href="#Apache-APISIX-的优势" class="headerlink" title="Apache APISIX 的优势"></a>Apache APISIX 的优势</h4><table>
-<thead>
-<tr>
-<th align="left"><strong>功能</strong></th>
-<th align="left"><strong>Apache APISIX</strong></th>
-<th align="left"><strong>KONG</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">项目归属</td>
-<td align="left">Apache 软件基金会</td>
-<td align="left">Kong Inc.</td>
-</tr>
-<tr>
-<td align="left">技术架构</td>
-<td align="left">Nginx + etcd</td>
-<td align="left">Nginx + postgres</td>
-</tr>
-<tr>
-<td align="left">交流渠道</td>
-<td align="left">微信群、QQ 群、邮件列表、Github、meetup</td>
-<td align="left">Github、论坛、freenode</td>
-</tr>
-<tr>
-<td align="left">单核 QPS (开启限流和 prometheus 插件)</td>
-<td align="left">18000</td>
-<td align="left">1700</td>
-</tr>
-<tr>
-<td align="left">平均延迟</td>
-<td align="left">0.2 毫秒</td>
-<td align="left">2 毫秒</td>
-</tr>
-<tr>
-<td align="left">支持 Dubbo 代理</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">配置回滚</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">支持生命周期的路由</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">插件热更新</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">用户自定义：负载均衡算法、路由</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">resty &lt;–&gt; gRPC 转码</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">支持 Tengine 作为运行时</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">MQTT 协议支持</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">配置生效时间</td>
-<td align="left">事件通知，低于 1 毫秒更新</td>
-<td align="left">定期轮询，5 秒</td>
-</tr>
-<tr>
-<td align="left">自带控制台</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">对接外部身份认证服务</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">配置中心高可用(HA)</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">指定时间窗口的限速</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-<tr>
-<td align="left">支持任何 Nginx 变量做路由条件</td>
-<td align="left">是</td>
-<td align="left">否</td>
-</tr>
-</tbody></table>
-<p>性能对比测试<a href="https://gist.github.com/membphis/137db97a4bf64d3653aa42f3e016bd01" target="_blank" rel="noopener">详细内容如下</a>。</p>
-<h2 id="视频和文章"><a href="#视频和文章" class="headerlink" title="视频和文章"></a>视频和文章</h2><ul>
-<li>2020.10.16 <a href="https://www.youtube.com/watch?v=iEegNXOtEhQ" target="_blank" rel="noopener">Apache APISIX: How to implement plugin orchestration in API Gateway</a></li>
-<li>2020.10.16 <a href="https://www.youtube.com/watch?v=DleVJwPs4i4" target="_blank" rel="noopener">Improve Apache APISIX observability with Apache Skywalking</a></li>
-<li>2020.1.17 <a href="https://mp.weixin.qq.com/s/c51apneVj0O9yxiZAHF34Q" target="_blank" rel="noopener">API 网关 Apache APISIX 和 Kong 的选型对比</a></li>
-<li>2019.12.14 <a href="https://zhuanlan.zhihu.com/p/99620158" target="_blank" rel="noopener">从 0 到 1：Apache APISIX 的 Apache 之路</a></li>
-<li>2019.12.14 <a href="https://www.upyun.com/opentalk/445.html" target="_blank" rel="noopener">基于 Apache APISIX 的下一代微服务架构</a></li>
-<li>2019.10.30 <a href="https://www.upyun.com/opentalk/440.html" target="_blank" rel="noopener">Apache APISIX 微服务架构极致性能架构解析</a></li>
-<li>2019.9.27 <a href="https://zhuanlan.zhihu.com/p/84467919" target="_blank" rel="noopener">想把 APISIX 运行在 ARM64 平台上？只要三步</a></li>
-<li>2019.8.31 <a href="https://www.upyun.com/opentalk/433.html" target="_blank" rel="noopener">APISIX 技术选型、测试和持续集成</a></li>
-<li>2019.8.31 <a href="https://www.upyun.com/opentalk/437.html" target="_blank" rel="noopener">APISIX 高性能实战 2</a></li>
-<li>2019.7.6 <a href="https://www.upyun.com/opentalk/429.html" target="_blank" rel="noopener">APISIX 高性能实战</a></li>
-</ul>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总的来说 apisix作为云原生网关,比其他的性能好的同时，稳定性可扩展性 都有质的提升。作为新一代网关的考虑范围内。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/11/30/apisix%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -1490,7 +1108,7 @@
   <div class="outer">
     <div id="footer-info">
       <div class="footer-left">
-        &copy; 2020 jame_xhs
+        &copy; 2021 jame_xhs
       </div>
       <div class="footer-right">
         <a href="http://hexo.io/" target="_blank">jame_xhs</a> Theme <a
@@ -1680,6 +1298,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">OAuth 2.0</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">ubuntu</a>
               </li>
             
             <div class="clearfix"></div>

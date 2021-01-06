@@ -196,6 +196,693 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-gin框架路由拆分与注册" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/12/18/gin%E6%A1%86%E6%9E%B6%E8%B7%AF%E7%94%B1%E6%8B%86%E5%88%86%E4%B8%8E%E6%B3%A8%E5%86%8C/">gin框架路由拆分与注册</a>
+</h1>
+
+
+
+        
+        <a href="/2020/12/18/gin%E6%A1%86%E6%9E%B6%E8%B7%AF%E7%94%B1%E6%8B%86%E5%88%86%E4%B8%8E%E6%B3%A8%E5%86%8C/" class="archive-article-date">
+  	<time datetime="2020-12-18T04:14:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-18</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文总结了我平时在项目中积累的关于gin框架路由拆分与注册的若干方法。</p>
+<h3 id="基本的路由注册"><a href="#基本的路由注册" class="headerlink" title="基本的路由注册"></a>基本的路由注册</h3><p>下面最基础的gin路由注册方式，适用于路由条目比较少的简单项目或者项目demo。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">	&quot;net&#x2F;http&quot;</span><br><span class="line"></span><br><span class="line">	&quot;github.com&#x2F;gin-gonic&#x2F;gin&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func helloHandler(c *gin.Context) &#123;</span><br><span class="line">	c.JSON(http.StatusOK, gin.H&#123;</span><br><span class="line">		&quot;message&quot;: &quot;Hello q1mi!&quot;,</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">	r :&#x3D; gin.Default()</span><br><span class="line">	r.GET(&quot;&#x2F;hello&quot;, helloHandler)</span><br><span class="line">	if err :&#x3D; r.Run(); err !&#x3D; nil &#123;</span><br><span class="line">		fmt.Println(&quot;startup service failed, err:%v\n&quot;, err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="路由拆分成单独文件或包"><a href="#路由拆分成单独文件或包" class="headerlink" title="路由拆分成单独文件或包"></a>路由拆分成单独文件或包</h3><p>当项目的规模增大后就不太适合继续在项目的<code>main.go</code>文件中去实现路由注册相关逻辑了，我们会倾向于把路由部分的代码都拆分出来，形成一个单独的文件或包：</p>
+<p>我们在<code>routers.go</code>文件中定义并注册路由信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">	&quot;net&#x2F;http&quot;</span><br><span class="line"></span><br><span class="line">	&quot;github.com&#x2F;gin-gonic&#x2F;gin&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func helloHandler(c *gin.Context) &#123;</span><br><span class="line">	c.JSON(http.StatusOK, gin.H&#123;</span><br><span class="line">		&quot;message&quot;: &quot;Hello q1mi!&quot;,</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func setupRouter() *gin.Engine &#123;</span><br><span class="line">	r :&#x3D; gin.Default()</span><br><span class="line">	r.GET(&quot;&#x2F;hello&quot;, helloHandler)</span><br><span class="line">	return r</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时<code>main.go</code>中调用上面定义好的<code>setupRouter</code>函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func main() &#123;</span><br><span class="line">	r :&#x3D; setupRouter()</span><br><span class="line">	if err :&#x3D; r.Run(); err !&#x3D; nil &#123;</span><br><span class="line">		fmt.Println(&quot;startup service failed, err:%v\n&quot;, err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时的目录结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gin_demo</span><br><span class="line">├── go.mod</span><br><span class="line">├── go.sum</span><br><span class="line">├── main.go</span><br><span class="line">└── routers.go</span><br></pre></td></tr></table></figure>
+<p>把路由部分的代码单独拆分成包的话也是可以的，拆分后的目录结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gin_demo</span><br><span class="line">├── go.mod</span><br><span class="line">├── go.sum</span><br><span class="line">├── main.go</span><br><span class="line">└── routers</span><br><span class="line">    └── routers.go</span><br></pre></td></tr></table></figure>
+
+<p><code>routers/routers.go</code>需要注意此时<code>setupRouter</code>需要改成首字母大写：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">package routers</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">	&quot;net&#x2F;http&quot;</span><br><span class="line"></span><br><span class="line">	&quot;github.com&#x2F;gin-gonic&#x2F;gin&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func helloHandler(c *gin.Context) &#123;</span><br><span class="line">	c.JSON(http.StatusOK, gin.H&#123;</span><br><span class="line">		&quot;message&quot;: &quot;Hello q1mi!&quot;,</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; SetupRouter 配置路由信息</span><br><span class="line">func SetupRouter() *gin.Engine &#123;</span><br><span class="line">	r :&#x3D; gin.Default()</span><br><span class="line">	r.GET(&quot;&#x2F;hello&quot;, helloHandler)</span><br><span class="line">	return r</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>main.go</code>文件内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">	&quot;fmt&quot;</span><br><span class="line">	&quot;gin_demo&#x2F;routers&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">	r :&#x3D; routers.SetupRouter()</span><br><span class="line">	if err :&#x3D; r.Run(); err !&#x3D; nil &#123;</span><br><span class="line">		fmt.Println(&quot;startup service failed, err:%v\n&quot;, err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="路由拆分成多个文件"><a href="#路由拆分成多个文件" class="headerlink" title="路由拆分成多个文件"></a>路由拆分成多个文件</h3><p>当我们的业务规模继续膨胀，单独的一个<code>routers</code>文件或包已经满足不了我们的需求了，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func SetupRouter() *gin.Engine &#123;</span><br><span class="line">	r :&#x3D; gin.Default()</span><br><span class="line">	r.GET(&quot;&#x2F;hello&quot;, helloHandler)</span><br><span class="line">  	r.GET(&quot;&#x2F;xx1&quot;, xxHandler1)</span><br><span class="line">  	...</span><br><span class="line">  	r.GET(&quot;&#x2F;xx30&quot;, xxHandler30)</span><br><span class="line">		return r</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为我们把所有的路由注册都写在一个<code>SetupRouter</code>函数中的话就会太复杂了。</p>
+<p>我们可以分开定义多个路由文件，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">gin_demo</span><br><span class="line">├── go.mod</span><br><span class="line">├── go.sum</span><br><span class="line">├── main.go</span><br><span class="line">└── routers</span><br><span class="line">    ├── blog.go</span><br><span class="line">    └── shop.go</span><br></pre></td></tr></table></figure>
+<p><code>routers/shop.go</code>中添加一个<code>LoadShop</code>的函数，将shop相关的路由注册到指定的路由器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func LoadShop(e *gin.Engine)  &#123;</span><br><span class="line">	e.GET(&quot;&#x2F;hello&quot;, helloHandler)</span><br><span class="line">  	e.GET(&quot;&#x2F;goods&quot;, goodsHandler)</span><br><span class="line">  	e.GET(&quot;&#x2F;checkout&quot;, checkoutHandler)</span><br><span class="line">  	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>routers/blog.go</code>中添加一个<code>LoadBlog</code>的函数，将blog相关的路由注册到指定的路由器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">func LoadBlog(e *gin.Engine) &#123;</span><br><span class="line">	e.GET(&quot;&#x2F;post&quot;, postHandler)</span><br><span class="line">  	e.GET(&quot;&#x2F;comment&quot;, commentHandler)</span><br><span class="line">  	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在main函数中实现最终的注册逻辑如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func main() &#123;</span><br><span class="line">	r :&#x3D; gin.Default()</span><br><span class="line">	routers.LoadBlog(r)</span><br><span class="line">	routers.LoadShop(r)</span><br><span class="line">	if err :&#x3D; r.Run(); err !&#x3D; nil &#123;</span><br><span class="line">		fmt.Println(&quot;startup service failed, err:%v\n&quot;, err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="路由拆分到不同的APP"><a href="#路由拆分到不同的APP" class="headerlink" title="路由拆分到不同的APP"></a>路由拆分到不同的APP</h3><p>有时候项目规模实在太大，那么我们就更倾向于把业务拆分的更详细一些，例如把不同的业务代码拆分成不同的APP。</p>
+<p>因此我们在项目目录下单独定义一个<code>app</code>目录，用来存放我们不同业务线的代码文件，这样就很容易进行横向扩展。大致目录结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">gin_demo</span><br><span class="line">├── app</span><br><span class="line">│   ├── blog</span><br><span class="line">│   │   ├── handler.go</span><br><span class="line">│   │   └── router.go</span><br><span class="line">│   └── shop</span><br><span class="line">│       ├── handler.go</span><br><span class="line">│       └── router.go</span><br><span class="line">├── go.mod</span><br><span class="line">├── go.sum</span><br><span class="line">├── main.go</span><br><span class="line">└── routers</span><br><span class="line">    └── routers.go</span><br></pre></td></tr></table></figure>
+<p>其中<code>app/blog/router.go</code>用来定义post相关路由信息，具体内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func Routers(e *gin.Engine) &#123;</span><br><span class="line">	e.GET(&quot;&#x2F;post&quot;, postHandler)</span><br><span class="line">	e.GET(&quot;&#x2F;comment&quot;, commentHandler)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>app/shop/router.go</code>用来定义shop相关路由信息，具体内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func Routers(e *gin.Engine) &#123;</span><br><span class="line">	e.GET(&quot;&#x2F;goods&quot;, goodsHandler)</span><br><span class="line">	e.GET(&quot;&#x2F;checkout&quot;, checkoutHandler)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>routers/routers.go</code>中根据需要定义<code>Include</code>函数用来注册子app中定义的路由，<code>Init</code>函数用来进行路由的初始化操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">type Option func(*gin.Engine)</span><br><span class="line"></span><br><span class="line">var options &#x3D; []Option&#123;&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 注册app的路由配置</span><br><span class="line">func Include(opts ...Option) &#123;</span><br><span class="line">	options &#x3D; append(options, opts...)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 初始化</span><br><span class="line">func Init() *gin.Engine &#123;</span><br><span class="line">	r :&#x3D; gin.Default()</span><br><span class="line">	for _, opt :&#x3D; range options &#123;</span><br><span class="line">		opt(r)</span><br><span class="line">	&#125;</span><br><span class="line">	return r</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>main.go</code>中按如下方式先注册子app中的路由，然后再进行路由的初始化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">func main() &#123;</span><br><span class="line">	&#x2F;&#x2F; 加载多个APP的路由配置</span><br><span class="line">	routers.Include(shop.Routers, blog.Routers)</span><br><span class="line">	&#x2F;&#x2F; 初始化路由</span><br><span class="line">	r :&#x3D; routers.Init()</span><br><span class="line">	if err :&#x3D; r.Run(); err !&#x3D; nil &#123;</span><br><span class="line">		fmt.Println(&quot;startup service failed, err:%v\n&quot;, err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>gin</code>框架是一个非常容易扩展的web框架，本文是我在日常编码中总结的一点点经验，不过web框架都差不多 flask django也是这么玩儿的。。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/12/18/gin%E6%A1%86%E6%9E%B6%E8%B7%AF%E7%94%B1%E6%8B%86%E5%88%86%E4%B8%8E%E6%B3%A8%E5%86%8C/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-怎样理解openresty中的cosocket" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/12/01/%E6%80%8E%E6%A0%B7%E7%90%86%E8%A7%A3openresty%E4%B8%AD%E7%9A%84cosocket/">怎样理解openresty中的cosocket</a>
+</h1>
+
+
+
+        
+        <a href="/2020/12/01/%E6%80%8E%E6%A0%B7%E7%90%86%E8%A7%A3openresty%E4%B8%AD%E7%9A%84cosocket/" class="archive-article-date">
+  	<time datetime="2020-12-01T07:22:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-01</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>cosocket 是各种 lua-resty-* 非阻塞库的基础，没 有 cosocket，开发者就无法用 Lua 来快速连接各种外部的网络服务。</p>
+<p>在早期的 OpenResty 版本中，如果想要去与 Redis、memcached 这些服务交互的话，需要使用 redis2-nginx-module、redis-nginx-module 和 memc-nginx-module这些 C 模块.这些模块至今仍然在 OpenResty 的发行包中。</p>
+<p>cosocket 功能加入以后，它们都已经被 lua-resty-redis 和 lua-resty-memcached 替代，基 本上没人再去使用 C 模块连接外部服务了。</p>
+<h3 id="什么是-cosocket"><a href="#什么是-cosocket" class="headerlink" title="什么是 cosocket"></a>什么是 cosocket</h3><p>cosocket是 OpenResty 中的专有名词，是把协程和网络套接字的英文 拼在一起形成的，即 cosocket = coroutine + socket。所以，可以把 cosocket 翻译为“协程套接字”。</p>
+<p>cosocket 不仅需要 Lua 协程特性的支持，也需要 Nginx 中非常重要的事件机制的支持，这两者结合在一 起，最终实现了非阻塞网络 I/O。另外，cosocket 支持 TCP、UDP 和 Unix Domain Socket。</p>
+<p>在 OpenResty 中调用一个 cosocket 相关函数，内部实现便是下面这张图的样子：<br><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glrwdfkpjvj30ye0fkjuz.jpg" alt=""><br>用户的 Lua 脚本每触发一个网络操作，都会有协程的 yield 以及 resume。</p>
+<p>遇到网络 I/O 时，它会交出控制权（yield），把网络事件注册到 Nginx 监听列表中，并把权限交给 Nginx；当有 Nginx 事件达到触发条件时，便唤醒对应的协程继续处理（resume）。</p>
+<p>OpenResty 正是以此为基础，封装实现 connect、send、receive 等操作，形成了现在的 cosocket API。以处理 TCP 的 API 为例来介绍一下。处理 UDP 和 Unix Domain Socket ，与TCP 的接口基 本是一样的。</p>
+<h3 id="cosocket-API-和指令简介"><a href="#cosocket-API-和指令简介" class="headerlink" title="cosocket API 和指令简介"></a>cosocket API 和指令简介</h3><p>TCP 相关的 cosocket API 可以分为下面这几类：</p>
+<blockquote>
+<p>创建对象：ngx.socket.tcp。<br>设置超时：tcpsock:settimeout 和 tcpsock:settimeouts。<br>建立连接：tcpsock:connect。<br>发送数据：tcpsock:send。<br>接受数据：tcpsock:receive、tcpsock:receiveany 和 tcpsock:receiveuntil。<br>连接池：tcpsock:setkeepalive。<br>关闭连接：tcpsock:close。</p>
+</blockquote>
+<p>这些 API 可以使用的上下文：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">	</span><br><span class="line">rewrite_by_lua*, access_by_lua*, content_by_lua*, ngx.timer.*, ssl_certificate_by_lua*, ssl_session_fetch_by_lua*_</span><br></pre></td></tr></table></figure>
+
+<p>由于 Nginx 内核的各种限制，cosocket API 在 set_by_lua<em>， log_by_lua*， header_filter_by_lua</em> 和 body_filter_by_lua* 中是无法使用的。而在 init_by_lua* 和 init_worker_by_lua* 中暂时也不能用，不过 Nginx 内核对这两个阶段并没有限制。</p>
+<p>此外，与这些 API 相关的，还有 8 个 lua_socket_ 开头的 Nginx 指令：</p>
+<blockquote>
+<p>lua_socket_connect_timeout：连接超时，默认 60 秒。<br>lua_socket_send_timeout：发送超时，默认 60 秒。<br>lua_socket_send_lowat：发送阈值（low water），默认为 0。<br>lua_socket_read_timeout： 读取超时，默认 60 秒。<br>lua_socket_buffer_size：读取数据的缓存区大小，默认 4k/8k。<br>lua_socket_pool_size：连接池大小，默认 30。<br>lua_socket_keepalive_timeout：连接池 cosocket 对象的空闲时间，默认 60 秒。<br>lua_socket_log_errors：cosocket 发生错误时，是否记录日志，默认为 on。</p>
+</blockquote>
+<p>有些指令和 API 的功能一样的，比如设置超时时间和连接池大小等。不过，如果两者有冲突的话，API 的优先级高于指令，会覆盖指令设置的值。所以，一般来说，都推荐使用 API来做设 置，这样也会更加灵活。 </p>
+<p>通过一个具体的例子，来理解如何使用这些 cosocket API。发送 TCP 请求到一个网站，并把返回的内容打印出来：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">resty -e &#39;local sock &#x3D; ngx.socket.tcp()</span><br><span class="line">    sock:settimeout(1000) -- one second timeout</span><br><span class="line">    local ok, err &#x3D; sock:connect(&quot;www.baidu.com&quot;, 80)</span><br><span class="line">    if not ok then</span><br><span class="line">        ngx.say(&quot;failed to connect: &quot;, err)</span><br><span class="line">        return</span><br><span class="line">    end</span><br><span class="line">local req_data &#x3D; &quot;GET &#x2F; HTTP&#x2F;1.1\r\nHost: www.baidu.com\r\n\r\n&quot;</span><br><span class="line">local bytes, err &#x3D; sock:send(req_data)</span><br><span class="line">if err then</span><br><span class="line">    ngx.say(&quot;failed to send: &quot;, err)</span><br><span class="line">    return</span><br><span class="line">end</span><br><span class="line">local data, err, partial &#x3D; sock:receive()</span><br><span class="line">if err then</span><br><span class="line">    ngx.say(&quot;failed to receive: &quot;, err)</span><br><span class="line">    return</span><br><span class="line">end</span><br><span class="line">sock:close()</span><br><span class="line">ngx.say(&quot;response is: &quot;, data)</span><br></pre></td></tr></table></figure>
+
+<p>分析下这段代码:</p>
+<blockquote>
+<p>首先，通过 ngx.socket.tcp() ，创建 TCP 的 cosocket 对象，名字是 sock。<br>然后，使用 settimeout() ，把超时时间设置为 1 秒。注这里的超时没有区分 connect、receive，是统一的设置。<br>接着，使用 connect() 去连接指定网站的 80 端口，如果失败就直接退出。<br>连接成功的话，就使用 send() 来发送构造好的数据，如果发送失败就退出。<br>发送数据成功的话，就使用 receive() 来接收网站返回的数据。这里 receive() 的默认参数值是 <em>l，也就是只返回第一行的数据；如果参数设&gt;置为了</em>a，就是持续接收数据，直到连接关闭；<br>最后，调用 close() ，主动关闭 socket 连接。</p>
+</blockquote>
+<p>接 下来，我们对这个示例再做一些调整:<br>第一个动作，对 socket 连接、发送和读取这三个动作，分别设置超时时间。</p>
+<p>settimeout() 作用是把超时时间统一设置为一个值。如果要想分开设置，就需要使用 settimeouts() 函数，比如下面这样的写法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sock:settimeouts(1000, 2000, 3000)</span><br></pre></td></tr></table></figure>
+<p>表示连接超时为 1 秒，发送超时为 2 秒，读取超时为 3 秒。在OpenResty 和 lua-resty 库中，大部分和时间相关的 API 的参数，都以毫秒为单位</p>
+<p>第二个动作，receive接收指定大小的内容。</p>
+<p>receive() 接口可以接收一行数据，也可以持续接收数据。如果只想接收 10K 大小的数据，应该使用receiveany() ，它就是专为满足这种需求而设计的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">local data, err, partial &#x3D; sock:receiveany(10240)</span><br></pre></td></tr></table></figure>
+<p>关于receive，还有另一个很常见的用户需求，那就是一直获取数据，直到遇到指定字符串才停止。</p>
+<p>receiveuntil() 专门用来解决这类问题，它不会像 receive() 和 receiveany() 一样返回字符串， 而会返回一个迭代器。这样就可以在循环中调用它来分段读取匹配到的数据，当读取完毕时，就会返回 nil。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">local reader &#x3D; sock:receiveuntil(&quot;\r\n&quot;)</span><br><span class="line">while true do</span><br><span class="line">    local data, err, partial &#x3D; reader(4)</span><br><span class="line">    if not data then</span><br><span class="line">        if err then</span><br><span class="line">            ngx.say(&quot;failed to read the data stream: &quot;, err)</span><br><span class="line">            break</span><br><span class="line">        end</span><br><span class="line">        ngx.say(&quot;read done&quot;)</span><br><span class="line">        break</span><br><span class="line">    end</span><br><span class="line">    ngx.say(&quot;read chunk: [&quot;, data, &quot;]&quot;)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>receiveuntil 会返回 \r\n 之前的数据，并通过迭代器每次读取其中的 4 个字节，</p>
+<p>第三个动作，不直接关闭 socket，而是放入连接池中。</p>
+<p>没有连接池的话，每次请求进来都要新建一个连接，就会导致 cosocket 对象被频繁地创建和销 毁，造成不必要的性能损耗。</p>
+<p>为了避免这个问题，在使用完一个 cosocket 后，可以调用 setkeepalive() 放到连接池中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">local ok, err &#x3D; sock:setkeepalive(2 * 1000, 100)</span><br><span class="line">if not ok then</span><br><span class="line">    ngx.say(&quot;failed to set reusable: &quot;, err)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p>这段代码设置了连接的空闲时间为 2 秒，连接池的大小为 100。这样，在调用 connect() 函数时，就会优先从连接池中获取 cosocket 对象。</p>
+<p>关于连接池的使用，有两点需要注意：</p>
+<p>第一，不能把发生错误的连接放入连接池，否则下次使用时，就会导致收发数据失败。这也是为什么需要判断每一个 API 调用是否成功的一个原因。</p>
+<p>第二，要搞清楚连接的数量。连接池是 worker 级别的，每个 worker 都有自己的连接池。所以，如果有 10 个 worker，连接池大小设置为 30，那么对于后端的服务来讲，就等于有 300个连接。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/12/01/%E6%80%8E%E6%A0%B7%E7%90%86%E8%A7%A3openresty%E4%B8%AD%E7%9A%84cosocket/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-apisix与consul服务发现的结合使用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/11/30/apisix%E4%B8%8Econsul%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E7%9A%84%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/">apisix与consul服务发现的结合使用</a>
+</h1>
+
+
+
+        
+        <a href="/2020/11/30/apisix%E4%B8%8Econsul%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E7%9A%84%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/" class="archive-article-date">
+  	<time datetime="2020-11-30T09:05:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-30</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>首先简单介绍一下apisix,是一个机遇openresty开发的云原生网关。功能类比于nginx+upsync 可无reload，apisix支持自身配置放在etcd中，原生高可用架构。并且支持 <code>consul</code>  <code>eruka</code>  <code>nacos</code>。</p>
+<h2 id="实践逻辑如下"><a href="#实践逻辑如下" class="headerlink" title="实践逻辑如下"></a>实践逻辑如下</h2><h4 id="安装以下实验环境"><a href="#安装以下实验环境" class="headerlink" title="安装以下实验环境"></a>安装以下实验环境</h4><p>以下三个点作为验证环境的安装步骤。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.安装好apisix以及相关依赖(openresty,etcd)</span><br><span class="line">2.安装好consul组件作为服务注册与发现。</span><br><span class="line">3.run demo案例作为业务服务。</span><br></pre></td></tr></table></figure>
+
+<h4 id="验证逻辑"><a href="#验证逻辑" class="headerlink" title="验证逻辑"></a>验证逻辑</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1.run demo代码,本身是一个http服务,并且把自己注册到consul中,持续健康检查监听。</span><br><span class="line">2.访问 demo的http服务发现可访问</span><br><span class="line">3.在apisix中创建url,后端服务对应demo注册到consul的servername。</span><br><span class="line">4.使用apisix创建的url访问服务，发现访问结果与之前一致。</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Install-Consul"><a href="#Install-Consul" class="headerlink" title="Install Consul"></a>Install Consul</h2><ol>
+<li><p>download consul</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https:&#x2F;&#x2F;releases.hashicorp.com&#x2F;consul&#x2F;1.7.3&#x2F;consul_1.7.3_linux_amd64.zip</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>unzip to <code>/usr/bin</code> </p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo unzip consul_1.7.3_linux_amd64.zip -d &#x2F;usr&#x2F;bin</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><p>create consul service file</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sudo vim &#x2F;lib&#x2F;systemd&#x2F;system&#x2F;consul.service</span><br><span class="line"></span><br><span class="line">[Unit]</span><br><span class="line">Description&#x3D;consul</span><br><span class="line">[Service]</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;bin&#x2F;consul agent -config-dir &#x2F;etc&#x2F;consul</span><br><span class="line">KillSignal&#x3D;SIGINT</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>create server json file</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir &#x2F;etc&#x2F;consul&#x2F;</span><br><span class="line"></span><br><span class="line">sudo vim &#x2F;etc&#x2F;consul&#x2F;server.json</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">	&quot;data_dir&quot;: &quot;&#x2F;var&#x2F;consul&quot;,</span><br><span class="line">	&quot;log_level&quot;: &quot;INFO&quot;,</span><br><span class="line">	&quot;node_name&quot;: &quot;test&quot;,</span><br><span class="line">	&quot;server&quot;: true,</span><br><span class="line">	&quot;ui&quot;: true,</span><br><span class="line">	&quot;bootstrap_expect&quot;: 1,</span><br><span class="line">	&quot;client_addr&quot;: &quot;0.0.0.0&quot;,</span><br><span class="line">	&quot;advertise_addr&quot;: &quot;127.0.0.1&quot;,</span><br><span class="line">	&quot;ports&quot;: &#123;</span><br><span class="line">		&quot;dns&quot;: 53</span><br><span class="line">	&#125;,	</span><br><span class="line">	&quot;advertise_addr_wan&quot;: &quot;127.0.0.1&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>start consul</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start consul</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h2 id="start-service-golang-version"><a href="#start-service-golang-version" class="headerlink" title="start service - golang version"></a>start service - golang version</h2><p><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glwqp0m8muj30qj0qbjvm.jpg" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;api7&#x2F;consul-test-golang.git</span><br><span class="line"></span><br><span class="line">yum -y install glang </span><br><span class="line"></span><br><span class="line">go env -w GO111MODULE&#x3D;on</span><br><span class="line"></span><br><span class="line">go env -w GOPROXY&#x3D;https:&#x2F;&#x2F;goproxy.io,direct</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">cd consul-test-golang</span><br><span class="line"></span><br><span class="line">nohup go run main.go &amp;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="install-etcd-–-need-by-Apache-APISIX"><a href="#install-etcd-–-need-by-Apache-APISIX" class="headerlink" title="install etcd  – need by Apache APISIX"></a>install etcd  – need by Apache APISIX</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install etcd</span><br><span class="line"></span><br><span class="line">nohup &#x2F;usr&#x2F;bin&#x2F;etcd --enable-v2&#x3D;true &amp;</span><br></pre></td></tr></table></figure>
+
+<h2 id="install-openresty-–-need-by-Apache-APISIX"><a href="#install-openresty-–-need-by-Apache-APISIX" class="headerlink" title="install openresty – need by Apache APISIX"></a>install openresty – need by Apache APISIX</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget https:&#x2F;&#x2F;openresty.org&#x2F;package&#x2F;centos&#x2F;openresty.repo</span><br><span class="line"></span><br><span class="line">sudo mv openresty.repo &#x2F;etc&#x2F;yum.repos.d&#x2F;</span><br><span class="line"></span><br><span class="line">sudo yum install openresty -y</span><br></pre></td></tr></table></figure>
+
+<h2 id="install-Apache-APISIX"><a href="#install-Apache-APISIX" class="headerlink" title="install Apache APISIX"></a>install Apache APISIX</h2><ol>
+<li>install from RPM, and you can get the latest version from <a href="https://github.com/apache/incubator-apisix/releases" target="_blank" rel="noopener">https://github.com/apache/incubator-apisix/releases</a></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;incubator-apisix&#x2F;releases&#x2F;download&#x2F;1.3&#x2F;apisix-1.3-0.el7.noarch.rpm</span><br><span class="line"></span><br><span class="line">sudo yum install apisix-1.3-0.el7.noarch.rpm -y</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>change config.yaml</li>
+</ol>
+<p>vi /usr/local/apisix/conf/config.yaml</p>
+<p>add consul address to <code>dns_resolver</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dns_resolver:</span><br><span class="line"> - 127.0.0.1</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>start Apache APISIX:<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apisix start</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h2 id="Test"><a href="#Test" class="headerlink" title="Test"></a>Test</h2><ol>
+<li>add route in Apache APISIX:<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">curl http:&#x2F;&#x2F;127.0.0.1:9080&#x2F;apisix&#x2F;admin&#x2F;routes&#x2F;1 -H &#39;X-API-KEY: edd1c9f034335f136f87ad84b625c8f1&#39; -X PUT -i -d &#39;</span><br><span class="line">&#123;</span><br><span class="line">    &quot;uri&quot;: &quot;&#x2F;healthz&quot;,</span><br><span class="line">    &quot;upstream&quot;: &#123;</span><br><span class="line">        &quot;type&quot;: &quot;roundrobin&quot;,</span><br><span class="line">        &quot;nodes&quot;: &#123;</span><br><span class="line">            &quot;go-consul-test.service.consul:8080&quot;: 1</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;&#39;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p><strong>go-consul-test.service.consul is registered DNS SRV by consul-test-golang service</strong></p>
+<ol start="2">
+<li>test：<br><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glwqqxoe77j313y086q47.jpg" alt=""></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http:&#x2F;&#x2F;127.0.0.1:8080&#x2F;healthz | jq</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glwqsd3qemj314g07u75i.jpg" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http:&#x2F;&#x2F;127.0.0.1:9080&#x2F;healthz | jq</span><br></pre></td></tr></table></figure>
+<p>能看该运行的demo已经被apisix给封装起来了。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/11/30/apisix%E4%B8%8Econsul%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E7%9A%84%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-apisix介绍以及食用方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/11/30/apisix%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/">apisix介绍以及食用方法</a>
+</h1>
+
+
+
+        
+        <a href="/2020/11/30/apisix%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/" class="archive-article-date">
+  	<time datetime="2020-11-30T02:27:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-30</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Apache-APISIX-是什么？"><a href="#Apache-APISIX-是什么？" class="headerlink" title="Apache APISIX 是什么？"></a>Apache APISIX 是什么？</h2><p>Apache APISIX 是一个动态、实时、高性能的 API 网关，基于 Nginx 网络库和 etcd 实现，<br>提供负载均衡、动态上游、灰度发布、服务熔断、身份认证、可观测性等丰富的流量管理功能。</p>
+<p>你可以使用 Apache APISIX 来处理传统的南北向流量，以及服务间的东西向流量，<br>也可以当做 k8s ingress controller 来使用。</p>
+<p>Apache APISIX 的技术架构如下图所示：</p>
+<p><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1gl85xhdvnoj30th0fmju8.jpg" alt=""></p>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li><a href="#特性">特性</a></li>
+<li><a href="#立刻开始">立刻开始</a></li>
+<li><a href="#控制台">控制台</a></li>
+<li><a href="#性能测试">性能测试</a></li>
+<li><a href="#apache-apisix-和-kong-的比较">Apache APISIX 和 Kong 的比较</a></li>
+<li><a href="#开放治理">开放治理</a></li>
+<li><a href="#社区">社区</a></li>
+<li><a href="#视频和文章">视频和文章</a></li>
+</ul>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><p>你可以把 Apache APISIX 当做流量入口，来处理所有的业务数据，包括动态路由、动态上游、动态证书、<br>A/B 测试、金丝雀发布(灰度发布)、蓝绿部署、限流限速、抵御恶意攻击、监控报警、服务可观测性、服务治理等。</p>
+<ul>
+<li><p><strong>全平台</strong></p>
+<ul>
+<li>云原生: 平台无关，没有供应商锁定，无论裸机还是 Kubernetes，APISIX 都可以运行。</li>
+<li>运行环境: OpenResty 和 Tengine 都支持。</li>
+<li>支持 ARM64: 不用担心底层技术的锁定。</li>
+</ul>
+</li>
+<li><p><strong>多协议</strong></p>
+<ul>
+<li><a href="doc/zh-cn/stream-proxy.md">TCP/UDP 代理</a>: 动态 TCP/UDP 代理。</li>
+<li><a href="doc/zh-cn/plugins/mqtt-proxy.md">动态 MQTT 代理</a>: 支持用 <code>client_id</code> 对 MQTT 进行负载均衡，同时支持 MQTT <a href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html" target="_blank" rel="noopener">3.1.*</a> 和 <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html" target="_blank" rel="noopener">5.0</a> 两个协议标准。</li>
+<li><a href="doc/zh-cn/grpc-proxy.md">gRPC 代理</a>：通过 APISIX 代理 gRPC 连接，并使用 APISIX 的大部分特性管理你的 gRPC 服务。</li>
+<li><a href="doc/zh-cn/plugins/grpc-transcode.md">gRPC 协议转换</a>：支持协议的转换，这样客户端可以通过 HTTP/JSON 来访问你的 gRPC API。</li>
+<li>Websocket 代理</li>
+<li>Proxy Protocol</li>
+<li>Dubbo 代理：基于 Tengine，可以实现 Dubbo 请求的代理。</li>
+<li>HTTP(S) 反向代理</li>
+<li><a href="doc/zh-cn/https.md">SSL</a>：动态加载 SSL 证书。</li>
+</ul>
+</li>
+<li><p><strong>全动态能力</strong></p>
+<ul>
+<li><a href="doc/zh-cn/plugins.md">热更新和热插件</a>: 无需重启服务，就可以持续更新配置和插件。</li>
+<li><a href="doc/zh-cn/plugins/proxy-rewrite.md">代理请求重写</a>: 支持重写请求上游的<code>host</code>、<code>uri</code>、<code>schema</code>、<code>enable_websocket</code>、<code>headers</code>信息。</li>
+<li><a href="doc/zh-cn/plugins/response-rewrite.md">输出内容重写</a>: 支持自定义修改返回内容的 <code>status code</code>、<code>body</code>、<code>headers</code>。</li>
+<li><a href="doc/zh-cn/plugins/serverless.md">Serverless</a>: 在 APISIX 的每一个阶段，你都可以添加并调用自己编写的函数。</li>
+<li>动态负载均衡：动态支持有权重的 round-robin 负载平衡。</li>
+<li>支持一致性 hash 的负载均衡：动态支持一致性 hash 的负载均衡。</li>
+<li><a href="doc/zh-cn/health-check.md">健康检查</a>：启用上游节点的健康检查，将在负载均衡期间自动过滤不健康的节点，以确保系统稳定性。</li>
+<li>熔断器: 智能跟踪不健康上游服务。</li>
+<li><a href="doc/zh-cn/plugins/proxy-mirror.md">代理镜像</a>: 提供镜像客户端请求的能力。</li>
+</ul>
+</li>
+<li><p><strong>精细化路由</strong></p>
+<ul>
+<li><a href="doc/router-radixtree.md#how-to-use-libradixtree-in-apisix">支持全路径匹配和前缀匹配</a></li>
+<li><a href="/doc/router-radixtree.md#how-to-filter-route-by-nginx-builtin-variable">支持使用 Nginx 所有内置变量做为路由的条件</a>，所以你可以使用 <code>cookie</code>, <code>args</code> 等做为路由的条件，来实现灰度发布、A/B 测试等功能</li>
+<li>支持<a href="https://github.com/iresty/lua-resty-radixtree#operator-list" target="_blank" rel="noopener">各类操作符做为路由的判断条件</a>，比如 <code>{&quot;arg_age&quot;, &quot;&gt;&quot;, 24}</code></li>
+<li>支持<a href="https://github.com/iresty/lua-resty-radixtree/blob/master/t/filter-fun.t#L10" target="_blank" rel="noopener">自定义路由匹配函数</a></li>
+<li>IPv6：支持使用 IPv6 格式匹配路由</li>
+<li>支持路由的<a href="doc/zh-cn/admin-api.md#route">自动过期(TTL)</a></li>
+<li><a href="doc/router-radixtree.md#3-match-priority">支持路由的优先级</a></li>
+<li><a href="doc/zh-cn/plugins/batch-requests.md">支持批量 Http 请求</a></li>
+</ul>
+</li>
+<li><p><strong>安全防护</strong></p>
+<ul>
+<li>多种身份认证方式: <a href="doc/zh-cn/plugins/key-auth.md">key-auth</a>, <a href="doc/zh-cn/plugins/jwt-auth.md">JWT</a>, <a href="doc/zh-cn/plugins/basic-auth.md">basic-auth</a>, <a href="doc/zh-cn/plugins/wolf-rbac.md">wolf-rbac</a>。</li>
+<li><a href="doc/zh-cn/plugins/ip-restriction.md">IP 黑白名单</a></li>
+<li><a href="doc/zh-cn/plugins/referer-restriction.md">Referer 白名单</a></li>
+<li><a href="doc/plugins/openid-connect.md">IdP 支持</a>: 支持外部的身份认证服务，比如 Auth0，Okta，Authing 等，用户可以借此来对接 Oauth2.0 等认证方式。</li>
+<li><a href="doc/zh-cn/plugins/limit-req.md">限制速率</a></li>
+<li><a href="doc/zh-cn/plugins/limit-count.md">限制请求数</a></li>
+<li><a href="doc/zh-cn/plugins/limit-conn.md">限制并发</a></li>
+<li>防御 ReDoS(正则表达式拒绝服务)：内置策略，无需配置即可抵御 ReDoS。</li>
+<li><a href="doc/zh-cn/plugins/cors.md">CORS</a>：为你的 API 启用 CORS。</li>
+<li><a href="doc/zh-cn/plugins/uri-blocker.md">URI 拦截器</a>：根据 URI 拦截用户请求。</li>
+<li><a href="doc/zh-cn/plugins/request-validation.md">请求验证器</a>。</li>
+</ul>
+</li>
+<li><p><strong>运维友好</strong></p>
+<ul>
+<li>OpenTracing 可观测性: 支持 <a href="doc/zh-cn/plugins/skywalking.md">Apache Skywalking</a> 和 <a href="doc/zh-cn/plugins/zipkin.md">Zipkin</a>。</li>
+<li>对接外部服务发现：除了内置的 etcd 外，还支持 <code>Consul</code> 和 <code>Nacos</code> 的 <a href="https://github.com/apache/apisix/issues/1731#issuecomment-646392129" target="_blank" rel="noopener">DNS 发现模式</a>，以及 <a href="doc/zh-cn/discovery.md">Eureka</a>。</li>
+<li>监控和指标: <a href="doc/zh-cn/plugins/prometheus.md">Prometheus</a></li>
+<li>集群：APISIX 节点是无状态的，创建配置中心集群请参考 <a href="https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/clustering.md" target="_blank" rel="noopener">etcd Clustering Guide</a>。</li>
+<li>高可用：支持配置同一个集群内的多个 etcd 地址。</li>
+<li>控制台: 内置控制台来操作 APISIX 集群。</li>
+<li>版本控制：支持操作的多次回滚。</li>
+<li>CLI: 使用命令行来启动、关闭和重启 APISIX。</li>
+<li><a href="doc/zh-cn/stand-alone.md">单机模式</a>: 支持从本地配置文件中加载路由规则，在 kubernetes(k8s) 等环境下更友好。</li>
+<li><a href="doc/zh-cn/architecture-design.md#Global-Rule">全局规则</a>：允许对所有请求执行插件，比如黑白名单、限流限速等。</li>
+<li>高性能：在单核上 QPS 可以达到 18k，同时延迟只有 0.2 毫秒。</li>
+<li><a href="doc/zh-cn/plugins/fault-injection.md">故障注入</a></li>
+<li><a href="doc/zh-cn/admin-api.md">REST Admin API</a>: 使用 REST Admin API 来控制 Apache APISIX，默认只允许 127.0.0.1 访问，你可以修改 <code>conf/config.yaml</code> 中的 <code>allow_admin</code> 字段，指定允许调用 Admin API 的 IP 列表。同时需要注意的是，Admin API 使用 key auth 来校验调用者身份，<strong>在部署前需要修改 <code>conf/config.yaml</code> 中的 <code>admin_key</code> 字段，来保证安全。</strong></li>
+<li>外部日志记录器：将访问日志导出到外部日志管理工具。(<a href="doc/plugins/http-logger.md">HTTP Logger</a>, <a href="doc/plugins/tcp-logger.md">TCP Logger</a>, <a href="doc/plugins/kafka-logger.md">Kafka Logger</a>, <a href="doc/plugins/udp-logger.md">UDP Logger</a>)</li>
+</ul>
+</li>
+<li><p><strong>高度可扩展</strong></p>
+<ul>
+<li><a href="doc/zh-cn/plugin-develop.md">自定义插件</a>: 允许挂载常见阶段，例如<code>init</code>, <code>rewrite</code>，<code>access</code>，<code>balancer</code>,<code>header filer</code>，<code>body filter</code> 和 <code>log</code> 阶段。</li>
+<li>自定义负载均衡算法：可以在 <code>balancer</code> 阶段使用自定义负载均衡算法。</li>
+<li>自定义路由: 支持用户自己实现路由算法。</li>
+</ul>
+</li>
+</ul>
+<h2 id="Apache-APISIX-和-Kong-的比较"><a href="#Apache-APISIX-和-Kong-的比较" class="headerlink" title="Apache APISIX 和 Kong 的比较"></a>Apache APISIX 和 Kong 的比较</h2><h4 id="API-网关核心功能点，两者均已覆盖"><a href="#API-网关核心功能点，两者均已覆盖" class="headerlink" title="API 网关核心功能点，两者均已覆盖"></a>API 网关核心功能点，两者均已覆盖</h4><table>
+<thead>
+<tr>
+<th align="left"><strong>功能</strong></th>
+<th align="left"><strong>Apache APISIX</strong></th>
+<th align="left"><strong>KONG</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>动态上游</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left"><strong>动态路由</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left"><strong>健康检查和熔断器</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left"><strong>动态 SSL 证书</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left"><strong>七层和四层代理</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left"><strong>分布式追踪</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left"><strong>自定义插件</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left"><strong>REST API</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left"><strong>CLI</strong></td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+</tbody></table>
+<h4 id="Apache-APISIX-的优势"><a href="#Apache-APISIX-的优势" class="headerlink" title="Apache APISIX 的优势"></a>Apache APISIX 的优势</h4><table>
+<thead>
+<tr>
+<th align="left"><strong>功能</strong></th>
+<th align="left"><strong>Apache APISIX</strong></th>
+<th align="left"><strong>KONG</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">项目归属</td>
+<td align="left">Apache 软件基金会</td>
+<td align="left">Kong Inc.</td>
+</tr>
+<tr>
+<td align="left">技术架构</td>
+<td align="left">Nginx + etcd</td>
+<td align="left">Nginx + postgres</td>
+</tr>
+<tr>
+<td align="left">交流渠道</td>
+<td align="left">微信群、QQ 群、邮件列表、Github、meetup</td>
+<td align="left">Github、论坛、freenode</td>
+</tr>
+<tr>
+<td align="left">单核 QPS (开启限流和 prometheus 插件)</td>
+<td align="left">18000</td>
+<td align="left">1700</td>
+</tr>
+<tr>
+<td align="left">平均延迟</td>
+<td align="left">0.2 毫秒</td>
+<td align="left">2 毫秒</td>
+</tr>
+<tr>
+<td align="left">支持 Dubbo 代理</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">配置回滚</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">支持生命周期的路由</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">插件热更新</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">用户自定义：负载均衡算法、路由</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">resty &lt;–&gt; gRPC 转码</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">支持 Tengine 作为运行时</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">MQTT 协议支持</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">配置生效时间</td>
+<td align="left">事件通知，低于 1 毫秒更新</td>
+<td align="left">定期轮询，5 秒</td>
+</tr>
+<tr>
+<td align="left">自带控制台</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">对接外部身份认证服务</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">配置中心高可用(HA)</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">指定时间窗口的限速</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left">支持任何 Nginx 变量做路由条件</td>
+<td align="left">是</td>
+<td align="left">否</td>
+</tr>
+</tbody></table>
+<p>性能对比测试<a href="https://gist.github.com/membphis/137db97a4bf64d3653aa42f3e016bd01" target="_blank" rel="noopener">详细内容如下</a>。</p>
+<h2 id="视频和文章"><a href="#视频和文章" class="headerlink" title="视频和文章"></a>视频和文章</h2><ul>
+<li>2020.10.16 <a href="https://www.youtube.com/watch?v=iEegNXOtEhQ" target="_blank" rel="noopener">Apache APISIX: How to implement plugin orchestration in API Gateway</a></li>
+<li>2020.10.16 <a href="https://www.youtube.com/watch?v=DleVJwPs4i4" target="_blank" rel="noopener">Improve Apache APISIX observability with Apache Skywalking</a></li>
+<li>2020.1.17 <a href="https://mp.weixin.qq.com/s/c51apneVj0O9yxiZAHF34Q" target="_blank" rel="noopener">API 网关 Apache APISIX 和 Kong 的选型对比</a></li>
+<li>2019.12.14 <a href="https://zhuanlan.zhihu.com/p/99620158" target="_blank" rel="noopener">从 0 到 1：Apache APISIX 的 Apache 之路</a></li>
+<li>2019.12.14 <a href="https://www.upyun.com/opentalk/445.html" target="_blank" rel="noopener">基于 Apache APISIX 的下一代微服务架构</a></li>
+<li>2019.10.30 <a href="https://www.upyun.com/opentalk/440.html" target="_blank" rel="noopener">Apache APISIX 微服务架构极致性能架构解析</a></li>
+<li>2019.9.27 <a href="https://zhuanlan.zhihu.com/p/84467919" target="_blank" rel="noopener">想把 APISIX 运行在 ARM64 平台上？只要三步</a></li>
+<li>2019.8.31 <a href="https://www.upyun.com/opentalk/433.html" target="_blank" rel="noopener">APISIX 技术选型、测试和持续集成</a></li>
+<li>2019.8.31 <a href="https://www.upyun.com/opentalk/437.html" target="_blank" rel="noopener">APISIX 高性能实战 2</a></li>
+<li>2019.7.6 <a href="https://www.upyun.com/opentalk/429.html" target="_blank" rel="noopener">APISIX 高性能实战</a></li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总的来说 apisix作为云原生网关,比其他的性能好的同时，稳定性可扩展性 都有质的提升。作为新一代网关的考虑范围内。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/11/30/apisix%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-安装docker" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -650,310 +1337,9 @@
 
 
   
-    <article id="post-使用Air实现gin框架实时重新加载" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/07/14/%E4%BD%BF%E7%94%A8Air%E5%AE%9E%E7%8E%B0gin%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%97%B6%E9%87%8D%E6%96%B0%E5%8A%A0%E8%BD%BD/">使用Air实现gin框架实时重新加载</a>
-</h1>
-
-
-
-        
-        <a href="/2020/07/14/%E4%BD%BF%E7%94%A8Air%E5%AE%9E%E7%8E%B0gin%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%97%B6%E9%87%8D%E6%96%B0%E5%8A%A0%E8%BD%BD/" class="archive-article-date">
-  	<time datetime="2020-07-14T06:54:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-14</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="为什么需要实时加载？"><a href="#为什么需要实时加载？" class="headerlink" title="为什么需要实时加载？"></a>为什么需要实时加载？</h3><p>之前使用Python编写Web项目的时候，常见的Flask或Django框架都是支持实时加载的，你修改了项目代码之后，程序能够自动重新加载并执行（live-reload），这在日常的开发阶段是十分方便的。</p>
-<p>在使用Go语言的gin框架在本地做开发调试的时候，经常需要在变更代码之后频繁的按下Ctrl+C停止程序并重新编译再执行，这样就不是很方便。</p>
-<h3 id="Air介绍"><a href="#Air介绍" class="headerlink" title="Air介绍"></a>Air介绍</h3><p>怎样才能在基于gin框架开发时实现实时加载功能呢？像这种烦恼肯定不会只是你一个人的烦恼，所以我报着肯定有现成轮子的心态开始了全网大搜索。果不其然就在Github上找到了一个工具：<a href="https://github.com/cosmtrek/air" target="_blank" rel="noopener">Air</a>。它支持以下特性：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">彩色日志输出</span><br><span class="line">自定义构建或二进制命令</span><br><span class="line">支持忽略子目录</span><br><span class="line">启动后支持监听新目录</span><br><span class="line">更好的构建过程</span><br></pre></td></tr></table></figure>
-
-<h3 id="安装air"><a href="#安装air" class="headerlink" title="安装air"></a>安装air</h3><p>Go</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get -u github.com&#x2F;cosmtrek&#x2F;air</span><br></pre></td></tr></table></figure>
-<p>MacOS</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fLo air https:&#x2F;&#x2F;git.io&#x2F;darwin_air</span><br></pre></td></tr></table></figure>
-<p>Linux</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fLo air https:&#x2F;&#x2F;git.io&#x2F;linux_air</span><br></pre></td></tr></table></figure>
-<p>Windows</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fLo air.exe https:&#x2F;&#x2F;git.io&#x2F;windows_air</span><br></pre></td></tr></table></figure>
-
-<h3 id="使用Air"><a href="#使用Air" class="headerlink" title="使用Air"></a>使用Air</h3><p>为了敲命令时更简单更方便，你应该把alias air=’~/.air’加到你的.bashrc或.zshrc中。</p>
-<p>首先进入你的项目目录：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;path&#x2F;to&#x2F;your_project</span><br></pre></td></tr></table></figure>
-<p>最简单的用法就是直接执行下面的命令：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 首先在当前目录下查找 &#96;.air.conf&#96;配置文件，如果找不到就使用默认的</span><br><span class="line">air -c .air.conf</span><br></pre></td></tr></table></figure>
-<p>推荐的使用方法是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 1. 在当前目录创建一个新的配置文件.air.conf</span><br><span class="line">touch .air.conf</span><br><span class="line"></span><br><span class="line"># 2. 复制 &#96;air.conf.example&#96; 中的内容到这个文件，然后根据你的需要去修改它</span><br><span class="line"></span><br><span class="line"># 3. 使用你的配置运行 air, 如果文件名是 &#96;.air.conf&#96;，只需要执行 &#96;air&#96;。</span><br><span class="line">air</span><br></pre></td></tr></table></figure>
-
-<h4 id="air-example-conf示例"><a href="#air-example-conf示例" class="headerlink" title="air_example.conf示例"></a>air_example.conf示例</h4><p>完整的<code>air_example.conf</code>示例配置如下，可以根据自己的需要修改。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"># [Air](https:&#x2F;&#x2F;github.com&#x2F;cosmtrek&#x2F;air) TOML 格式的配置文件</span><br><span class="line"></span><br><span class="line"># 工作目录</span><br><span class="line"># 使用 . 或绝对路径，请注意 &#96;tmp_dir&#96; 目录必须在 &#96;root&#96; 目录下</span><br><span class="line">root &#x3D; &quot;.&quot;</span><br><span class="line">tmp_dir &#x3D; &quot;tmp&quot;</span><br><span class="line"></span><br><span class="line">[build]</span><br><span class="line"># 只需要写你平常编译使用的shell命令。你也可以使用 &#96;make&#96;</span><br><span class="line">cmd &#x3D; &quot;go build -o .&#x2F;tmp&#x2F;main .&quot;</span><br><span class="line"># 由&#96;cmd&#96;命令得到的二进制文件名</span><br><span class="line">bin &#x3D; &quot;tmp&#x2F;main&quot;</span><br><span class="line"># 自定义的二进制，可以添加额外的编译标识例如添加 GIN_MODE&#x3D;release</span><br><span class="line">full_bin &#x3D; &quot;APP_ENV&#x3D;dev APP_USER&#x3D;air .&#x2F;tmp&#x2F;main&quot;</span><br><span class="line"># 监听以下文件扩展名的文件.</span><br><span class="line">include_ext &#x3D; [&quot;go&quot;, &quot;tpl&quot;, &quot;tmpl&quot;, &quot;html&quot;]</span><br><span class="line"># 忽略这些文件扩展名或目录</span><br><span class="line">exclude_dir &#x3D; [&quot;assets&quot;, &quot;tmp&quot;, &quot;vendor&quot;, &quot;frontend&#x2F;node_modules&quot;]</span><br><span class="line"># 监听以下指定目录的文件</span><br><span class="line">include_dir &#x3D; []</span><br><span class="line"># 排除以下文件</span><br><span class="line">exclude_file &#x3D; []</span><br><span class="line"># 如果文件更改过于频繁，则没有必要在每次更改时都触发构建。可以设置触发构建的延迟时间</span><br><span class="line">delay &#x3D; 1000 # ms</span><br><span class="line"># 发生构建错误时，停止运行旧的二进制文件。</span><br><span class="line">stop_on_error &#x3D; true</span><br><span class="line"># air的日志文件名，该日志文件放置在你的&#96;tmp_dir&#96;中</span><br><span class="line">log &#x3D; &quot;air_errors.log&quot;</span><br><span class="line"></span><br><span class="line">[log]</span><br><span class="line"># 显示日志时间</span><br><span class="line">time &#x3D; true</span><br><span class="line"></span><br><span class="line">[color]</span><br><span class="line"># 自定义每个部分显示的颜色。如果找不到颜色，使用原始的应用程序日志。</span><br><span class="line">main &#x3D; &quot;magenta&quot;</span><br><span class="line">watcher &#x3D; &quot;cyan&quot;</span><br><span class="line">build &#x3D; &quot;yellow&quot;</span><br><span class="line">runner &#x3D; &quot;green&quot;</span><br><span class="line"></span><br><span class="line">[misc]</span><br><span class="line"># 退出时删除tmp目录</span><br><span class="line">clean_on_exit &#x3D; true</span><br></pre></td></tr></table></figure>
-
-<h3 id="效果图"><a href="#效果图" class="headerlink" title="效果图"></a>效果图</h3><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ggrnaui0m5g30xc0k042d.gif" alt=""></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/07/14/%E4%BD%BF%E7%94%A8Air%E5%AE%9E%E7%8E%B0gin%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%97%B6%E9%87%8D%E6%96%B0%E5%8A%A0%E8%BD%BD/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-go闭包中局部变量逃逸的简单分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/06/25/go%E9%97%AD%E5%8C%85%E4%B8%AD%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F%E9%80%83%E9%80%B8%E7%9A%84%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90/">go闭包中局部变量逃逸的简单分析</a>
-</h1>
-
-
-
-        
-        <a href="/2020/06/25/go%E9%97%AD%E5%8C%85%E4%B8%AD%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F%E9%80%83%E9%80%B8%E7%9A%84%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90/" class="archive-article-date">
-  	<time datetime="2020-06-25T09:21:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/06/25/go%E9%97%AD%E5%8C%85%E4%B8%AD%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F%E9%80%83%E9%80%B8%E7%9A%84%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-使用prometheus-operator来监控istio数据" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/06/18/%E4%BD%BF%E7%94%A8prometheus-operator%E6%9D%A5%E7%9B%91%E6%8E%A7istio%E6%95%B0%E6%8D%AE/">使用prometheus-operator来监控istio数据</a>
-</h1>
-
-
-
-        
-        <a href="/2020/06/18/%E4%BD%BF%E7%94%A8prometheus-operator%E6%9D%A5%E7%9B%91%E6%8E%A7istio%E6%95%B0%E6%8D%AE/" class="archive-article-date">
-  	<time datetime="2020-06-18T09:51:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-18</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>其实默认安装完istio是会带一个promethes的。但是如果都用那个prometheus局限性比较大  还是用先进的prometheus-operator来监控istio。</p>
-<h3 id="安装prometheus-operator"><a href="#安装prometheus-operator" class="headerlink" title="安装prometheus-operator"></a>安装prometheus-operator</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;coreos&#x2F;kube-prometheus.git ; cd kube-prometheus</span><br><span class="line">kubectl create -f manifests&#x2F;setup</span><br><span class="line">until kubectl get servicemonitors --all-namespaces ; do date; sleep 1; echo &quot;&quot;; done</span><br><span class="line">kubectl create -f manifests&#x2F;</span><br></pre></td></tr></table></figure>
-
-<h3 id="查看安装结果"><a href="#查看安装结果" class="headerlink" title="查看安装结果"></a>查看安装结果</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl  get pod -n monitoring</span><br><span class="line">NAME                                   READY   STATUS    RESTARTS   AGE</span><br><span class="line">alertmanager-main-0                    2&#x2F;2     Running   0          14d</span><br><span class="line">alertmanager-main-1                    2&#x2F;2     Running   0          22d</span><br><span class="line">alertmanager-main-2                    2&#x2F;2     Running   0          22d</span><br><span class="line">grafana-5c55845445-8jvbz               1&#x2F;1     Running   0          22d</span><br><span class="line">kube-state-metrics-957fd6c75-vxp4k     3&#x2F;3     Running   0          22d</span><br><span class="line">node-exporter-9hc9q                    2&#x2F;2     Running   2          22d</span><br><span class="line">node-exporter-d85q9                    2&#x2F;2     Running   0          22d</span><br><span class="line">node-exporter-fzfhl                    2&#x2F;2     Running   0          22d</span><br><span class="line">node-exporter-gcm86                    2&#x2F;2     Running   0          22d</span><br><span class="line">node-exporter-w7xtg                    2&#x2F;2     Running   0          9d</span><br><span class="line">node-exporter-wvq7b                    2&#x2F;2     Running   0          22d</span><br><span class="line">prometheus-adapter-5cdcdf9c8d-6c5vq    1&#x2F;1     Running   0          14d</span><br><span class="line">prometheus-k8s-0                       3&#x2F;3     Running   1          14d</span><br><span class="line">prometheus-k8s-1                       3&#x2F;3     Running   1          22d</span><br><span class="line">prometheus-operator-6f98f66b89-4jjff   2&#x2F;2     Running   0          22d</span><br></pre></td></tr></table></figure>
-
-<h3 id="给promehteus增加权限监控istio"><a href="#给promehteus增加权限监控istio" class="headerlink" title="给promehteus增加权限监控istio"></a>给promehteus增加权限监控istio</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">kubectl -n monitoring edit clusterrole prometheus-k8s</span><br><span class="line"></span><br><span class="line">rules:</span><br><span class="line">- apiGroups:</span><br><span class="line">  - &quot;&quot;</span><br><span class="line">  resources:</span><br><span class="line">  - nodes&#x2F;metrics</span><br><span class="line">  - services</span><br><span class="line">  - endpoints</span><br><span class="line">  - pods</span><br><span class="line">  verbs:</span><br><span class="line">  - get</span><br><span class="line">  - list</span><br><span class="line">  - watch</span><br><span class="line">- nonResourceURLs:</span><br><span class="line">  - &#x2F;metrics</span><br><span class="line">  verbs:</span><br><span class="line">  - get</span><br></pre></td></tr></table></figure>
-
-<h3 id="安装监控项ServiceMonitor"><a href="#安装监控项ServiceMonitor" class="headerlink" title="安装监控项ServiceMonitor"></a>安装监控项ServiceMonitor</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">[root@master data]# cat ServiceMonitor.yaml</span><br><span class="line">apiVersion: monitoring.coreos.com&#x2F;v1</span><br><span class="line">kind: ServiceMonitor</span><br><span class="line">metadata:</span><br><span class="line">  name: istio-monitor</span><br><span class="line">  namespace: monitoring</span><br><span class="line">  labels:</span><br><span class="line">    app: prometheus-istio</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: mixer </span><br><span class="line">      istio: mixer</span><br><span class="line">  endpoints:</span><br><span class="line">  - port: prometheus </span><br><span class="line">    interval: 10s    </span><br><span class="line">  namespaceSelector:</span><br><span class="line">    matchNames:</span><br><span class="line">    - istio-system   </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@master data]# kubectl apply -f ServiceMonitor.yaml</span><br></pre></td></tr></table></figure>
-
-<h3 id="从promehtues的监控数据中可查看"><a href="#从promehtues的监控数据中可查看" class="headerlink" title="从promehtues的监控数据中可查看"></a>从promehtues的监控数据中可查看</h3><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfwxbhgdr3j31ot0u0do8.jpg" alt=""></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">prometheus</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/06/18/%E4%BD%BF%E7%94%A8prometheus-operator%E6%9D%A5%E7%9B%91%E6%8E%A7istio%E6%95%B0%E6%8D%AE/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-vim复制粘贴导致多行出现-号解决办法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/06/16/vim%E5%A4%8D%E5%88%B6%E7%B2%98%E8%B4%B4%E5%AF%BC%E8%87%B4%E5%A4%9A%E8%A1%8C%E5%87%BA%E7%8E%B0-%E5%8F%B7%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/">vim复制粘贴导致多行出现#号解决办法</a>
-</h1>
-
-
-
-        
-        <a href="/2020/06/16/vim%E5%A4%8D%E5%88%B6%E7%B2%98%E8%B4%B4%E5%AF%BC%E8%87%B4%E5%A4%9A%E8%A1%8C%E5%87%BA%E7%8E%B0-%E5%8F%B7%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/" class="archive-article-date">
-  	<time datetime="2020-06-16T05:53:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在vim内复制多行假如复制的行带有#号会导致其他不带#号的行自动加#</p>
-<p>解决办法，输入一下命令再粘贴即可</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:set paste</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/06/16/vim%E5%A4%8D%E5%88%B6%E7%B2%98%E8%B4%B4%E5%AF%BC%E8%87%B4%E5%A4%9A%E8%A1%8C%E5%87%BA%E7%8E%B0-%E5%8F%B7%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
+      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -965,7 +1351,7 @@
   <div class="outer">
     <div id="footer-info">
       <div class="footer-left">
-        &copy; 2020 jame_xhs
+        &copy; 2021 jame_xhs
       </div>
       <div class="footer-right">
         <a href="http://hexo.io/" target="_blank">jame_xhs</a> Theme <a
@@ -1155,6 +1541,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">OAuth 2.0</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">ubuntu</a>
               </li>
             
             <div class="clearfix"></div>

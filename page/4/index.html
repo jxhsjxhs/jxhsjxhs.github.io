@@ -196,6 +196,819 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-drone使用手册" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/05/29/drone%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">drone使用手册</a>
+</h1>
+
+
+
+        
+        <a href="/2020/05/29/drone%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/" class="archive-article-date">
+  	<time datetime="2020-05-29T13:03:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-29</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/05/29/drone%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-CKAD练习" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/05/25/CKAD%E7%BB%83%E4%B9%A0/">CKAD练习</a>
+</h1>
+
+
+
+        
+        <a href="/2020/05/25/CKAD%E7%BB%83%E4%B9%A0/" class="archive-article-date">
+  	<time datetime="2020-05-25T15:17:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-25</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Kubernetes-CKAD-练习"><a href="#Kubernetes-CKAD-练习" class="headerlink" title="Kubernetes CKAD 练习"></a>Kubernetes CKAD 练习</h2><h3 id="核心概念（13％）"><a href="#核心概念（13％）" class="headerlink" title="核心概念（13％）"></a>核心概念（13％）</h3><h3 id="多容器-Pod（10％）"><a href="#多容器-Pod（10％）" class="headerlink" title="多容器 Pod（10％）"></a>多容器 Pod（10％）</h3><h3 id="Pod-设计（20％）"><a href="#Pod-设计（20％）" class="headerlink" title="Pod 设计（20％）"></a>Pod 设计（20％）</h3><h3 id="状态持久性（8％）"><a href="#状态持久性（8％）" class="headerlink" title="状态持久性（8％）"></a>状态持久性（8％）</h3><h3 id="配置（18％）"><a href="#配置（18％）" class="headerlink" title="配置（18％）"></a>配置（18％）</h3><h3 id="可观察性（18％）"><a href="#可观察性（18％）" class="headerlink" title="可观察性（18％）"></a>可观察性（18％）</h3><h3 id="服务和网络（13％）"><a href="#服务和网络（13％）" class="headerlink" title="服务和网络（13％）"></a>服务和网络（13％）</h3><h3 id="了解-Kubernetes-API-原语，创建和配置基本-Pod"><a href="#了解-Kubernetes-API-原语，创建和配置基本-Pod" class="headerlink" title="了解 Kubernetes API 原语，创建和配置基本 Pod"></a>了解 Kubernetes API 原语，创建和配置基本 Pod</h3><ol>
+<li><p>列出集群中的所有命名空间</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl get namespaces</span><br><span class="line">kubectl get ns</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>列出所有命名空间中的所有 Pod</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get po --all-namespaces</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>列出特定命名空间中的所有 Pod</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod -n kube-system</span><br><span class="line">kubectl get pod -n 命名空间名称</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>列出特定命名空间中的所有 Service</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc --all-namespaces</span><br><span class="line">kubectl get svc -n 命名空间名称</span><br><span class="line">kubectl get svc -n default</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用 json 路径表达式列出所有显示名称和命名空间的 Pod</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods -o&#x3D;jsonpath&#x3D;&quot;&#123;. items[*][&#39;metadata. name&#39;,&#39;metadata. namespace&#39;]&#125;&quot; --all-namespaces --sort-by&#x3D;metadata. name</span><br><span class="line"></span><br><span class="line">kubectl get pods -o&#x3D;jsonpath&#x3D;&quot;&#123;. items[*][&#39;metadata. name&#39;,&#39;metadata. namespace&#39;]&#125;&quot; --all-namespaces</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在默认命名空间中创建一个 Nginx Pod，并验证 Pod 是否正在运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl run nginx --image&#x3D;nginx</span><br><span class="line">以上命令</span><br><span class="line">kubectl run --generator&#x3D;deployment&#x2F;apps. v1 is DEPRECATED and will be removed in a future version.  Use kubectl run --generator&#x3D;run-pod&#x2F;v1 or kubectl create instead</span><br><span class="line"></span><br><span class="line">kubectl run nginx --image&#x3D;nginx --restart&#x3D;Never</span><br><span class="line">会直接产生 nginx  后面不会产生随机数</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 yaml 文件创建相同的 Nginx Pod</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl run nginx --image&#x3D;nginx --restart&#x3D;Never --dry-run -o yaml &gt; nginx. yaml</span><br><span class="line"></span><br><span class="line">nginx. yaml 为</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  labels:</span><br><span class="line">    run: nginx</span><br><span class="line">  name: nginx</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - image: nginx</span><br><span class="line">    name: nginx</span><br><span class="line">    resources: &#123;&#125;</span><br><span class="line">  dnsPolicy: ClusterFirst</span><br><span class="line">  restartPolicy: Never</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+
+<ol start="8">
+<li>输出刚创建的 Pod 的 yaml 文件<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get po nginx -o yaml</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<ol start="9">
+<li>输出刚创建的 Pod 的 yaml 文件，并且其中不包含特定于集群的信息</li>
+</ol>
+<p>kubectl get po nginx -o yaml –export</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">Flag --export has been deprecated, This flag is deprecated and will be removed in future. </span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  annotations:</span><br><span class="line">    cni. projectcalico. org&#x2F;podIP: 10. 244. 1. 4&#x2F;32</span><br><span class="line">    cni. projectcalico. org&#x2F;podIPs: 10. 244. 1. 4&#x2F;32</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  labels:</span><br><span class="line">    run: nginx</span><br><span class="line">  name: nginx</span><br><span class="line">  selfLink: &#x2F;api&#x2F;v1&#x2F;namespaces&#x2F;default&#x2F;pods&#x2F;nginx</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - image: nginx</span><br><span class="line">    imagePullPolicy: Always</span><br><span class="line">    name: nginx</span><br><span class="line">    resources: &#123;&#125;</span><br><span class="line">    terminationMessagePath: &#x2F;dev&#x2F;termination-log</span><br><span class="line">    terminationMessagePolicy: File</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - mountPath: &#x2F;var&#x2F;run&#x2F;secrets&#x2F;kubernetes. io&#x2F;serviceaccount</span><br><span class="line">      name: default-token-6t2vf</span><br><span class="line">      readOnly: true</span><br><span class="line">  dnsPolicy: ClusterFirst</span><br><span class="line">  enableServiceLinks: true</span><br><span class="line">  nodeName: k8s-node01</span><br><span class="line">  priority: 0</span><br><span class="line">  restartPolicy: Never</span><br><span class="line">  schedulerName: default-scheduler</span><br><span class="line">  securityContext: &#123;&#125;</span><br><span class="line">  serviceAccount: default</span><br><span class="line">  serviceAccountName: default</span><br><span class="line">  terminationGracePeriodSeconds: 30</span><br><span class="line">  tolerations:</span><br><span class="line">  - effect: NoExecute</span><br><span class="line">    key: node. kubernetes. io&#x2F;not-ready</span><br><span class="line">    operator: Exists</span><br><span class="line">    tolerationSeconds: 300</span><br><span class="line">  - effect: NoExecute</span><br><span class="line">    key: node. kubernetes. io&#x2F;unreachable</span><br><span class="line">    operator: Exists</span><br><span class="line">    tolerationSeconds: 300</span><br><span class="line">  volumes:</span><br><span class="line">  - name: default-token-6t2vf</span><br><span class="line">    secret:</span><br><span class="line">      defaultMode: 420</span><br><span class="line">      secretName: default-token-6t2vf</span><br><span class="line">status:</span><br><span class="line">  phase: Pending</span><br><span class="line">  qosClass: BestEffort</span><br></pre></td></tr></table></figure>
+
+<ol start="10">
+<li>获取刚刚创建的 Pod 的完整详细信息</li>
+</ol>
+<p>kubectl describe pod nginx</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">Name:         nginx</span><br><span class="line">Namespace:    default</span><br><span class="line">Priority:     0</span><br><span class="line">Node:         k8s-node01&#x2F;192. 168. 17. 151</span><br><span class="line">Start Time:   Sun, 05 Jan 2020 18:57:52 -0800</span><br><span class="line">Labels:       run&#x3D;nginx</span><br><span class="line">Annotations:  cni. projectcalico. org&#x2F;podIP: 10. 244. 1. 4&#x2F;32</span><br><span class="line">              cni. projectcalico. org&#x2F;podIPs: 10. 244. 1. 4&#x2F;32</span><br><span class="line">Status:       Running</span><br><span class="line">IP:           10. 244. 1. 4</span><br><span class="line">IPs:</span><br><span class="line">  IP:  10. 244. 1. 4</span><br><span class="line">Containers:</span><br><span class="line">  nginx:</span><br><span class="line">    Container ID:   docker:&#x2F;&#x2F;3d9b8b7aba7c10b3f1fbdd470dee702bc5c0e70a46157674574b3b20bd629335</span><br><span class="line">    Image:          nginx</span><br><span class="line">    Image ID:       docker-pullable:&#x2F;&#x2F;nginx@sha256:b2d89d0a210398b4d1120b3e3a7672c16a4ba09c2c4a0395f18b9f7999b768f2</span><br><span class="line">    Port:           &lt;none&gt;</span><br><span class="line">    Host Port:      &lt;none&gt;</span><br><span class="line">    State:          Running</span><br><span class="line">      Started:      Sun, 05 Jan 2020 18:57:57 -0800</span><br><span class="line">    Ready:          True</span><br><span class="line">    Restart Count:  0</span><br><span class="line">    Environment:    &lt;none&gt;</span><br><span class="line">    Mounts:</span><br><span class="line">      &#x2F;var&#x2F;run&#x2F;secrets&#x2F;kubernetes. io&#x2F;serviceaccount from default-token-6t2vf (ro)</span><br><span class="line">Conditions:</span><br><span class="line">  Type              Status</span><br><span class="line">  Initialized       True </span><br><span class="line">  Ready             True </span><br><span class="line">  ContainersReady   True </span><br><span class="line">  PodScheduled      True </span><br><span class="line">Volumes:</span><br><span class="line">  default-token-6t2vf:</span><br><span class="line">    Type:        Secret (a volume populated by a Secret)</span><br><span class="line">    SecretName:  default-token-6t2vf</span><br><span class="line">    Optional:    false</span><br><span class="line">QoS Class:       BestEffort</span><br><span class="line">Node-Selectors:  &lt;none&gt;</span><br><span class="line">Tolerations:     node. kubernetes. io&#x2F;not-ready:NoExecute for 300s</span><br><span class="line">                 node. kubernetes. io&#x2F;unreachable:NoExecute for 300s</span><br><span class="line">Events:</span><br><span class="line">  Type    Reason     Age   From                 Message</span><br><span class="line">  ----    ------     ----  ----                 -------</span><br><span class="line">  Normal  Scheduled  14m   default-scheduler    Successfully assigned default&#x2F;nginx to k8s-node01</span><br><span class="line">  Normal  Pulling    14m   kubelet, k8s-node01  Pulling image &quot;nginx&quot;</span><br><span class="line">  Normal  Pulled     14m   kubelet, k8s-node01  Successfully pulled image &quot;nginx&quot;</span><br><span class="line">  Normal  Created    14m   kubelet, k8s-node01  Created container nginx</span><br><span class="line">  Normal  Started    14m   kubelet, k8s-node01  Started container nginx</span><br></pre></td></tr></table></figure>
+
+<ol start="11">
+<li>删除刚创建的 Pod</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete pod nginx</span><br><span class="line">kubectl delete -f yaml 文件</span><br></pre></td></tr></table></figure>
+
+<ol start="12">
+<li>强制删除刚创建的 Pod</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete po nginx --grace-period&#x3D;0 --force</span><br><span class="line"></span><br><span class="line">warning: Immediate deletion does not wait for confirmation that the running resource has been terminated.  The resource may continue to run on the cluster indefinitely. </span><br><span class="line">pod &quot;nginx&quot; force deleted</span><br></pre></td></tr></table></figure>
+
+<ol start="13">
+<li>创建版本为 1. 17. 4 的 Nginx Pod，并将其暴露在端口 80 上</li>
+</ol>
+<p>kubectl run nginx –image=nginx:1. 17. 4 –restart=Never –port=80</p>
+<p>kubectl run nginx –image=nginx:1. 17. 4 –restart=Never –port=80 –dry-run -o yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  labels:</span><br><span class="line">    run: nginx</span><br><span class="line">  name: nginx</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - image: nginx:1. 17. 4</span><br><span class="line">    name: nginx</span><br><span class="line">    ports:</span><br><span class="line">    - containerPort: 80</span><br><span class="line">    resources: &#123;&#125;</span><br><span class="line">  dnsPolicy: ClusterFirst</span><br><span class="line">  restartPolicy: Never</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="14">
+<li><p>将刚创建的容器的镜像更改为 1. 15-alpine，并验证该镜像是否已更新</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">kubectl set image pod&#x2F;nginx nginx&#x3D;nginx:1. 15-alpine</span><br><span class="line"></span><br><span class="line">kubectl edit po nginx</span><br><span class="line"></span><br><span class="line">kubectl get po nginx -w</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>对于刚刚更新的 Pod，将镜像版本改回 1. 17. 1，并观察变化</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">kubectl set image pod&#x2F;nginx nginx&#x3D;nginx:1. 17. 1</span><br><span class="line"></span><br><span class="line">kubectl edit po nginx</span><br><span class="line"></span><br><span class="line">kubectl get po nginx -w</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在不用 describe 命令的情况下检查镜像版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">kubectl get po nginx -o&#x3D;jsonpath&#x3D;&#39;&#123;. spec. containers[]. image&#125;&#123;&quot;\n&quot;&#125;&#39;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建 Nginx Pod 并在 Pod 上执行简单的 shell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl run nginx --image&#x3D;nginx --restart&#x3D;Never</span><br><span class="line">kubectl exec -it nginx &#x2F;bin&#x2F;bash</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取刚刚创建的 Pod 的 IP 地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get po nginx -o wide</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建一个 busybox Pod，在创建它时运行命令 ls 并检查日志</p>
+</li>
+</ol>
+<p>kubectl run busybox –image=busybox –restart=Never – ls</p>
+<p>kubectl logs busybox</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">bin</span><br><span class="line">dev</span><br><span class="line">etc</span><br><span class="line">home</span><br><span class="line">proc</span><br><span class="line">root</span><br><span class="line">sys</span><br><span class="line">tmp</span><br><span class="line">usr</span><br><span class="line">var</span><br></pre></td></tr></table></figure>
+
+<ol start="20">
+<li>如果 Pod 崩溃了，请检查 Pod 的先前日志<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs busybox -p</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<ol start="21">
+<li><p>用命令 sleep 3600 创建一个 busybox Pod</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl run busybox --image&#x3D;busybox --restart&#x3D;Never -- &#x2F;bin&#x2F;sh -c &quot;sleep 3600&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>检查 busybox Pod 中 Nginx Pod 的连接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod nginx -o wide</span><br><span class="line"></span><br><span class="line">kubectl exec -it busybox -- wget -o- 上述命令列出的 ip 地址</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<ol start="23">
+<li>创建一个能回显消息“How are you”的 busybox Pod，并手动将其删除<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl run busybox --image&#x3D;busybox --restart&#x3D;Never -it -- echo &quot;How are you&quot;</span><br><span class="line">kubectl delete po busybox</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<ol start="24">
+<li>创建一个 Nginx Pod 并列出具有不同复杂度（verbosity）的 Pod</li>
+</ol>
+<p>kubectl run nginx –image=nginx –restart=Never –port=80<br>kubectl get po nginx –v=7</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">I0105 20:54:25.780863  118442 loader.go:375] Config loaded from file:  &#x2F;home&#x2F;k8s-master&#x2F;.kube&#x2F;config</span><br><span class="line">I0105 20:54:25.790538  118442 round_trippers.go:420] GET https:&#x2F;&#x2F;192.168.17.150:6443&#x2F;api&#x2F;v1&#x2F;namespaces&#x2F;default&#x2F;pods&#x2F;nginx</span><br><span class="line">I0105 20:54:25.790575  118442 round_trippers.go:427] Request Headers:</span><br><span class="line">I0105 20:54:25.790584  118442 round_trippers.go:431]     Accept: application&#x2F;json;as&#x3D;Table;v&#x3D;v1beta1;g&#x3D;meta.k8s.io, application&#x2F;json</span><br><span class="line">I0105 20:54:25.790591  118442 round_trippers.go:431]     User-Agent: kubectl&#x2F;v1.16.3 (linux&#x2F;amd64) kubernetes&#x2F;b3cbbae</span><br><span class="line">I0105 20:54:25.797321  118442 round_trippers.go:446] Response Status: 200 OK in 6 milliseconds</span><br><span class="line">NAME    READY   STATUS    RESTARTS   AGE</span><br><span class="line">nginx   1&#x2F;1     Running   3          91m</span><br></pre></td></tr></table></figure>
+
+<ol start="25">
+<li>使用自定义列 PODNAME 和 PODSTATUS 列出 Nginx Pod</li>
+</ol>
+<p>kubectl get po nginx -o=custom-columns=”POD_NAME:.metadata.name,POD_STATUS:.status.containerStatuses”</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx      [map[containerID:docker:&#x2F;&#x2F;9ff65fc8e8771aa9bc069735a7d9bffa915737cdc8da2f491e330c9c11082ebb image:nginx:latest imageID:docker-pullable:&#x2F;&#x2F;nginx@sha256:b2d89d0a210398b4d1120b3e3a7672c16a4ba09c2c4a0395f18b9f7999b768f2 lastState:map[terminated:map[containerID:docker:&#x2F;&#x2F;ade08d0814b2073079bbad9ebf51b3a3fa2af2df4a411f99b255a78d3b669eeb exitCode:0 finishedAt:2020-01-06T03:34:31Z reason:Completed startedAt:2020-01-06T03:31:59Z]] name:nginx ready:true restartCount:3 started:true state:map[running:map[startedAt:2020-01-06T03:34:31Z]]]]</span><br></pre></td></tr></table></figure>
+
+<ol start="26">
+<li><p>列出所有按名称排序的 Pod</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get po --sort-by&#x3D;.metadata.name</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>列出所有按创建时间排序的 Pod</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get po --sort-by&#x3D;.metadata.creationTimestamp</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<ol start="28">
+<li>用“ls; sleep 3600;”“echo Hello World; sleep 3600;”及“echo this is the third container; sleep 3600”三个命令创建一个包含三个 busybox 容器的 Pod，并观察其状态</li>
+</ol>
+<p>sudo vim multi-containers.yaml</p>
+<p>apiVersion: v1<br>kind: Pod<br>metadata:<br>  creationTimestamp: null<br>  labels:<br>    run: busybox<br>  name: busybox<br>spec:<br>  containers:</p>
+<ul>
+<li>args:<ul>
+<li>bin/sh</li>
+<li>-c</li>
+<li>ls; sleep 3600<br>image: busybox<br>name: busybox1<br>resources: {}</li>
+</ul>
+</li>
+<li>args:<ul>
+<li>bin/sh</li>
+<li>-c</li>
+<li>echo Hello World;sleep 3600<br>image: busybox<br>name: busybox2<br>resources: {}</li>
+</ul>
+</li>
+<li>args:<ul>
+<li>bin/sh</li>
+<li>-c</li>
+<li>echo this is third containers;sleep 3600<br>image: busybox<br>name: busybox3<br>resources: {}<br>dnsPolicy: ClusterFirst<br>restartPolicy: Never<br>status: {}</li>
+</ul>
+</li>
+</ul>
+<ol start="29">
+<li>检查刚创建的每个容器的日志<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl get po</span><br><span class="line"></span><br><span class="line">kubectl logs busybox -c busybox1</span><br><span class="line">kubectl logs busybox -c busybox2</span><br><span class="line">kubectl logs busybox -c busybox3</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<ol start="30">
+<li><p>检查第二个容器 busybox2 的先前日志（如果有）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs busybox -c busybox2 --previous</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在上述容器的第三个容器 busybox3 中运行命令 ls</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl exec busybox -c busybox3 -- ls</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>显示以上容器的 metrics，将其放入 file.log 中并进行验证</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl top pod busybox --containers &gt; file.log &amp;&amp; cat file.log</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用主容器 busybox 创建一个 Pod，并执行“while true; do echo ‘Hi I am from Main container’ &gt;&gt; /var/log/index.html; sleep 5; done”，并带有暴露在端口 80 上的 Nginx 镜像的 sidecar 容器。用 emptyDir Volume 将该卷安装在 /var/log 路径（用于 busybox）和 /usr/share/nginx/html 路径（用于nginx容器）。验证两个容器都在运行。</p>
+</li>
+</ol>
+<p>kubectl run muilti-containers-pod –image=busybox –restart=Never –dry-run -o yaml &gt; nulti-containers-pod.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  labels:</span><br><span class="line">    run: muilti-containers-pod</span><br><span class="line">  name: muilti-containers-pod</span><br><span class="line">spec:</span><br><span class="line">  volumes: </span><br><span class="line">  - name: var-logs</span><br><span class="line">    emptyDir: &#123;&#125;</span><br><span class="line">  containers:</span><br><span class="line">  - image: busybox</span><br><span class="line">    command: [&quot;&#x2F;bin&#x2F;sh&quot;]</span><br><span class="line">    args: [&quot;-c&quot;, &quot;while true; do echo &#39;Hi I am from Main container&#39; &gt;&gt; &#x2F;var&#x2F;log&#x2F;index.html; sleep 5; done&quot;]</span><br><span class="line">    name: main-containers</span><br><span class="line">    resources: &#123;&#125;</span><br><span class="line">    volumeMounts: </span><br><span class="line">    - name: var-logs</span><br><span class="line">      mountPath: &#x2F;var&#x2F;log</span><br><span class="line">  - image: nginx</span><br><span class="line">    name: sidercar-container</span><br><span class="line">    resources: &#123;&#125;</span><br><span class="line">    ports: </span><br><span class="line">      - containerPort: 80</span><br><span class="line">    volumeMounts: </span><br><span class="line">    - name: var-logs</span><br><span class="line">      mountPath: &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html</span><br><span class="line">  dnsPolicy: ClusterFirst</span><br><span class="line">  restartPolicy: Never</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>kubectl create -f multi-containers-pod.yaml</p>
+<ol start="34">
+<li><p>进入两个容器并验证 main.txt 是否存在，并用 curl localhost 从 sidecar 容器中查询 main. txt</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl exec -it muilti-containers-pod -c main-container -- sh</span><br><span class="line">cat var&#x2F;log&#x2F;index.html</span><br><span class="line">kubectl exec -it muilti-containers-pod -c sidercar-container -- sh</span><br><span class="line">cat &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html&#x2F;index.html</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取带有标签信息的 Pod</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get po --show-labels</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<ol start="36">
+<li>创建 5 个 Nginx Pod，其中两个标签为 env = prod，另外三个标签为 env = dev<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl run nginx-dev1 --image&#x3D;nginx --restart&#x3D;Never --labels&#x3D;env&#x3D;dev</span><br><span class="line">kubectl run nginx-dev2 --image&#x3D;nginx --restart&#x3D;Never --labels&#x3D;env&#x3D;dev</span><br><span class="line">kubectl run nginx-dev3 --image&#x3D;nginx --restart&#x3D;Never --labels&#x3D;env&#x3D;dev</span><br><span class="line">kubectl run nginx-pro1 --image&#x3D;nginx --restart&#x3D;Never --labels&#x3D;env&#x3D;pro</span><br><span class="line">kubectl run nginx-pro2 --image&#x3D;nginx --restart&#x3D;Never --labels&#x3D;env&#x3D;pro</span><br></pre></td></tr></table></figure></li>
+<li>确认所有 Pod 都使用正确的标签创建</li>
+</ol>
+<p>kubectl get po –show-labels</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">nginx-dev1                  1&#x2F;1     Running   0          2m2s    env&#x3D;dev</span><br><span class="line">nginx-dev2                  1&#x2F;1     Running   0          63s     env&#x3D;dev</span><br><span class="line">nginx-dev3                  1&#x2F;1     Running   0          57s     env&#x3D;dev</span><br><span class="line">nginx-pro1                  1&#x2F;1     Running   0          52s     env&#x3D;pro</span><br><span class="line">nginx-pro2                  1&#x2F;1     Running   0          46s     env&#x3D;pro</span><br></pre></td></tr></table></figure>
+
+<ol start="38">
+<li>获得带有标签 env=dev 的 Pod</li>
+</ol>
+<p>kubectl get pods -l env=dev</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nginx-dev1   1&#x2F;1     Running   0          4m55s</span><br><span class="line">nginx-dev2   1&#x2F;1     Running   0          3m56s</span><br><span class="line">nginx-dev3   1&#x2F;1     Running   0          3m50s</span><br></pre></td></tr></table></figure>
+
+<ol start="39">
+<li>获得带标签 env=dev 的 Pod 并输出标签<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods -l env&#x3D;dev --show-labels</span><br></pre></td></tr></table></figure></li>
+<li>获得带有标签 env=pro 的 Pod</li>
+</ol>
+<p>kubectl get pods -l env=pro</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">NAME         READY   STATUS    RESTARTS   AGE</span><br><span class="line">nginx-pro1   1&#x2F;1     Running   0          8m25s</span><br><span class="line">nginx-pro2   1&#x2F;1     Running   0          8m19s</span><br></pre></td></tr></table></figure>
+
+<ol start="41">
+<li><p>获得带标签 env=prod 的 Pod 并输出标签</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods -l env&#x3D;pro --show-labels</span><br></pre></td></tr></table></figure></li>
+<li><p>获取带有标签 env 的 Pod</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get po -L env</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获得带标签 env=dev、env=pro 的 Pod</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get po -l &#39;env in (dev,pro)&#39;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取带有标签 env=dev 和 env=pro 的 Pod 并输出标签</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get po -l &#39;env in (dev,pro)&#39; --show-labels</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将其中一个容器的标签更改为 env=uat 并列出所有要验证的容器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl label pod&#x2F;nginx-pro1 env&#x3D;aa --overwrite</span><br><span class="line">kubectl get pods --show-labels</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除刚才创建的 Pod 标签，并确认所有标签均已删除</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl label pod nginx-dev&#123;1..3&#125; env-</span><br><span class="line">kubectl label pod nginx-pro&#123;1..2&#125; env-</span><br><span class="line">kubectl get pods --show-labels</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为所有 Pod 添加标签 app = nginx 并验证</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl label pod nginx-dev&#123;1..3&#125; app&#x3D;nginx</span><br><span class="line">kubectl label pod nginx-pro&#123;1..2&#125; app&#x3D;nginx</span><br><span class="line">kubectl get pods --show-labels</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取所有带有标签的节点（如果使用 minikube，则只会获得主节点）</p>
+</li>
+</ol>
+<p>kubectl get nodes –show-labels</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">NAME         STATUS   ROLES    AGE   VERSION   LABELS</span><br><span class="line">k8s-master   Ready    master   13d   v1.16.3   beta.kubernetes.io&#x2F;arch&#x3D;amd64,beta.kubernetes.io&#x2F;os&#x3D;linux,kubernetes.io&#x2F;arch&#x3D;amd64,kubernetes.io&#x2F;hostname&#x3D;k8s-master,kubernetes.io&#x2F;os&#x3D;linux,node-role.kubernetes.io&#x2F;master&#x3D;</span><br><span class="line">k8s-node01   Ready    &lt;none&gt;   13d   v1.16.3   beta.kubernetes.io&#x2F;arch&#x3D;amd64,beta.kubernetes.io&#x2F;os&#x3D;linux,kubernetes.io&#x2F;arch&#x3D;amd64,kubernetes.io&#x2F;hostname&#x3D;k8s-node01,kubernetes.io&#x2F;os&#x3D;linux</span><br><span class="line">k8s-node02   Ready    &lt;none&gt;   13d   v1.16.3   beta.kubernetes.io&#x2F;arch&#x3D;amd64,beta.kubernetes.io&#x2F;os&#x3D;linux,kubernetes.io&#x2F;arch&#x3D;amd64,kubernetes.io&#x2F;hostname&#x3D;k8s-node02,kubernetes.io&#x2F;os&#x3D;linux</span><br></pre></td></tr></table></figure>
+
+<ol start="49">
+<li>标记节点（如果正在使用，则为 minikube）nodeName = nginxnode<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl label node minikube nodeName&#x3D;nginxnode</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<ol start="50">
+<li>建一个标签为 nginx=dev 的 Pod 并将其部署在此节点上<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl label node k8s-node01  nginx&#x3D;dev</span><br><span class="line">kubectl label node k8s-node02  nginx&#x3D;pro</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>参考文献<br>medium.com/bb-tutorials-and-thoughts/practice-enough-with-these-questions-for-the-ckad-exam</p>
+<h1 id="Pod-设计、状态持久性"><a href="#Pod-设计、状态持久性" class="headerlink" title="Pod 设计、状态持久性"></a>Pod 设计、状态持久性</h1><ol start="52">
+<li>使用节点选择器验证已调度的 Pod</li>
+</ol>
+<p>pod.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  labels:</span><br><span class="line">    run: nginx</span><br><span class="line">  name: nginx</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - image: nginx</span><br><span class="line">    name: nginx</span><br><span class="line">    resources: &#123;&#125;</span><br><span class="line">  dnsPolicy: ClusterFirst</span><br><span class="line">  restartPolicy: Never</span><br><span class="line">  nodeSelector: </span><br><span class="line">  nginx: dev</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 50 基础上</p>
+<p>kubectl describe po nginx | grep Node-Selectors</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Node-Selectors:  nginx&#x3D;dev</span><br></pre></td></tr></table></figure>
+
+
+<ol start="53">
+<li><p>验证我们刚刚创建的 Pod Nginx 是否具有 nginx=dev 这个标签</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe po nginx | grep Labels</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Labels:       run&#x3D;nginx</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用 name=webapp 注释 Pod nginx-dev.<em>、nginx-pro.</em></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl annotate po nginx-dev&#123;1..3&#125; name&#x3D;webapp</span><br><span class="line">kubectl annotate po nginx-pro&#123;1..2&#125; name&#x3D;webapp</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<ol start="55">
+<li>验证已正确注释的 Pod<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe po nginx-dev&#123;1..3&#125; | grep -i annotations</span><br><span class="line">kubectl describe po nginx-pro&#123;1..2&#125; | grep -i annotations</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<ol start="56">
+<li><p>删除 Pod 上的注释并验证</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl annotate po nginx-dev&#123;1..3&#125; name-</span><br><span class="line">kubectl annotate po nginx-pro&#123;1..2&#125; name-</span><br><span class="line">kubectl describe po nginx-dev&#123;1..3&#125; | grep -i annotations</span><br><span class="line">kubectl describe po nginx-pro&#123;1..2&#125; | grep -i annotations</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除到目前为止我们创建的所有 Pod</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete pod --all</span><br></pre></td></tr></table></figure></li>
+<li><p>创建一个名为 webapp 的 Deployment，它带有 5 个副本的镜像 Nginx</p>
+</li>
+</ol>
+<p>kubectl create deployment  webapp –image=nginx –dry-run -o yaml &gt; webapp-deployment.yaml<br>更改 webapp-deployment 的 replicas 为 5</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps&#x2F;v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  labels:</span><br><span class="line">    app: webapp</span><br><span class="line">  name: webapp</span><br><span class="line">spec:</span><br><span class="line">  replicas: 5</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: webapp</span><br><span class="line">  strategy: &#123;&#125;</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      creationTimestamp: null</span><br><span class="line">      labels:</span><br><span class="line">        app: webapp</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - image: nginx</span><br><span class="line">        name: nginx</span><br><span class="line">        resources: &#123;&#125;</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+
+<ol start="59">
+<li>用标签获取我们刚刚创建的 Deployment</li>
+</ol>
+<p>kubectl get deploy webapp –show-labels</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NAME     READY   UP-TO-DATE   AVAILABLE   AGE     LABELS</span><br><span class="line">webapp   5&#x2F;5     5            5           3m59s   app&#x3D;webapp</span><br></pre></td></tr></table></figure>
+
+<ol start="60">
+<li>导出该 Deployment 的 yaml 文件</li>
+</ol>
+<p>kubectl get deploy webapp -o yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps&#x2F;v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  annotations:</span><br><span class="line">    deployment.kubernetes.io&#x2F;revision: &quot;1&quot;</span><br><span class="line">    kubectl.kubernetes.io&#x2F;last-applied-configuration: |</span><br><span class="line">      &#123;&quot;apiVersion&quot;:&quot;apps&#x2F;v1&quot;,&quot;kind&quot;:&quot;Deployment&quot;,&quot;metadata&quot;:&#123;&quot;annotations&quot;:&#123;&#125;,&quot;creationTimestamp&quot;:null,&quot;labels&quot;:&#123;&quot;app&quot;:&quot;webapp&quot;&#125;,&quot;name&quot;:&quot;webapp&quot;,&quot;namespace&quot;:&quot;default&quot;&#125;,&quot;spec&quot;:&#123;&quot;replicas&quot;:5,&quot;selector&quot;:&#123;&quot;matchLabels&quot;:&#123;&quot;app&quot;:&quot;webapp&quot;&#125;&#125;,&quot;strategy&quot;:&#123;&#125;,&quot;template&quot;:&#123;&quot;metadata&quot;:&#123;&quot;creationTimestamp&quot;:null,&quot;labels&quot;:&#123;&quot;app&quot;:&quot;webapp&quot;&#125;&#125;,&quot;spec&quot;:&#123;&quot;containers&quot;:[&#123;&quot;image&quot;:&quot;nginx&quot;,&quot;name&quot;:&quot;nginx&quot;,&quot;resources&quot;:&#123;&#125;&#125;]&#125;&#125;&#125;,&quot;status&quot;:&#123;&#125;&#125;</span><br><span class="line">  creationTimestamp: &quot;2020-01-08T05:52:11Z&quot;</span><br><span class="line">  generation: 1</span><br><span class="line">  labels:</span><br><span class="line">    app: webapp</span><br><span class="line">  name: webapp</span><br><span class="line">  namespace: default</span><br><span class="line">  resourceVersion: &quot;30357&quot;</span><br><span class="line">  selfLink: &#x2F;apis&#x2F;apps&#x2F;v1&#x2F;namespaces&#x2F;default&#x2F;deployments&#x2F;webapp</span><br><span class="line">  uid: defb62c1-1b1d-43db-ab43-5cfe90f67d68</span><br><span class="line">spec:</span><br><span class="line">  progressDeadlineSeconds: 600</span><br><span class="line">  replicas: 5</span><br><span class="line">  revisionHistoryLimit: 10</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: webapp</span><br><span class="line">  strategy:</span><br><span class="line">    rollingUpdate:</span><br><span class="line">      maxSurge: 25%</span><br><span class="line">      maxUnavailable: 25%</span><br><span class="line">    type: RollingUpdate</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      creationTimestamp: null</span><br><span class="line">      labels:</span><br><span class="line">        app: webapp</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - image: nginx</span><br><span class="line">        imagePullPolicy: Always</span><br><span class="line">        name: nginx</span><br><span class="line">        resources: &#123;&#125;</span><br><span class="line">        terminationMessagePath: &#x2F;dev&#x2F;termination-log</span><br><span class="line">        terminationMessagePolicy: File</span><br><span class="line">      dnsPolicy: ClusterFirst</span><br><span class="line">      restartPolicy: Always</span><br><span class="line">      schedulerName: default-scheduler</span><br><span class="line">      securityContext: &#123;&#125;</span><br><span class="line">      terminationGracePeriodSeconds: 30</span><br><span class="line">status:</span><br><span class="line">  availableReplicas: 5</span><br><span class="line">  conditions:</span><br><span class="line">  - lastTransitionTime: &quot;2020-01-08T05:52:26Z&quot;</span><br><span class="line">    lastUpdateTime: &quot;2020-01-08T05:52:26Z&quot;</span><br><span class="line">    message: Deployment has minimum availability.</span><br><span class="line">    reason: MinimumReplicasAvailable</span><br><span class="line">    status: &quot;True&quot;</span><br><span class="line">    type: Available</span><br><span class="line">  - lastTransitionTime: &quot;2020-01-08T05:52:11Z&quot;</span><br><span class="line">    lastUpdateTime: &quot;2020-01-08T05:52:29Z&quot;</span><br><span class="line">    message: ReplicaSet &quot;webapp-58867d7bbb&quot; has successfully progressed.</span><br><span class="line">    reason: NewReplicaSetAvailable</span><br><span class="line">    status: &quot;True&quot;</span><br><span class="line">    type: Progressing</span><br><span class="line">  observedGeneration: 1</span><br><span class="line">  readyReplicas: 5</span><br><span class="line">  replicas: 5</span><br><span class="line">  updatedReplicas: 5</span><br></pre></td></tr></table></figure>
+
+<ol start="61">
+<li>获取该 Deployment 的 Pod</li>
+</ol>
+<p>kubectl get deploy –show-labels</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">NAME               READY   UP-TO-DATE   AVAILABLE   AGE    LABELS</span><br><span class="line">nginx-deployment   3&#x2F;3     3            3           19h    app&#x3D;nginx</span><br><span class="line">webapp             5&#x2F;5     5            5           7m1s   app&#x3D;webapp</span><br></pre></td></tr></table></figure>
+<p>kubectl get po -l app=webapp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">NAME                      READY   STATUS    RESTARTS   AGE</span><br><span class="line">webapp-58867d7bbb-4q5nn   1&#x2F;1     Running   0          7m29s</span><br><span class="line">webapp-58867d7bbb-9jxc7   1&#x2F;1     Running   0          7m29s</span><br><span class="line">webapp-58867d7bbb-hxfv6   1&#x2F;1     Running   0          7m29s</span><br><span class="line">webapp-58867d7bbb-qj2nk   1&#x2F;1     Running   0          7m29s</span><br><span class="line">webapp-58867d7bbb-wmms4   1&#x2F;1     Running   0          7m29s</span><br></pre></td></tr></table></figure>
+
+<ol start="62">
+<li><p>将该 Deployment 从 5 个副本扩展到 20 个副本并验证</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl scale deploy webapp --replicas&#x3D;20</span><br><span class="line"></span><br><span class="line">尝试 --replicas&#x3D;1000 机器配置过低 会发生问题</span><br><span class="line"></span><br><span class="line">kubectl get po -l app&#x3D;webapp</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取该 Deployment 的 rollout 状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout status deploy webapp</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<ol start="64">
+<li><p>获取使用该 Deployment 创建的副本集</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get rs -l app&#x3D;webapp</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取该 Deployment 的副本集和 Pod 的 yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl get rs -l app&#x3D;webapp -o yaml</span><br><span class="line">kubectl get po -l app&#x3D;webapp -o yaml</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除刚创建的 Deployment，并查看所有 Pod 是否已被删除</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete deploy webapp</span><br><span class="line">kubectl get po -l app&#x3D;webapp -w</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用镜像 nginx：1.17.1 和容器端口 80 创建 webapp Deployment，并验证镜像版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create deploy webapp --image&#x3D;nginx:1.17.1 --dry-run -o yaml &gt; webapp.yaml</span><br></pre></td></tr></table></figure>
+<p>apiVersion: apps/v1<br>kind: Deployment<br>metadata:<br>creationTimestamp: null<br>labels:<br>app: webapp<br>name: webapp<br>spec:<br>replicas: 1<br>selector:<br>matchLabels:<br>  app: webapp<br>strategy: {}<br>template:<br>metadata:<br>  creationTimestamp: null<br>  labels:</p>
+<pre><code>app: webapp</code></pre><p>spec:<br>  containers:</p>
+<ul>
+<li>image: nginx:1.17.1<br>name: nginx<br>ports: <ul>
+<li>containerPort: 80<br>resources: {}<br>status: {}<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">68. 使用镜像版本 1.17.4 更新 Deployment 并验证</span><br><span class="line"></span><br><span class="line">kubectl set image deploy&#x2F;webapp nginx&#x3D;nginx:1.17.4</span><br><span class="line">kubectl get deploy  -o wide</span><br></pre></td></tr></table></figure>
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE    CONTAINERS   IMAGES         SELECTOR<br>nginx-deployment   3/3     3            3           20h    nginx        nginx:1.7.9    app=nginx<br>webapp             1/1     1            1           5m7s   nginx        nginx:1.17.4   app=webapp<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">kubectl describe deploy webapp | grep Image</span><br></pre></td></tr></table></figure>
+Image:        nginx:1.17.4<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">69. 检查 rollout 历史记录，并确保更新后一切正常</span><br><span class="line"></span><br><span class="line">kubectl rollout history deploy webapp</span><br></pre></td></tr></table></figure>
+deployment.apps/webapp<br>REVISION  CHANGE-CAUSE<br>1         <none><br>2         <none><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl get deploy webapp --show-labels</span><br><span class="line">kubectl get rs -l app&#x3D;webapp</span><br><span class="line">kubectl get po -l app&#x3D;webapp</span><br><span class="line"></span><br><span class="line">70. 撤消之前使用版本 1.17.1 的 Deployment，并验证镜像是否还有老版本</span><br><span class="line"></span><br><span class="line">kubectl rollout undo deploy webapp</span><br><span class="line">kubectl rollout history deploy webapp</span><br></pre></td></tr></table></figure>
+deployment.apps/webapp<br>REVISION  CHANGE-CAUSE<br>2         <none><br>3         <none><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe deploy webapp | grep Image</span><br><span class="line"></span><br><span class="line">71. 使用镜像版本 1.16.1 更新 Deployment，并验证镜像、检查 rollout 历史记录</span><br><span class="line"></span><br><span class="line">kubectl set image deploy&#x2F;webapp nginx&#x3D;nginx:1.16.1</span><br><span class="line">kubectl rollout status deploy webapp</span><br></pre></td></tr></table></figure>
+Waiting for deployment “webapp” rollout to finish: 1 old replicas are pending termination…<br>Waiting for deployment “webapp” rollout to finish: 1 old replicas are pending termination…<br>deployment “webapp” successfully rolled out<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout history deploy webapp</span><br></pre></td></tr></table></figure>
+deployment.apps/webapp<br>REVISION  CHANGE-CAUSE<br>2         <none><br>3         <none><br>4         <none></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe deploy webapp | grep Image</span><br><span class="line">  Image:        nginx:1.16.1</span><br></pre></td></tr></table></figure>
+
+<ol start="72">
+<li>将 Deployment 更新到镜像 1.17.1 并确认一切正常<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout undo deploy webapp --to-revision&#x3D;3</span><br><span class="line">kubectl rollout history deploy webapp</span><br><span class="line">kubectl describe deploy webapp | grep Image</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<ol start="73">
+<li><p>使用错误的镜像版本 1.100 更新 Deployment，并验证有问题</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl set image deploy&#x2F;webapp nginx&#x3D;nginx:1.10000</span><br><span class="line">kubectl rollout history deploy webapp</span><br><span class="line">kubectl get pods</span><br><span class="line">kubectl describe po pod名称</span><br><span class="line">Warning  Failed     2s (x2 over 52s)   kubelet, k8s-node01  Error: ImagePullBackOff</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>撤消使用先前版本的 Deployment，并确认一切正常</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout undo deploy webapp</span><br><span class="line">kubectl rollout status deploy webapp</span><br><span class="line">kubectl get pods</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>检查该 Deployment 的特定修订版本的历史记录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout history deploy webapp --revision&#x3D;特定版本记录号</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<ol start="76">
+<li><p>暂停 Deployment rollout</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout pause deploy  webapp</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用最新版本的镜像更新 Deployment，并检查历史记录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl set image deploy&#x2F;webapp nginx&#x3D;nginx:lastest</span><br><span class="line">kubectl rollout history deploy webapp</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>恢复 Deployment rollout</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout resume deploy  webapp</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>检查 rollout 历史记录，确保是最新版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout history deploy webapp</span><br><span class="line">kubectl rollout history deploy webapp --revision&#x3D;9</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将自动伸缩应用到该 Deployment 中，最少副本数为 10，最大副本数为 20，<br>目标 CPU 利用率 85%，并验证 hpa 已创建，将副本数从 1 个增加到 10 个</p>
+</li>
+</ol>
+<p>kubectl autoscale deploy webapp –min=10 –max=20 –cpu-percent=85</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get hpa</span><br><span class="line">NAME     REFERENCE           TARGETS         MINPODS   MAXPODS   REPLICAS   AGE</span><br><span class="line">webapp   Deployment&#x2F;webapp   &lt;unknown&gt;&#x2F;85%   10        20        0          9s</span><br></pre></td></tr></table></figure>
+<p>kubectl get po -l app=webapp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">NAME                      READY   STATUS    RESTARTS   AGE</span><br><span class="line">webapp-7668577c8f-98ltc   1&#x2F;1     Running   0          29s</span><br><span class="line">webapp-7668577c8f-bjmhz   1&#x2F;1     Running   0          29s</span><br><span class="line">webapp-7668577c8f-cbl2k   1&#x2F;1     Running   0          29s</span><br><span class="line">webapp-7668577c8f-dnb5z   1&#x2F;1     Running   0          2m54s</span><br><span class="line">webapp-7668577c8f-dvfrt   1&#x2F;1     Running   0          29s</span><br><span class="line">webapp-7668577c8f-gcqgt   1&#x2F;1     Running   0          29s</span><br><span class="line">webapp-7668577c8f-ht8pg   1&#x2F;1     Running   0          29s</span><br><span class="line">webapp-7668577c8f-nhjzs   1&#x2F;1     Running   0          29s</span><br><span class="line">webapp-7668577c8f-nsmqd   1&#x2F;1     Running   0          29s</span><br><span class="line">webapp-7668577c8f-rjg58   1&#x2F;1     Running   0          29s</span><br></pre></td></tr></table></figure>
+
+<ol start="81">
+<li><p>通过删除刚刚创建的 Deployment 和 hpa 来清理集群</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete deploy webapp</span><br><span class="line">kubectl delete hpa webapp</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用镜像 node 创建一个 Job，并验证是否有对应的 Pod 创建</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl create job nodeversion --image&#x3D;node -- node v</span><br><span class="line">kubectl get job -w</span><br><span class="line">kubectl get pod</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取刚刚创建的 Job 的日志</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs pod 名称</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用镜像 busybox 输出 Job 的 yaml 文件，并回显“Hello I am from job”</p>
+</li>
+</ol>
+<p>kubectl create job hello-job –image=busybox –dry-run -o yaml – echo “Hello I am from job”</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: batch&#x2F;v1</span><br><span class="line">kind: Job</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  name: hello-job</span><br><span class="line">spec:</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      creationTimestamp: null</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - command:</span><br><span class="line">        - echo</span><br><span class="line">        - Hello I am from job</span><br><span class="line">        image: busybox</span><br><span class="line">        name: hello-job</span><br><span class="line">        resources: &#123;&#125;</span><br><span class="line">      restartPolicy: Never</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="85">
+<li><p>将上面的 yaml 文件复制到 hello-job.yaml 文件并创建 Job</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl create job hello-job --image&#x3D;busybox --dry-run -o yaml -- echo &quot;Hello I am from job&quot; &gt; hello-job.yaml</span><br><span class="line"></span><br><span class="line">kubectl apply -f hello-job.yaml</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>验证 Job 并创建关联的容器，检查日志</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod</span><br><span class="line">kubectl get po</span><br><span class="line">kubectl logs po 名称</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除我们刚刚创建的 Job</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete job hello-job</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建一个相同的 Job，并使它一个接一个地运行 10 次</p>
+</li>
+</ol>
+<p>kubectl create job hello-job –image=busybox –dry-run -o yaml – echo “Hello I am from job” &gt; 10-job.yaml</p>
+<p>在 10-job.yaml 添加 completions: 10</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: batch&#x2F;v1</span><br><span class="line">kind: Job</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  name: hello-job</span><br><span class="line">spec:</span><br><span class="line">  completions: 10</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      creationTimestamp: null</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - command:</span><br><span class="line">        - echo</span><br><span class="line">        - Hello I am from Job</span><br><span class="line">        image: busybox</span><br><span class="line">        name: hello-job</span><br><span class="line">        resources: &#123;&#125;</span><br><span class="line">      restartPolicy: Never</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>kubectl get job -w<br>kubectl get po</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">NAME          COMPLETIONS   DURATION   AGE</span><br><span class="line">hello-job     9&#x2F;10          53s        53s</span><br><span class="line">nodeversion   1&#x2F;1           3m14s      18m</span><br><span class="line">hello-job     10&#x2F;10         59s        59s</span><br></pre></td></tr></table></figure>
+
+
+<ol start="89">
+<li><p>运行 10 次，确认已创建 10 个 Pod，并在完成后删除它们</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete job hello-job</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建相同的 Job 并使它并行运行 10 次</p>
+</li>
+</ol>
+<p>kubectl create job hello-job –image=busybox –dry-run -o yaml – echo “Hello I am from job” &gt; 10-parallelism-job.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: batch&#x2F;v1</span><br><span class="line">kind: Job</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  name: hello-job</span><br><span class="line">spec:</span><br><span class="line">  parallelism: 10</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      creationTimestamp: null</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - command:</span><br><span class="line">        - echo</span><br><span class="line">        - Hello I am from Job</span><br><span class="line">        image: busybox</span><br><span class="line">        name: hello-job</span><br><span class="line">        resources: &#123;&#125;</span><br><span class="line">      restartPolicy: Never</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="91">
+<li>并行运行 10 次，确认已创建 10 个 Pod，并在完成后将其删除</li>
+</ol>
+<p>kubectl get job -w<br>kubectl get po</p>
+<ol start="92">
+<li>创建一个带有 busybox 镜像的 Cronjob，每分钟打印一次来自 Kubernetes 集群消息的日期和 hello</li>
+</ol>
+<p>kubectl create cronjob date-job –image=busybox –schedule=”*/1 * * * *” – bin/sh -c “date; echo Hello from kubernetes cluster”</p>
+<p>kubectl get cronjob</p>
+<p>kubectl get po</p>
+<p>kubectl logs pod 名称</p>
+<ol start="93">
+<li>输出上述 cronjob 的 yaml 文件</li>
+</ol>
+<p>kubectl get cj date-job -o yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: batch&#x2F;v1beta1</span><br><span class="line">kind: CronJob</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: &quot;2020-01-08T08:50:52Z&quot;</span><br><span class="line">  name: date-job</span><br><span class="line">  namespace: default</span><br><span class="line">  resourceVersion: &quot;50543&quot;</span><br><span class="line">  selfLink: &#x2F;apis&#x2F;batch&#x2F;v1beta1&#x2F;namespaces&#x2F;default&#x2F;cronjobs&#x2F;date-job</span><br><span class="line">  uid: 22d49b8d-58ec-468a-b589-d5f60f0030c0</span><br><span class="line">spec:</span><br><span class="line">  concurrencyPolicy: Allow</span><br><span class="line">  failedJobsHistoryLimit: 1</span><br><span class="line">  jobTemplate:</span><br><span class="line">    metadata:</span><br><span class="line">      creationTimestamp: null</span><br><span class="line">      name: date-job</span><br><span class="line">    spec:</span><br><span class="line">      template:</span><br><span class="line">        metadata:</span><br><span class="line">          creationTimestamp: null</span><br><span class="line">        spec:</span><br><span class="line">          containers:</span><br><span class="line">          - command:</span><br><span class="line">            - bin&#x2F;sh</span><br><span class="line">            - -c</span><br><span class="line">            - date; echo Hello from kubernetes cluster</span><br><span class="line">            image: busybox</span><br><span class="line">            imagePullPolicy: Always</span><br><span class="line">            name: date-job</span><br><span class="line">            resources: &#123;&#125;</span><br><span class="line">            terminationMessagePath: &#x2F;dev&#x2F;termination-log</span><br><span class="line">            terminationMessagePolicy: File</span><br><span class="line">          dnsPolicy: ClusterFirst</span><br><span class="line">          restartPolicy: OnFailure</span><br><span class="line">          schedulerName: default-scheduler</span><br><span class="line">          securityContext: &#123;&#125;</span><br><span class="line">          terminationGracePeriodSeconds: 30</span><br><span class="line">  schedule: &#39;*&#x2F;1 * * * *&#39;</span><br><span class="line">  successfulJobsHistoryLimit: 3</span><br><span class="line">  suspend: false</span><br><span class="line">status:</span><br><span class="line">  lastScheduleTime: &quot;2020-01-08T08:51:00Z&quot;</span><br></pre></td></tr></table></figure>
+
+<ol start="94">
+<li><p>验证 cronJob 为每分钟运行创建一个单独的 Job 和 Pod，并验证 Pod 的日志</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get job</span><br><span class="line">kubectl get po</span><br><span class="line">kubectl logs date-job-&lt;jobid&gt;-&lt;pod&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除 cronJob，并验证所有关联的 Job 和 Pod 也都被删除</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete cj date-job</span><br><span class="line">&#x2F;&#x2F; verify pods and jobs</span><br><span class="line">kubectl get po</span><br><span class="line">kubectl get job</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>列出集群中的持久卷</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pv</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建一个名为 task-pv-volume 的 PersistentVolume，其 storgeClassName 为 manual，storage 为 10Gi，accessModes 为 ReadWriteOnce，hostPath 为 /mnt/data</p>
+</li>
+</ol>
+<p>task-pv-volume.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: task-pv-volume</span><br><span class="line">  labels: </span><br><span class="line">    type: local</span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 10Gi</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  storageClassName: manual</span><br><span class="line">  hostPath: </span><br><span class="line">    path: &quot;&#x2F;mnt&#x2F;data&quot;</span><br></pre></td></tr></table></figure>
+<p>kubectl get pv</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NAME             CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE</span><br><span class="line">task-pv-volume   10Gi       RWO            Retain           Available           manual                  88s</span><br></pre></td></tr></table></figure>
+
+
+
+<ol start="98">
+<li>创建一个存储至少 3Gi、访问模式为 ReadWriteOnce 的 PersistentVolumeClaim，并确认它的状态是否是绑定的</li>
+</ol>
+<p>kubectl create -f task-pv-claim.yaml<br>kubectl get pvc</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: task-pv-claim</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 3Gi</span><br><span class="line">  storageClassName: manual</span><br></pre></td></tr></table></figure>
+
+<ol start="99">
+<li><p>删除我们刚刚创建的持久卷和 PersistentVolumeClaim</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete pvc task-pv-claim</span><br><span class="line">kubectl delete pv task-pv-volume</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用镜像 Redis 创建 Pod，并配置一个在 Pod 生命周期内可持续使用的卷</p>
+</li>
+</ol>
+<p>redis-storage.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: redis</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: redis</span><br><span class="line">    image: redis</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: redis-storage</span><br><span class="line">      mountPath: &#x2F;data&#x2F;redis</span><br><span class="line">  volumes:</span><br><span class="line">  - name: redis-storage</span><br><span class="line">    emptyDir: &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="101">
+<li>在上面的 Pod 中执行操作，并在 /data/redis 路径中创建一个名为 file.txt 的文件，其文本为“This is the file”，然后打开另一个选项卡，再次使用同一 Pod 执行，并验证文件是否在同一路径中<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl exec -it redis &#x2F;bin&#x2F;sh</span><br><span class="line"></span><br><span class="line">cd &#x2F;data&#x2F;redis</span><br><span class="line"></span><br><span class="line">echo &quot;This is the file&quot; &gt; file.txt</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<ol start="102">
+<li>删除上面的 Pod，然后从相同的 yaml 文件再次创建，并验证路径 /data/redis 中是否没有 file.txt<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete po redis</span><br><span class="line"></span><br><span class="line">kubectl apply -f redis-storage.yaml</span><br><span class="line"></span><br><span class="line">kubectl exec -it redis &#x2F;bin&#x2F;sh</span><br><span class="line"></span><br><span class="line">cat &#x2F;data&#x2F;redis&#x2F;file.txt</span><br><span class="line">cat: &#x2F;data&#x2F;redis&#x2F;file.txt: No such file or directory</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ol>
+<ol start="103">
+<li>创建一个名为 task-pv-volume 的 PersistentVolume，其 storgeClassName 为 manual，storage 为 10Gi，accessModes 为 ReadWriteOnce，hostPath 为 /mnt/data；并创建一个存储至少 3Gi、访问模式为 ReadWriteOnce 的 PersistentVolumeClaim，并确认它的状态是否是绑定的</li>
+</ol>
+<p>kubectl create -f task-pv-volume.yaml<br>kubectl create -f task-pv-claim.yaml<br>kubectl get pv<br>kubectl get pvc</p>
+<p>配置如下所述：<br>task-pv-volume.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: task-pv-volume</span><br><span class="line">  labels: </span><br><span class="line">    type: local</span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 10Gi</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  storageClassName: manual</span><br><span class="line">  hostPath: </span><br><span class="line">    path: &quot;&#x2F;mnt&#x2F;data&quot;</span><br></pre></td></tr></table></figure>
+<p>task-pv-claim.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: task-pv-claim</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 3Gi</span><br><span class="line">  storageClassName: manual</span><br></pre></td></tr></table></figure>
+
+
+<ol start="104">
+<li>用容器端口 80 和 PersistentVolumeClaim task-pv-claim 创建一个 Nginx 容器，且具有路径“/usr/share/nginx/html”</li>
+</ol>
+<p>task-pv-pod.yaml</p>
+<p>apiVersion: v1<br>kind: Pod<br>metadata:<br>  name: task-pv-pod<br>spec:<br>  containers:<br>    - name: task-pv-container<br>      image: nginx<br>      ports:<br>        - containerPort: 80<br>          name: “http-server”<br>      volumeMounts:<br>      - mountPath: “/usr/share/nginx/html”<br>        name: task-pv-storage<br>  volumes:<br>    - name: task-pv-storage<br>      persistentVolumeClaim:<br>        claimName: task-pv-claim</p>
+<p>kubectl get pv<br>NAME             CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                   STORAGECLASS   REASON   AGE<br>task-pv-volume   10Gi       RWO            Retain           Bound    default/task-pv-claim   manual                  85m</p>
+<p>kubectl get pvc<br>NAME            STATUS   VOLUME           CAPACITY   ACCESS MODES   STORAGECLASS   AGE<br>task-pv-claim   Bound    task-pv-volume   10Gi       RWO            manual         10m</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/05/25/CKAD%E7%BB%83%E4%B9%A0/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-MTU是什么" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/05/23/MTU%E6%98%AF%E4%BB%80%E4%B9%88/">MTU是什么</a>
+</h1>
+
+
+
+        
+        <a href="/2020/05/23/MTU%E6%98%AF%E4%BB%80%E4%B9%88/" class="archive-article-date">
+  	<time datetime="2020-05-23T07:57:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="什么是MTU"><a href="#什么是MTU" class="headerlink" title="什么是MTU"></a>什么是MTU</h3><p>Maximum Transmission Unit，缩写MTU，中文名是：最大传输单元。</p>
+<h3 id="这是哪一层网络的概念？"><a href="#这是哪一层网络的概念？" class="headerlink" title="这是哪一层网络的概念？"></a>这是哪一层网络的概念？</h3><p>从下面这个表格中可以看到，在7层网络协议中，MTU是数据链路层的概念。MTU限制的是数据链路层的payload，也就是上层协议的大小，例如IP，ICMP等。</p>
+<h3 id="MTU有什么用？"><a href="#MTU有什么用？" class="headerlink" title="MTU有什么用？"></a>MTU有什么用？</h3><p>举一个最简单的场景，你在家用自己的笔记本上网，用的是路由器，路由器连接电信网络，然后访问了<a href="http://www.baidu.com，从你的笔记本出发的一个以太网数据帧总共经过了以下路径：">www.baidu.com，从你的笔记本出发的一个以太网数据帧总共经过了以下路径：</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">笔记本 -&gt; 路由器 -&gt; 电信机房 -&gt; 服务器</span><br></pre></td></tr></table></figure>
+<p>其中，每个节点都有一个MTU值，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1500     1500                 1500</span><br><span class="line">笔记本 -&gt; 路由器 -&gt; 电信机房  -&gt; 服务器</span><br></pre></td></tr></table></figure>
+<p>假设现在我把笔记本的MTU最大值设置成了1700，然后发送了一个超大的ip数据包（2000），这时候在以外网传输的时候会被拆成2个包，一个1700，一个300，然后加上头信息进行传输。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1700     1500                1500</span><br><span class="line">笔记本 -&gt; 路由器 -&gt; 电信机房 -&gt; 服务器</span><br></pre></td></tr></table></figure>
+<p>路由器接收到了一个1700的帧，发现大于自己设置的最大值：1500，如果IP包DF标志位为1，也就是不允许分包，那么路由器直接就把这个包丢弃了，根本就不会到达电信机房，也就到不了服务器了，所以，到这里我们就会发现，MTU其实就是在每一个节点的管控值，只要是大于这个值的数据帧，要么选择分片，要么直接丢弃。</p>
+<h3 id="MTU遇到calico"><a href="#MTU遇到calico" class="headerlink" title="MTU遇到calico"></a>MTU遇到calico</h3><p>这里分享一个前不久的k8s集群排障过程。<br>一天新搭建的集群各个节点看起来都是ok的但是只有同主机的pod才能访问的通,跨主机的通讯都有问题。当时的calico用的ipip模式，也就是每一台机器相当于一个路由器。互相通讯的时候通过主机的路由去寻路。<br><img src="https://i.loli.net/2020/05/24/PMKpLNv7Q6C1y9Z.png" alt="DeepinScreenshot_select-area_20200524123309.png"></p>
+<p><code>IPIP</code> 是linux内核的驱动程序，可以对数据包进行隧道，上图可以看到两个不同的网络 vlan1 和 vlan2。基于现有的以太网将原始包中的原始IP进行一次封装，通过tunl0解包，这个tunl0类似于ipip模块，和Flannel vxlan的veth很类似。</p>
+<p>Pod1 访问 Pod2 流程如下：<br>1、数据包从 Pod1 出到达Veth Pair另一端（宿主机上，以cali前缀开头）。</p>
+<p>2、进入IP隧道设备（tunl0），由Linux内核IPIP驱动封装，把源容器ip换成源宿主机ip，目的容器ip换成目的主机ip，这样就封装成 Node1 到 Node2 的数据包。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">此时包的类型：</span><br><span class="line">  原始IP包：</span><br><span class="line">  源IP：10.244.1.10</span><br><span class="line">  目的IP：10.244.2.10</span><br><span class="line"></span><br><span class="line">   TCP：</span><br><span class="line">   源IP: 192.168.31.62</span><br><span class="line">   目的iP：192.168.32.63</span><br></pre></td></tr></table></figure>
+<p>3、数据包经过路由器三层转发到 Node2。</p>
+<p>4、Node2 收到数据包后，网络协议栈会使用IPIP驱动进行解包，从中拿到原始IP包。</p>
+<p>5、然后根据路由规则，将数据包转发给cali设备，从而到达 Pod2。</p>
+<p>经过排障发现,当时主机的MTU为1454,而docker的MTU为1500.<br><img src="https://i.loli.net/2020/05/24/PIbBLknaqUKYrJM.png" alt="DeepinScreenshot_select-area_20200524123542.png"></p>
+<p>找到问题以后处理就很简单了。要么改主机的MTU要么改calico的。由于这里是云主机 改主机MTU可能会引发其他问题。所以我改了calico的MTU。问题修复</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/05/23/MTU%E6%98%AF%E4%BB%80%E4%B9%88/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-kubernetes-拉取私有镜像-imagepullsecrets" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/05/23/kubernetes-%E6%8B%89%E5%8F%96%E7%A7%81%E6%9C%89%E9%95%9C%E5%83%8F-imagepullsecrets/">kubernetes 拉取私有镜像 imagepullsecrets</a>
+</h1>
+
+
+
+        
+        <a href="/2020/05/23/kubernetes-%E6%8B%89%E5%8F%96%E7%A7%81%E6%9C%89%E9%95%9C%E5%83%8F-imagepullsecrets/" class="archive-article-date">
+  	<time datetime="2020-05-23T07:52:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="docker-使用私有仓库"><a href="#docker-使用私有仓库" class="headerlink" title="docker 使用私有仓库"></a>docker 使用私有仓库</h3><p>使用docker时,由于私有仓库很多时候没有搭建https的认证证书,访问时需要在本地docker的配置文件中加上允许对次镜像或者对所有镜像的http请求。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@Core:~# cat &#x2F;etc&#x2F;docker&#x2F;dameon.json </span><br><span class="line">&#123;&quot;insecure-registries&quot;: [&quot;0.0.0.0&#x2F;0&quot;]&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2020/05/23/b1jExvs8kBHRgYd.png" alt="DeepinScreenshot_select-area_20200523193555.png"></p>
+<p>然后使用docker login 登录的时候会发现,登录成功以后会在本地生<code>~/.docker/config.json</code>的配置文件。<br><img src="https://i.loli.net/2020/05/23/FAWPjmx4Bh9tqvX.png" alt="DeepinScreenshot_select-area_20200523193918.png"><br>该文件会存放登录过的用户的token以及登录仓库的地址</p>
+<h3 id="k8s使用私有仓库"><a href="#k8s使用私有仓库" class="headerlink" title="k8s使用私有仓库"></a>k8s使用私有仓库</h3><p>虚假的使用方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">在k8s中,想要使用私有仓库而用以上方法是不现实的。如下</span><br><span class="line">1.由于pod是漂移的,不知道下次pod会在哪个节点。</span><br><span class="line">2.并且如果几个部门合作之类的，不止只有一个私有库,在k8s集群中将非常麻烦。</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>真实的使用方法</p>
+<p>将刚刚生成的<code>config.json</code>变成configmap放置到k8s中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl create secret generic harborsecret \</span><br><span class="line">    --from-file&#x3D;.dockerconfigjson&#x3D;&#x2F;root&#x2F;.docker&#x2F;config.json \</span><br><span class="line">    --type&#x3D;kubernetes.io&#x2F;dockerconfigjson</span><br></pre></td></tr></table></figure>
+
+<p>查看一下<br>kubectl get secrets harborsecret<br><img src="https://i.loli.net/2020/05/23/nV25oGzHJIQkmSa.png" alt="DeepinScreenshot_select-area_20200523222238.png"></p>
+<p>kubectl get secret harborsecret –output=yaml<br><img src="https://i.loli.net/2020/05/23/WBXF4wsAdVQDR1o.png" alt="DeepinScreenshot_select-area_20200523222224.png"></p>
+<p>在要部署的deployment中放入此镜像的configmap配置文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps&#x2F;v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  namespace: istio-cosmo</span><br><span class="line">  name: cosmo-bff</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: istio</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nginx</span><br><span class="line">    spec:</span><br><span class="line">      imagePullSecrets:</span><br><span class="line">      - name: daocloud-registry</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        image: registry.daocloud.cn&#x2F;xxx&#x2F;nginx:264</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 8080</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: cosmo-conf</span><br><span class="line">          mountPath: &#x2F;work&#x2F;config</span><br><span class="line">      volumes:</span><br><span class="line">      - name: cosmo-conf</span><br><span class="line">        configMap:</span><br><span class="line">          name: cosmo-conf</span><br></pre></td></tr></table></figure>
+<p>这样不管是哪台机器执行下载该镜像的任务都会调用这个config文件。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">k8s</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/05/23/kubernetes-%E6%8B%89%E5%8F%96%E7%A7%81%E6%9C%89%E9%95%9C%E5%83%8F-imagepullsecrets/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-k8s部署mysql单节点到sotrageclass" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -668,310 +1481,9 @@
 
 
   
-    <article id="post-树莓派4的-ubuntu-18-04-LTS-源" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/04/23/%E6%A0%91%E8%8E%93%E6%B4%BE4%E7%9A%84-ubuntu-18-04-LTS-%E6%BA%90/">树莓派4的 ubuntu 18.04 LTS 源</a>
-</h1>
-
-
-
-        
-        <a href="/2020/04/23/%E6%A0%91%E8%8E%93%E6%B4%BE4%E7%9A%84-ubuntu-18-04-LTS-%E6%BA%90/" class="archive-article-date">
-  	<time datetime="2020-04-23T05:20:28.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-23</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>#阿里云源<br>deb <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic main restricted universe multiverse<br>deb-src <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic main restricted universe multiverse<br>deb <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic-security main restricted universe multiverse<br>deb-src <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic-security main restricted universe multiverse<br>deb <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic-updates main restricted universe multiverse<br>deb-src <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic-updates main restricted universe multiverse<br>deb <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic-backports main restricted universe multiverse<br>deb-src <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic-backports main restricted universe multiverse<br>deb <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic-proposed main restricted universe multiverse<br>deb-src <a href="https://mirrors.aliyun.com/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.aliyun.com/ubuntu-ports/</a> bionic-proposed main restricted universe multiverse</p>
-<p>#中科大源<br>deb <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic main restricted universe multiverse<br>deb-src <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic main restricted universe multiverse<br>deb <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic-updates main restricted universe multiverse<br>deb-src <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic-updates main restricted universe multiverse<br>deb <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic-backports main restricted universe multiverse<br>deb-src <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic-backports main restricted universe multiverse<br>deb <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic-security main restricted universe multiverse<br>deb-src <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic-security main restricted universe multiverse<br>deb <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic-proposed main restricted universe multiverse<br>deb-src <a href="https://mirrors.ustc.edu.cn/ubuntu-ports/" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/ubuntu-ports/</a> bionic-proposed main restricted universe multiverse</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/04/23/%E6%A0%91%E8%8E%93%E6%B4%BE4%E7%9A%84-ubuntu-18-04-LTS-%E6%BA%90/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-谈一谈值类型与引用类型和装箱与拆箱" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/03/31/%E8%B0%88%E4%B8%80%E8%B0%88%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1/">谈一谈值类型与引用类型和装箱与拆箱</a>
-</h1>
-
-
-
-        
-        <a href="/2020/03/31/%E8%B0%88%E4%B8%80%E8%B0%88%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1/" class="archive-article-date">
-  	<time datetime="2020-03-31T10:45:28.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-31</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="值类型与引用类型"><a href="#值类型与引用类型" class="headerlink" title="值类型与引用类型"></a>值类型与引用类型</h2><p>首先说一说什么是值类型和引用类型</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">值类型直接存储其值。</span><br><span class="line">引用类型存储对值的引用。</span><br></pre></td></tr></table></figure>
-<p>粗俗点儿翻译的就是值类型就是现金，要用直接用；引用类型是存折，要用还得先去银行取现。</p>
-<p>衍生出几个问题:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.为什么能直接直接用</span><br><span class="line">2.引用类型怎么引用的</span><br><span class="line">3.有啥区别</span><br></pre></td></tr></table></figure>
-<h3 id="问题1-为什么值类型的能直接用"><a href="#问题1-为什么值类型的能直接用" class="headerlink" title="问题1 为什么值类型的能直接用"></a>问题1 为什么值类型的能直接用</h3><blockquote>
-<p>基础扎实的同学知道。栈空间是某个进程启动的时候所内置的内存空间,我们经常听到的比如局部变量。这类型信息就存在栈当中,所以可以直接使用。但是栈的空间比较小。如果有其他需求我们只能放到堆内存当中。</p>
-</blockquote>
-<h3 id="问题2-引用类型怎么引用的"><a href="#问题2-引用类型怎么引用的" class="headerlink" title="问题2 引用类型怎么引用的"></a>问题2 引用类型怎么引用的</h3><p><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gddc3pkcflj30mw0jy0uq.jpg" alt=""></p>
-<blockquote>
-<p>如图,我们创建<code>Name</code>类就是在堆内存中,而我们如果需要使用。实例化以后。如下图所示<br><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gddc8328sjj31480l2wfs.jpg" alt=""><br>obj这个变量存储的东西只是Name对象的地址.(这个引用过程就是传说中的指针)</p>
-</blockquote>
-<h3 id="问题3-有啥区别"><a href="#问题3-有啥区别" class="headerlink" title="问题3 有啥区别"></a>问题3 有啥区别</h3><p><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gddch6bnphj313i0oan0i.jpg" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">值类型通常被人们称为轻量级的类型，因为在大多数情况下，值类型的的实例都分配在线程栈中，因此它不受垃圾回收的控制，缓解了托管堆中的压力，减少了应用程序的垃圾回收的次数，提高性能。</span><br><span class="line"></span><br><span class="line">所有的引用类型的实例都分配在托管堆上，c#中new操作符会返回一个内存地址指向当前的对象。所以当你在创建个一个引用类型实例的时候，你必须要考虑以下问题：</span><br><span class="line"></span><br><span class="line">&gt; 内存是在托管堆上分配的</span><br><span class="line">&gt; 在分配每一个对象时都会包含一些额外的成员（类型对象指针，同步块索引），这些成员必须初始化</span><br><span class="line">&gt; 对象中的其他字节总是设为零</span><br><span class="line">&gt; 在分配对象时，可能会进行一次垃圾回收操作（如果托管堆上的内存不够分配一次对象时）</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="装箱与拆箱"><a href="#装箱与拆箱" class="headerlink" title="装箱与拆箱"></a>装箱与拆箱</h2><p>简单解释</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">装箱 就是把“值类型”转换成“引用类型”(Object)；</span><br><span class="line"></span><br><span class="line">拆箱 就是把“引用类型”转换成“值类型”；</span><br></pre></td></tr></table></figure>
-<p>举个例子</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;装箱 boxing</span><br><span class="line">int i &#x3D; 3 ;  &#x2F;&#x2F;分配在栈上</span><br><span class="line">object o &#x3D; i ;&#x2F;&#x2F;隐式装箱操作，int i 在堆上</span><br><span class="line">object b &#x3D; (object)i ; &#x2F;&#x2F;显示装箱操作</span><br><span class="line">&#x2F;&#x2F;拆箱 unboxing</span><br><span class="line">int j &#x3D; (int) o ;&#x2F;&#x2F;显示拆箱（将对象o拆箱为int类型）</span><br><span class="line"> </span><br><span class="line">int k &#x3D; b ;&#x2F;&#x2F;error!!, 不能隐式拆箱</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">值类型和引用类型理解透彻后，我们知道C#里面是值传递，但是有些变量是引用类型的，在传递和拷贝时需要特别注意。方法传递参数时加上ref(out)，为引用传递参数。</span><br><span class="line"></span><br><span class="line">值传递仅仅传递的是值，不影响原始值。</span><br><span class="line"></span><br><span class="line">引用传递，传递的是内存地址，修改后会改变内存地址对应储存的值</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">C#</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/31/%E8%B0%88%E4%B8%80%E8%B0%88%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Thinkpad-L440双系统记录" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/03/29/Thinkpad-L440%E5%8F%8C%E7%B3%BB%E7%BB%9F%E8%AE%B0%E5%BD%95/">Thinkpad L440双系统记录</a>
-</h1>
-
-
-
-        
-        <a href="/2020/03/29/Thinkpad-L440%E5%8F%8C%E7%B3%BB%E7%BB%9F%E8%AE%B0%E5%BD%95/" class="archive-article-date">
-  	<time datetime="2020-03-29T15:59:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-29</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>驱动过程没啥好说的,EFI我整理好了如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">EFI如下</span><br><span class="line">链接:https:&#x2F;&#x2F;pan.baidu.com&#x2F;s&#x2F;1X1r5warmKrzWX423YdSMMw  密码:kdnc</span><br><span class="line">镜像地址如下</span><br><span class="line">链接:https:&#x2F;&#x2F;pan.baidu.com&#x2F;s&#x2F;170PKgxP-emez_BibOIHyhg  密码:qrj3</span><br></pre></td></tr></table></figure>
-<h3 id="坑"><a href="#坑" class="headerlink" title="坑"></a>坑</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">中间有意思的说一下做个记录</span><br><span class="line">我这个笔记本有两个盘，想的一个盘做好mac以后 用四叶草驱动作为windows的启动项引导。</span><br><span class="line">然后呢 装黑苹果的时候 Bios得开启AHIC模式,开启到这个模式以后,windows怎么都启动不起来。</span><br><span class="line">win7直接蓝屏然后0x0000...忘记了 </span><br><span class="line">win10报错以后可以进入那种引导修复的状态。</span><br><span class="line">重点来了</span><br><span class="line">在这种状态中 进入高级设置里面 然后点击类似重装系统这种修复。</span><br><span class="line">重装完以后 就可以在AHIC模式下启动windows了 我也不晓得为啥 试出来的</span><br></pre></td></tr></table></figure>
-<p>上双系统的图瞧瞧<br><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gdb90jbqawj31400u0di5.jpg" alt=""><br><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gdb91goay0j31hb0tz7wi.jpg" alt=""><br><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gdb91q3qc3j31hc0u0hdt.jpg" alt=""></p>
-<blockquote>
-<p>补充一句,电脑已经卖掉了….只是买来玩玩。倒手转卖赚了500.(我真他娘应该去做销售的.)</p>
-</blockquote>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/29/Thinkpad-L440%E5%8F%8C%E7%B3%BB%E7%BB%9F%E8%AE%B0%E5%BD%95/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-学习c" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/03/15/%E5%AD%A6%E4%B9%A0c/">学习c#</a>
-</h1>
-
-
-
-        
-        <a href="/2020/03/15/%E5%AD%A6%E4%B9%A0c/" class="archive-article-date">
-  	<time datetime="2020-03-15T07:10:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>链接:<a href="https://pan.baidu.com/s/1iw-tbafU6hRa6E4mV9c4Yg" target="_blank" rel="noopener">https://pan.baidu.com/s/1iw-tbafU6hRa6E4mV9c4Yg</a>  密码:3oa9</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">偷偷学习一波C#,预测一下 3年以后回来看.  .NET Core绝对是牛逼的产品。而C#也是牛逼的语言</span><br><span class="line">这次的跨平台尝试,并且看微软的发力力度，一定能有东西产出。</span><br><span class="line"></span><br><span class="line">但是不一定能影响很大，因为由于之前的微软积极闭源。导致现在的开源社区基本都是从反对微软而成立的,微软做开源阻力很大。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">如果一旦形成开源的势力 那么前后端以及APP将一统江湖.(只是可视化的一统江湖,后端还是有其他力量 比如 专门为微服务生的go 处理数据以及AI的python,虽然C#除了操作系统。什么都能做)</span><br><span class="line"></span><br><span class="line">PS:目前C#工资水平在同期的开发薪资是非常低的,中档大概低百分之35不止。但是这次尝试我会坚持3年。3年以后看再回来看这波博客。补上到时候的市场</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/15/%E5%AD%A6%E4%B9%A0c/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/3/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/5/">Next &amp;raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/3/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/5/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -983,7 +1495,7 @@
   <div class="outer">
     <div id="footer-info">
       <div class="footer-left">
-        &copy; 2020 jame_xhs
+        &copy; 2021 jame_xhs
       </div>
       <div class="footer-right">
         <a href="http://hexo.io/" target="_blank">jame_xhs</a> Theme <a
@@ -1173,6 +1685,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">OAuth 2.0</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">ubuntu</a>
               </li>
             
             <div class="clearfix"></div>

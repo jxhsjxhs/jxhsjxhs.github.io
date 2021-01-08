@@ -6,19 +6,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.jxhs.me">
-  <title>个人随笔 | jame_xhs&#39;s blog</title>
+  <title>RabbitMQ Golang之HelloWorld | jame_xhs&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="这世上为什么会有桥？因为路走到头了？ 莫怕，过了桥，这就翻篇了。 决定在事业上好好地在搞一把。借兵总的一句话 现在我们的高度真的完完全全把控在我们自己手里。 给自己一年时间看看改变。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="个人随笔">
-<meta property="og:url" content="http://www.jxhs.me/essays/qiao.html">
+  <meta name="description" content="本文翻译自RabbitMQ官网的Go语言客户端系列教程，共分为六篇，本文是第一篇——HelloWorld。 这些教程涵盖了使用RabbitMQ创建消息传递应用程序的基础知识。 你需要安装RabbitMQ服务器才能完成这些教程，请参阅安装指南或使用Docker镜像。 这些教程的代码是开源的，官方网站也是如此。 先决条件 本教程假设RabbitMQ已安装并运行在本机上的标准端口（5672）。如果你使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMQ Golang之HelloWorld">
+<meta property="og:url" content="http://www.jxhs.me/2021/01/08/RabbitMQ-Golang%E4%B9%8BHelloWorld/index.html">
 <meta property="og:site_name" content="jame_xhs&#39;s blog">
-<meta property="og:description" content="这世上为什么会有桥？因为路走到头了？ 莫怕，过了桥，这就翻篇了。 决定在事业上好好地在搞一把。借兵总的一句话 现在我们的高度真的完完全全把控在我们自己手里。 给自己一年时间看看改变。">
+<meta property="og:description" content="本文翻译自RabbitMQ官网的Go语言客户端系列教程，共分为六篇，本文是第一篇——HelloWorld。 这些教程涵盖了使用RabbitMQ创建消息传递应用程序的基础知识。 你需要安装RabbitMQ服务器才能完成这些教程，请参阅安装指南或使用Docker镜像。 这些教程的代码是开源的，官方网站也是如此。 先决条件 本教程假设RabbitMQ已安装并运行在本机上的标准端口（5672）。如果你使用">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-07-21T13:02:09.000Z">
-<meta property="article:modified_time" content="2020-07-21T14:13:38.960Z">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008eGmZEgy1gmgnk1d1gnj301z01fdfl.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008eGmZEgy1gmgnk9o4loj303m02j0ol.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008eGmZEgy1gmgnki4ehmj301z01fjr5.jpg">
+<meta property="article:published_time" content="2021-01-08T14:20:59.000Z">
+<meta property="article:modified_time" content="2021-01-08T14:24:35.160Z">
 <meta property="article:author" content="jame_xhs">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/008eGmZEgy1gmgnk1d1gnj301z01fdfl.jpg">
   
     <link rel="alternative" href="/atom.xml" title="jame_xhs&#39;s blog" type="application/atom+xml">
   
@@ -70,7 +74,7 @@
         
         <li><a href="/jxhsjxhs">个人简历</a></li>
         
-        <li><a href="/leetcode">个人项目</a></li>
+        <li><a href="/code">编程记录</a></li>
         
       </ul>
     </nav>
@@ -183,7 +187,7 @@
 		        
 					<li style="width: 25%"><a href="/jxhsjxhs">个人简历</a></li>
 		        
-					<li style="width: 25%"><a href="/leetcode">个人项目</a></li>
+					<li style="width: 25%"><a href="/code">编程记录</a></li>
 		        
 				</ul>
 			</nav>
@@ -198,31 +202,43 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="page-" class="article article-type-page " itemscope itemprop="blogPost">
+            <article id="post-RabbitMQ-Golang之HelloWorld" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
 
 <h1 class="article-title" itemprop="name">
-  个人随笔
+  RabbitMQ Golang之HelloWorld
 </h1>
 
 
 
         
-        <a href="/essays/qiao.html" class="archive-article-date">
-  	<time datetime="2020-07-21T13:02:09.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-21</time>
+        <a href="/2021/01/08/RabbitMQ-Golang%E4%B9%8BHelloWorld/" class="archive-article-date">
+  	<time datetime="2021-01-08T14:20:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-08</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>这世上为什么会有桥？<br>因为路走到头了？</p>
-<p>莫怕，过了桥，这就翻篇了。</p>
-<p>决定在事业上好好地在搞一把。借兵总的一句话 现在我们的高度真的完完全全把控在我们自己手里。</p>
-<p>给自己一年时间看看改变。</p>
+        <p>本文翻译自RabbitMQ官网的Go语言客户端系列教程，共分为六篇，本文是第一篇——HelloWorld。</p>
+<p>这些教程涵盖了使用RabbitMQ创建消息传递应用程序的基础知识。 你需要安装RabbitMQ服务器才能完成这些教程，请参阅安装指南或使用Docker镜像。 这些教程的代码是开源的，官方网站也是如此。</p>
+<h3 id="先决条件"><a href="#先决条件" class="headerlink" title="先决条件 "></a><center>先决条件 </center></h3><p>本教程假设RabbitMQ已安装并运行在本机上的标准端口（5672）。如果你使用不同的主机、端口或凭据，则需要调整连接设置。</p>
+<h3 id="RabbitMQ-Go语言客户端教程（一）"><a href="#RabbitMQ-Go语言客户端教程（一）" class="headerlink" title="RabbitMQ Go语言客户端教程（一） "></a><center>RabbitMQ Go语言客户端教程（一） </center></h3><h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>RabbitMQ是一个消息代理：它接受并转发消息。你可以把它想象成一个邮局：当你把你想要邮寄的邮件放进一个邮箱时，你可以确定邮差先生或女士最终会把邮件送到你的收件人那里。在这个比喻中，RabbitMQ是一个邮箱、一个邮局和一个邮递员。</p>
+<p>RabbitMQ和邮局的主要区别在于它不处理纸张，而是接受、存储和转发二进制数据块——消息。</p>
+<p>RabbitMQ和一般的消息传递都使用一些术语。</p>
+<blockquote>
+<p>生产仅意味着发送。发送消息的程序是生产者：<br><img src="https://tva1.sinaimg.cn/large/008eGmZEgy1gmgnk1d1gnj301z01fdfl.jpg" alt=""></p>
+</blockquote>
+<blockquote>
+<p>队列是位于RabbitMQ内部的邮箱的名称。尽管消息通过RabbitMQ和你的应用程序流动，但它们只能存储在队列中。队列只受主机内存和磁盘限制的限制，实际上它是一个大的消息缓冲区。许多生产者可以向一个队列发送消息，而许多消费者可以尝试从一个队列接收数据。以下是我们表示队列的方式：</p>
+</blockquote>
+<p><img src="https://tva1.sinaimg.cn/large/008eGmZEgy1gmgnk9o4loj303m02j0ol.jpg" alt=""></p>
+<blockquote>
+<p>消费与接收具有相似的含义。消费者是一个主要等待接收消息的程序：<br><img src="https://tva1.sinaimg.cn/large/008eGmZEgy1gmgnki4ehmj301z01fjr5.jpg" alt=""><br>请注意，生产者，消费者和代理（broker）不必位于同一主机上。实际上，在大多数应用程序中它们不是。一个应用程序既可以是生产者，也可以是消费者。</p>
+</blockquote>
 
       
 
@@ -281,7 +297,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://www.jxhs.me/essays/qiao.html" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.jxhs.me/2021/01/08/RabbitMQ-Golang%E4%B9%8BHelloWorld/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -293,6 +309,16 @@
 </article>
 
   
+<nav id="article-nav">
+  
+  
+    <a href="/2021/01/07/Golang%E9%BB%91%E7%A7%91%E6%8A%80%E4%B9%8B%E2%80%94%E2%80%94string%E4%B8%8E-byte%E8%BD%AC%E6%8D%A2/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Golang黑科技之——string与[]byte转换</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -345,7 +371,7 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
@@ -580,6 +606,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           
             <li class="search-li">
               <a href="https://blog.k-8s.com/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>耗子</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="https://blog.csdn.net/cwg_xiaoguizi" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>小桂子</a>
             </li>
           
         </ul>

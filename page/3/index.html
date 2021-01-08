@@ -66,7 +66,7 @@
         
         <li><a href="/jxhsjxhs">个人简历</a></li>
         
-        <li><a href="/leetcode">个人项目</a></li>
+        <li><a href="/code">编程记录</a></li>
         
       </ul>
     </nav>
@@ -179,7 +179,7 @@
 		        
 					<li style="width: 25%"><a href="/jxhsjxhs">个人简历</a></li>
 		        
-					<li style="width: 25%"><a href="/leetcode">个人项目</a></li>
+					<li style="width: 25%"><a href="/code">编程记录</a></li>
 		        
 				</ul>
 			</nav>
@@ -195,6 +195,110 @@
           </div>
           <div id="js-content" class="content-ll">
             
+  
+    <article id="post-JWT的原理和用法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/07/14/JWT%E7%9A%84%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%A8%E6%B3%95/">JWT的原理和用法</a>
+</h1>
+
+
+
+        
+        <a href="/2020/07/14/JWT%E7%9A%84%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%A8%E6%B3%95/" class="archive-article-date">
+  	<time datetime="2020-07-14T07:03:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-14</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="啥是JWT"><a href="#啥是JWT" class="headerlink" title="啥是JWT"></a>啥是JWT</h3><p>JSON Web Token（缩写 JWT）是目前最流行的跨域认证解决方案。</p>
+<h3 id="为啥会有JWT"><a href="#为啥会有JWT" class="headerlink" title="为啥会有JWT"></a>为啥会有JWT</h3><p>互联网服务离不开用户认证。一般流程是下面这样。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1、用户向服务器发送用户名和密码。</span><br><span class="line"></span><br><span class="line">2、服务器验证通过后，在当前对话（session）里面保存相关数据，比如用户角色、登录时间等等。</span><br><span class="line"></span><br><span class="line">3、服务器向用户返回一个 session_id，写入用户的 Cookie。</span><br><span class="line"></span><br><span class="line">4、用户随后的每一次请求，都会通过 Cookie，将 session_id 传回服务器。</span><br><span class="line"></span><br><span class="line">5、服务器收到 session_id，找到前期保存的数据，由此得知用户的身份。</span><br></pre></td></tr></table></figure>
+
+<p>这种模式的问题在于，扩展性（scaling）不好。单机当然没有问题，如果是服务器集群，或者是跨域的服务导向架构，就要求 session 数据共享，每台服务器都能够读取 session。</p>
+<p>举例来说，A 网站和 B 网站是同一家公司的关联服务。现在要求，用户只要在其中一个网站登录，再访问另一个网站就会自动登录，请问怎么实现？</p>
+<p>一种解决方案是 session 数据持久化，写入数据库或别的持久层。各种服务收到请求后，都向持久层请求数据。这种方案的优点是架构清晰，缺点是工程量比较大。另外，持久层万一挂了，就会单点失败。</p>
+<p>另一种方案是服务器索性不保存 session 数据了，所有数据都保存在客户端，每次请求都发回服务器。JWT 就是这种方案的一个代表。</p>
+<h3 id="JWT-的原理"><a href="#JWT-的原理" class="headerlink" title="JWT 的原理"></a>JWT 的原理</h3><p>JWT 的原理是，服务器认证以后，生成一个 JSON 对象，发回给用户，就像下面这样。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;姓名&quot;: &quot;dashabi&quot;,</span><br><span class="line">  &quot;角色&quot;: &quot;管理员&quot;,</span><br><span class="line">  &quot;到期时间&quot;: &quot;2020年7月15日0点0分&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以后，用户与服务端通信的时候，都要发回这个 JSON 对象。服务器完全只靠这个对象认定用户身份。为了防止用户篡改数据，服务器在生成这个对象的时候，会加上签名（详见后文）。</p>
+<p>服务器就不保存任何 session 数据了，也就是说，服务器变成无状态了，从而比较容易实现扩展。</p>
+<h3 id="JWT-的数据结构"><a href="#JWT-的数据结构" class="headerlink" title="JWT 的数据结构"></a>JWT 的数据结构</h3><p>实际的 JWT 大概就像下面这样。<br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ggrmz6bwctj315e096n7h.jpg" alt=""></p>
+<p>它是一个很长的字符串，中间用点<code>（.）</code>分隔成三个部分。注意，JWT 内部是没有换行的，这里只是为了便于展示，将它写成了几行。</p>
+<p>JWT 的三个部分依次如下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Header（头部）</span><br><span class="line">Payload（负载）</span><br><span class="line">Signature（签名）</span><br></pre></td></tr></table></figure>
+<p>写成一行，就是下面的样子。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Header.Payload.Signature</span><br></pre></td></tr></table></figure>
+
+<h3 id="具体讲解JWT三部分"><a href="#具体讲解JWT三部分" class="headerlink" title="具体讲解JWT三部分"></a>具体讲解JWT三部分</h3><h4 id="Header"><a href="#Header" class="headerlink" title="Header"></a>Header</h4><p>Header 部分是一个 JSON 对象，描述 JWT 的元数据，通常是下面的样子。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;alg&quot;: &quot;HS256&quot;,</span><br><span class="line">  &quot;typ&quot;: &quot;JWT&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面代码中，alg属性表示签名的算法（algorithm），默认是 HMAC SHA256（写成 HS256）；typ属性表示这个令牌（token）的类型（type），JWT 令牌统一写为JWT。</p>
+<p>最后，将上面的 JSON 对象使用 Base64URL 算法（详见后文）转成字符串。</p>
+<h4 id="Payload"><a href="#Payload" class="headerlink" title="Payload"></a>Payload</h4><p>Payload 部分也是一个 JSON 对象，用来存放实际需要传递的数据。JWT 规定了7个官方字段，供选用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">iss (issuer)：签发人</span><br><span class="line">exp (expiration time)：过期时间</span><br><span class="line">sub (subject)：主题</span><br><span class="line">aud (audience)：受众</span><br><span class="line">nbf (Not Before)：生效时间</span><br><span class="line">iat (Issued At)：签发时间</span><br><span class="line">jti (JWT ID)：编号</span><br></pre></td></tr></table></figure>
+<p>除了官方字段，你还可以在这个部分定义私有字段，下面就是一个例子。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;sub&quot;: &quot;1234567890&quot;,</span><br><span class="line">  &quot;name&quot;: &quot;John Doe&quot;,</span><br><span class="line">  &quot;admin&quot;: true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意，JWT 默认是不加密的，任何人都可以读到，所以不要把秘密信息放在这个部分。</p>
+<p>这个 JSON 对象也要使用 Base64URL 算法转成字符串。</p>
+<h4 id="Signature"><a href="#Signature" class="headerlink" title="Signature"></a>Signature</h4><p>Signature 部分是对前两部分的签名，防止数据篡改。</p>
+<p>首先，需要指定一个密钥（secret）。这个密钥只有服务器才知道，不能泄露给用户。然后，使用 Header 里面指定的签名算法（默认是 HMAC SHA256），按照下面的公式产生签名。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HMACSHA256(</span><br><span class="line">  base64UrlEncode(header) + &quot;.&quot; +</span><br><span class="line">  base64UrlEncode(payload),</span><br><span class="line">  secret)</span><br></pre></td></tr></table></figure>
+<p>算出签名以后，把 Header、Payload、Signature 三个部分拼成一个字符串，每个部分之间用”点”（.）分隔，就可以返回给用户。</p>
+<h3 id="Base64URL"><a href="#Base64URL" class="headerlink" title="Base64URL"></a>Base64URL</h3><p>前面提到，Header 和 Payload 串型化的算法是 Base64URL。这个算法跟 Base64 算法基本类似，但有一些小的不同。</p>
+<p>JWT 作为一个令牌（token），有些场合可能会放到 URL（比如 api.example.com/?token=xxx）。Base64 有三个字符+、/和=，在 URL 里面有特殊含义，所以要被替换掉：=被省略、+替换成-，/替换成_ 。这就是 Base64URL 算法。</p>
+<h3 id="JWT-的使用方式"><a href="#JWT-的使用方式" class="headerlink" title="JWT 的使用方式"></a>JWT 的使用方式</h3><p>客户端收到服务器返回的 JWT，可以储存在 Cookie 里面，也可以储存在 localStorage。</p>
+<p>此后，客户端每次与服务器通信，都要带上这个 JWT。你可以把它放在 Cookie 里面自动发送，但是这样不能跨域，所以更好的做法是放在 HTTP 请求的头信息Authorization字段里面。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Authorization: Bearer &lt;token&gt;</span><br></pre></td></tr></table></figure>
+
+<p>另一种做法是，跨域的时候，JWT 就放在 POST 请求的数据体里面。</p>
+<h3 id="JWT-的几个特点"><a href="#JWT-的几个特点" class="headerlink" title="JWT 的几个特点"></a>JWT 的几个特点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">（1）JWT 默认是不加密，但也是可以加密的。生成原始 Token 以后，可以用密钥再加密一次。</span><br><span class="line"></span><br><span class="line">（2）JWT 不加密的情况下，不能将秘密数据写入 JWT。</span><br><span class="line"></span><br><span class="line">（3）JWT 不仅可以用于认证，也可以用于交换信息。有效使用 JWT，可以降低服务器查询数据库的次数。</span><br><span class="line"></span><br><span class="line">（4）JWT 的最大缺点是，由于服务器不保存 session 状态，因此无法在使用过程中废止某个 token，或者更改 token 的权限。也就是说，一旦 JWT 签发了，在到期之前就会始终有效，除非服务器部署额外的逻辑。</span><br><span class="line"></span><br><span class="line">（5）JWT 本身包含了认证信息，一旦泄露，任何人都可以获得该令牌的所有权限。为了减少盗用，JWT 的有效期应该设置得比较短。对于一些比较重要的权限，使用时应该再次对用户进行认证。</span><br><span class="line"></span><br><span class="line">（6）为了减少盗用，JWT 不应该使用 HTTP 协议明码传输，要使用 HTTPS 协议传输。</span><br></pre></td></tr></table></figure>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/07/14/JWT%E7%9A%84%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%A8%E6%B3%95/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
   
     <article id="post-使用Air实现gin框架实时重新加载" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
@@ -887,118 +991,6 @@
 
 
   
-    <article id="post-容器内抓包定位网络问题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/06/02/%E5%AE%B9%E5%99%A8%E5%86%85%E6%8A%93%E5%8C%85%E5%AE%9A%E4%BD%8D%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98/">容器内抓包定位网络问题</a>
-</h1>
-
-
-
-        
-        <a href="/2020/06/02/%E5%AE%B9%E5%99%A8%E5%86%85%E6%8A%93%E5%8C%85%E5%AE%9A%E4%BD%8D%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98/" class="archive-article-date">
-  	<time datetime="2020-06-02T01:56:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-02</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在使用 kubernetes 跑应用的时候，可能会遇到一些网络问题，比较常见的是服务端无响应(超时)或回包内容不正常，如果没找出各种配置上有问题，这时我们需要确认数据包到底有没有最终被路由到容器里，或者报文到达容器的内容和出容器的内容符不符合预期，通过分析报文可以进一步缩小问题范围。那么如何在容器内抓包呢？本文提供实用的脚本一键进入容器网络命名空间(netns)，使用宿主机上的tcpdump进行抓包。</p>
-<h3 id="使用脚本一键进入-pod-netns-抓包"><a href="#使用脚本一键进入-pod-netns-抓包" class="headerlink" title="使用脚本一键进入 pod netns 抓包"></a>使用脚本一键进入 pod netns 抓包</h3><blockquote>
-<p>发现某个服务不通，最好将其副本数调为1，并找到这个副本 pod 所在节点和 pod 名称</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod -o wide</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>登录 pod 所在节点，将如下脚本粘贴到 shell (注册函数到当前登录的 shell，我们后面用)</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">function e() &#123;</span><br><span class="line">    set -eu</span><br><span class="line">    ns&#x3D;$&#123;2-&quot;default&quot;&#125;</span><br><span class="line">    pod&#x3D;&#96;kubectl -n $ns describe pod $1 | grep -A10 &quot;^Containers:&quot; | grep -Eo &#39;docker:&#x2F;&#x2F;.*$&#39; | head -n 1 | sed &#39;s&#x2F;docker:\&#x2F;\&#x2F;\(.*\)$&#x2F;\1&#x2F;&#39;&#96;</span><br><span class="line">    pid&#x3D;&#96;docker inspect -f &#123;&#123;.State.Pid&#125;&#125; $pod&#96;</span><br><span class="line">    echo &quot;entering pod netns for $ns&#x2F;$1&quot;</span><br><span class="line">    cmd&#x3D;&quot;nsenter -n --target $pid&quot;</span><br><span class="line">    echo $cmd</span><br><span class="line">    $cmd</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>一键进入 pod 所在的 netns，格式：<code>e POD_NAME NAMESPACE</code>，示例：</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">e istio-galley-58c7c7c646-m6568 istio-system</span><br><span class="line">e proxy-5546768954-9rxg6 # 省略 NAMESPACE 默认为 default</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>这时已经进入 pod 的 netns，可以执行宿主机上的 <code>ip a</code> 或 <code>ifconfig</code> 来查看容器的网卡，执行 <code>netstat -tunlp</code> 查看当前容器监听了哪些端口，再通过 tcpdump 抓包：</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 -w test.pcap port 80</span><br></pre></td></tr></table></figure>
-<p><code>ctrl-c</code> 停止抓包，再用 <code>scp</code> 或 <code>sz</code> 将抓下来的包下载到本地使用 <code>wireshark</code> 分析，提供一些常用的 <code>wireshark</code> 过滤语法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 使用 telnet 连上并发送一些测试文本，比如 &quot;lbtest&quot;，</span><br><span class="line"># 用下面语句可以看发送的测试报文有没有到容器</span><br><span class="line">tcp contains &quot;lbtest&quot;</span><br><span class="line"># 如果容器提供的是http服务，可以使用 curl 发送一些测试路径的请求，</span><br><span class="line"># 通过下面语句过滤 uri 看报文有没有都容器</span><br><span class="line">http.request.uri&#x3D;&#x3D;&quot;&#x2F;mytest&quot;</span><br></pre></td></tr></table></figure>
-
-<h3 id="脚本原理"><a href="#脚本原理" class="headerlink" title="脚本原理"></a>脚本原理</h3><p>我们解释下步骤二中用到的脚本的原理</p>
-<blockquote>
-<p>查看指定 pod 运行的容器 ID</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe pod &lt;pod&gt; -n mservice</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>获得容器进程的 pid</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect -f &#123;&#123;.State.Pid&#125;&#125; &lt;container&gt;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>进入该容器的 network namespace</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nsenter -n --target &lt;PID&gt;</span><br></pre></td></tr></table></figure>
-
-<p>依赖宿主机的命名：<code>kubectl</code>, <code>docker</code>, <code>nsenter</code>, <code>grep</code>, <code>head</code>, <code>sed</code></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">网络</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/06/02/%E5%AE%B9%E5%99%A8%E5%86%85%E6%8A%93%E5%8C%85%E5%AE%9A%E4%BD%8D%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/2/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/4/">Next &amp;raquo;</a>
@@ -1263,6 +1255,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           
             <li class="search-li">
               <a href="https://blog.k-8s.com/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>耗子</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="https://blog.csdn.net/cwg_xiaoguizi" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>小桂子</a>
             </li>
           
         </ul>

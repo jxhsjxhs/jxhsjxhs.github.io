@@ -196,6 +196,96 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-OAuth-2-0-的一个简单解释" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+
+<h1 itemprop="name">
+  <a class="article-title" href="/2020/12/21/OAuth-2-0-%E7%9A%84%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E8%A7%A3%E9%87%8A/">OAuth 2.0 的一个简单解释</a>
+</h1>
+
+
+
+        
+        <a href="/2020/12/21/OAuth-2-0-%E7%9A%84%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E8%A7%A3%E9%87%8A/" class="archive-article-date">
+  	<time datetime="2020-12-21T07:41:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-21</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://www.jxhs.me/2020/12/21/%E7%90%86%E8%A7%A3OAuth-2-0/">OAuth 2.0</a> 是目前最流行的授权机制，用来授权第三方应用，获取用户数据。</p>
+<p>这个标准比较抽象，使用了很多术语，初学者不容易理解。其实说起来并不复杂，下面我就通过一个简单的类比，帮助大家轻松理解，OAuth 2.0 到底是什么。</p>
+<h3 id="一、快递员问题"><a href="#一、快递员问题" class="headerlink" title="一、快递员问题"></a>一、快递员问题</h3><p>我住在一个大型的居民小区。<br><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glvm5d78v3j30m80etq4n.jpg" alt=""></p>
+<p>小区有门禁系统。</p>
+<p><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glvm6d9hggj30m80gh75d.jpg" alt=""></p>
+<p>进入的时候需要输入密码。<br><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glvm6m43h6j30e00b10t8.jpg" alt=""><br>我经常网购和外卖，每天都有快递员来送货。我必须找到一个办法，让快递员通过门禁系统，进入小区。<br><img src="https://tva1.sinaimg.cn/large/0081Kckwgy1glvm6z4zumj30dc0a0aaw.jpg" alt=""></p>
+<p>如果我把自己的密码，告诉快递员，他就拥有了与我同样的权限，这样好像不太合适。万一我想取消他进入小区的权力，也很麻烦，我自己的密码也得跟着改了，还得通知其他的快递员。</p>
+<p>有没有一种办法，让快递员能够自由进入小区，又不必知道小区居民的密码，而且他的唯一权限就是送货，其他需要密码的场合，他都没有权限？</p>
+<h3 id="二、授权机制的设计"><a href="#二、授权机制的设计" class="headerlink" title="二、授权机制的设计"></a>二、授权机制的设计</h3><p>于是，我设计了一套授权机制。</p>
+<p>第一步，门禁系统的密码输入器下面，增加一个按钮，叫做”获取授权”。快递员需要首先按这个按钮，去申请授权。</p>
+<p>第二步，他按下按钮以后，屋主（也就是我）的手机就会跳出对话框：有人正在要求授权。系统还会显示该快递员的姓名、工号和所属的快递公司。</p>
+<p>我确认请求属实，就点击按钮，告诉门禁系统，我同意给予他进入小区的授权。</p>
+<p>第三步，门禁系统得到我的确认以后，向快递员显示一个进入小区的令牌（access token）。令牌就是类似密码的一串数字，只在短期内（比如七天）有效。</p>
+<p>第四步，快递员向门禁系统输入令牌，进入小区。</p>
+<p>有人可能会问，为什么不是远程为快递员开门，而要为他单独生成一个令牌？这是因为快递员可能每天都会来送货，第二天他还可以复用这个令牌。另外，有的小区有多重门禁，快递员可以使用同一个令牌通过它们。</p>
+<h3 id="三、互联网场景"><a href="#三、互联网场景" class="headerlink" title="三、互联网场景"></a>三、互联网场景</h3><p>我们把上面的例子搬到互联网，就是 OAuth 的设计了。</p>
+<p>首先，居民小区就是储存用户数据的网络服务。比如，微信储存了我的好友信息，获取这些信息，就必须经过微信的”门禁系统”。</p>
+<p>其次，快递员（或者说快递公司）就是第三方应用，想要穿过门禁系统，进入小区。</p>
+<p>最后，我就是用户本人，同意授权第三方应用进入小区，获取我的数据。</p>
+<p>简单说，OAuth 就是一种授权机制。数据的所有者告诉系统，同意授权第三方应用进入系统，获取这些数据。系统从而产生一个短期的进入令牌（token），用来代替密码，供第三方应用使用。</p>
+<h3 id="四、令牌与密码"><a href="#四、令牌与密码" class="headerlink" title="四、令牌与密码"></a>四、令牌与密码</h3><p>令牌（token）与密码（password）的作用是一样的，都可以进入系统，但是有三点差异。</p>
+<p>（1）令牌是短期的，到期会自动失效，用户自己无法修改。密码一般长期有效，用户不修改，就不会发生变化。</p>
+<p>（2）令牌可以被数据所有者撤销，会立即失效。以上例而言，屋主可以随时取消快递员的令牌。密码一般不允许被他人撤销。</p>
+<p>（3）令牌有权限范围（scope），比如只能进小区的二号门。对于网络服务来说，只读令牌就比读写令牌更安全。密码一般是完整权限。</p>
+<p>上面这些设计，保证了令牌既可以让第三方应用获得权限，同时又随时可控，不会危及系统安全。这就是 OAuth 2.0 的优点。</p>
+<p>注意，只要知道了令牌，就能进入系统。系统一般不会再次确认身份，所以令牌必须保密，泄漏令牌与泄漏密码的后果是一样的。 这也是为什么令牌的有效期，一般都设置得很短的原因。</p>
+<p>OAuth 2.0 对于如何颁发令牌的细节，规定得非常详细。具体来说，一共分成四种授权类型（authorization grant），即四种颁发令牌的方式，适用于不同的互联网场景。下一篇文章，我就来介绍这四种类型，并给出代码实例。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/12/21/OAuth-2-0-%E7%9A%84%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E8%A7%A3%E9%87%8A/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-理解OAuth-2-0" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1370,92 +1460,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2020/07/22/Proxmox%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-使用-skopeo-操作容器镜像" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-
-<h1 itemprop="name">
-  <a class="article-title" href="/2020/07/15/%E4%BD%BF%E7%94%A8-skopeo-%E6%93%8D%E4%BD%9C%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F/">使用 skopeo 操作容器镜像</a>
-</h1>
-
-
-
-        
-        <a href="/2020/07/15/%E4%BD%BF%E7%94%A8-skopeo-%E6%93%8D%E4%BD%9C%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F/" class="archive-article-date">
-  	<time datetime="2020-07-15T05:28:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>今天项目组突然提出一个需求,跟其他应用放对接的时候提供一个镜像仓库。对接放把应用上传完以后。我们需要将这些镜像都打成tar包存到oss中。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">问题如下:</span><br><span class="line">  镜像仓库每个都很大(内部是数据模型以及算法)怎么能保证完整下下来不影响业务网络</span><br><span class="line">  镜像都得打tar包，但是本地存储限制 没那么大  并且耗时</span><br><span class="line">  后续扩展跟其他库同步麻烦。需要一个个load进去然后倒入</span><br></pre></td></tr></table></figure>
-<p>根据以上的需求进行分析,目的很明确 </p>
-<blockquote>
-<p>1.需要找到一个能直接下载docker镜像并且最好是直接打tar包的工具<br>2.最好能镜像库与库之间的同步<br>3.这个工具最好不依赖docker</p>
-</blockquote>
-<p>为啥说最好不依赖docker呢，这里并不是对docker有啥歧视的地方,见下图<br><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ggrlwuw4j9j317g04g0va.jpg" alt=""><br>我明明只需要个命令行工具来进行镜像的下载上传，并不需要真正的run起来。但是docker傻乎乎的需要程序进行守护启动才能进行镜像下载  增大维护度</p>
-<h3 id="skopeo的使用"><a href="#skopeo的使用" class="headerlink" title="skopeo的使用"></a>skopeo的使用</h3><p>到github找了找,发现官方已经有这样的工具了 并且完美支持我的需求 <a href="https://github.com/containers/skopeo" target="_blank" rel="noopener">项目地址</a></p>
-<h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># centos</span><br><span class="line">yum install skopeo</span><br></pre></td></tr></table></figure>
-<p>其他系统安装见<a href="https://github.com/containers/skopeo/blob/master/install.md" target="_blank" rel="noopener">安装文档</a></p>
-<h5 id="不借助-docker-下载镜像"><a href="#不借助-docker-下载镜像" class="headerlink" title="不借助 docker 下载镜像"></a>不借助 docker 下载镜像</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">skopeo --insecure-policy copy docker:&#x2F;&#x2F;nginx:1.17.6 docker-archive:&#x2F;tmp&#x2F;nginx.tar</span><br></pre></td></tr></table></figure>
-<p><code>--insecure-policy</code> 选项用于忽略安全策略配置文件，该命令将会直接通过 http 下载目标镜像并存储为 <code>/tmp/nginx.tar</code>，此文件可以直接通过 <code>docker load</code> 命令导入</p>
-<h5 id="从-docker-daemon-导出镜像"><a href="#从-docker-daemon-导出镜像" class="headerlink" title="从 docker daemon 导出镜像"></a>从 docker daemon 导出镜像</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">skopeo --insecure-policy copy docker-daemon:nginx:1.17.6 docker-archive:&#x2F;tmp&#x2F;nginx.tar</span><br></pre></td></tr></table></figure>
-<p>该命令将会从 docker daemon 导出镜像到 <code>/tmp/nginx.tar</code>；为什么不用 docker save？因为我是偷懒 dest 也是 docker-archive，实际上 skopeo 可以导出为其他格式比如 <code>oci</code>、<code>oci-archive</code>、<code>ostree</code> 等</p>
-<h5 id="远程获取镜像的信息"><a href="#远程获取镜像的信息" class="headerlink" title="远程获取镜像的信息"></a>远程获取镜像的信息</h5><p>skopeo 可以在不用下载镜像的情况下，获取镜像信息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"># skopeo inspect docker:&#x2F;&#x2F;docker.io&#x2F;centos</span><br><span class="line">&#123;</span><br><span class="line">    &quot;Name&quot;: &quot;docker.io&#x2F;library&#x2F;centos&quot;,</span><br><span class="line">    &quot;Digest&quot;: &quot;sha256:fe8d824220415eed5477b63addf40fb06c3b049404242b31982106ac204f6700&quot;,</span><br><span class="line">    &quot;RepoTags&quot;: [</span><br><span class="line">        &quot;5.11&quot;,</span><br><span class="line">        &quot;5&quot;,</span><br><span class="line">        &quot;6.10&quot;,</span><br><span class="line">        &quot;6.6&quot;,</span><br><span class="line">        &quot;6.7&quot;,</span><br><span class="line">        &quot;6.8&quot;,</span><br><span class="line">        &quot;6.9&quot;,</span><br><span class="line">        &quot;6&quot;,</span><br><span class="line">        &quot;7.0.1406&quot;,</span><br><span class="line">        &quot;7.1.1503&quot;,</span><br><span class="line">        &quot;7.2.1511&quot;,</span><br><span class="line">        &quot;7.3.1611&quot;,</span><br><span class="line">        &quot;7.4.1708&quot;,</span><br><span class="line">        &quot;7.5.1804&quot;,</span><br><span class="line">        &quot;7.6.1810&quot;,</span><br><span class="line">        &quot;7.7.1908&quot;,</span><br><span class="line">        &quot;7&quot;,</span><br><span class="line">        &quot;8.1.1911&quot;,</span><br><span class="line">        &quot;8&quot;,</span><br><span class="line">        &quot;centos5.11&quot;,</span><br><span class="line">        &quot;centos5&quot;,</span><br><span class="line">        &quot;centos6.10&quot;,</span><br><span class="line">        &quot;centos6.6&quot;,</span><br><span class="line">        &quot;centos6.7&quot;,</span><br><span class="line">        &quot;centos6.8&quot;,</span><br><span class="line">        &quot;centos6.9&quot;,</span><br><span class="line">        &quot;centos6&quot;,</span><br><span class="line">        &quot;centos7.0.1406&quot;,</span><br><span class="line">        &quot;centos7.1.1503&quot;,</span><br><span class="line">        &quot;centos7.2.1511&quot;,</span><br><span class="line">        &quot;centos7.3.1611&quot;,</span><br><span class="line">        &quot;centos7.4.1708&quot;,</span><br><span class="line">        &quot;centos7.5.1804&quot;,</span><br><span class="line">        &quot;centos7.6.1810&quot;,</span><br><span class="line">        &quot;centos7.7.1908&quot;,</span><br><span class="line">        &quot;centos7&quot;,</span><br><span class="line">        &quot;centos8.1.1911&quot;,</span><br><span class="line">        &quot;centos8&quot;,</span><br><span class="line">        &quot;latest&quot;</span><br><span class="line">    ],</span><br><span class="line">    &quot;Created&quot;: &quot;2020-01-18T00:26:46.850750902Z&quot;,</span><br><span class="line">    &quot;DockerVersion&quot;: &quot;18.06.1-ce&quot;,</span><br><span class="line">    &quot;Labels&quot;: &#123;</span><br><span class="line">        &quot;org.label-schema.build-date&quot;: &quot;20200114&quot;,</span><br><span class="line">        &quot;org.label-schema.license&quot;: &quot;GPLv2&quot;,</span><br><span class="line">        &quot;org.label-schema.name&quot;: &quot;CentOS Base Image&quot;,</span><br><span class="line">        &quot;org.label-schema.schema-version&quot;: &quot;1.0&quot;,</span><br><span class="line">        &quot;org.label-schema.vendor&quot;: &quot;CentOS&quot;,</span><br><span class="line">        &quot;org.opencontainers.image.created&quot;: &quot;2020-01-14 00:00:00-08:00&quot;,</span><br><span class="line">        &quot;org.opencontainers.image.licenses&quot;: &quot;GPL-2.0-only&quot;,</span><br><span class="line">        &quot;org.opencontainers.image.title&quot;: &quot;CentOS Base Image&quot;,</span><br><span class="line">        &quot;org.opencontainers.image.vendor&quot;: &quot;CentOS&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;Architecture&quot;: &quot;amd64&quot;,</span><br><span class="line">    &quot;Os&quot;: &quot;linux&quot;,</span><br><span class="line">    &quot;Layers&quot;: [</span><br><span class="line">        &quot;sha256:8a29a15cefaeccf6545f7ecf11298f9672d2f0cdaf9e357a95133ac3ad3e1f07&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>docker://: 是使用 Docker Registry HTTP API V2 进行连接远端<br>docker.io: 远程仓库<br>centos: 镜像名称</p>
-<h5 id="镜像仓的认证文件"><a href="#镜像仓的认证文件" class="headerlink" title="镜像仓的认证文件"></a>镜像仓的认证文件</h5><p>认证文件默认存放在 $HOME/.docker/config.json<br>文件内容</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	&quot;auths&quot;: &#123;</span><br><span class="line">		&quot;myregistrydomain.com:5000&quot;: &#123;</span><br><span class="line">			&quot;auth&quot;: &quot;dGVzdHVzZXI6dGVzdHBhc3N3b3Jk&quot;,</span><br><span class="line">			&quot;email&quot;: &quot;stuf@ex.cm&quot;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h5 id="其他命令"><a href="#其他命令" class="headerlink" title="其他命令"></a>其他命令</h5><p>skopeo 还有一些其他的实用命令，比如 sync 可以在两个位置之间同步镜像.</p>
-<h3 id="源码赏析"><a href="#源码赏析" class="headerlink" title="源码赏析"></a>源码赏析</h3><p>暂时先埋个坑 以后再写</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/07/15/%E4%BD%BF%E7%94%A8-skopeo-%E6%93%8D%E4%BD%9C%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F/">展开全文 >></a>
         </p>
       
 

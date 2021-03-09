@@ -49,6 +49,19 @@
   
   
   <entry>
+    <title>一条命令搞定 github clone 慢的问题</title>
+    <link href="/2020/12/27/%E4%B8%80%E6%9D%A1%E5%91%BD%E4%BB%A4%E6%90%9E%E5%AE%9A-github-clone-%E6%85%A2%E7%9A%84%E9%97%AE%E9%A2%98/"/>
+    <url>/2020/12/27/%E4%B8%80%E6%9D%A1%E5%91%BD%E4%BB%A4%E6%90%9E%E5%AE%9A-github-clone-%E6%85%A2%E7%9A%84%E9%97%AE%E9%A2%98/</url>
+    
+    <content type="html"><![CDATA[<figure class="highlight jboss-cli"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs jboss-cli">git config <span class="hljs-params">--global</span> url.<span class="hljs-string">"https://github.com/"</span><span class="hljs-string">.insteadOf</span> https:<span class="hljs-string">//github.com.cnpmjs.org/</span><br></code></pre></div></td></tr></table></figure>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>etcd 集群恢复</title>
     <link href="/2020/12/24/etcd-%E9%9B%86%E7%BE%A4%E6%81%A2%E5%A4%8D/"/>
     <url>/2020/12/24/etcd-%E9%9B%86%E7%BE%A4%E6%81%A2%E5%A4%8D/</url>

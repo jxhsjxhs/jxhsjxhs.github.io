@@ -244,6 +244,186 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2020/12/18/gin%E6%A1%86%E6%9E%B6%E8%B7%AF%E7%94%B1%E6%8B%86%E5%88%86%E4%B8%8E%E6%B3%A8%E5%86%8C/">gin框架路由拆分与注册</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/12/18/gin%E6%A1%86%E6%9E%B6%E8%B7%AF%E7%94%B1%E6%8B%86%E5%88%86%E4%B8%8E%E6%B3%A8%E5%86%8C/">
+          
+          
+            
+          
+          本文总结了我平时在项目中积累的关于gin框架路由拆分与注册的若干方法。
+基本的路由注册下面最基础的gin路由注册方式，适用于路由条目比较少的简单项目或者项目demo。
+123456789101112131415161718192021package mainimport (	"net/http"	"github.com/gin-gonic/gin")func helloHandler(c *gin
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-12-18 12:14" pubdate>
+              2020-12-18
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/12/01/%E6%80%8E%E6%A0%B7%E7%90%86%E8%A7%A3openresty%E4%B8%AD%E7%9A%84cosocket/">怎样理解openresty中的cosocket</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/12/01/%E6%80%8E%E6%A0%B7%E7%90%86%E8%A7%A3openresty%E4%B8%AD%E7%9A%84cosocket/">
+          
+          
+            
+          
+          cosocket 是各种 lua-resty-* 非阻塞库的基础，没 有 cosocket，开发者就无法用 Lua 来快速连接各种外部的网络服务。
+在早期的 OpenResty 版本中，如果想要去与 Redis、memcached 这些服务交互的话，需要使用 redis2-nginx-module、redis-nginx-module 和 memc-nginx-module这些 C 模块.这些模块
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-12-01 15:22" pubdate>
+              2020-12-01
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/11/30/apisix%E4%B8%8Econsul%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E7%9A%84%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/">apisix与consul服务发现的结合使用</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/11/30/apisix%E4%B8%8Econsul%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E7%9A%84%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/">
+          
+          
+            
+          
+          首先简单介绍一下apisix,是一个机遇openresty开发的云原生网关。功能类比于nginx+upsync 可无reload，apisix支持自身配置放在etcd中，原生高可用架构。并且支持 consul  eruka  nacos。
+实践逻辑如下安装以下实验环境以下三个点作为验证环境的安装步骤。
+1231.安装好apisix以及相关依赖(openresty,etcd)2.安装好consul组
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-11-30 17:05" pubdate>
+              2020-11-30
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/11/30/apisix%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/">apisix介绍以及食用方法</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/11/30/apisix%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E9%A3%9F%E7%94%A8%E6%96%B9%E6%B3%95/">
+          
+          
+            
+          
+          Apache APISIX 是什么？Apache APISIX 是一个动态、实时、高性能的 API 网关，基于 Nginx 网络库和 etcd 实现，提供负载均衡、动态上游、灰度发布、服务熔断、身份认证、可观测性等丰富的流量管理功能。
+你可以使用 Apache APISIX 来处理传统的南北向流量，以及服务间的东西向流量，也可以当做 k8s ingress controller 来使用。
+Apac
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-11-30 10:27" pubdate>
+              2020-11-30
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/10/26/%E5%AE%89%E8%A3%85docker/">安装docker</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/10/26/%E5%AE%89%E8%A3%85docker/">
+          
+          
+            
+          
+          在物联网以及arm板子安装docker比较麻烦。直接用官方的安装脚本然后用阿里的源安装会比较方便hin简单
+curl -fsSL https://get.docker.com | bash -s docker –mirror Aliyun
+完事。
+
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-10-26 22:57" pubdate>
+              2020-10-26
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2020/10/22/pi4B-kubelet-Following-Cgroup-subsystem-not-mounted/">pi4B  kubelet  Following Cgroup subsystem not mounted </a>
       </h1>
 
@@ -407,190 +587,6 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2020-07-14 15:03" pubdate>
               2020-07-14
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/07/14/%E4%BD%BF%E7%94%A8Air%E5%AE%9E%E7%8E%B0gin%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%97%B6%E9%87%8D%E6%96%B0%E5%8A%A0%E8%BD%BD/">使用Air实现gin框架实时重新加载</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/07/14/%E4%BD%BF%E7%94%A8Air%E5%AE%9E%E7%8E%B0gin%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%97%B6%E9%87%8D%E6%96%B0%E5%8A%A0%E8%BD%BD/">
-          
-          
-            
-          
-          为什么需要实时加载？之前使用Python编写Web项目的时候，常见的Flask或Django框架都是支持实时加载的，你修改了项目代码之后，程序能够自动重新加载并执行（live-reload），这在日常的开发阶段是十分方便的。
-在使用Go语言的gin框架在本地做开发调试的时候，经常需要在变更代码之后频繁的按下Ctrl+C停止程序并重新编译再执行，这样就不是很方便。
-Air介绍怎样才能在基于gin框架
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-07-14 14:54" pubdate>
-              2020-07-14
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/06/25/go%E9%97%AD%E5%8C%85%E4%B8%AD%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F%E9%80%83%E9%80%B8%E7%9A%84%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90/">go闭包中局部变量逃逸的简单分析</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/06/25/go%E9%97%AD%E5%8C%85%E4%B8%AD%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F%E9%80%83%E9%80%B8%E7%9A%84%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90/">
-          
-          
-            
-          
-          
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-06-25 17:21" pubdate>
-              2020-06-25
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/06/18/%E4%BD%BF%E7%94%A8prometheus-operator%E6%9D%A5%E7%9B%91%E6%8E%A7istio%E6%95%B0%E6%8D%AE/">使用prometheus-operator来监控istio数据</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/06/18/%E4%BD%BF%E7%94%A8prometheus-operator%E6%9D%A5%E7%9B%91%E6%8E%A7istio%E6%95%B0%E6%8D%AE/">
-          
-          
-            
-          
-          其实默认安装完istio是会带一个promethes的。但是如果都用那个prometheus局限性比较大  还是用先进的prometheus-operator来监控istio。
-安装prometheus-operator1234git clone https://github.com/coreos/kube-prometheus.git ; cd kube-prometheuskubectl cr
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-06-18 17:51" pubdate>
-              2020-06-18
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/prometheus/">prometheus</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/06/16/vim%E5%A4%8D%E5%88%B6%E7%B2%98%E8%B4%B4%E5%AF%BC%E8%87%B4%E5%A4%9A%E8%A1%8C%E5%87%BA%E7%8E%B0-%E5%8F%B7%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/">vim复制粘贴导致多行出现#号解决办法</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/06/16/vim%E5%A4%8D%E5%88%B6%E7%B2%98%E8%B4%B4%E5%AF%BC%E8%87%B4%E5%A4%9A%E8%A1%8C%E5%87%BA%E7%8E%B0-%E5%8F%B7%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/">
-          
-          
-            
-          
-          在vim内复制多行假如复制的行带有#号会导致其他不带#号的行自动加#
-解决办法，输入一下命令再粘贴即可
-1:set paste
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-06-16 13:53" pubdate>
-              2020-06-16
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/06/12/python3%E4%BD%BF%E7%94%A8sqlit3%E6%96%87%E6%A1%A3%E8%AE%B0%E5%BD%95/">python3使用sqlit3文档记录</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/06/12/python3%E4%BD%BF%E7%94%A8sqlit3%E6%96%87%E6%A1%A3%E8%AE%B0%E5%BD%95/">
-          
-          
-            
-          
-          使用python3内置的sqlite3库，首先连接到数据库，创建并使用游标Cursor，再执行SQL语句，最后提交事务以实现sqlite3数据库中的CRUD新增数据，查询数据，更新数据和删除数据的常用操作。
-SQLite是一种嵌入式数据库，它的数据库就是一个文件，SQLite能保存可以保存空值、整数、浮点数、字符串和blob 。sqlite相关教程动手学sqlite。
-连接数据库(如果不存在则创建
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-06-12 14:24" pubdate>
-              2020-06-12
             </time>
           </div>
         

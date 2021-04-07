@@ -241,6 +241,186 @@
   <div class="row mx-auto index-card">
     
     
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/07/Linux%E7%AD%89%E5%BE%85%E9%98%9F%E5%88%97%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/">Linux等待队列原理与实现</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/04/07/Linux%E7%AD%89%E5%BE%85%E9%98%9F%E5%88%97%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
+          
+          
+            
+          
+          等待队列原理与实现当进程要获取某些资源（例如从网卡读取数据）的时候，但资源并没有准备好（例如网卡还没接收到数据），这时候内核必须切换到其他进程运行，直到资源准备好再唤醒进程。
+waitqueue (等待队列) 就是内核用于管理等待资源的进程，当某个进程获取的资源没有准备好的时候，可以通过调用 add_wait_queue() 函数把进程添加到 waitqueue 中，然后切换到其他进程继续执行。当
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-07 16:40" pubdate>
+              2021-04-07
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/07/Linux%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86/">Linux中断处理</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/04/07/Linux%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86/">
+          
+          
+            
+          
+          中断处理 - 上半部（硬中断）由于 APIC中断控制器 有点小复杂，所以本文主要通过 8259A中断控制器 来介绍Linux对中断的处理过程。
+中断处理相关结构前面说过，8259A中断控制器 由两片 8259A 风格的外部芯片以 级联 的方式连接在一起，每个芯片可处理多达 8 个不同的 IRQ（中断请求），所以可用 IRQ 线的个数达到 15 个。如下图：
+
+在内核中每条IRQ线由结构体 irq_
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-07 16:37" pubdate>
+              2021-04-07
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/07/Linux%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%8E%9F%E7%90%86/">Linux系统调用原理</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/04/07/Linux%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%8E%9F%E7%90%86/">
+          
+          
+            
+          
+          一、什么是系统调用系统调用 跟用户自定义函数一样也是一个函数，不同的是 系统调用 运行在内核态，而用户自定义函数运行在用户态。由于某些指令（如设置时钟、关闭/打开中断和I/O操作等）只能运行在内核态，所以操作系统必须提供一种能够进入内核态的方式，系统调用 就是这样的一种机制。
+系统调用 是 Linux 内核提供的一段代码（函数），其实现了一些特定的功能，用户可以通过 int 0x80 中断（x86
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-07 16:32" pubdate>
+              2021-04-07
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/07/Linux%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">Linux虚拟文件系统</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/04/07/Linux%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
+          
+          
+            
+          
+          虚拟文件系统通常我们使用的磁盘和光盘都属于块设备，也就是说它们都是按照 数据块 来进行读写的，可以把磁盘和光盘想象成一个由数据块组成的巨大数组。但这样的读写方式对于人类来说不太友好，所以一般要在磁盘或者光盘上面挂载 文件系统 才能使用。那么什么是 文件系统 呢？ 文件系统 是一种存储和组织数据的方法，它使得对其访问和查找变得容易。通过挂载文件系统后，我们可以使用如 /home/docs/test.
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-07 16:29" pubdate>
+              2021-04-07
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/07/Linux-%E7%9B%B4%E6%8E%A5I-O-%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/">Linux 直接I/O 原理与实现</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/04/07/Linux-%E7%9B%B4%E6%8E%A5I-O-%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
+          
+          
+            
+          
+          缓存I/O一般来说，当调用 open() 系统调用打开文件时，如果不指定 O_DIRECT 标志，那么就是使用缓存I/O来对文件进行读写操作。我们先来看看 open() 系统调用的定义：
+1int open(const char *pathname, int flags, ... /*, mode_t mode */ );
+
+下面说明一下各个参数的作用：
+
+pathname：指定要打开的文件路径。
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-07 16:25" pubdate>
+              2021-04-07
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
       <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2021/04/07/Netfilter-%E4%B8%8E-iptables-%E5%8E%9F%E7%90%86/" target="_self">
           <img src="/img/pageimg/iptables.jpg" srcset="/img/loading.gif" alt="Netfilter 与 iptables 原理">
@@ -433,199 +613,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/golang/">golang</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/12/27/%E4%B8%80%E6%9D%A1%E5%91%BD%E4%BB%A4%E6%90%9E%E5%AE%9A-github-clone-%E6%85%A2%E7%9A%84%E9%97%AE%E9%A2%98/">一条命令搞定 github clone 慢的问题</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/12/27/%E4%B8%80%E6%9D%A1%E5%91%BD%E4%BB%A4%E6%90%9E%E5%AE%9A-github-clone-%E6%85%A2%E7%9A%84%E9%97%AE%E9%A2%98/">
-          
-          
-            
-          
-          1git config --global url."https://github.com/".insteadOf https://github.com.cnpmjs.org/
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-12-27 11:07" pubdate>
-              2020-12-27
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/12/24/etcd-%E9%9B%86%E7%BE%A4%E6%81%A2%E5%A4%8D/">etcd 集群恢复</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/12/24/etcd-%E9%9B%86%E7%BE%A4%E6%81%A2%E5%A4%8D/">
-          
-          
-            
-          
-          
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-12-24 17:15" pubdate>
-              2020-12-24
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/12/24/etcd-v3%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/">etcd  v3集群搭建</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/12/24/etcd-v3%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/">
-          
-          
-            
-          
-          
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-12-24 17:14" pubdate>
-              2020-12-24
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/12/23/%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E5%AE%B9%E5%99%A8%E6%95%B0%E6%8D%AE%E7%A3%81%E7%9B%98%E8%A2%AB%E5%86%99%E6%BB%A1/">如何处理容器数据磁盘被写满</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/12/23/%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E5%AE%B9%E5%99%A8%E6%95%B0%E6%8D%AE%E7%A3%81%E7%9B%98%E8%A2%AB%E5%86%99%E6%BB%A1/">
-          
-          
-            
-          
-          容器数据磁盘被写满造成的危害:
-
-不能创建 Pod (一直 ContainerCreating)
-不能删除 Pod (一直 Terminating)
-
-判断是否被写满:
-容器数据目录大多会单独挂数据盘，路径一般是 /var/lib/docker，也可能是 /data/docker 或 /opt/docker，取决于节点被添加时的配置：
-
-可通过 docker info 确定：
-12345$ doc
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-12-23 16:42" pubdate>
-              2020-12-23
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/12/23/%E6%A0%91%E8%8E%93%E6%B4%BE4bubuntu%E8%BF%9Ewifi%E5%9B%BA%E5%AE%9Aip/">树莓派4bubuntu连wifi固定ip</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/12/23/%E6%A0%91%E8%8E%93%E6%B4%BE4bubuntu%E8%BF%9Ewifi%E5%9B%BA%E5%AE%9Aip/">
-          
-          
-            
-          
-          树莓派4B 安装ubuntu 20.04 LTS wifi配置固定ip
-每次都随机比较难找……
-1.首先参考之前的那篇 (树莓派 ubuntu 连wifi)
-
-ubuntu 从18.04 版本开始网络配置工具已经改为netplan了
-
-编辑netplan目录下的yaml配置文件sudo vim  /etc/netplan/50-cloud-init.yaml
-1234567891011121314
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-12-23 12:04" pubdate>
-              2020-12-23
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/ubuntu/">ubuntu</a>
             
           </div>
         

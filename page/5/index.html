@@ -244,6 +244,50 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2020/06/02/%E5%86%85%E5%AD%98%E7%A2%8E%E7%89%87%E5%8C%96/">内存碎片化</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/06/02/%E5%86%85%E5%AD%98%E7%A2%8E%E7%89%87%E5%8C%96/">
+          
+          
+            
+          
+          判断是否内存碎片化严重内存页分配失败，内核日志报类似下面的错：
+1mysqld: page allocation failure. order:4, mode:0x10c0d0
+
+mysqld 是被分配的内存的程序order 表示需要分配连续页的数量(2^order)，这里 4 表示 2^4=16 个连续的页mode 是内存分配模式的标识，定义在内核源码文件 include/linux/gfp.h
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-06-02 14:38" pubdate>
+              2020-06-02
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/k8s/">k8s</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2020/06/02/%E5%AE%B9%E5%99%A8%E5%86%85%E6%8A%93%E5%8C%85%E5%AE%9A%E4%BD%8D%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98/">容器内抓包定位网络问题</a>
       </h1>
 
@@ -593,47 +637,6 @@ U1S1 确实好看。
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/istio/">istio</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/04/24/Csharp-%E4%B8%ADAbstract%E5%92%8CVirtual/">Csharp 中Abstract和Virtual</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/04/24/Csharp-%E4%B8%ADAbstract%E5%92%8CVirtual/">
-          
-          
-            
-          
-          
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-04-24 16:07" pubdate>
-              2020-04-24
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Csharp/">Csharp</a>
             
           </div>
         

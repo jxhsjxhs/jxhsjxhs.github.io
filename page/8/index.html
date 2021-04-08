@@ -244,6 +244,41 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2020/01/20/coredns%E6%B7%BB%E5%8A%A0%E8%87%AA%E5%AE%9A%E4%B9%89DNS%E8%A7%A3%E6%9E%90%E8%AE%B0%E5%BD%95/">coredns添加自定义DNS解析记录</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/01/20/coredns%E6%B7%BB%E5%8A%A0%E8%87%AA%E5%AE%9A%E4%B9%89DNS%E8%A7%A3%E6%9E%90%E8%AE%B0%E5%BD%95/">
+          
+          
+            
+          
+          coredns 自带 hosts 插件， 允许像配置 hosts 一样配置自定义 DNS 解析，修改 kube-system 中 configMap 的 coredns 添加如下设置即可。
+123456hosts &#123;    172.21.91.28 cache.redis    172.21.91.28 persistent.redis          fallthrough&#125
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-01-20 15:44" pubdate>
+              2020-01-20
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2020/01/20/%E5%9B%BE%E8%A7%A3-kubernetes-scheduler-%E6%BA%90%E7%A0%81%E8%AE%BE%E8%AE%A1%E7%B3%BB%E5%88%97-%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/">图解 kubernetes scheduler 源码设计系列-初步了解</a>
       </h1>
 
@@ -597,53 +632,6 @@ d
           </div>
         
         
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2019/11/28/k8s-v1-17-%E6%96%B0%E7%89%B9%E6%80%A7%E9%A2%84%E5%91%8A-%E6%8B%93%E6%89%91%E6%84%9F%E7%9F%A5%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1/">k8s v1.17 新特性预告: 拓扑感知服务路由</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2019/11/28/k8s-v1-17-%E6%96%B0%E7%89%B9%E6%80%A7%E9%A2%84%E5%91%8A-%E6%8B%93%E6%89%91%E6%84%9F%E7%9F%A5%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1/">
-          
-          
-            
-          
-          转摘自roc   https://imroc.io
-
-
-名词解释
-拓扑域: 表示在集群中的某一类 “地方”，比如某节点、某机架、某可用区或某地域等，这些都可以作为某种拓扑域。
-endpoint: k8s 某个服务的某个 ip+port，通常是 pod 的 ip+port。
-service: k8s 的 service 资源(服务)，关联一组 endpoint ，访问 service 会被转发到关联
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2019-11-28 11:00" pubdate>
-              2019-11-28
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/k8s/">k8s</a>
-            
-          </div>
         
       </div>
     </article>

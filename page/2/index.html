@@ -80,9 +80,9 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/financial/">
+              <a class="nav-link" href="/more-order/">
                 <i class="iconfont icon-slack-fill"></i>
-                奇怪的知识
+                越阶计划
               </a>
             </li>
           
@@ -237,6 +237,86 @@
               <div class="col-12 col-md-10 m-auto">
                 
 
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/07/Linux-%E7%9B%B4%E6%8E%A5I-O-%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/">Linux 直接I/O 原理与实现</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/04/07/Linux-%E7%9B%B4%E6%8E%A5I-O-%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
+          
+          
+            
+          
+          缓存I/O一般来说，当调用 open() 系统调用打开文件时，如果不指定 O_DIRECT 标志，那么就是使用缓存I/O来对文件进行读写操作。我们先来看看 open() 系统调用的定义：
+1int open(const char *pathname, int flags, ... /*, mode_t mode */ );
+
+下面说明一下各个参数的作用：
+
+pathname：指定要打开的文件路径。
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-07 16:25" pubdate>
+              2021-04-07
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2021/04/07/Netfilter-%E4%B8%8E-iptables-%E5%8E%9F%E7%90%86/" target="_self">
+          <img src="/img/pageimg/iptables.jpg" srcset="/img/loading.gif" alt="Netfilter 与 iptables 原理">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/07/Netfilter-%E4%B8%8E-iptables-%E5%8E%9F%E7%90%86/">Netfilter 与 iptables 原理</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/04/07/Netfilter-%E4%B8%8E-iptables-%E5%8E%9F%E7%90%86/">
+          
+          
+            
+          
+          Netfilter 与 iptables 原理Netfilter 可能了解的人比较少，但是 iptables 用过 Linux 的都应该知道。本文主要介绍 Netfilter 与 iptables 的原理，而下一篇将会介绍 Netfilter 与 iptables 的实现。
+什么是 NetfilterNetfilter 顾名思义就是网络过滤器，其主要功能就是对进出内核协议栈的数据包进行过滤或者修改
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-07 16:12" pubdate>
+              2021-04-07
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
 
   <div class="row mx-auto index-card">
     
@@ -535,88 +615,6 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2020-12-23 16:42" pubdate>
               2020-12-23
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/12/23/%E6%A0%91%E8%8E%93%E6%B4%BE4bubuntu%E8%BF%9Ewifi%E5%9B%BA%E5%AE%9Aip/">树莓派4bubuntu连wifi固定ip</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/12/23/%E6%A0%91%E8%8E%93%E6%B4%BE4bubuntu%E8%BF%9Ewifi%E5%9B%BA%E5%AE%9Aip/">
-          
-          
-            
-          
-          树莓派4B 安装ubuntu 20.04 LTS wifi配置固定ip
-每次都随机比较难找……
-1.首先参考之前的那篇 (树莓派 ubuntu 连wifi)
-
-ubuntu 从18.04 版本开始网络配置工具已经改为netplan了
-
-编辑netplan目录下的yaml配置文件sudo vim  /etc/netplan/50-cloud-init.yaml
-1234567891011121314
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-12-23 12:04" pubdate>
-              2020-12-23
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/ubuntu/">ubuntu</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/12/22/Golang-Gin-%E5%AE%9E%E6%88%98-%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85%E5%85%A5%E9%97%A8/">Golang Gin 实战(-)|快速安装入门</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/12/22/Golang-Gin-%E5%AE%9E%E6%88%98-%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85%E5%85%A5%E9%97%A8/">
-          
-          
-            
-          
-          
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-12-22 14:54" pubdate>
-              2020-12-22
             </time>
           </div>
         

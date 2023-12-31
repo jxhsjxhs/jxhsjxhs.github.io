@@ -1,0 +1,559 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;light&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="jame_xhs">
+  <meta name="keywords" content="">
+  <title>怎样理解openresty中的cosocket - jame_xhs&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.jxhs.me","root":"/","version":"1.8.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>jame_xhs blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/more-order/">
+                <i class="iconfont icon-slack-fill"></i>
+                越阶计划
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                书单
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2021/">
+                    
+                    2021
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2020/">
+                    
+                    2020
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="怎样理解openresty中的cosocket">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-12-01 15:22" pubdate>
+        2020年12月1日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.8k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      21
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">怎样理解openresty中的cosocket</h1>
+            
+            <div class="markdown-body">
+              <p>cosocket 是各种 lua-resty-* 非阻塞库的基础，没 有 cosocket，开发者就无法用 Lua 来快速连接各种外部的网络服务。</p>
+<p>在早期的 OpenResty 版本中，如果想要去与 Redis、memcached 这些服务交互的话，需要使用 redis2-nginx-module、redis-nginx-module 和 memc-nginx-module这些 C 模块.这些模块至今仍然在 OpenResty 的发行包中。</p>
+<p>cosocket 功能加入以后，它们都已经被 lua-resty-redis 和 lua-resty-memcached 替代，基 本上没人再去使用 C 模块连接外部服务了。</p>
+<h3 id="什么是-cosocket"><a href="#什么是-cosocket" class="headerlink" title="什么是 cosocket"></a>什么是 cosocket</h3><p>cosocket是 OpenResty 中的专有名词，是把协程和网络套接字的英文 拼在一起形成的，即 cosocket = coroutine + socket。所以，可以把 cosocket 翻译为“协程套接字”。</p>
+<p>cosocket 不仅需要 Lua 协程特性的支持，也需要 Nginx 中非常重要的事件机制的支持，这两者结合在一 起，最终实现了非阻塞网络 I/O。另外，cosocket 支持 TCP、UDP 和 Unix Domain Socket。</p>
+<p>在 OpenResty 中调用一个 cosocket 相关函数，内部实现便是下面这张图的样子：<br><img src="/img/newimg/0081Kckwgy1glrwdfkpjvj30ye0fkjuz.jpg" srcset="/img/loading.gif" alt=""><br>用户的 Lua 脚本每触发一个网络操作，都会有协程的 yield 以及 resume。</p>
+<p>遇到网络 I/O 时，它会交出控制权（yield），把网络事件注册到 Nginx 监听列表中，并把权限交给 Nginx；当有 Nginx 事件达到触发条件时，便唤醒对应的协程继续处理（resume）。</p>
+<p>OpenResty 正是以此为基础，封装实现 connect、send、receive 等操作，形成了现在的 cosocket API。以处理 TCP 的 API 为例来介绍一下。处理 UDP 和 Unix Domain Socket ，与TCP 的接口基 本是一样的。</p>
+<h3 id="cosocket-API-和指令简介"><a href="#cosocket-API-和指令简介" class="headerlink" title="cosocket API 和指令简介"></a>cosocket API 和指令简介</h3><p>TCP 相关的 cosocket API 可以分为下面这几类：</p>
+<blockquote>
+<p>创建对象：ngx.socket.tcp。<br>设置超时：tcpsock:settimeout 和 tcpsock:settimeouts。<br>建立连接：tcpsock:connect。<br>发送数据：tcpsock:send。<br>接受数据：tcpsock:receive、tcpsock:receiveany 和 tcpsock:receiveuntil。<br>连接池：tcpsock:setkeepalive。<br>关闭连接：tcpsock:close。</p>
+</blockquote>
+<p>这些 API 可以使用的上下文：</p>
+<figure class="highlight ceylon"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs ceylon">	<br>rewrite<span class="hljs-number">_</span><span class="hljs-meta">by</span><span class="hljs-number">_</span>lua*, access<span class="hljs-number">_</span><span class="hljs-meta">by</span><span class="hljs-number">_</span>lua*, content<span class="hljs-number">_</span><span class="hljs-meta">by</span><span class="hljs-number">_</span>lua*, ngx.timer.*, ssl<span class="hljs-number">_</span>certificate<span class="hljs-number">_</span><span class="hljs-meta">by</span><span class="hljs-number">_</span>lua*, ssl<span class="hljs-number">_</span>session<span class="hljs-number">_f</span>etch<span class="hljs-number">_</span><span class="hljs-meta">by</span><span class="hljs-number">_</span>lua*<span class="hljs-number">_</span><br></code></pre></div></td></tr></table></figure>
+
+<p>由于 Nginx 内核的各种限制，cosocket API 在 set_by_lua<em>， log_by_lua*， header_filter_by_lua</em> 和 body_filter_by_lua* 中是无法使用的。而在 init_by_lua* 和 init_worker_by_lua* 中暂时也不能用，不过 Nginx 内核对这两个阶段并没有限制。</p>
+<p>此外，与这些 API 相关的，还有 8 个 lua_socket_ 开头的 Nginx 指令：</p>
+<blockquote>
+<p>lua_socket_connect_timeout：连接超时，默认 60 秒。<br>lua_socket_send_timeout：发送超时，默认 60 秒。<br>lua_socket_send_lowat：发送阈值（low water），默认为 0。<br>lua_socket_read_timeout： 读取超时，默认 60 秒。<br>lua_socket_buffer_size：读取数据的缓存区大小，默认 4k/8k。<br>lua_socket_pool_size：连接池大小，默认 30。<br>lua_socket_keepalive_timeout：连接池 cosocket 对象的空闲时间，默认 60 秒。<br>lua_socket_log_errors：cosocket 发生错误时，是否记录日志，默认为 on。</p>
+</blockquote>
+<p>有些指令和 API 的功能一样的，比如设置超时时间和连接池大小等。不过，如果两者有冲突的话，API 的优先级高于指令，会覆盖指令设置的值。所以，一般来说，都推荐使用 API来做设 置，这样也会更加灵活。 </p>
+<p>通过一个具体的例子，来理解如何使用这些 cosocket API。发送 TCP 请求到一个网站，并把返回的内容打印出来：</p>
+<figure class="highlight stata"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs stata">resty -<span class="hljs-keyword">e</span> '<span class="hljs-keyword">local</span> sock = ngx.socket.tcp()<br>    sock:settimeout(1000) -- <span class="hljs-keyword">one</span> second timeout<br>    <span class="hljs-keyword">local</span> ok, <span class="hljs-keyword">err</span> = sock:connect(<span class="hljs-string">"www.baidu.com"</span>, 80)<br>    <span class="hljs-keyword">if</span> not ok then<br>        ngx.say(<span class="hljs-string">"failed to connect: "</span>, <span class="hljs-keyword">err</span>)<br>        <span class="hljs-keyword">return</span><br>    end<br><span class="hljs-keyword">local</span> req_data = <span class="hljs-string">"GET / HTTP/1.1\r\nHost: www.baidu.com\r\n\r\n"</span><br><span class="hljs-keyword">local</span> bytes, <span class="hljs-keyword">err</span> = sock:send(req_data)<br><span class="hljs-keyword">if</span> <span class="hljs-keyword">err</span> then<br>    ngx.say(<span class="hljs-string">"failed to send: "</span>, <span class="hljs-keyword">err</span>)<br>    <span class="hljs-keyword">return</span><br>end<br><span class="hljs-keyword">local</span> data, <span class="hljs-keyword">err</span>, partial = sock:receive()<br><span class="hljs-keyword">if</span> <span class="hljs-keyword">err</span> then<br>    ngx.say(<span class="hljs-string">"failed to receive: "</span>, <span class="hljs-keyword">err</span>)<br>    <span class="hljs-keyword">return</span><br>end<br>sock:<span class="hljs-keyword">close</span>()<br>ngx.say(<span class="hljs-string">"response is: "</span>, data)<br></code></pre></div></td></tr></table></figure>
+
+<p>分析下这段代码:</p>
+<blockquote>
+<p>首先，通过 ngx.socket.tcp() ，创建 TCP 的 cosocket 对象，名字是 sock。<br>然后，使用 settimeout() ，把超时时间设置为 1 秒。注这里的超时没有区分 connect、receive，是统一的设置。<br>接着，使用 connect() 去连接指定网站的 80 端口，如果失败就直接退出。<br>连接成功的话，就使用 send() 来发送构造好的数据，如果发送失败就退出。<br>发送数据成功的话，就使用 receive() 来接收网站返回的数据。这里 receive() 的默认参数值是 <em>l，也就是只返回第一行的数据；如果参数设&gt;置为了</em>a，就是持续接收数据，直到连接关闭；<br>最后，调用 close() ，主动关闭 socket 连接。</p>
+</blockquote>
+<p>接 下来，我们对这个示例再做一些调整:<br>第一个动作，对 socket 连接、发送和读取这三个动作，分别设置超时时间。</p>
+<p>settimeout() 作用是把超时时间统一设置为一个值。如果要想分开设置，就需要使用 settimeouts() 函数，比如下面这样的写法：</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs angelscript">sock:settimeouts(<span class="hljs-number">1000</span>, <span class="hljs-number">2000</span>, <span class="hljs-number">3000</span>)<br></code></pre></div></td></tr></table></figure>
+<p>表示连接超时为 1 秒，发送超时为 2 秒，读取超时为 3 秒。在OpenResty 和 lua-resty 库中，大部分和时间相关的 API 的参数，都以毫秒为单位</p>
+<p>第二个动作，receive接收指定大小的内容。</p>
+<p>receive() 接口可以接收一行数据，也可以持续接收数据。如果只想接收 10K 大小的数据，应该使用receiveany() ，它就是专为满足这种需求而设计的</p>
+<figure class="highlight haskell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs haskell"><span class="hljs-title">local</span> <span class="hljs-class"><span class="hljs-keyword">data</span>, err, partial = sock:receiveany(10240)</span><br></code></pre></div></td></tr></table></figure>
+<p>关于receive，还有另一个很常见的用户需求，那就是一直获取数据，直到遇到指定字符串才停止。</p>
+<p>receiveuntil() 专门用来解决这类问题，它不会像 receive() 和 receiveany() 一样返回字符串， 而会返回一个迭代器。这样就可以在循环中调用它来分段读取匹配到的数据，当读取完毕时，就会返回 nil。</p>
+<figure class="highlight applescript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs applescript"><span class="hljs-keyword">local</span> reader = sock:receiveuntil(<span class="hljs-string">"\r\n"</span>)<br><span class="hljs-keyword">while</span> <span class="hljs-literal">true</span> do<br>    <span class="hljs-keyword">local</span> data, err, partial = reader(<span class="hljs-number">4</span>)<br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> data <span class="hljs-keyword">then</span><br>        <span class="hljs-keyword">if</span> err <span class="hljs-keyword">then</span><br>            ngx.<span class="hljs-built_in">say</span>(<span class="hljs-string">"failed to read the data stream: "</span>, err)<br>            break<br>        <span class="hljs-keyword">end</span><br>        ngx.<span class="hljs-built_in">say</span>(<span class="hljs-string">"read done"</span>)<br>        break<br>    <span class="hljs-keyword">end</span><br>    ngx.<span class="hljs-built_in">say</span>(<span class="hljs-string">"read chunk: ["</span>, data, <span class="hljs-string">"]"</span>)<br><span class="hljs-keyword">end</span><br></code></pre></div></td></tr></table></figure>
+<p>receiveuntil 会返回 \r\n 之前的数据，并通过迭代器每次读取其中的 4 个字节，</p>
+<p>第三个动作，不直接关闭 socket，而是放入连接池中。</p>
+<p>没有连接池的话，每次请求进来都要新建一个连接，就会导致 cosocket 对象被频繁地创建和销 毁，造成不必要的性能损耗。</p>
+<p>为了避免这个问题，在使用完一个 cosocket 后，可以调用 setkeepalive() 放到连接池中</p>
+<figure class="highlight applescript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs applescript"><span class="hljs-keyword">local</span> ok, err = sock:setkeepalive(<span class="hljs-number">2</span> * <span class="hljs-number">1000</span>, <span class="hljs-number">100</span>)<br><span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> ok <span class="hljs-keyword">then</span><br>    ngx.<span class="hljs-built_in">say</span>(<span class="hljs-string">"failed to set reusable: "</span>, err)<br><span class="hljs-keyword">end</span><br></code></pre></div></td></tr></table></figure>
+
+<p>这段代码设置了连接的空闲时间为 2 秒，连接池的大小为 100。这样，在调用 connect() 函数时，就会优先从连接池中获取 cosocket 对象。</p>
+<p>关于连接池的使用，有两点需要注意：</p>
+<p>第一，不能把发生错误的连接放入连接池，否则下次使用时，就会导致收发数据失败。这也是为什么需要判断每一个 API 调用是否成功的一个原因。</p>
+<p>第二，要搞清楚连接的数量。连接池是 worker 级别的，每个 worker 都有自己的连接池。所以，如果有 10 个 worker，连接池大小设置为 30，那么对于后端的服务来讲，就等于有 300个连接。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/12/18/gin%E6%A1%86%E6%9E%B6%E8%B7%AF%E7%94%B1%E6%8B%86%E5%88%86%E4%B8%8E%E6%B3%A8%E5%86%8C/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">gin框架路由拆分与注册</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/11/30/apisix%E4%B8%8Econsul%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E7%9A%84%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/">
+                        <span class="hidden-mobile">apisix与consul服务发现的结合使用</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.0/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>

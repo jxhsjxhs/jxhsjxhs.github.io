@@ -1,0 +1,562 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;light&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="jame_xhs">
+  <meta name="keywords" content="">
+  <title>用nfs作为k8s持久化存储 - jame_xhs&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.jxhs.me","root":"/","version":"1.8.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>jame_xhs blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/more-order/">
+                <i class="iconfont icon-slack-fill"></i>
+                越阶计划
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                书单
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2021/">
+                    
+                    2021
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2020/">
+                    
+                    2020
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="用nfs作为k8s持久化存储">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-10-25 13:57" pubdate>
+        2019年10月25日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.1k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      14
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">用nfs作为k8s持久化存储</h1>
+            
+            <div class="markdown-body">
+              <h2 id="kubernetes部署NFS持久存储"><a href="#kubernetes部署NFS持久存储" class="headerlink" title="kubernetes部署NFS持久存储"></a>kubernetes部署NFS持久存储</h2><h3 id="NFS简介"><a href="#NFS简介" class="headerlink" title="NFS简介"></a>NFS简介</h3><blockquote>
+<p>NFS是网络文件系统Network File System的缩写，NFS服务器可以让PC将网络中的NFS服务器共享的目录挂载到本地的文件系统中，而在本地的系统中来看，那个远程主机的目录就好像是自己的一个磁盘分区一样。</p>
+<figure class="highlight excel"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs excel">kubernetes使用NFS共享存储有两种方式：<br>手动方式静态创建所需要的<span class="hljs-built_in">PV</span>和PVC。<br>通过创建PVC动态地创建对应<span class="hljs-built_in">PV</span>，无需手动创建<span class="hljs-built_in">PV</span>。<br>这条博客是写的静态创建方法<br></code></pre></div></td></tr></table></figure>
+<p>可以发现k8s中的Volume（无论何种类型）和使用它的Pod都是一种静态绑定关系，在Pod定义文件中，同时定义了它使用的Volume。在这种情况下，Volume是Pod的附属品，我们无法像创建其他资源（例如Pod，Node，Deployment等等）一样创建一个Volume。</p>
+</blockquote>
+<p>因此Kubernetes提出了PersistentVolume（PV）的概念。PersistentVolume和Volume一样，代表了集群中的一块存储区域，然而Kubernetes将PersistentVolume抽象成了一种集群资源，类似于集群中的Node对象，这意味着我们可以使用Kubernetes API来创建PersistentVolume对象。PV与Volume最大的不同是PV拥有着独立于Pod的生命周期。</p>
+<p>而PersistentVolumeClaim（PVC）代表了用户对PV资源的请求。用户需要使用PV资源时，只需要创建一个PVC对象（包括指定使用何种存储资源，使用多少GB，以何种模式使用PV等信息），Kubernetes会自动为我们分配我们所需的PV。如果把PersistentVolume类比成集群中的Node，那么PersistentVolumeClaim就相当于集群中的Pod，Kubernetes为Pod分配可用的Node，为PersistentVolumeClaim分配可用的PersistentVolume。</p>
+<h3 id="搭建nfs服务器"><a href="#搭建nfs服务器" class="headerlink" title="搭建nfs服务器"></a>搭建nfs服务器</h3><p>这里作为测试，临时在master节点上部署NFS服务器。</p>
+<figure class="highlight properties"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs properties"><span class="hljs-comment">#master节点安装nfs</span><br><span class="hljs-attr">yum</span> <span class="hljs-string">-y install nfs-utils</span><br><br><span class="hljs-comment">#创建nfs目录</span><br><span class="hljs-attr">mkdir</span> <span class="hljs-string">-p /data/nfs/</span><br><br><span class="hljs-comment">#修改权限</span><br><span class="hljs-attr">chmod</span> <span class="hljs-string">-R 777 /data/nfs</span><br><br><span class="hljs-comment">#编辑export文件</span><br><span class="hljs-attr">vim</span> <span class="hljs-string">/etc/exports</span><br><span class="hljs-meta">/data/nfs</span> <span class="hljs-string">*(rw,no_root_squash,sync)</span><br><br><span class="hljs-comment">#配置生效</span><br><span class="hljs-attr">exportfs</span> <span class="hljs-string">-r</span><br><span class="hljs-comment">#查看生效</span><br><span class="hljs-attr">exportfs</span><br><br><span class="hljs-comment">#启动rpcbind、nfs服务</span><br><span class="hljs-attr">systemctl</span> <span class="hljs-string">restart rpcbind &amp;&amp; systemctl enable rpcbind</span><br><span class="hljs-attr">systemctl</span> <span class="hljs-string">restart nfs &amp;&amp; systemctl enable nfs</span><br><br><span class="hljs-comment">#查看 RPC 服务的注册状况</span><br><span class="hljs-attr">rpcinfo</span> <span class="hljs-string">-p localhost</span><br><br><span class="hljs-comment">#showmount测试</span><br><span class="hljs-attr">showmount</span> <span class="hljs-string">-e 10.7.150.112</span><br><br><span class="hljs-comment">#所有node节点安装客户端</span><br><span class="hljs-attr">yum</span> <span class="hljs-string">-y install nfs-utils</span><br><span class="hljs-attr">systemctl</span> <span class="hljs-string">start nfs &amp;&amp; systemctl enable nfs</span><br></code></pre></div></td></tr></table></figure>
+<blockquote>
+<p>作为准备工作，我们已经在 k8s-master 节点上搭建了一个 NFS 服务器，目录为 /data/nfs.</p>
+</blockquote>
+<h3 id="静态申请PV卷"><a href="#静态申请PV卷" class="headerlink" title="静态申请PV卷"></a>静态申请PV卷</h3><h4 id="添加pv卷对应目录-作为挂载点"><a href="#添加pv卷对应目录-作为挂载点" class="headerlink" title="添加pv卷对应目录,作为挂载点"></a>添加pv卷对应目录,作为挂载点</h4><figure class="highlight haskell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs haskell"><span class="hljs-meta">#创建pv卷对应的目录</span><br><span class="hljs-title">mkdir</span> -p /nfs/<span class="hljs-class"><span class="hljs-keyword">data</span>/pv001</span><br><br><span class="hljs-meta">#配置exportrs</span><br><span class="hljs-title">vim</span> /etc/exports<br>/nfs/<span class="hljs-class"><span class="hljs-keyword">data</span> *(<span class="hljs-title">rw</span>,<span class="hljs-title">no_root_squash</span>,<span class="hljs-title">sync</span>)</span><br>/nfs/<span class="hljs-class"><span class="hljs-keyword">data</span>/pv001 *(<span class="hljs-title">rw</span>,<span class="hljs-title">no_root_squash</span>,<span class="hljs-title">sync</span>)</span><br><br><span class="hljs-meta">#配置生效</span><br><span class="hljs-title">exportfs</span> -r<br><span class="hljs-meta">#重启rpcbind、nfs服务</span><br><span class="hljs-title">systemctl</span> restart rpcbind &amp;&amp; systemctl restart nfs<br></code></pre></div></td></tr></table></figure>
+
+<h4 id="创建PV"><a href="#创建PV" class="headerlink" title="创建PV"></a>创建PV</h4><figure class="highlight yaml"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs yaml"><span class="hljs-string">`</span><br><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">PersistentVolume</span><br><span class="hljs-attr">metadata:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">nfs-pv</span><br>  <span class="hljs-attr">labels:</span><br>    <span class="hljs-attr">pv:</span> <span class="hljs-string">nfs-pv</span><br><span class="hljs-attr">spec:</span><br>  <span class="hljs-attr">capacity:</span><br>    <span class="hljs-attr">storage:</span> <span class="hljs-string">1Gi</span><br>  <span class="hljs-attr">accessModes:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">ReadWriteOnce</span><br>  <span class="hljs-attr">persistentVolumeReclaimPolicy:</span> <span class="hljs-string">Recycle</span><br>  <span class="hljs-attr">storageClassName:</span> <span class="hljs-string">nfs</span><br>  <span class="hljs-attr">nfs:</span><br>    <span class="hljs-attr">path:</span> <span class="hljs-string">/nfs/data/pv</span><br>    <span class="hljs-attr">server:</span> <span class="hljs-number">10.7</span><span class="hljs-number">.150</span><span class="hljs-number">.112</span><br><span class="hljs-string">`</span><br></code></pre></div></td></tr></table></figure>
+<hr>
+<figure class="highlight excel"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs excel">`配置说明`：<br>capacity 指定 <span class="hljs-built_in">PV</span> 的容量为 <span class="hljs-number">1</span>G。<br>accessModes 指定访问模式为 ReadWriteOnce，支持的访问模式有：<br>ReadWriteOnce – <span class="hljs-built_in">PV</span> 能以 read-write 模式 mount 到单个节点。<br>ReadOnlyMany – <span class="hljs-built_in">PV</span> 能以 read-only 模式 mount 到多个节点。<br>ReadWriteMany – <span class="hljs-built_in">PV</span> 能以 read-write 模式 mount 到多个节点。<br>persistentVolumeReclaimPolicy 指定当 <span class="hljs-built_in">PV</span> 的回收策略为 Recycle，支持的策略有：<br>Retain – 需要管理员手工回收。<br>Recycle – 清除 <span class="hljs-built_in">PV</span> 中的数据，效果相当于执行 rm -rf /thevolume/*。<br>Delete – 删除 Storage Provider 上的对应存储资源，例如 AWS EBS、GCE PD、Azure<br>Disk、OpenStack Cinder Volume 等。<br>storageClassName 指定 <span class="hljs-built_in">PV</span> 的 class 为 nfs。相当于为 <span class="hljs-built_in">PV</span> 设置了一个分类，PVC 可以指定 class 申请相应 class 的 <span class="hljs-built_in">PV</span>。<br>指定 <span class="hljs-built_in">PV</span> 在 NFS 服务器上对应的目录。<br></code></pre></div></td></tr></table></figure>
+<p><img src="/img/newimg/006y8mN6gy1g8ctzzzc76j30wm03kaaq.jpg" srcset="/img/loading.gif" alt="create PV"></p>
+<blockquote>
+<p>STATUS 为 Available，表示 pv就绪，可以被 PVC 申请。</p>
+</blockquote>
+<h4 id="创建PVC"><a href="#创建PVC" class="headerlink" title="创建PVC"></a>创建PVC</h4><p>接下来创建一个名为pvc的PVC，配置文件 pvc.yaml</p>
+<figure class="highlight dts"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs dts"><span class="hljs-symbol">apiVersion:</span> v1<br><span class="hljs-symbol">kind:</span> PersistentVolumeClaim<br><span class="hljs-symbol">metadata:</span><br><span class="hljs-symbol">  name:</span> nfs-pvc<br><span class="hljs-symbol">spec:</span><br><span class="hljs-symbol">  accessModes:</span><br>    - ReadWriteOnce<br><span class="hljs-symbol">  resources:</span><br><span class="hljs-symbol">    requests:</span><br><span class="hljs-symbol">      storage:</span> <span class="hljs-number">1</span>Gi<br><span class="hljs-symbol">  storageClassName:</span> nfs<br><span class="hljs-symbol">  selector:</span><br><span class="hljs-symbol">    matchLabels:</span><br><span class="hljs-symbol">      pv:</span> nfs-pv<br></code></pre></div></td></tr></table></figure>
+
+<p><img src="/img/newimg/006y8mN6gy1g8cu33t8lsj30xo06kmyk.jpg" srcset="/img/loading.gif" alt="Bound PVC"></p>
+<blockquote>
+<p>从 kubectl get pvc 和 kubectl get pv 的输出可以看到pvc绑定成功，注意pvc绑定到对应pv通过labels标签方式实现，也可以不指定，将随机绑定到pv。</p>
+</blockquote>
+<hr>
+<p>接下来就可以在 Pod 中使用存储了，Pod 配置文件 pod.yaml</p>
+<figure class="highlight less"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs less"><span class="hljs-attribute">kind</span>: Pod<br><span class="hljs-attribute">apiVersion</span>: v1<br><span class="hljs-attribute">metadata</span>:<br>  <span class="hljs-attribute">name</span>: nfs-pod001<br><span class="hljs-attribute">spec</span>:<br>  <span class="hljs-attribute">containers</span>:<br>    - <span class="hljs-attribute">name</span>: myfrontend<br>      <span class="hljs-attribute">image</span>: nginx<br>      <span class="hljs-attribute">volumeMounts</span>:<br>      - <span class="hljs-attribute">mountPath</span>: <span class="hljs-string">"/var/www/html"</span><br>        <span class="hljs-attribute">name</span>: nfs-pv<br>  <span class="hljs-attribute">volumes</span>:<br>    - <span class="hljs-attribute">name</span>: nfs-pv<br>      <span class="hljs-attribute">persistentVolumeClaim</span>:<br>        <span class="hljs-attribute">claimName</span>: nfs-pvc<br></code></pre></div></td></tr></table></figure>
+<blockquote>
+<p>与使用普通 Volume 的格式类似，在 volumes 中通过 persistentVolumeClaim 指定使用nfs-pvc 申请的 Volume</p>
+</blockquote>
+<p><img src="/img/newimg/006y8mN6gy1g8cu7x6628j30go03tt97.jpg" srcset="/img/loading.gif" alt="create pod"></p>
+<p>验证PV是否可用<br><img src="/img/newimg/006y8mN6gy1g8cu8qrjnpj30pg02yjrt.jpg" srcset="/img/loading.gif" alt="file"><br>进入pod查看情况<br><img src="/img/newimg/006y8mN6gy1g8cu9hb48qj30u0092abz.jpg" srcset="/img/loading.gif" alt="exec pod"></p>
+<h4 id="删除pv"><a href="#删除pv" class="headerlink" title="删除pv"></a>删除pv</h4><p>删除pod，pv和pvc不会被删除，nfs存储的数据不会被删除。<br><img src="/img/newimg/006y8mN6gy1g8cub06m8qj30hd03iq3d.jpg" srcset="/img/loading.gif" alt="del pod "><br>继续删除pvc，pv将被释放，处于 Available 可用状态，并且nfs存储中的数据被删除。<br><img src="/img/newimg/006y8mN6gy1g8cucndzf7j30us05175e.jpg" srcset="/img/loading.gif" alt="del pvc "><br>继续删除pv<br><img src="/img/newimg/006y8mN6gy1g8cud8vkzpj30gf026dg2.jpg" srcset="/img/loading.gif" alt="del pv"></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%AE%B9%E5%99%A8/">容器</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/k8s-nfs/">k8s,nfs</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/10/27/%E5%88%A9%E7%94%A8%E5%8A%A8%E6%80%81%E5%AD%98%E5%82%A8%E5%8D%B7StorageClass%E4%BD%BF%E7%94%A8nfs/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">利用动态存储卷StorageClass使用nfs</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/10/25/hexo%E6%8D%A2%E7%94%B5%E8%84%91%E6%80%8E%E4%B9%88%E7%BB%A7%E7%BB%AD%E5%86%99%E4%BD%9C/">
+                        <span class="hidden-mobile">hexo换电脑怎么继续写作</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.0/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,587 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;light&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="jame_xhs">
+  <meta name="keywords" content="">
+  <title>从零到一开发 Operator - jame_xhs&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.jxhs.me","root":"/","version":"1.8.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>jame_xhs blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/more-order/">
+                <i class="iconfont icon-slack-fill"></i>
+                越阶计划
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                书单
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2021/">
+                    
+                    2021
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2020/">
+                    
+                    2020
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/pageimg/Kubernetes-Operators.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="从零到一开发 Operator">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-10-05 21:41" pubdate>
+        2021年10月5日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.7k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      30
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">从零到一开发 Operator</h1>
+            
+            <div class="markdown-body">
+              <blockquote>
+<p>转自DaoCloud</p>
+</blockquote>
+<h3 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h3><p>在 Kubernetes 已经成为容器调度平台的事实标准之后，对于整个云原生围绕 Kubernetes 来构建自己的业务来说，社区的统一的方案就是通过实现 CRD+Controller 的方式来实现自己的 Kubernetes 的业务能力。此类业务已经覆盖了软件的很多领域，如微服务，DevOps, AI, 安全，网络，存储，大数据，数据库，中间件等等。那接下来，我们就来介绍一下 Operator 是什么，有哪些作用和能力。</p>
+<p>Kubernetes 是一个管理容器化应用程序的平台，它会 Watch ETCD 中存储的信息来比较并在必要时协调所表达的期望状态和对象的当前状态，它的这种工作方式我们称为 Reconciliation Loop（协调循环），而协调循环与状态恢复的大部分工作是通过 Controller 实现的。</p>
+<h3 id="2-什么是-Operator"><a href="#2-什么是-Operator" class="headerlink" title="2. 什么是 Operator"></a>2. 什么是 Operator</h3><p>随着 Kubernetes 生态的不断发展，开箱即用的相对底层，通用的 Kubernetes 基础模型元素已经无法支撑不同业务领域下复杂的自动化场景，更高层次对象的出现，带来的是业务运行时繁琐的运维操作以及复杂的部署场景，因此，Kubernetes 社区在 1.7 版本中提出了 Custom Resources And Controllers 的概念，通过自定义资源以及自定义控制器达到对 Kubernetes API 进行拓展的目的，而 Operator 正是这个模型的实现。</p>
+<p>CoreOS 在 2016 年底提出了 Operator 的概念，官方定义如下：</p>
+<blockquote>
+<p>An Operator represents human operational knowledge in software, to reliably manage an application. They are methods of packaging, deploying, and managing a Kubernetes application.    </p>
+</blockquote>
+<p>简单来说，Operators 就是一组自定义控制器的集合以及由这些控制器管理着的一系列自定义资源，我们将不在关注于 pod，configmap 等基本模型元素，而是将他们聚合为一个应用或服务，Operator 通过控制器的协调循环来使自定义应用达到我们期望的状态，我们只需要关注该应用的期望状态，通过自定义控制器协调循环逻辑，来达到安装，更新，扩展，备份，恢复 7*24 小时不间断的应用或服务的生命周期管理。</p>
+<h3 id="3-Operator-的工作原理"><a href="#3-Operator-的工作原理" class="headerlink" title="3. Operator 的工作原理"></a>3. Operator 的工作原理</h3><p>Operator 使用自定义资源(CR)管理应用以及其组件的自定义 kubernetes 控制器，自定义资源是 kubernetes 中的 API 扩展，自定义资源配置(CRD)会明确 CR 并列出 Operator 用户可用的所有配置，Operator 监视 CR 类型并且采取特定于应用的操作，确保当前状态与该资源的理想状态相符。</p>
+<p>Operator 工作流程：<br><img src="/img/newimg/008i3skNly1gvc901ct2lj60u01aswg902.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>一个 Operator 中主要有以下几种对象：</p>
+<p>CRD:自定义资源的定义，Kubernetes API 服务器会为你所指定的每一个 CRD 版本生成 RESTful 的资源路径。一个 CRD 其实就是定义自己应用业务模型的地方，可以根据业务的需求，完全定制自己所需要的资源对象，如 RedisCluster, PrometheusServer 等这些都是可以被 Kubernetes 直接操作和管理的自定义的资源对象。</p>
+<p>CR：自定义资源，即 CRD 的一个具体实例，是具体的可管理的 Kubernetes 资源对象，可以对其进行正常的生命周期管理，如创建，删除，修改，查询等，同时 CR 对象一般还会包含运行时的状态，如当前的 CR 的真实的状态是什么，用于观察和判断，CR 对象的真正所处于的状态。</p>
+<p>Controller：其实就是控制器真正的用武之地了，它会循环处理工作队列中的动作，按照逻辑协调应用当前状态至期望状态。如观察一个 CR 对象被创建了之后，会根据实现的逻辑来处理 CR，让 CR 对象的状态以及CR对象所负责的业务逻辑慢慢的往最终期望的状态上靠近，最终达到期望的效果，举例来说如果定义了一个 RocketMQ 的 Operator，那在创建 RocketMQCluster 的时候，就会一直协调和观察 RocketMQ 真正的集群是不是创建好了，以及每个节点的状态和可用性是不是健康的，一旦发现不符合期望的状态就会继续协调，就一直保持基于事件的机制，不断检查和协调，去保证期望的状态。</p>
+<h3 id="4-开发一个-Operator"><a href="#4-开发一个-Operator" class="headerlink" title="4. 开发一个 Operator"></a>4. 开发一个 Operator</h3><p>从 0 开始开发一个 Operator 是非常困难的，因此 Operator Framework 为我们提供了 webhook 以及 controller 的框架，使开发者可以忽略一些 Kubernetes 底层细节，只需要关注于被管理应用的运维逻辑实现。</p>
+<p>目前主流的 Operator Framework 主要有两个：Kubebuilder 以及 Operator SDK。以下将以 DaoCloud 自研的 RocketMQ Operator 为例，介绍使用 Operator SDK 开发一个 Operator 的过程。</p>
+<blockquote>
+<p>4.1. 创建 rocketmq operator 项目,并生成样板文件</p>
+</blockquote>
+<p>mkdir rocketmq-operator</p>
+<p>operator-sdk init  –domain daocloud.io</p>
+<p>生成以下文件以及目录：<br><img src="/img/newimg/008i3skNly1gvc90n9ansj60jg07gdgs02.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>go.mod：与我们的项目匹配的新 Go 模块，具有基本依赖项。</p>
+<p>PROJECT：我们应用的一些元数据元数据</p>
+<p><img src="/img/newimg/008i3skNly1gvc90xstguj60n408mjs602.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>如上，定义了项目名称，版本以及 repo 等</p>
+<p>Makefile：构建与部署控制器的工程文件</p>
+<p>Config: 部署控制器的一些编排文件，包括控制器，RBAC 等</p>
+<blockquote>
+<p>4.2. 创建组为 rocketmq 版本为 v1 类型为 Broker 的新的自定义资源定义(CRD)，并设置控制器</p>
+</blockquote>
+<p>operator-sdk create api –group rocketmq  –version v1 –kind Broker –resource –controller</p>
+<p>生成文件目录结构如下：</p>
+<p><img src="/img/newimg/008i3skNly1gvc91cyt96j60n40a4jt202.jpg" srcset="/img/loading.gif" alt=""><br>再次查看 PROJECT 文件：<br><img src="/img/newimg/008i3skNly1gvc91iiua7j60n40j640302.jpg" srcset="/img/loading.gif" alt=""><br>PROJECT 文件中新增了 Resources 字段，描述了我们添加的 Broker CRD 以及它的版本。</p>
+<p>Api：自定义类型元数据存放位置，每次创建新类型都会在此处生成新文件。</p>
+<p>Controller：自定义资源的控制器协调循环逻辑</p>
+<blockquote>
+<p>4.3. 关注于自定义类型与控制循环            </p>
+</blockquote>
+<p>查看 api/v1/ broker_types.go 文件，我们对 BrokerSpec 以及 BrokerStatus 做一些定义，以使 Kubernetes 通过 Controller 协调 Broker</p>
+<p><img src="/img/newimg/008i3skNly1gvc91u0kc0j60iy0bowf902.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>如下所示，我们定义了一系列字段来设置对 Broker 的期望状态，同时也定义了一系列字段来描述 Broker 的当前状态，以供我们很方便的监控 Broker 的生命周期</p>
+<p><img src="/img/newimg/008i3skNly1gvc925r7tlj60iy0aat9n02.jpg" srcset="/img/loading.gif" alt=""></p>
+<p><img src="/img/newimg/008i3skNly1gvc929vdhij60jc076mxv02.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>由上述介绍我们已经知道控制器主要完成协调循环逻辑， 将自定义资源不断推向期望状态，需要注意的是控制器运行在集群上并对集群资源进行增删改查，所以需要 RBAC 权限。</p>
+<p><img src="/img/newimg/008i3skNly1gvc92fv29zj60n40dqmyb02.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>控制器会监视资源的增删改事件，并触发 reconcile 函数作为响应，每个控制器都有两个核心组件：Informer 以及 Workqueue，Informer 负责 Watch 指定资源的变化，将增删改时间发送到 Workqueue 中，然后控制器的 Worker 从Workqueue 中取出事件交由控制器程序处理，这些机制 controller-runtime 包已经帮我们实现，当我们需要设置对指定的资源进行 Watch 时，只需更改 broker_controller.go 中 SetupWithManager 方法即可。 </p>
+<p><img src="/img/newimg/008i3skNly1gvc92lt4sjj60n405wjrt02.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>如上，当前控制器会监听 Broker 资源，如果我们希望它同时监听 Deploymeng/Pod 等资源可以用 For 进一步指定，如果我们希望监听由 Broker 类型创建的 Deploymeng，可以使用 Owns 进行指定，当然这要求 Broker 与由他创建的 Deployment 具有从属关系。</p>
+<p>RocketMQ Operator Broker 使用 DLedger 模式部署，实现了按组扩缩容，配置文件热更新，动态获取 Nameserver 地址等功能，简单的协调逻辑如图：</p>
+<p><img src="/img/newimg/008i3skNly1gvc92rj1e2j60qa0igjsd02.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>在开始一次协调循环之前，我们先看看 Operator SDK 帮助我们做了什么事：</p>
+<p>首先它会将自定义资源的 Group 和 Version 以及 Kind（GVK）注册进 Scheme中，维持 GVK 与我们编写的自定义资源结构体的映射关系.</p>
+<p><img src="/img/newimg/008i3skNly1gvc942t620j60u007v3z602.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>而每一个控制器中都需要 Scheme，以通过 GVK 来找到我们所要 Watch 的 Kind，也就是我们编写的自定义资源 Struct,而实例化以后便是 GVR，因此 GVK 与 GVR 便是 Reconcile 的关键，控制器又通过 Informer Watch 到自定义资源的增删改查事件，来触发 Reconcile，一次协调循环就此开始：</p>
+<p>对比 RocketMQ 协调逻辑图，主要发生了以下几步： </p>
+<p>Reconcile 是所有 Operator 的程序协调整个过程的入口，一般处理的逻辑是判断CR对象是新建的，修改的，还是删除的，进行一些常规处理，然后就会进入真正的协调的完整过程。<br>Finalize 阶段，检查实例是否需要被删除，使用 Finalize 异步删除实例所关联的外部资源例如存储等。<br>PreConfig 阶段，预创建实例所需要的 ConfigMap/Secret 等对象。<br>Sync 阶段，根据定义的 CR 编排文件，对实例进行部署以及更新操作，监控配置，存储挂载，扩容，缩容，并检查实例状态，根据实例的状态进行进一步的协调的过程，最终保障实例的状态是达到了期望的状态了。</p>
+<p>为了保证应用完整的运维性，监控当然必不可少：</p>
+<p><img src="/img/newimg/008i3skNly1gvc94dmhn5j60u00bimy802.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>如上，通过在控制器中添加 Metrics 地址来暴露出我们的监控指标，使用 RocketMQ Exporter 提供监控指标给 Prometheus 使用</p>
+<p><img src="/img/newimg/008i3skNly1gvc94kpjjej60u00gimzg02.jpg" srcset="/img/loading.gif" alt=""><br>这样，一个具备自动化运维及监控，扩缩容能力的 Operator 就开发完成了，以下是它的一个基本架构：</p>
+<p><img src="/img/newimg/008i3skNly1gvc953xyl4j60qg0lr75e02.jpg" srcset="/img/loading.gif" alt=""></p>
+<h3 id="5-Operator-社区"><a href="#5-Operator-社区" class="headerlink" title="5. Operator 社区"></a>5. Operator 社区</h3><p>随着 Operator 的种类的增多和秉持着开源共享的精神，社区也相继推出了开放和共享 Operator 的机制，如 operatorhub.io, artifacthub.io。</p>
+<p><img src="/img/newimg/008i3skNly1gvc95f4po2j60u00ew40302.jpg" srcset="/img/loading.gif" alt=""></p>
+<p><img src="/img/newimg/008i3skNly1gvc95lwlu1j60u00evq4102.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>如果大家对 Operator 实现细节感兴趣，可以参考社区中几个不错的 Operator 实现：</p>
+<p>Kafka：CNCF 的项目，<a href="https://github.com/strimzi/strimzi-kafka-operator" target="_blank" rel="noopener">https://github.com/strimzi/strimzi-kafka-operator</a></p>
+<p>ElasticSearch: ES 官方的项目，<a href="https://github.com/elastic/cloud-on-k8s" target="_blank" rel="noopener">https://github.com/elastic/cloud-on-k8s</a></p>
+<p>RabbitMQ: RabbitMQ 官方的项目，<a href="https://github.com/rabbitmq/cluster-operator" target="_blank" rel="noopener">https://github.com/rabbitmq/cluster-operator</a></p>
+<h3 id="6-挑战"><a href="#6-挑战" class="headerlink" title="6. 挑战"></a>6. 挑战</h3><p>开发一个优秀的 Operator，首先的要求是对封装组件本身需要比较熟悉。以中间件为例，来分析一下面临的挑战：</p>
+<p>首先，对于架构师而言，应该是具备中间件架构设计能力，以及需要有中间件丰富运维经验；</p>
+<p>其次，对于研发而言，就是有 Operator 的研发能力，以及能结合周边的监控，告警，日志，容器存储，容器网络等系统，打造完善的中间件的 Opetator 能力；</p>
+<p>最后，对于交付而言，需要有丰富的运维经验，能理解 Operator 本身的能力，以及利用好 Operator 能力，结合客户周边的监控，告警，日志，容器存储，容器网络等系统，去完整的交付和运维 Operator，以及 Operator 负责的中间件。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/10/29/CDN%E6%8A%80%E6%9C%AF%E4%B9%8B-%E6%B5%81%E5%AA%92%E4%BD%93CDN%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%BB%84%E6%88%90/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">CDN技术之--流媒体CDN系统的组成</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/09/30/CDN%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/">
+                        <span class="hidden-mobile">CDN技术详解之系统架构</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.0/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,612 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;light&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="jame_xhs">
+  <meta name="keywords" content="">
+  <title>kafka常用管理命令和脚本 - jame_xhs&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.jxhs.me","root":"/","version":"1.8.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>jame_xhs blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/more-order/">
+                <i class="iconfont icon-slack-fill"></i>
+                越阶计划
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                书单
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2021/">
+                    
+                    2021
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2020/">
+                    
+                    2020
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/newimg/008vxvgGgy1h936eu9i0yj30uo0gyq3r.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="kafka常用管理命令和脚本">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-12-14 11:25" pubdate>
+        2022年12月14日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      3.9k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      62
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">kafka常用管理命令和脚本</h1>
+            
+            <div class="markdown-body">
+              <h3 id="系统"><a href="#系统" class="headerlink" title="系统"></a>系统</h3><h4 id="启动-Kafka"><a href="#启动-Kafka" class="headerlink" title="启动 Kafka"></a>启动 Kafka</h4><p><code>-daemon</code> 参数可以让 Kafka 在后台运行。</p>
+<blockquote>
+<p>kafka-server-start.sh -daemon /usr/local/kafka/config/server.properties</p>
+</blockquote>
+<h4 id="指定-JMX-端口启动"><a href="#指定-JMX-端口启动" class="headerlink" title="指定 JMX 端口启动"></a>指定 JMX 端口启动</h4><p>JMX 的全称为 Java Management Extensions。顾名思义，是管理 Java 的一种扩展，通过 JMX 可以方便我们监控 Kafka 的内存，线程，CPU 的使用情况，以及生产和消费消息的指标。</p>
+<blockquote>
+<p>JMX_PORT=9999 kafka-server-start.sh -daemon /usr/local/kafka/config/server.properties</p>
+</blockquote>
+<h4 id="停止-Kafka"><a href="#停止-Kafka" class="headerlink" title="停止 Kafka"></a>停止 Kafka</h4><blockquote>
+<p>kafka-server-stop.sh </p>
+</blockquote>
+<h3 id="Topic"><a href="#Topic" class="headerlink" title="Topic"></a>Topic</h3><h4 id="创建Topic"><a href="#创建Topic" class="headerlink" title="创建Topic"></a>创建Topic</h4><blockquote>
+<p>kafka-topics.sh –create  –bootstrap-server <zk-service>:9092 –replication-factor 3 –partitions 3 –topic <topic-name></p>
+</blockquote>
+<h4 id="列出所有-Topic"><a href="#列出所有-Topic" class="headerlink" title="列出所有 Topic"></a>列出所有 Topic</h4><blockquote>
+<p>kafka-topics.sh  –bootstrap-server <zk-service>:9092 –list</p>
+</blockquote>
+<h4 id="查看指定-Topic"><a href="#查看指定-Topic" class="headerlink" title="查看指定 Topic"></a>查看指定 Topic</h4><blockquote>
+<p>kafka-topics.sh –bootstrap-server <zk-service>:9092 –describe –topic <topic-name></p>
+</blockquote>
+<h4 id="删除指定-Topic"><a href="#删除指定-Topic" class="headerlink" title="删除指定 Topic"></a>删除指定 Topic</h4><blockquote>
+<p>kafka-topics.sh –bootstrap-server  <zk-service>:9092 –delete –topic <topic-name></p>
+</blockquote>
+<h4 id="扩展-Topic-的-Partition-数量"><a href="#扩展-Topic-的-Partition-数量" class="headerlink" title="扩展 Topic 的 Partition 数量"></a>扩展 Topic 的 Partition 数量</h4><p>artition 数量只能扩大不能缩小。</p>
+<blockquote>
+<p>kafka-topics.sh –bootstrap-server <zk-service>:9092 –topic app –alter –partitions 30</p>
+</blockquote>
+<h4 id="扩展-topic-每个-partition-的副本数量"><a href="#扩展-topic-每个-partition-的副本数量" class="headerlink" title="扩展 topic 每个 partition 的副本数量"></a>扩展 topic 每个 partition 的副本数量</h4><p>replication factor 可以扩大也可以缩小，最多不能超过 broker 数量。先创建一个文件名为 increace-factor.json，这里要扩展的是 mysql-audit-log 这个 topic 的 partition 到 15 个：0，1，2 为 broker id。</p>
+<figure class="highlight json"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs json">&#123;<span class="hljs-attr">"version"</span>:<span class="hljs-number">1</span>,<br><span class="hljs-attr">"partitions"</span>:[<br>&#123;<span class="hljs-attr">"topic"</span>:<span class="hljs-string">"mysql-audit-log"</span>,<span class="hljs-attr">"partition"</span>:<span class="hljs-number">0</span>,<span class="hljs-attr">"replicas"</span>:[<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]&#125;,<br>&#123;<span class="hljs-attr">"topic"</span>:<span class="hljs-string">"mysql-audit-log"</span>,<span class="hljs-attr">"partition"</span>:<span class="hljs-number">1</span>,<span class="hljs-attr">"replicas"</span>:[<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]&#125;,<br>&#123;<span class="hljs-attr">"topic"</span>:<span class="hljs-string">"mysql-audit-log"</span>,<span class="hljs-attr">"partition"</span>:<span class="hljs-number">2</span>,<span class="hljs-attr">"replicas"</span>:[<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]&#125;,<br>&#123;<span class="hljs-attr">"topic"</span>:<span class="hljs-string">"mysql-audit-log"</span>,<span class="hljs-attr">"partition"</span>:<span class="hljs-number">3</span>,<span class="hljs-attr">"replicas"</span>:[<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]&#125;,<br>&#123;<span class="hljs-attr">"topic"</span>:<span class="hljs-string">"mysql-audit-log"</span>,<span class="hljs-attr">"partition"</span>:<span class="hljs-number">4</span>,<span class="hljs-attr">"replicas"</span>:[<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]&#125;,<br>&#123;<span class="hljs-attr">"topic"</span>:<span class="hljs-string">"mysql-audit-log"</span>,<span class="hljs-attr">"partition"</span>:<span class="hljs-number">5</span>,<span class="hljs-attr">"replicas"</span>:[<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]&#125;,<br>&#123;<span class="hljs-attr">"topic"</span>:<span class="hljs-string">"mysql-audit-log"</span>,<span class="hljs-attr">"partition"</span>:<span class="hljs-number">6</span>,<span class="hljs-attr">"replicas"</span>:[<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]&#125;,<br>&#123;<span class="hljs-attr">"topic"</span>:<span class="hljs-string">"mysql-audit-log"</span>,<span class="hljs-attr">"partition"</span>:<span class="hljs-number">7</span>,<span class="hljs-attr">"replicas"</span>:[<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]&#125;,<br>&#123;<span class="hljs-attr">"topic"</span>:<span class="hljs-string">"mysql-audit-log"</span>,<span class="hljs-attr">"partition"</span>:<span class="hljs-number">8</span>,<span class="hljs-attr">"replicas"</span>:[<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]&#125;,<br>&#123;<span class="hljs-attr">"topic"</span>:<span class="hljs-string">"mysql-audit-log"</span>,<span class="hljs-attr">"partition"</span>:<span class="hljs-number">9</span>,<span class="hljs-attr">"replicas"</span>:[<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]&#125;,<br>&#123;<span class="hljs-attr">"topic"</span>:<span class="hljs-string">"mysql-audit-log"</span>,<span class="hljs-attr">"partition"</span>:<span class="hljs-number">10</span>,<span class="hljs-attr">"replicas"</span>:[<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]&#125;,<br>&#123;<span class="hljs-attr">"topic"</span>:<span class="hljs-string">"mysql-audit-log"</span>,<span class="hljs-attr">"partition"</span>:<span class="hljs-number">11</span>,<span class="hljs-attr">"replicas"</span>:[<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]&#125;,<br>&#123;<span class="hljs-attr">"topic"</span>:<span class="hljs-string">"mysql-audit-log"</span>,<span class="hljs-attr">"partition"</span>:<span class="hljs-number">12</span>,<span class="hljs-attr">"replicas"</span>:[<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]&#125;,<br>&#123;<span class="hljs-attr">"topic"</span>:<span class="hljs-string">"mysql-audit-log"</span>,<span class="hljs-attr">"partition"</span>:<span class="hljs-number">13</span>,<span class="hljs-attr">"replicas"</span>:[<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]&#125;,<br>&#123;<span class="hljs-attr">"topic"</span>:<span class="hljs-string">"mysql-audit-log"</span>,<span class="hljs-attr">"partition"</span>:<span class="hljs-number">14</span>,<span class="hljs-attr">"replicas"</span>:[<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]&#125;<br>]&#125;<br></code></pre></div></td></tr></table></figure>
+<blockquote>
+<p>kafka-reassign-partitions.sh –zookeeper <zk-service>:2181 –reassignment-json-file  increace-factor.json –execute </p>
+</blockquote>
+<h4 id="查看-Topic-数据大小"><a href="#查看-Topic-数据大小" class="headerlink" title="查看 Topic 数据大小"></a>查看 Topic 数据大小</h4><figure class="highlight livescript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs livescript"><span class="hljs-comment">#方法一</span><br>kafka-log-dirs.sh <span class="hljs-string">\</span><br>  --bootstrap-server <span class="hljs-number">192.168</span>.<span class="hljs-number">1.87</span>:<span class="hljs-number">9092</span> <span class="hljs-string">\</span><br>  --topic-<span class="hljs-keyword">list</span> mytopic <span class="hljs-string">\</span><br>  --describe <span class="hljs-string">\</span><br>  | grep -oP <span class="hljs-string">'(?&lt;=size":)\d+'</span>  <span class="hljs-string">\</span><br>  | awk <span class="hljs-string">'&#123; sum += $1 &#125; END &#123; print sum &#125;'</span><br>  <br><span class="hljs-comment">#返回结果，单位 Byte</span><br><span class="hljs-number">648</span><br><br><span class="hljs-comment">#方法二，需要安装 jq</span><br>kafka-log-dirs.sh <span class="hljs-string">\</span><br>    --bootstrap-server <span class="hljs-number">192.168</span>.<span class="hljs-number">1.87</span>:<span class="hljs-number">9092</span> <span class="hljs-string">\</span><br>    --topic-<span class="hljs-keyword">list</span> mytopic <span class="hljs-string">\</span><br>    --describe <span class="hljs-string">\</span><br>  | grep <span class="hljs-string">'^&#123;'</span> <span class="hljs-string">\</span><br>  | jq <span class="hljs-string">'[ ..|.size? | numbers ] | add'</span><br><br><span class="hljs-comment">#返回结果，单位 Byte</span><br><span class="hljs-number">648</span><br></code></pre></div></td></tr></table></figure>
+<h3 id="消费者组-Consumer-Group"><a href="#消费者组-Consumer-Group" class="headerlink" title="消费者组 Consumer Group"></a>消费者组 Consumer Group</h3><h4 id="列出所有的-Consumer-Group"><a href="#列出所有的-Consumer-Group" class="headerlink" title="列出所有的 Consumer Group"></a>列出所有的 Consumer Group</h4><blockquote>
+<p> kafka-consumer-groups.sh –bootstrap-server <zk-service>:9092 –list</p>
+</blockquote>
+<h4 id="查看指定-Consumer-Group-详情"><a href="#查看指定-Consumer-Group-详情" class="headerlink" title="查看指定 Consumer Group 详情"></a>查看指定 Consumer Group 详情</h4><figure class="highlight routeros"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs routeros">GROUP:消费者 group<br>TOPIC:话题 id<br>PARTITION:分区 id<br>CURRENT-OFFSET:当前已消费的条数<br>LOG-END-OFFSET:总条数<br>LAG:未消费的条数<br>CONSUMER-ID:消费者 id<br>HOST:消费者<span class="hljs-built_in"> ip </span>地址<br>CLIENT-ID:客户端 id<br></code></pre></div></td></tr></table></figure>
+
+<figure class="highlight angelscript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs angelscript">#这里查看的是 logstash_mysql 这个消费者 group 的消费情况<br>kafka-consumer-groups.sh --bootstrap-server <span class="hljs-number">10.37</span><span class="hljs-number">.62</span><span class="hljs-number">.20</span>:<span class="hljs-number">9092</span> --describe --group logstash_mysql<br><br>#返回结果<br>GROUP           TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                      HOST            CLIENT-ID<br>logstash_mysql  mysql-audit-log <span class="hljs-number">11</span>         <span class="hljs-number">1312115</span>         <span class="hljs-number">1312857</span>         <span class="hljs-number">742</span>             logstash<span class="hljs-number">-5</span><span class="hljs-number">-0545</span>a8a7-f7bd<span class="hljs-number">-430</span>c-b619<span class="hljs-number">-7</span>a2b206addd2  /<span class="hljs-number">10.37</span><span class="hljs-number">.62</span><span class="hljs-number">.24</span>    logstash<span class="hljs-number">-5</span><br>logstash_mysql  mysql-audit-log <span class="hljs-number">1</span>          <span class="hljs-number">1312593</span>         <span class="hljs-number">1313345</span>         <span class="hljs-number">752</span>             logstash<span class="hljs-number">-0</span>-d86bd51a-d010<span class="hljs-number">-45</span>de-aa6f-f6da8542b779  /<span class="hljs-number">10.37</span><span class="hljs-number">.62</span><span class="hljs-number">.23</span>    logstash<span class="hljs-number">-0</span><br>logstash_mysql  mysql-audit-log <span class="hljs-number">2</span>          <span class="hljs-number">1309548</span>         <span class="hljs-number">1310317</span>         <span class="hljs-number">769</span>             logstash<span class="hljs-number">-1</span><span class="hljs-number">-496340</span>ea<span class="hljs-number">-935</span>d<span class="hljs-number">-444</span>d-a184<span class="hljs-number">-51</span>d42e225054  /<span class="hljs-number">10.37</span><span class="hljs-number">.62</span><span class="hljs-number">.24</span>    logstash<span class="hljs-number">-1</span><br>logstash_mysql  mysql-audit-log <span class="hljs-number">12</span>         <span class="hljs-number">1313083</span>         <span class="hljs-number">1313194</span>         <span class="hljs-number">111</span>             logstash<span class="hljs-number">-6</span><span class="hljs-number">-806</span>b20cb-a9af<span class="hljs-number">-49</span>c1-b37d-ccb33a646ab2  /<span class="hljs-number">10.37</span><span class="hljs-number">.62</span><span class="hljs-number">.24</span>    logstash<span class="hljs-number">-6</span><br>logstash_mysql  mysql-audit-log <span class="hljs-number">6</span>          <span class="hljs-number">1310984</span>         <span class="hljs-number">1311192</span>         <span class="hljs-number">208</span>             logstash<span class="hljs-number">-13</span><span class="hljs-number">-8</span>d474bf6-e8d0<span class="hljs-number">-4</span>b8a-b319-cf5e2e6cc078 /<span class="hljs-number">10.37</span><span class="hljs-number">.62</span><span class="hljs-number">.24</span>    logstash<span class="hljs-number">-13</span><br>logstash_mysql  mysql-audit-log <span class="hljs-number">9</span>          <span class="hljs-number">1312998</span>         <span class="hljs-number">1313768</span>         <span class="hljs-number">770</span>             logstash<span class="hljs-number">-3</span><span class="hljs-number">-29863f</span>b0<span class="hljs-number">-6708</span><span class="hljs-number">-4f</span>b1<span class="hljs-number">-9e28</span>-bd81c30ce8ef  /<span class="hljs-number">10.37</span><span class="hljs-number">.62</span><span class="hljs-number">.24</span>    logstash<span class="hljs-number">-3</span><br>logstash_mysql  mysql-audit-log <span class="hljs-number">4</span>          <span class="hljs-number">1315150</span>         <span class="hljs-number">1315276</span>         <span class="hljs-number">126</span>             logstash<span class="hljs-number">-11</span><span class="hljs-number">-6</span>d66a188<span class="hljs-number">-85</span>b7<span class="hljs-number">-476</span>b-bd89<span class="hljs-number">-5423</span>ef48cd01 /<span class="hljs-number">10.37</span><span class="hljs-number">.62</span><span class="hljs-number">.24</span>    logstash<span class="hljs-number">-11</span><br>logstash_mysql  mysql-audit-log <span class="hljs-number">0</span>          <span class="hljs-number">22770935522</span>     <span class="hljs-number">22770935650</span>     <span class="hljs-number">128</span>             logstash<span class="hljs-number">-0</span><span class="hljs-number">-7</span>be475d6-a49e<span class="hljs-number">-4f</span>f9-bf83<span class="hljs-number">-6</span>b83f6067306  /<span class="hljs-number">10.37</span><span class="hljs-number">.62</span><span class="hljs-number">.24</span>    logstash<span class="hljs-number">-0</span><br>logstash_mysql  mysql-audit-log <span class="hljs-number">8</span>          <span class="hljs-number">1309956</span>         <span class="hljs-number">1310103</span>         <span class="hljs-number">147</span>             logstash<span class="hljs-number">-2</span><span class="hljs-number">-3</span>c313c6f<span class="hljs-number">-8</span>c98<span class="hljs-number">-4333</span><span class="hljs-number">-8</span>bad<span class="hljs-number">-2f</span>9696457d7d  /<span class="hljs-number">10.37</span><span class="hljs-number">.62</span><span class="hljs-number">.24</span>    logstash<span class="hljs-number">-2</span><br>logstash_mysql  mysql-audit-log <span class="hljs-number">13</span>         <span class="hljs-number">1314659</span>         <span class="hljs-number">1314775</span>         <span class="hljs-number">116</span>             logstash<span class="hljs-number">-7</span>-e98fd14e-e7f6<span class="hljs-number">-45e5</span><span class="hljs-number">-8</span>ccf<span class="hljs-number">-2442058f</span>0bc9  /<span class="hljs-number">10.37</span><span class="hljs-number">.62</span><span class="hljs-number">.24</span>    logstash<span class="hljs-number">-7</span><br>logstash_mysql  mysql-audit-log <span class="hljs-number">14</span>         <span class="hljs-number">1313145</span>         <span class="hljs-number">1313250</span>         <span class="hljs-number">105</span>             logstash<span class="hljs-number">-8</span><span class="hljs-number">-2</span>c3345a8-f8f1<span class="hljs-number">-4f</span>08-a18e<span class="hljs-number">-333</span>dff2f0d65  /<span class="hljs-number">10.37</span><span class="hljs-number">.62</span><span class="hljs-number">.24</span>    logstash<span class="hljs-number">-8</span><br>logstash_mysql  mysql-audit-log <span class="hljs-number">5</span>          <span class="hljs-number">1314037</span>         <span class="hljs-number">1314297</span>         <span class="hljs-number">260</span>             logstash<span class="hljs-number">-12</span>-ce018227<span class="hljs-number">-9e59</span><span class="hljs-number">-4137</span>-a23f<span class="hljs-number">-5</span>ccc0c7d4f6a /<span class="hljs-number">10.37</span><span class="hljs-number">.62</span><span class="hljs-number">.24</span>    logstash<span class="hljs-number">-12</span><br>logstash_mysql  mysql-audit-log <span class="hljs-number">10</span>         <span class="hljs-number">1312883</span>         <span class="hljs-number">1312962</span>         <span class="hljs-number">79</span>              logstash<span class="hljs-number">-4</span><span class="hljs-number">-9</span>eb84ae4<span class="hljs-number">-3351</span><span class="hljs-number">-4083</span><span class="hljs-number">-9</span>b1f<span class="hljs-number">-288910</span>a6c3b8  /<span class="hljs-number">10.37</span><span class="hljs-number">.62</span><span class="hljs-number">.24</span>    logstash<span class="hljs-number">-4</span><br>logstash_mysql  mysql-audit-log <span class="hljs-number">7</span>          <span class="hljs-number">1312476</span>         <span class="hljs-number">1313200</span>         <span class="hljs-number">724</span>             logstash<span class="hljs-number">-14</span><span class="hljs-number">-680</span>c982e<span class="hljs-number">-5</span>cf3<span class="hljs-number">-406</span>b<span class="hljs-number">-810</span>a<span class="hljs-number">-4</span>d5c96b5bdee /<span class="hljs-number">10.37</span><span class="hljs-number">.62</span><span class="hljs-number">.24</span>    logstash<span class="hljs-number">-14</span><br>logstash_mysql  mysql-audit-log <span class="hljs-number">3</span>          <span class="hljs-number">1313227</span>         <span class="hljs-number">1313328</span>         <span class="hljs-number">101</span><br></code></pre></div></td></tr></table></figure>
+<h4 id="删除指定-Consumer-Group"><a href="#删除指定-Consumer-Group" class="headerlink" title="删除指定 Consumer Group"></a>删除指定 Consumer Group</h4><blockquote>
+<p>kafka-topics.sh –bootstrap-server <zk-service>:9092 –delete –topic pgw-nginx</p>
+</blockquote>
+<h3 id="消息"><a href="#消息" class="headerlink" title="消息"></a>消息</h3><h4 id="生产消息"><a href="#生产消息" class="headerlink" title="生产消息"></a>生产消息</h4><figure class="highlight angelscript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs angelscript">kafka-console-producer.sh --broker-list <span class="hljs-number">11.8</span><span class="hljs-number">.36</span><span class="hljs-number">.125</span>:<span class="hljs-number">9092</span> --topic mytopic<br>&gt;<span class="hljs-keyword">this</span> <span class="hljs-keyword">is</span> my topic<br></code></pre></div></td></tr></table></figure>
+
+<h4 id="生产消息指定-Key"><a href="#生产消息指定-Key" class="headerlink" title="生产消息指定 Key"></a>生产消息指定 Key</h4><p><code>key.separator=</code>, 指定以逗号作为 key 和 value 的分隔符。</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs crmsh">kafka-console-producer.sh --broker-list kafka1:<span class="hljs-number">9092</span> --topic cr7-topic --<span class="hljs-keyword">property</span><span class="hljs-title"> </span>parse.<span class="hljs-attr">key=</span><span class="hljs-literal">true</span> --<span class="hljs-keyword">property</span><span class="hljs-title"> </span>key.<span class="hljs-attr">separator=</span>,<br><br>&gt;mykey,&#123;<span class="hljs-string">"orderAmount"</span>:<span class="hljs-number">1000</span>,<span class="hljs-string">"orderId"</span>:<span class="hljs-number">1</span>,<span class="hljs-string">"productId"</span>:<span class="hljs-number">101</span>,<span class="hljs-string">"productNum"</span>:<span class="hljs-number">1</span>&#125;<br></code></pre></div></td></tr></table></figure>
+<h4 id="消费消息"><a href="#消费消息" class="headerlink" title="消费消息"></a>消费消息</h4><h5 id="从头开始消费"><a href="#从头开始消费" class="headerlink" title="从头开始消费"></a>从头开始消费</h5><p>从头开始消费是可以消费到之前的消息的，通过 <code>--from-beginning</code> 指定：</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs angelscript">kafka-console-consumer.sh --bootstrap-server <span class="hljs-number">11.8</span><span class="hljs-number">.36</span><span class="hljs-number">.125</span>:<span class="hljs-number">9092</span> --topic mytopic --<span class="hljs-keyword">from</span>-beginning<br><span class="hljs-keyword">this</span> <span class="hljs-keyword">is</span> my topic<br></code></pre></div></td></tr></table></figure>
+<h5 id="从尾部开始消费"><a href="#从尾部开始消费" class="headerlink" title="从尾部开始消费"></a>从尾部开始消费</h5><p><code>--offset latest</code> 指定从尾部开始消费，另外还需要指定 partition，可以指定多个：</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs angelscript">kafka-console-consumer.sh --bootstrap-server <span class="hljs-number">11.8</span><span class="hljs-number">.36</span><span class="hljs-number">.125</span>:<span class="hljs-number">9092</span> --topic mytopic  --offset latest  --partition <span class="hljs-number">0</span> <span class="hljs-number">1</span> <span class="hljs-number">2</span><br></code></pre></div></td></tr></table></figure>
+<h5 id="消费指定条数的消息"><a href="#消费指定条数的消息" class="headerlink" title="消费指定条数的消息"></a>消费指定条数的消息</h5><p><code>--max-messages</code> 指定取的个数：</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs angelscript">kafka-console-consumer.sh --bootstrap-server <span class="hljs-number">11.8</span><span class="hljs-number">.36</span><span class="hljs-number">.125</span>:<span class="hljs-number">9092</span> --topic mytopic  --offset latest  --partition <span class="hljs-number">0</span> <span class="hljs-number">1</span> <span class="hljs-number">2</span> --max-messages <span class="hljs-number">2</span><br>bobo<br><span class="hljs-number">1111</span><br>Processed a total of <span class="hljs-number">2</span> messages<br></code></pre></div></td></tr></table></figure>
+
+<h5 id="指定消费组进行消费"><a href="#指定消费组进行消费" class="headerlink" title="指定消费组进行消费"></a>指定消费组进行消费</h5><p><code>--consumer-property group.id=&lt;消费者组名&gt;</code>执行消费者组进行消费：</p>
+<blockquote>
+<p>kafka-console-consumer.sh –bootstrap-server  kafka1:9092 –topic test_partition –consumer-property  group.id=test_group –from-beginning </p>
+</blockquote>
+<h5 id="查看消息具体内容"><a href="#查看消息具体内容" class="headerlink" title="查看消息具体内容"></a>查看消息具体内容</h5><figure class="highlight angelscript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs angelscript">kafka-dump-log.sh --files cr7-topic<span class="hljs-number">-0</span>/<span class="hljs-number">00000000000000000000.</span>log  -deep-iteration --print-data-log<br> <br> #输出结果<br>| offset: <span class="hljs-number">1080</span> CreateTime: <span class="hljs-number">1615020877664</span> keysize: <span class="hljs-number">1</span> valuesize: <span class="hljs-number">63</span> sequence: <span class="hljs-number">-1</span> headerKeys: [] key: <span class="hljs-number">1</span> payload: &#123;<span class="hljs-string">"orderAmount"</span>:<span class="hljs-number">1000</span>,<span class="hljs-string">"orderId"</span>:<span class="hljs-number">1</span>,<span class="hljs-string">"productId"</span>:<span class="hljs-number">101</span>,<span class="hljs-string">"productNum"</span>:<span class="hljs-number">1</span>&#125;<br>| offset: <span class="hljs-number">1081</span> CreateTime: <span class="hljs-number">1615020877677</span> keysize: <span class="hljs-number">1</span> valuesize: <span class="hljs-number">63</span> sequence: <span class="hljs-number">-1</span> headerKeys: [] key: <span class="hljs-number">5</span> payload: &#123;<span class="hljs-string">"orderAmount"</span>:<span class="hljs-number">1000</span>,<span class="hljs-string">"orderId"</span>:<span class="hljs-number">5</span>,<span class="hljs-string">"productId"</span>:<span class="hljs-number">105</span>,<span class="hljs-string">"productNum"</span>:<span class="hljs-number">5</span>&#125;<br>| offset: <span class="hljs-number">1082</span> CreateTime: <span class="hljs-number">1615020877677</span> keysize: <span class="hljs-number">1</span> valuesize: <span class="hljs-number">63</span> sequence: <span class="hljs-number">-1</span> headerKeys: [] key: <span class="hljs-number">7</span> payload: &#123;<span class="hljs-string">"orderAmount"</span>:<span class="hljs-number">1000</span>,<span class="hljs-string">"orderId"</span>:<span class="hljs-number">7</span>,<span class="hljs-string">"productId"</span>:<span class="hljs-number">107</span>,<span class="hljs-string">"productNum"</span>:<span class="hljs-number">7</span>&#125;<br>| offset: <span class="hljs-number">1083</span> CreateTime: <span class="hljs-number">1615020877677</span> keysize: <span class="hljs-number">1</span> valuesize: <span class="hljs-number">63</span> sequence: <span class="hljs-number">-1</span> headerKeys: [] key: <span class="hljs-number">8</span> payload: &#123;<span class="hljs-string">"orderAmount"</span>:<span class="hljs-number">1000</span>,<span class="hljs-string">"orderId"</span>:<span class="hljs-number">8</span>,<span class="hljs-string">"productId"</span>:<span class="hljs-number">108</span>,<span class="hljs-string">"productNum"</span>:<span class="hljs-number">8</span>&#125;<br>| offset: <span class="hljs-number">1084</span> CreateTime: <span class="hljs-number">1615020877677</span> keysize: <span class="hljs-number">2</span> valuesize: <span class="hljs-number">65</span> sequence: <span class="hljs-number">-1</span> headerKeys: [] key: <span class="hljs-number">11</span> payload: &#123;<span class="hljs-string">"orderAmount"</span>:<span class="hljs-number">1000</span>,<span class="hljs-string">"orderId"</span>:<span class="hljs-number">11</span>,<span class="hljs-string">"productId"</span>:<span class="hljs-number">111</span>,<span class="hljs-string">"productNum"</span>:<span class="hljs-number">11</span>&#125;<br>| offset: <span class="hljs-number">1085</span> CreateTime: <span class="hljs-number">1615020877677</span> keysize: <span class="hljs-number">2</span> valuesize: <span class="hljs-number">65</span> sequence: <span class="hljs-number">-1</span> headerKeys: [] key: <span class="hljs-number">15</span> payload: &#123;<span class="hljs-string">"orderAmount"</span>:<span class="hljs-number">1000</span>,<span class="hljs-string">"orderId"</span>:<span class="hljs-number">15</span>,<span class="hljs-string">"productId"</span>:<span class="hljs-number">115</span>,<span class="hljs-string">"productNum"</span>:<span class="hljs-number">15</span>&#125;<br>| offset: <span class="hljs-number">1086</span> CreateTime: <span class="hljs-number">1615020877678</span> keysize: <span class="hljs-number">2</span> valuesize: <span class="hljs-number">65</span> sequence: <span class="hljs-number">-1</span> headerKeys: [] key: <span class="hljs-number">17</span> payload: &#123;<span class="hljs-string">"orderAmount"</span>:<span class="hljs-number">1000</span>,<span class="hljs-string">"orderId"</span>:<span class="hljs-number">17</span>,<span class="hljs-string">"productId"</span>:<span class="hljs-number">117</span>,<span class="hljs-string">"productNum"</span>:<span class="hljs-number">17</span>&#125;<br>| offset: <span class="hljs-number">1087</span> CreateTime: <span class="hljs-number">1615020877678</span> keysize: <span class="hljs-number">2</span> valuesize: <span class="hljs-number">65</span> sequence: <span class="hljs-number">-1</span> headerKeys: [] key: <span class="hljs-number">21</span> payload: &#123;<span class="hljs-string">"orderAmount"</span>:<span class="hljs-number">1000</span>,<span class="hljs-string">"orderId"</span>:<span class="hljs-number">21</span>,<span class="hljs-string">"productId"</span>:<span class="hljs-number">121</span>,<span class="hljs-string">"productNum"</span>:<span class="hljs-number">21</span>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<h5 id="查看-Topic-中当前消息总数"><a href="#查看-Topic-中当前消息总数" class="headerlink" title="查看 Topic 中当前消息总数"></a>查看 Topic 中当前消息总数</h5><p>Kafka 自带的命令没有直接提供这样的功能，要使用 Kafka 提供的工具类 GetOffsetShell 来计算给定 Topic 每个分区当前最早位移和最新位移，差值就是每个分区的当前的消息总数，将该 Topic 所有分区的消息总数累加就能得到该 Topic 总的消息数。</p>
+<p>首先查询 Topic 中每个分区 offset 的最小值（起始位置），使用 <code>--time -2</code>参数。一个分区的起始位置并不是每时每刻都为 0 ，因为日志清理的动作会清理旧的数据，所以分区的起始位置会自然而然地增加。</p>
+<figure class="highlight css"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs css"><span class="hljs-selector-tag">kafka-run-class</span><span class="hljs-selector-class">.sh</span> <span class="hljs-selector-tag">kafka</span><span class="hljs-selector-class">.tools</span><span class="hljs-selector-class">.GetOffsetShell</span> <span class="hljs-selector-tag">--broker-list</span> <span class="hljs-selector-tag">kafka1</span><span class="hljs-selector-pseudo">:9092</span> <span class="hljs-selector-tag">-topic</span> <span class="hljs-selector-tag">test-topic</span>  <span class="hljs-selector-tag">--time</span> <span class="hljs-selector-tag">-2</span><br><br>#前面是分区号，后面是 <span class="hljs-selector-tag">offset</span><br><span class="hljs-selector-tag">test-topic</span><span class="hljs-selector-pseudo">:0</span><span class="hljs-selector-pseudo">:0</span><br><span class="hljs-selector-tag">test-topic</span><span class="hljs-selector-pseudo">:1</span><span class="hljs-selector-pseudo">:0</span><br></code></pre></div></td></tr></table></figure>
+<p>然后使用<code>--time -1</code>参数查询 Topic 各个分区的 offset 的最大值。</p>
+<figure class="highlight css"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs css"><span class="hljs-selector-tag">kafka-run-class</span><span class="hljs-selector-class">.sh</span> <span class="hljs-selector-tag">kafka</span><span class="hljs-selector-class">.tools</span><span class="hljs-selector-class">.GetOffsetShell</span> <span class="hljs-selector-tag">--broker-list</span> <span class="hljs-selector-tag">kafka1</span><span class="hljs-selector-pseudo">:9092</span> <span class="hljs-selector-tag">--time</span> <span class="hljs-selector-tag">-1</span> <span class="hljs-selector-tag">--topic</span> <span class="hljs-selector-tag">test-topic</span><br><br>#输出结果<br><span class="hljs-selector-tag">test-topic</span><span class="hljs-selector-pseudo">:0</span><span class="hljs-selector-pseudo">:5500000</span><br><span class="hljs-selector-tag">test-topic</span><span class="hljs-selector-pseudo">:1</span><span class="hljs-selector-pseudo">:5500000</span><br></code></pre></div></td></tr></table></figure>
+<p>对于本例来说，test-topic 中当前总的消息数为 (5500000 - 0) + （5500000 - 0），等于 1100 万条。如果只是要获取 Topic 中总的消息数（包括已经从 Kafka 删除的消息），那么只需要将 Topic 中每个 Partition 的 Offset 累加即可。</p>
+<h3 id="Offset"><a href="#Offset" class="headerlink" title="Offset"></a>Offset</h3><h4 id="重置消费者-Offset"><a href="#重置消费者-Offset" class="headerlink" title="重置消费者 Offset"></a>重置消费者 Offset</h4><figure class="highlight pgsql"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs pgsql">#查看消费者组消费情况<br>#目前的 <span class="hljs-number">0</span> 分区 <span class="hljs-keyword">CURRENT</span>-<span class="hljs-keyword">OFFSET</span> 是 <span class="hljs-number">4</span>，<span class="hljs-number">2</span> 分区 <span class="hljs-keyword">CURRENT</span>-<span class="hljs-keyword">OFFSET</span> 是 <span class="hljs-number">6</span><br>kafka-consumer-<span class="hljs-keyword">groups</span>.sh <span class="hljs-comment">--bootstrap-server kafka1:9092 --describe --group my-consumer-group</span><br><br>#返回结果<br>Consumer <span class="hljs-keyword">group</span> <span class="hljs-string">'my-consumer-group'</span> has <span class="hljs-keyword">no</span> active members.<br><br><span class="hljs-keyword">GROUP</span>             TOPIC                 <span class="hljs-keyword">PARTITION</span>  <span class="hljs-keyword">CURRENT</span>-<span class="hljs-keyword">OFFSET</span>  <span class="hljs-keyword">LOG</span>-<span class="hljs-keyword">END</span>-<span class="hljs-keyword">OFFSET</span>  LAG             CONSUMER-ID     HOST            CLIENT-ID<br>my-consumer-<span class="hljs-keyword">group</span> <span class="hljs-keyword">transaction</span>-topic-msg <span class="hljs-number">2</span>          <span class="hljs-number">6</span>               <span class="hljs-number">6</span>               <span class="hljs-number">0</span>               -               -               -<br>my-consumer-<span class="hljs-keyword">group</span> <span class="hljs-keyword">transaction</span>-topic-msg <span class="hljs-number">1</span>          <span class="hljs-number">0</span>               <span class="hljs-number">0</span>               <span class="hljs-number">0</span>               -               -               -<br>my-consumer-<span class="hljs-keyword">group</span> <span class="hljs-keyword">transaction</span>-topic-msg <span class="hljs-number">0</span>          <span class="hljs-number">4</span>               <span class="hljs-number">4</span>               <span class="hljs-number">0</span>               -               -               -         -<br><br>#重置消费者组 <span class="hljs-keyword">offset</span> 为 <span class="hljs-number">3</span>，重置是所有分区一起重置<br>kafka-consumer-<span class="hljs-keyword">groups</span>.sh <span class="hljs-comment">--bootstrap-server kafka1:9092 --group my-consumer-group --reset-offsets --execute --to-offset 3 --topic transaction-topic-msg</span><br><br>#返回结果<br>[<span class="hljs-number">2021</span><span class="hljs-number">-06</span><span class="hljs-number">-25</span> <span class="hljs-number">10</span>:<span class="hljs-number">44</span>:<span class="hljs-number">51</span>,<span class="hljs-number">848</span>] WARN <span class="hljs-built_in">New</span> <span class="hljs-keyword">offset</span> (<span class="hljs-number">3</span>) <span class="hljs-keyword">is</span> higher than latest <span class="hljs-keyword">offset</span> <span class="hljs-keyword">for</span> topic <span class="hljs-keyword">partition</span> <span class="hljs-keyword">transaction</span>-topic-msg<span class="hljs-number">-1.</span> <span class="hljs-keyword">Value</span> will be <span class="hljs-keyword">set</span> <span class="hljs-keyword">to</span> <span class="hljs-number">0</span> (kafka.<span class="hljs-keyword">admin</span>.ConsumerGroupCommand$)<br><br><span class="hljs-keyword">GROUP</span>                          TOPIC                          <span class="hljs-keyword">PARTITION</span>  <span class="hljs-built_in">NEW</span>-<span class="hljs-keyword">OFFSET</span>     <br>my-consumer-<span class="hljs-keyword">group</span>              <span class="hljs-keyword">transaction</span>-topic-msg          <span class="hljs-number">0</span>          <span class="hljs-number">3</span>              <br>my-consumer-<span class="hljs-keyword">group</span>              <span class="hljs-keyword">transaction</span>-topic-msg          <span class="hljs-number">1</span>          <span class="hljs-number">0</span>              <br>my-consumer-<span class="hljs-keyword">group</span>              <span class="hljs-keyword">transaction</span>-topic-msg          <span class="hljs-number">2</span>          <span class="hljs-number">3</span>              <br><br>#可以看到 <span class="hljs-number">0</span> 分区和 <span class="hljs-number">2</span> 分区的 <span class="hljs-keyword">CURRENT</span>-<span class="hljs-keyword">OFFSET</span> 都变为 <span class="hljs-number">3</span> 了<br>kafka-consumer-<span class="hljs-keyword">groups</span>.sh <span class="hljs-comment">--bootstrap-server kafka1:9092 --describe --group my-consumer-group</span><br><br>#返回结果<br>Consumer <span class="hljs-keyword">group</span> <span class="hljs-string">'my-consumer-group'</span> has <span class="hljs-keyword">no</span> active members.<br><br><span class="hljs-keyword">GROUP</span>             TOPIC                 <span class="hljs-keyword">PARTITION</span>  <span class="hljs-keyword">CURRENT</span>-<span class="hljs-keyword">OFFSET</span>  <span class="hljs-keyword">LOG</span>-<span class="hljs-keyword">END</span>-<span class="hljs-keyword">OFFSET</span>  LAG             CONSUMER-ID     HOST            CLIENT-ID<br>my-consumer-<span class="hljs-keyword">group</span> <span class="hljs-keyword">transaction</span>-topic-msg <span class="hljs-number">2</span>          <span class="hljs-number">3</span>               <span class="hljs-number">6</span>               <span class="hljs-number">3</span>               -               -               -<br>my-consumer-<span class="hljs-keyword">group</span> <span class="hljs-keyword">transaction</span>-topic-msg <span class="hljs-number">1</span>          <span class="hljs-number">0</span>               <span class="hljs-number">0</span>               <span class="hljs-number">0</span>               -               -               -<br>my-consumer-<span class="hljs-keyword">group</span> <span class="hljs-keyword">transaction</span>-topic-msg <span class="hljs-number">0</span>          <span class="hljs-number">3</span>               <span class="hljs-number">4</span>               <span class="hljs-number">1</span>               -               -               -<br><br>#可以重新消费到之前的数据<br>kafka-console-consumer.sh <span class="hljs-comment">--bootstrap-server kafka1:9092 --topic transaction-topic-msg  --group my-consumer-group </span><br><br>#返回结果<br>message<span class="hljs-number">-111111</span><br>message<span class="hljs-number">-333333</span><br></code></pre></div></td></tr></table></figure>
+
+<h3 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h3><figure class="highlight angelscript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs angelscript">--num-records <span class="hljs-number">10000000</span>: 向指定主题发送了 <span class="hljs-number">1</span> 千万条消息。<br>--record-size <span class="hljs-number">1024</span>: 每条消息的大小为 <span class="hljs-number">1024</span>KB。<br>--throughput <span class="hljs-number">-1</span>: 不限制吞吐量。<br>--producer-props: 指定生产者参数。<br>    acks=<span class="hljs-number">-1</span>: 这要求 ISR 列表里跟 leader 保持同步的那些 follower 都要把消息同步过去，才能认为这条消息是写入成功。<br>    linger.ms=<span class="hljs-number">2000</span>: batch.size 和 linger.ms 是对 kafka producer 性能影响比较大的两个参数。batch.size 是 producer 批量发送的基本单位，默认是 <span class="hljs-number">16384</span>Bytes，即 <span class="hljs-number">16</span>kB；lingger.ms 是 sender 线程在检查 batch 是否 ready 时候，判断有没有过期的参数，默认大小是 <span class="hljs-number">0</span>ms。<br>    compression.type=lz4: 使用 lz4 压缩算法。<br></code></pre></div></td></tr></table></figure>
+<figure class="highlight crmsh"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs crmsh">[root@kafka1 ~]<span class="hljs-comment"># kafka-producer-perf-test.sh --topic test_producer_perf --num-records 10000000 --throughput -1 --record-size 1024 --producer-props bootstrap.servers=kafka1:9092 acks=-1 linger.ms=2000 compression.type=lz4</span><br><br><span class="hljs-comment">#输出结果</span><br><span class="hljs-number">705600</span> records sent, <span class="hljs-number">141063.6</span> records/sec (<span class="hljs-number">137.76</span> MB/sec), <span class="hljs-number">54.8</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">avg</span> latency, <span class="hljs-number">557.0</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">max</span> latency.<br><span class="hljs-number">1204178</span> records sent, <span class="hljs-number">240739.3</span> records/sec (<span class="hljs-number">235.10</span> MB/sec), <span class="hljs-number">44.1</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">avg</span> latency, <span class="hljs-number">402.0</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">max</span> latency.<br><span class="hljs-number">1370938</span> records sent, <span class="hljs-number">274187.6</span> records/sec (<span class="hljs-number">267.76</span> MB/sec), <span class="hljs-number">27.9</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">avg</span> latency, <span class="hljs-number">311.0</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">max</span> latency.<br><span class="hljs-number">1464605</span> records sent, <span class="hljs-number">292628.4</span> records/sec (<span class="hljs-number">285.77</span> MB/sec), <span class="hljs-number">19.2</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">avg</span> latency, <span class="hljs-number">139.0</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">max</span> latency.<br><span class="hljs-number">1477239</span> records sent, <span class="hljs-number">295447.8</span> records/sec (<span class="hljs-number">288.52</span> MB/sec), <span class="hljs-number">31.8</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">avg</span> latency, <span class="hljs-number">290.0</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">max</span> latency.<br><span class="hljs-number">1446682</span> records sent, <span class="hljs-number">289336.4</span> records/sec (<span class="hljs-number">282.56</span> MB/sec), <span class="hljs-number">26.4</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">avg</span> latency, <span class="hljs-number">281.0</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">max</span> latency.<br><span class="hljs-number">1555098</span> records sent, <span class="hljs-number">311019.6</span> records/sec (<span class="hljs-number">303.73</span> MB/sec), <span class="hljs-number">37.6</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">avg</span> latency, <span class="hljs-number">344.0</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">max</span> latency.<br><span class="hljs-number">10000000</span> records sent, <span class="hljs-number">263894.020162</span> records/sec (<span class="hljs-number">257.71</span> MB/sec), <span class="hljs-number">32.60</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">avg</span> latency, <span class="hljs-number">557.00</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">max</span> latency, <span class="hljs-number">12</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">50th</span>, <span class="hljs-number">140</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">95th</span>, <span class="hljs-number">262</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">99th</span>, <span class="hljs-number">396</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">99</span>.<span class="hljs-number">9</span>th.<br></code></pre></div></td></tr></table></figure>
+<p>我们应该关心延时的概率分布情况，仅仅知道一个平均值是没有意义的。这就是这里计算分位数的原因。通常我们关注到 99th 分位就可以了。比如在上面的输出中，99th 值是 262 ms，这表明测试生产者生产的消息中，有 99% 消息的延时都在 262 ms 以内。你完全可以把这个数据当作这个生产者对外承诺的 SLA。</p>
+<h5 id="消费者性能测试"><a href="#消费者性能测试" class="headerlink" title="消费者性能测试"></a>消费者性能测试</h5><figure class="highlight css"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs css"><span class="hljs-selector-attr">[root@kafka1 ~]</span># <span class="hljs-selector-tag">kafka-consumer-perf-test</span><span class="hljs-selector-class">.sh</span> <span class="hljs-selector-tag">--broker-list</span> <span class="hljs-selector-tag">kafka1</span><span class="hljs-selector-pseudo">:9092</span> <span class="hljs-selector-tag">--messages</span> 10000000 <span class="hljs-selector-tag">--topic</span> <span class="hljs-selector-tag">test_producer_perf</span><br><br>#输出结果<br><span class="hljs-selector-tag">start</span><span class="hljs-selector-class">.time</span>, <span class="hljs-selector-tag">end</span><span class="hljs-selector-class">.time</span>, <span class="hljs-selector-tag">data</span><span class="hljs-selector-class">.consumed</span><span class="hljs-selector-class">.in</span><span class="hljs-selector-class">.MB</span>, <span class="hljs-selector-tag">MB</span><span class="hljs-selector-class">.sec</span>, <span class="hljs-selector-tag">data</span><span class="hljs-selector-class">.consumed</span><span class="hljs-selector-class">.in</span><span class="hljs-selector-class">.nMsg</span>, <span class="hljs-selector-tag">nMsg</span><span class="hljs-selector-class">.sec</span>, <span class="hljs-selector-tag">rebalance</span><span class="hljs-selector-class">.time</span><span class="hljs-selector-class">.ms</span>, <span class="hljs-selector-tag">fetch</span><span class="hljs-selector-class">.time</span><span class="hljs-selector-class">.ms</span>, <span class="hljs-selector-tag">fetch</span><span class="hljs-selector-class">.MB</span><span class="hljs-selector-class">.sec</span>, <span class="hljs-selector-tag">fetch</span><span class="hljs-selector-class">.nMsg</span><span class="hljs-selector-class">.sec</span><br>2021<span class="hljs-selector-tag">-03-09</span> 10<span class="hljs-selector-pseudo">:34</span><span class="hljs-selector-pseudo">:18</span><span class="hljs-selector-pseudo">:447</span>, 2021<span class="hljs-selector-tag">-03-09</span> 10<span class="hljs-selector-pseudo">:34</span><span class="hljs-selector-pseudo">:33</span><span class="hljs-selector-pseudo">:948</span>, 9765<span class="hljs-selector-class">.6250</span>, 629<span class="hljs-selector-class">.9997</span>, 10000000, 645119<span class="hljs-selector-class">.6697</span>, 1615257259068, <span class="hljs-selector-tag">-1615257243567</span>, <span class="hljs-selector-tag">-0</span><span class="hljs-selector-class">.0000</span>, <span class="hljs-selector-tag">-0</span><span class="hljs-selector-class">.0062</span><br></code></pre></div></td></tr></table></figure>
+
+<p>虽然输出格式有所差别，但该脚本也会打印出消费者的吞吐量数据。比如本例中的 629.9997MB/s。有点令人遗憾的是，它没有计算不同分位数下的分布情况。因此，在实际使用过程中，这个脚本的使用率要比生产者性能测试脚本的使用率低。</p>
+<h3 id="修改动态参数"><a href="#修改动态参数" class="headerlink" title="修改动态参数"></a>修改动态参数</h3><h5 id="修改-Broker-动态参数"><a href="#修改-Broker-动态参数" class="headerlink" title="修改 Broker 动态参数"></a>修改 Broker 动态参数</h5><figure class="highlight mipsasm"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs mipsasm">修改动态参数无需重启 <span class="hljs-keyword">Broker，动态 </span><span class="hljs-keyword">Broker </span>参数的使用场景非常广泛，通常包括但不限于以下几种：<br><br>动态调整 <span class="hljs-keyword">Broker </span>端各种线程池大小，实时应对突发流量。<br>动态调整 <span class="hljs-keyword">Broker </span>端连接信息或安全配置信息。<br>动态更新 SSL Keystore 有效期。<br>动态调整 <span class="hljs-keyword">Broker </span>端 Compact 操作性能。<br>实时变更 <span class="hljs-keyword">JMX </span>指标收集器 (<span class="hljs-keyword">JMX </span>Metrics Reporter)。<br>Kafka <span class="hljs-keyword">Broker </span><span class="hljs-built_in">Config</span> 的参数有以下 <span class="hljs-number">3</span> 种类型：<br><br>read-only：被标记为 read-only 的参数和原来的参数行为一样，只有重启 <span class="hljs-keyword">Broker，才能令修改生效。</span><br><span class="hljs-keyword">per-broker：被标记为 </span>per-<span class="hljs-keyword">broker </span>的参数属于动态参数，修改它之后，只会在对应的 <span class="hljs-keyword">Broker </span>上生效。<br>cluster-wide：被标记为 cluster-wide 的参数也属于动态参数，修改它之后，会在整个集群范围内生效，也就是说，对所有 <span class="hljs-keyword">Broker </span>都生效。你也可以为具体的 <span class="hljs-keyword">Broker </span>修改 cluster-wide 参数。<br>在集群层面设置全局值，即设置 cluster-wide 范围值，将 unclean.leader.election.enable 参数在集群层面设置为 true。<br></code></pre></div></td></tr></table></figure>
+
+<p>释案</p>
+<figure class="highlight routeros"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs routeros">kafka-configs.sh --bootstrap-server  10.37.249.58:9092 \<br>--entity-type brokers --entity-default --alter \<br>--add-config unclean.leader.election.<span class="hljs-attribute">enable</span>=<span class="hljs-literal">true</span><br><br><span class="hljs-comment">#返回结果</span><br>Completed updating<span class="hljs-built_in"> default config </span><span class="hljs-keyword">for</span> brokers <span class="hljs-keyword">in</span> the cluster.<br></code></pre></div></td></tr></table></figure>
+
+<p>如果要设置 cluster-wide 范围的动态参数，需要显式指定 entity-default。现在，我们使用下面的命令来查看一下刚才的配置是否成功。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs routeros">kafka-configs.sh --bootstrap-server 10.37.249.58:9092 \<br>--entity-type brokers --entity-default --describe<br><br><span class="hljs-comment">#返回结果</span><br>Default configs <span class="hljs-keyword">for</span> brokers <span class="hljs-keyword">in</span> the cluster are:<br>  unclean.leader.election.<span class="hljs-attribute">enable</span>=<span class="hljs-literal">true</span> <span class="hljs-attribute">sensitive</span>=<span class="hljs-literal">false</span> synonyms=&#123;DYNAMIC_DEFAULT_BROKER_CONFIG:unclean.leader.election.<span class="hljs-attribute">enable</span>=<span class="hljs-literal">true</span>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>在 Zookeeper 上查看 /config/brokers/ 节点可以查看 cluster-wide 的动态参数设置。</p>
+<figure class="highlight makefile"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs makefile"><span class="hljs-section">[zk: (CONNECTED) ] &gt; get /config/brokers/1</span><br><span class="hljs-section">&#123;"version":1,"config":&#123;"unclean.leader.election.enable":"false"&#125;&#125;</span><br>cZxid = 17179869574<br>ctime = 1631246495120<br>mZxid = 17179869574<br>mtime = 1631246495120<br>pZxid = 17179869574<br>cversion = 0<br>dataVersion = 0<br>aclVersion = 0<br>ephemeralOwner = 0<br>dataLength = 65<br>numChildren = 0[zk: (CONNECTED) ] &gt; get /config/brokers/&lt;default&gt;[zk: (CONNECTED) ] &gt; get /config/brokers/1<br></code></pre></div></td></tr></table></figure>
+<p>删除 cluster-wide 范围动态参数。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs routeros">kafka-configs.sh --bootstrap-server 10.37.249.58:9092 \<br>--entity-type brokers --entity-default --alter \<br>--delete-config unclean.leader.election.enable<br><br><span class="hljs-comment">#返回结果</span><br>Completed updating<span class="hljs-built_in"> default config </span><span class="hljs-keyword">for</span> brokers <span class="hljs-keyword">in</span> the cluster.<br></code></pre></div></td></tr></table></figure>
+
+<p>删除 per-broker 范围参数。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs routeros">kafka-configs.sh --bootstrap-server 10.37.249.58:9092 \<br>--entity-type brokers --entity-name 1 --alter \<br>--delete-config unclean.leader.election.enable<br><br><span class="hljs-comment">#返回结果</span><br>Completed updating<span class="hljs-built_in"> config </span><span class="hljs-keyword">for</span> broker 1.<br></code></pre></div></td></tr></table></figure>
+
+<p>修改 Topic 动态参数<br>设置 Topic test-topic 的 <code>retention.ms</code> 为 10000。</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs angelscript">kafka-configs.sh --bootstrap-server  <span class="hljs-number">10.37</span><span class="hljs-number">.249</span><span class="hljs-number">.58</span>:<span class="hljs-number">9092</span> \<br>--entity-type topics --entity-name test-topic --alter \<br>--add-config retention.ms=<span class="hljs-number">10000</span><br></code></pre></div></td></tr></table></figure>
+<p>查看设置的 Topic 动态参数。</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs angelscript">kafka-configs.sh --bootstrap-server  <span class="hljs-number">10.37</span><span class="hljs-number">.249</span><span class="hljs-number">.58</span>:<span class="hljs-number">9092</span> \<br>--entity-type topics --entity-name test-topic --describe<br><br>#返回结果<br>Dynamic configs <span class="hljs-keyword">for</span> topic test-topic are:<br>  retention.ms=<span class="hljs-number">10000</span> sensitive=<span class="hljs-literal">false</span> synonyms=&#123;DYNAMIC_TOPIC_CONFIG:retention.ms=<span class="hljs-number">10000</span>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>在 Zookeeper 上可以查看 /config/topics/ 来查看 Topic 动态参数。</p>
+<figure class="highlight makefile"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs makefile"><span class="hljs-section">[zk: (CONNECTED) ] &gt; get /config/topics/test-topic</span><br><span class="hljs-section">&#123;"version":1,"config":&#123;"retention.ms":"10000"&#125;&#125;</span><br>cZxid = 17179869460<br>ctime = 1631245744105<br>mZxid = 17179869619<br>mtime = 1631250116481<br>pZxid = 17179869460<br>cversion = 0<br>dataVersion = 10<br>aclVersion = 0<br>ephemeralOwner = 0<br>dataLength = 47<br>numChildren = 0[zk: (CONNECTED) ] &gt; get /config/topics/test-topic<br></code></pre></div></td></tr></table></figure>
+<p>删除 Topic 动态参数。</p>
+<figure class="highlight css"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs css"><span class="hljs-selector-tag">kafka-configs</span><span class="hljs-selector-class">.sh</span> <span class="hljs-selector-tag">--bootstrap-server</span>  10<span class="hljs-selector-class">.37</span><span class="hljs-selector-class">.249</span><span class="hljs-selector-class">.58</span><span class="hljs-selector-pseudo">:9092</span> \<br><span class="hljs-selector-tag">--entity-type</span> <span class="hljs-selector-tag">topics</span> <span class="hljs-selector-tag">--entity-name</span> <span class="hljs-selector-tag">test-topic</span> <span class="hljs-selector-tag">--alter</span> \<br><span class="hljs-selector-tag">--delete-config</span> <span class="hljs-selector-tag">retention</span><span class="hljs-selector-class">.ms</span><br></code></pre></div></td></tr></table></figure>
+<h3 id="Kafka-集群一键启动-停止脚本"><a href="#Kafka-集群一键启动-停止脚本" class="headerlink" title="Kafka 集群一键启动/停止脚本"></a>Kafka 集群一键启动/停止脚本</h3><h4 id="环境变量设置："><a href="#环境变量设置：" class="headerlink" title="环境变量设置："></a>环境变量设置：</h4><figure class="highlight routeros"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs routeros"><span class="hljs-comment">#/etc/profile 文件</span><br><span class="hljs-builtin-name">export</span> <span class="hljs-attribute">KAFKA_HOME</span>=/usr/local/kafka<br><span class="hljs-builtin-name">export</span> <span class="hljs-attribute">PATH</span>=<span class="hljs-variable">$PATH</span>:$KAFKA_HOME/bin<br></code></pre></div></td></tr></table></figure>
+<p>一键启动/停止脚本，查看状态需要安装 jps 工具。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs routeros"><span class="hljs-comment">#! /bin/bash</span><br><span class="hljs-comment"># 填写 Kafka Broker 节点地址</span><br>hosts=(kafka1 kafka2 kafka3)<br><br><span class="hljs-comment"># 打印启动分布式脚本信息</span><br><span class="hljs-attribute">mill</span>=`date <span class="hljs-string">"+%N"</span>`<br><span class="hljs-attribute">tdate</span>=`date <span class="hljs-string">"+%Y-%m-%d %H:%M:%S,<span class="hljs-variable">$&#123;mill:0:3&#125;</span>"</span>`<br><br>echo [<span class="hljs-variable">$tdate</span>] <span class="hljs-builtin-name">INFO</span> [Kafka Cluster] begins <span class="hljs-keyword">to</span> execute the <span class="hljs-variable">$1</span> operation.<br><br><span class="hljs-comment"># 执行分布式开启命令</span><br>function start()<br>&#123;<br>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-variable">$&#123;hosts[@]&#125;</span><br>                <span class="hljs-keyword">do</span><br>                        <span class="hljs-attribute">smill</span>=`date <span class="hljs-string">"+%N"</span>`<br>                        <span class="hljs-attribute">stdate</span>=`date <span class="hljs-string">"+%Y-%m-%d %H:%M:%S,<span class="hljs-variable">$&#123;smill:0:3&#125;</span>"</span>`<br>                        ssh root@<span class="hljs-variable">$i</span> <span class="hljs-string">"source /etc/profile;echo [<span class="hljs-variable">$stdate</span>] INFO [Kafka Broker <span class="hljs-variable">$i</span>] begins to execute the startup operation.;kafka-server-start.sh <span class="hljs-variable">$KAFKA_HOME</span>/config/server.properties&gt;/dev/null"</span> &amp;<br>                        sleep 1<br>                done<br>&#125;<br><br><span class="hljs-comment"># 执行分布式关闭命令</span><br>function stop()<br>&#123;<br>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-variable">$&#123;hosts[@]&#125;</span><br>                <span class="hljs-keyword">do</span><br>                        <span class="hljs-attribute">smill</span>=`date <span class="hljs-string">"+%N"</span>`<br>                        <span class="hljs-attribute">stdate</span>=`date <span class="hljs-string">"+%Y-%m-%d %H:%M:%S,<span class="hljs-variable">$&#123;smill:0:3&#125;</span>"</span>`<br>                        ssh root@<span class="hljs-variable">$i</span> <span class="hljs-string">"source /etc/profile;echo [<span class="hljs-variable">$stdate</span>] INFO [Kafka Broker <span class="hljs-variable">$i</span>] begins to execute the shutdown operation.;kafka-server-stop.sh&gt;/dev/null;"</span> &amp;<br>                        sleep 1<br>                done<br>&#125;<br><br><span class="hljs-comment"># 查看 Kafka Broker 节点状态</span><br>function status()<br>&#123;<br>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-variable">$&#123;hosts[@]&#125;</span><br>                <span class="hljs-keyword">do</span><br>                        <span class="hljs-attribute">smill</span>=`date <span class="hljs-string">"+%N"</span>`<br>                        <span class="hljs-attribute">stdate</span>=`date <span class="hljs-string">"+%Y-%m-%d %H:%M:%S,<span class="hljs-variable">$&#123;smill:0:3&#125;</span>"</span>`<br>                        ssh root@<span class="hljs-variable">$i</span> <span class="hljs-string">"source /etc/profile;echo [<span class="hljs-variable">$stdate</span>] INFO [Kafka Broker <span class="hljs-variable">$i</span>] status message is :;jps | grep Kafka;"</span> &amp;<br>                        sleep 1<br>                done<br>&#125;<br><br><span class="hljs-comment"># 判断输入的 Kafka 命令参数是否有效</span><br>case <span class="hljs-string">"<span class="hljs-variable">$1</span>"</span> <span class="hljs-keyword">in</span><br>    start)<br>        start<br>        ;;<br>    stop)<br>        stop<br>        ;;<br>    status)<br>        status<br>        ;;<br>    *)<br>        echo <span class="hljs-string">"Usage: <span class="hljs-variable">$0</span> &#123;start|stop|status&#125;"</span><br>        <span class="hljs-attribute">RETVAL</span>=1<br>esac<br></code></pre></div></td></tr></table></figure>
+
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/12/26/prometheus%E8%BF%9C%E7%AB%AF%E5%AD%98%E5%82%A8%E6%94%B9%E7%94%A8Tdengin/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">prometheus远端存储改用Tdengin</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/11/02/%E5%86%92%E4%B8%AA%E6%B3%A1/">
+                        <span class="hidden-mobile">冒个泡</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.0/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>

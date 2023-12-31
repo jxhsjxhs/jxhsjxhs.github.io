@@ -1,0 +1,878 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;light&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="jame_xhs">
+  <meta name="keywords" content="">
+  <title>jame_xhs&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.jxhs.me","root":"/","version":"1.8.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 100vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>jame_xhs blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/more-order/">
+                <i class="iconfont icon-slack-fill"></i>
+                越阶计划
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                书单
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2021/">
+                    
+                    2021
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2020/">
+                    
+                    2020
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="韭菜的自我修养">
+              
+            </span>
+
+            
+          </div>
+
+          
+            <div class="scroll-down-bar">
+              <i class="iconfont icon-arrowdown"></i>
+            </div>
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div class="py-5" id="board"
+          style=margin-top:0>
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2019/12/11/%E5%AF%B9%E4%BA%8E%E7%A8%8B%E5%BA%8F%E5%91%98%E6%9D%A5%E8%AF%B4%E4%B8%AA%E4%BA%BA%E5%AE%BD%E5%B8%A6%E5%8F%AF%E4%BB%A5%E6%80%8E%E4%B9%88%E5%88%A9%E7%94%A8/">对于程序员来说个人宽带可以怎么利用?</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2019/12/11/%E5%AF%B9%E4%BA%8E%E7%A8%8B%E5%BA%8F%E5%91%98%E6%9D%A5%E8%AF%B4%E4%B8%AA%E4%BA%BA%E5%AE%BD%E5%B8%A6%E5%8F%AF%E4%BB%A5%E6%80%8E%E4%B9%88%E5%88%A9%E7%94%A8/">
+          
+          
+            
+          
+          背景123目前在上海，家里有一个nas 和一些中日老师的学习视频，想在任何地方都获取知识.目前了解到的现状如下:上海用的宽带都是SDN网络,全是内网家里200M的网虽然上下不对等，但是上行也有30多M。如果用NAT穿透只能用我阿里云1M小水管。不甘心
+
+各种打听1234首先打听到SDN网络可以让运营商转为桥接,跟他说光纤转桥接就行(电信运营商电话打到人工客服真不容易)然后就有人跟你约时间上门调试,
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-12-11 22:17" pubdate>
+              2019-12-11
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2019/12/11/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99/">命令行翻墙</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2019/12/11/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99/">
+          
+          
+            
+          
+          痛点
+啥也不说，先上图。这样的痛苦 国内程序员应该都体会过
+
+共具介绍123对于技术人员shadowsocks应该不陌生，shadowsocks实质上也是一种socks5代理服务，类似于ssh代理。与vpn的全局代理不同，shadowsocks仅针对浏览器代理，不能代理应用软件，比如curl、wget等一些命令行软件。如果要让终端下的命令行工具都能支持代理，这时我们就要用上proxychains-
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-12-11 10:45" pubdate>
+              2019-12-11
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2019/12/07/%E5%B0%8F%E7%B1%B3%E8%B7%AF%E7%94%B1%E5%99%A83%E5%A2%9E%E5%BC%BA%E7%89%88%E5%88%B7%E6%9C%BA%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/">小米路由器3增强版刷机踩坑记录</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2019/12/07/%E5%B0%8F%E7%B1%B3%E8%B7%AF%E7%94%B1%E5%99%A83%E5%A2%9E%E5%BC%BA%E7%89%88%E5%88%B7%E6%9C%BA%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/">
+          
+          
+            
+          
+          首先我想说明一点，本博客是踩坑的记录。安装文档网上的基本都能用，为了文章的完整性还是写上安装步骤。
+排坑过程本次主要以为小米路由器3G(R3G)为例
+坑1原版路由器先刷官方开发版ROM（开发版才能打开ssh通道）小米路由器ROM
+123坑1:小米官方以及下架了刷ROM开发版的页面,已经找不到了。解决方案: 万能的网友有存档。我也在百度存了一份链接:https://pan.baidu.com/s/1
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-12-07 23:22" pubdate>
+              2019-12-07
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%9D%82%E9%A1%B9/">杂项</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2019/11/29/%E7%83%AD%E9%87%8D%E5%90%AFdocker/">热重启docker</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2019/11/29/%E7%83%AD%E9%87%8D%E5%90%AFdocker/">
+          
+          
+            
+          
+          背景众所周知，由于docker架构原因,docker是有守护进程的。而所有的容器进程父进程都是这个守护进程,如下图:
+这样的蠢架构导致了很多问题:
+
+生产环境docker内存泄漏无法处理或者处理繁琐
+升级生产docker版本繁琐
+
+从docker 1.12以后更新了热更新的配置,虽然架构还是不咋地,但是至少解决了以上问题
+热更新配置Step 1. 使用 docker live restore &a
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-11-29 11:13" pubdate>
+              2019-11-29
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2019/11/28/k8s-v1-17-%E6%96%B0%E7%89%B9%E6%80%A7%E9%A2%84%E5%91%8A-%E6%8B%93%E6%89%91%E6%84%9F%E7%9F%A5%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1/">k8s v1.17 新特性预告: 拓扑感知服务路由</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2019/11/28/k8s-v1-17-%E6%96%B0%E7%89%B9%E6%80%A7%E9%A2%84%E5%91%8A-%E6%8B%93%E6%89%91%E6%84%9F%E7%9F%A5%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1/">
+          
+          
+            
+          
+          转摘自roc   https://imroc.io
+
+
+名词解释
+拓扑域: 表示在集群中的某一类 “地方”，比如某节点、某机架、某可用区或某地域等，这些都可以作为某种拓扑域。
+endpoint: k8s 某个服务的某个 ip+port，通常是 pod 的 ip+port。
+service: k8s 的 service 资源(服务)，关联一组 endpoint ，访问 service 会被转发到关联
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-11-28 11:00" pubdate>
+              2019-11-28
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/k8s/">k8s</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2019/11/25/ip%E5%8D%8F%E8%AE%AE%E7%B0%87/">ip协议簇</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2019/11/25/ip%E5%8D%8F%E8%AE%AE%E7%B0%87/">
+          
+          
+            
+          
+          前言今天，也就是 2019-11-25日，全世界所有的ipv4已经分配完毕。这一天终于到来了！以后的日子中，ipv6的占比会越来越大，网络也会越来越复杂。作为IT从业人员，网络知识的掌握是必不可少的。网络是我们工程师的基础技能之一, 毕竟没有网络我们什么也干不了! 从各大公司的招聘要求上看,网络也是重点的考核部分. 今天就和大家一起复习下(还)大学里的课程(欠下的债)! TCP/IP协议簇的IP协
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-11-25 13:45" pubdate>
+              2019-11-25
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E7%BD%91%E7%BB%9C/">网络</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2019/11/17/CKA%E9%A2%98%E5%BA%93/">CKA题库</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2019/11/17/CKA%E9%A2%98%E5%BA%93/">
+          
+          
+            
+          
+          题库一24 题，160 分钟。
+第一题 (5%) 日志监控 Pod bar 的日志，并提取与错误 file-not-found 相对应的日志行,将这些日志行写入 /opt/dir/bar
+1kubectl logs &lt;podname&gt; | grep Error &gt; /opt/KUCC000xxx/KUCC000xxx.txt
+
+考点：Monitor, Log, and Debug
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-11-17 18:34" pubdate>
+              2019-11-17
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E5%AE%B9%E5%99%A8/">容器</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/CKA/">CKA</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2019/11/15/%E6%A0%91%E8%8E%93%E6%B4%BEzerow%E4%BD%BF%E7%94%A8/">树莓派zerow使用</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2019/11/15/%E6%A0%91%E8%8E%93%E6%B4%BEzerow%E4%BD%BF%E7%94%A8/">
+          
+          
+            
+          
+          
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-11-15 16:53" pubdate>
+              2019-11-15
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E6%A0%91%E8%8E%93%E6%B4%BE/">树莓派</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/zero-w/">zero_w</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2019/11/11/%E6%80%8E%E4%B9%88%E5%86%99%E5%A5%BD%E4%B8%80%E4%B8%AA%E6%8A%80%E6%9C%AF%E6%96%B9%E6%A1%88/">怎么写好一个技术方案</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2019/11/11/%E6%80%8E%E4%B9%88%E5%86%99%E5%A5%BD%E4%B8%80%E4%B8%AA%E6%8A%80%E6%9C%AF%E6%96%B9%E6%A1%88/">
+          
+          
+            
+          
+          怎么写好一个技术方案
+本文作为运维或开发面临转型,或者其他种种原因需要写技术方案时的一个初级版分解。
+
+
+三大忌讳
+切勿不清楚方案目的就开始写方案切勿一上来就直接写技术内容切勿思路不清晰就开始写方案
+
+正文内容这里拿日志方案作为案例
+
+目的：日志方案能够提供什么样的能力？—切勿一上来就直接写技术内容–
+
+业务层面：
+
+
+有哪些日志？ 主机日志、平台日志、pod 日志、应用日志
+这些日志在哪里？ 主
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-11-11 17:49" pubdate>
+              2019-11-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E6%9D%82%E9%A1%B9/">杂项</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%96%B9%E6%A1%88/">方案</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2019/11/04/%E6%80%8E%E4%B9%88%E4%BC%98%E9%9B%85%E5%BF%AB%E9%80%9F%E6%BF%80%E6%B4%BBwindows10/">怎么优雅快速激活windows10</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2019/11/04/%E6%80%8E%E4%B9%88%E4%BC%98%E9%9B%85%E5%BF%AB%E9%80%9F%E6%BF%80%E6%B4%BBwindows10/">
+          
+          
+            
+          
+          安装windows激活问题
+每次装windows系统最烦的就是激活,当年小白时候  激活下了四五个软件，什么小马激活啊 旋风激活 等等今天介绍一个方便的激活方法，不需要下软件 直接激活的方法
+
+KMS
+Key Management Service（简称:KMS），这个功能是在Windows Vista之后的产品中的一种新型产品激活机制，目的是为了Microsoft更好的遏制非法软件授权行为 (但是
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-11-04 12:06" pubdate>
+              2019-11-04
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E6%9D%82%E9%A1%B9/">杂项</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/windows/">windows</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+
+
+  <nav aria-label="navigation">
+    <span class="pagination" id="pagination">
+      <a class="extend prev" rel="prev" href="/page/10/"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/12/"><i class="iconfont icon-arrowright"></i></a>
+    </span>
+  </nav>
+  
+  <script>
+    for (ele of document.getElementById("pagination").getElementsByTagName("a")) {
+      ele.href += '#board';
+    }
+  </script>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>

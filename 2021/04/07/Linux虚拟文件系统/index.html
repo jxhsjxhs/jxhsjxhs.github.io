@@ -1,0 +1,588 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;light&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="jame_xhs">
+  <meta name="keywords" content="">
+  <title>Linux虚拟文件系统 - jame_xhs&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.jxhs.me","root":"/","version":"1.8.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>jame_xhs blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/more-order/">
+                <i class="iconfont icon-slack-fill"></i>
+                越阶计划
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                书单
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2021/">
+                    
+                    2021
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2020/">
+                    
+                    2020
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Linux虚拟文件系统">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-04-07 16:29" pubdate>
+        2021年4月7日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      4.5k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      58
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Linux虚拟文件系统</h1>
+            
+            <div class="markdown-body">
+              <h1 id="虚拟文件系统"><a href="#虚拟文件系统" class="headerlink" title="虚拟文件系统"></a>虚拟文件系统</h1><p>通常我们使用的磁盘和光盘都属于块设备，也就是说它们都是按照 <code>数据块</code> 来进行读写的，可以把磁盘和光盘想象成一个由数据块组成的巨大数组。但这样的读写方式对于人类来说不太友好，所以一般要在磁盘或者光盘上面挂载 <code>文件系统</code> 才能使用。那么什么是 <code>文件系统</code> 呢？ <code>文件系统</code> 是一种存储和组织数据的方法，它使得对其访问和查找变得容易。通过挂载文件系统后，我们可以使用如 <code>/home/docs/test.txt</code> 的方式来访问磁盘中的数据，而不用使用数据块编号来进行访问。</p>
+<p>在Linux系统中，可以使用多种文件系统来挂载不同的设备，如 ext2、ext3、nfs等等。但提供给用户的文件处理接口是一致的，也就是说不管使用 ext2 文件系统还是使用 ext3 文件系统，处理文件的接口都是一样的。这样的好处是，用户不用关心使用了什么文件系统，只需要使用统一的方式去处理文件即可。那么Linux是如何做到的呢？这就得益于 <code>虚拟文件系统(Virtual File System，简称 VFS)</code>。</p>
+<p><code>虚拟文件系统</code> 为不同的文件系统定义了一套规范，各个文件系统必须按照 <code>虚拟文件系统的规范</code> 编写才能接入到 <code>虚拟文件系统</code> 中。这有点像面向对象语言里面的 <code>接口</code>，当一个类实现了某个接口的所有方法时，便可以把这个类当做成此接口。VFS 主要为用户和内核架起一道桥梁，用户可以通过 VFS 提供的接口访问不同的文件系统，如下图：<br><img src="/img/newimg/008eGmZEgy1gpb9hxq5adj30bj0a1jrg.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>下面我们开始分析 <code>虚拟文件系统</code> 的实现原理。</p>
+<h2 id="虚拟文件系统抽象数据结构"><a href="#虚拟文件系统抽象数据结构" class="headerlink" title="虚拟文件系统抽象数据结构"></a>虚拟文件系统抽象数据结构</h2><p>Linux奉行了Unix的理念：<code>一切皆文件</code>，比如一个目录是一个文件，一个设备也是一个文件等，因而文件系统在Linux中占有非常重要的地位。</p>
+<p>因为要为不同类型的文件系统定义统一的接口层，所以 VFS 定义了一系列的规范，真实的文件系统必现按照 VFS 的规范来编写程序。VFS 抽象了几个数据结构来组织和管理不同的文件系统，分别为：<code>超级块（super_block）</code>、<code>索引节点（inode）</code>、<code>目录结构（dentry）</code> 和 <code>文件结构（file）</code>，要理解 VFS 就必须先了解这些数据结构的定义和作用。</p>
+<h3 id="超级块-super-block"><a href="#超级块-super-block" class="headerlink" title="超级块(super block)"></a>超级块(super block)</h3><p>因为Linux支持多文件系统，所以在内核中必须通过一个数据结构来描述具体文件系统的信息和相关的操作等，VFS 定义了一个名为 <code>超级块（super_block）</code> 的数据结构来描述具体的文件系统，也就是说内核是通过超级块来认知具体的文件系统的，一个具体的文件系统会对应一个超级块结构，其定义如下（由于super_block的成员比较多，所以这里只列出部分）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">file_system_type</span> &#123;</span><br>    <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *name;<br>    <span class="hljs-keyword">int</span> fs_flags;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">super_block</span> *(*<span class="hljs-title">read_super</span>) (<span class="hljs-title">struct</span> <span class="hljs-title">super_block</span> *, <span class="hljs-title">void</span> *, <span class="hljs-title">int</span>);</span> <span class="hljs-comment">// 读取设备中文件系统超级块的方法</span><br>    ...<br>&#125;;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">super_operations</span> &#123;</span><br>    <span class="hljs-keyword">void</span> (*read_inode) (struct inode *);        <span class="hljs-comment">// 把磁盘中的inode数据读取入到内存中</span><br>    <span class="hljs-keyword">void</span> (*write_inode) (struct inode *, <span class="hljs-keyword">int</span>);  <span class="hljs-comment">// 把inode的数据写入到磁盘中</span><br>    <span class="hljs-keyword">void</span> (*put_inode) (struct inode *);         <span class="hljs-comment">// 释放inode占用的内存</span><br>    <span class="hljs-keyword">void</span> (*delete_inode) (struct inode *);      <span class="hljs-comment">// 删除磁盘中的一个inode</span><br>    <span class="hljs-keyword">void</span> (*put_super) (struct super_block *);   <span class="hljs-comment">// 释放超级块占用的内存</span><br>    <span class="hljs-keyword">void</span> (*write_super) (struct super_block *); <span class="hljs-comment">// 把超级块写入到磁盘中</span><br>    ...<br>&#125;;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">super_block</span> &#123;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span>    <span class="hljs-title">s_list</span>;</span>     <span class="hljs-comment">/* Keep this first */</span><br>    <span class="hljs-keyword">kdev_t</span>              s_dev;         <span class="hljs-comment">// 设备号</span><br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span>       s_blocksize;   <span class="hljs-comment">// 数据块大小</span><br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span>       s_blocksize_bits;<br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span>       s_lock;<br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span>       s_dirt;       <span class="hljs-comment">// 是否脏</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">file_system_type</span> *<span class="hljs-title">s_type</span>;</span>  <span class="hljs-comment">// 文件系统类型</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">super_operations</span> *<span class="hljs-title">s_op</span>;</span>    <span class="hljs-comment">// 超级块相关的操作列表</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">dquot_operations</span> *<span class="hljs-title">dq_op</span>;</span><br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span>       s_flags;<br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span>       s_magic;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">dentry</span>       *<span class="hljs-title">s_root</span>;</span>      <span class="hljs-comment">// 挂载的根目录</span><br>    <span class="hljs-keyword">wait_queue_head_t</span>   s_wait;<br><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span>    <span class="hljs-title">s_dirty</span>;</span>    <span class="hljs-comment">/* dirty inodes */</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span>    <span class="hljs-title">s_files</span>;</span><br><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">block_device</span> *<span class="hljs-title">s_bdev</span>;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span>    <span class="hljs-title">s_mounts</span>;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">quota_mount_options</span> <span class="hljs-title">s_dquot</span>;</span><br><br>    <span class="hljs-keyword">union</span> &#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">minix_sb_info</span>    <span class="hljs-title">minix_sb</span>;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">ext2_sb_info</span> <span class="hljs-title">ext2_sb</span>;</span><br>        ...<br>    &#125; u;<br>    ...<br>&#125;;<br></code></pre></div></td></tr></table></figure>
+<p>下面我们介绍一下一些比较重要的成员：</p>
+<ul>
+<li>s_dev：用于保存设备的设备号</li>
+<li>s_blocksize：用于保存文件系统的数据块大小（文件系统是以数据块为单位的）</li>
+<li>s_type：文件系统的类型（提供了读取设备中文件系统超级块的方法）</li>
+<li>s_op：超级块相关的操作列表</li>
+<li>s_root：挂载的根目录</li>
+</ul>
+<h3 id="索引节点（inode）"><a href="#索引节点（inode）" class="headerlink" title="索引节点（inode）"></a>索引节点（inode）</h3><p><code>索引节点（inode）</code> 是 VFS 中最为重要的一个结构，用于描述一个文件的meta（元）信息，其包含的是诸如文件的大小、拥有者、创建时间、磁盘位置等和文件相关的信息，所有文件都有一个对应的 <code>inode</code> 结构。<code>inode</code> 的定义如下（由于inode的成员也是非常多，所以这里也只列出部分成员，具体可以参考Linux源码）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">inode_operations</span> &#123;</span><br>    <span class="hljs-keyword">int</span> (*create) (struct inode *,struct dentry *,<span class="hljs-keyword">int</span>);<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">dentry</span> * (*<span class="hljs-title">lookup</span>) (<span class="hljs-title">struct</span> <span class="hljs-title">inode</span> *,<span class="hljs-title">struct</span> <span class="hljs-title">dentry</span> *);</span><br>    <span class="hljs-keyword">int</span> (*link) (struct dentry *,struct inode *,struct dentry *);<br>    <span class="hljs-keyword">int</span> (*unlink) (struct inode *,struct dentry *);<br>    <span class="hljs-keyword">int</span> (*symlink) (struct inode *,struct dentry *,<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *);<br>    ...<br>&#125;;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">file_operations</span> &#123;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">module</span> *<span class="hljs-title">owner</span>;</span><br>    <span class="hljs-keyword">loff_t</span> (*llseek) (struct file *, <span class="hljs-keyword">loff_t</span>, <span class="hljs-keyword">int</span>);<br>    <span class="hljs-keyword">ssize_t</span> (*read) (struct file *, <span class="hljs-keyword">char</span> *, <span class="hljs-keyword">size_t</span>, <span class="hljs-keyword">loff_t</span> *);<br>    <span class="hljs-keyword">ssize_t</span> (*write) (struct file *, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *, <span class="hljs-keyword">size_t</span>, <span class="hljs-keyword">loff_t</span> *);<br>    ...<br>&#125;;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">inode</span> &#123;</span><br>    ...<br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span>       i_ino;<br>    <span class="hljs-keyword">atomic_t</span>            i_count;<br>    <span class="hljs-keyword">kdev_t</span>              i_dev;<br>    <span class="hljs-keyword">umode_t</span>             i_mode;<br>    <span class="hljs-keyword">nlink_t</span>             i_nlink;<br>    <span class="hljs-keyword">uid_t</span>               i_uid;<br>    <span class="hljs-keyword">gid_t</span>               i_gid;<br>    <span class="hljs-keyword">kdev_t</span>              i_rdev;<br>    <span class="hljs-keyword">loff_t</span>              i_size;<br>    <span class="hljs-keyword">time_t</span>              i_atime;<br>    <span class="hljs-keyword">time_t</span>              i_mtime;<br>    <span class="hljs-keyword">time_t</span>              i_ctime;<br>    ...<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">inode_operations</span> *<span class="hljs-title">i_op</span>;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">file_operations</span>  *<span class="hljs-title">i_fop</span>;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">super_block</span>      *<span class="hljs-title">i_sb</span>;</span><br>    ...<br>    <span class="hljs-keyword">union</span> &#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">minix_inode_info</span>     <span class="hljs-title">minix_i</span>;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">ext2_inode_info</span>      <span class="hljs-title">ext2_i</span>;</span><br>        ...<br>    &#125; u;<br>&#125;;<br></code></pre></div></td></tr></table></figure>
+<p>下面也介绍一下 <code>inode</code> 中几个比较重要的成员：</p>
+<ul>
+<li>i_uid：文件所属的用户</li>
+<li>i_gid：文件所属的组</li>
+<li>i_rdev：文件所在的设备号</li>
+<li>i_size：文件的大小</li>
+<li>i_atime：文件的最后访问时间</li>
+<li>i_mtime：文件的最后修改时间</li>
+<li>i_ctime：文件的创建时间</li>
+<li>i_op：inode相关的操作列表</li>
+<li>i_fop：文件相关的操作列表</li>
+<li>i_sb：文件所在文件系统的超级块</li>
+</ul>
+<p>我们应该重点关注 <code>i_op</code> 和 <code>i_fop</code> 这两个成员。<code>i_op</code> 成员定义对目录相关的操作方法列表，譬如 <code>mkdir()</code>系统调用会触发 <code>inode-&gt;i_op-&gt;mkdir()</code> 方法，而 <code>link()</code> 系统调用会触发 <code>inode-&gt;i_op-&gt;link()</code> 方法。而 <code>i_fop</code> 成员则定义了对打开文件后对文件的操作方法列表，譬如 <code>read()</code> 系统调用会触发 <code>inode-&gt;i_fop-&gt;read()</code> 方法，而 <code>write()</code> 系统调用会触发 <code>inode-&gt;i_fop-&gt;write()</code> 方法。</p>
+<h3 id="目录项（dentry）"><a href="#目录项（dentry）" class="headerlink" title="目录项（dentry）"></a>目录项（dentry）</h3><p>目录项的主要作用是方便查找文件。一个路径的各个组成部分，不管是目录还是普通的文件，都是一个目录项对象。如，在路径 <code>/home/liexusong/example.c</code> 中，目录 <code>/</code>, <code>home/</code>, <code>liexusong/</code> 和文件 <code>example.c</code> 都对应一个目录项对象。不同于前面的两个对象，目录项对象没有对应的磁盘数据结构，VFS 在遍历路径名的过程中现场将它们逐个地解析成目录项对象。其定义如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">dentry_operations</span> &#123;</span><br>    <span class="hljs-keyword">int</span> (*d_revalidate)(struct dentry *, <span class="hljs-keyword">int</span>);<br>    <span class="hljs-keyword">int</span> (*d_hash) (struct dentry *, struct qstr *);<br>    <span class="hljs-keyword">int</span> (*d_compare) (struct dentry *, struct qstr *, struct qstr *);<br>    <span class="hljs-keyword">int</span> (*d_delete)(struct dentry *);<br>    <span class="hljs-keyword">void</span> (*d_release)(struct dentry *);<br>    <span class="hljs-keyword">void</span> (*d_iput)(struct dentry *, struct inode *);<br>&#125;;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">dentry</span> &#123;</span><br>    ...<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">inode</span>  * <span class="hljs-title">d_inode</span>;</span>    <span class="hljs-comment">// 目录项对应的inode</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">dentry</span> * <span class="hljs-title">d_parent</span>;</span>   <span class="hljs-comment">// 当前目录项对应的父目录</span><br>    ...<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">qstr</span> <span class="hljs-title">d_name</span>;</span>         <span class="hljs-comment">// 目录的名字</span><br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> d_time;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">dentry_operations</span>  *<span class="hljs-title">d_op</span>;</span> <span class="hljs-comment">// 目录项的辅助方法</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">super_block</span> * <span class="hljs-title">d_sb</span>;</span>       <span class="hljs-comment">// 所在文件系统的超级块对象</span><br>    ...<br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span> d_iname[DNAME_INLINE_LEN]; <span class="hljs-comment">// 当目录名不超过16个字符时使用</span><br>&#125;;<br></code></pre></div></td></tr></table></figure>
+
+<h3 id="文件结构（file）"><a href="#文件结构（file）" class="headerlink" title="文件结构（file）"></a>文件结构（file）</h3><p>文件结构用于描述一个已打开的文件，其包含文件当前的读写偏移量，文件打开模式和文件操作函数列表等，文件结构定义如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">file</span> &#123;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span>         <span class="hljs-title">f_list</span>;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">dentry</span>           *<span class="hljs-title">f_dentry</span>;</span>  <span class="hljs-comment">// 文件所属的dentry结构</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">file_operations</span>  *<span class="hljs-title">f_op</span>;</span>      <span class="hljs-comment">// 文件的操作列表</span><br>    <span class="hljs-keyword">atomic_t</span>                 f_count;   <span class="hljs-comment">// 计数器（表示有多少个用户打开此文件）</span><br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span>             f_flags;   <span class="hljs-comment">// 标识位  </span><br>    <span class="hljs-keyword">mode_t</span>                   f_mode;    <span class="hljs-comment">// 打开模式</span><br>    <span class="hljs-keyword">loff_t</span>                   f_pos;     <span class="hljs-comment">// 读写偏移量</span><br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span>            f_reada, f_ramax, f_raend, f_ralen, f_rawin;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">fown_struct</span>       <span class="hljs-title">f_owner</span>;</span>   <span class="hljs-comment">// 所属者信息</span><br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span>             f_uid, f_gid;  <span class="hljs-comment">// 打开的用户id和组id</span><br>    <span class="hljs-keyword">int</span>                      f_error;<br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span>            f_version;<br><br>    <span class="hljs-comment">/* needed for tty driver, and maybe others */</span><br>    <span class="hljs-keyword">void</span>                    *private_data;<br>&#125;;<br></code></pre></div></td></tr></table></figure>
+
+<p>下图展示了各个数据结构之间的关系：<br><img src="/img/newimg/008eGmZEgy1gpb9i5r6fbj30t60q83z4.jpg" srcset="/img/loading.gif" alt=""></p>
+<h2 id="虚拟文件系统的实现"><a href="#虚拟文件系统的实现" class="headerlink" title="虚拟文件系统的实现"></a>虚拟文件系统的实现</h2><p>接下来我们分析一下虚拟文件系统的实现。</p>
+<h3 id="注册文件系统"><a href="#注册文件系统" class="headerlink" title="注册文件系统"></a>注册文件系统</h3><p>Linux为了支持不同的文件系统而创造了虚拟文件系统，虚拟文件系统更像一个规范(或者说接口)，真实的文件系统需要实现虚拟文件系统的规范(接口)才能接入到Linux内核中。</p>
+<p>要让Linux内核能够发现真实的文件系统，那么必须先使用 <code>register_filesystem()</code> 函数注册文件系统，<code>register_filesystem()</code> 函数实现如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">register_filesystem</span><span class="hljs-params">(struct file_system_type * fs)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">file_system_type</span> ** <span class="hljs-title">tmp</span>;</span><br><br>    <span class="hljs-keyword">if</span> (!fs)<br>        <span class="hljs-keyword">return</span> -EINVAL;<br>    <span class="hljs-keyword">if</span> (fs-&gt;next)<br>        <span class="hljs-keyword">return</span> -EBUSY;<br>    tmp = &amp;file_systems;<br>    <span class="hljs-keyword">while</span> (*tmp) &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>((*tmp)-&gt;name, fs-&gt;name) == <span class="hljs-number">0</span>)<br>            <span class="hljs-keyword">return</span> -EBUSY;<br>        tmp = &amp;(*tmp)-&gt;next;<br>    &#125;<br>    *tmp = fs;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p><code>register_filesystem()</code> 函数的实现很简单，就是把类型为 <code>struct file_system_type</code> 的 <code>fs</code> 添加到 <code>file_systems</code> 全局链表中。<code>struct file_system_type</code> 结构的定义如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">file_system_type</span> &#123;</span><br>    <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *name;<br>    <span class="hljs-keyword">int</span> fs_flags;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">super_block</span> *(*<span class="hljs-title">read_super</span>) (<span class="hljs-title">struct</span> <span class="hljs-title">super_block</span> *, <span class="hljs-title">void</span> *, <span class="hljs-title">int</span>);</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">file_system_type</span> * <span class="hljs-title">next</span>;</span><br>&#125;;<br></code></pre></div></td></tr></table></figure>
+<p>其中比较重要的字段是 <code>read_super</code>，用于读取文件系统的超级块结构。在Linux初始化时会注册各种文件系统，比如 <code>ext2</code> 文件系统会调用 <code>register_filesystem(&amp;ext2_fs_type)</code> 来注册。</p>
+<p>当安装Linux系统时，需要把磁盘格式化为指定的文件系统，其实格式化就是把文件系统超级块信息写入到磁盘中。但Linux系统启动时，就会遍历所有注册过的文件系统，然后调用其 <code>read_super()</code> 接口来尝试读取超级块信息，因为每种文件系统的超级块都有不同的魔数，用于识别不同的文件系统，所以当调用 <code>read_super()</code> 接口返回成功时，表示读取超级块成功，而且识别出磁盘所使用的文件系统。具体过程可以通过 <code>mount_root()</code> 函数得知：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs cpp"><span class="hljs-keyword">void</span> __<span class="hljs-function">init <span class="hljs-title">mount_root</span><span class="hljs-params">(<span class="hljs-keyword">void</span>)</span></span><br><span class="hljs-function"></span>&#123;<br>    ...<br><br>    <span class="hljs-built_in">memset</span>(&amp;filp, <span class="hljs-number">0</span>, <span class="hljs-keyword">sizeof</span>(filp));<br>    d_inode = get_empty_inode(); <span class="hljs-comment">// 获取一个新的inode</span><br>    d_inode-&gt;i_rdev = ROOT_DEV;<br>    filp.f_dentry = <span class="hljs-literal">NULL</span>;<br>    <span class="hljs-keyword">if</span> ( root_mountflags &amp; MS_RDONLY)<br>        filp.f_mode = <span class="hljs-number">1</span>; <span class="hljs-comment">/* read only */</span><br>    <span class="hljs-keyword">else</span><br>        filp.f_mode = <span class="hljs-number">3</span>; <span class="hljs-comment">/* read write */</span><br>    retval = blkdev_open(d_inode, &amp;filp);<br>    <span class="hljs-keyword">if</span> (retval == -EROFS) &#123;<br>        root_mountflags |= MS_RDONLY;<br>        filp.f_mode = <span class="hljs-number">1</span>;<br>        retval = blkdev_open(d_inode, &amp;filp);<br>    &#125;<br><br>    iput(d_inode);<br><br>    <span class="hljs-keyword">if</span> (retval)<br>        printk(<span class="hljs-string">"VFS: Cannot open root device %s\n"</span>, kdevname(ROOT_DEV));<br>    <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">for</span> (fs_type = file_systems ; fs_type ; fs_type = fs_type-&gt;next) &#123; <span class="hljs-comment">// 试探性读取超级块</span><br>            <span class="hljs-keyword">if</span> (!(fs_type-&gt;fs_flags &amp; FS_REQUIRES_DEV))<br>                <span class="hljs-keyword">continue</span>;<br>            sb = read_super(ROOT_DEV,fs_type-&gt;name,root_mountflags,<span class="hljs-literal">NULL</span>,<span class="hljs-number">1</span>); <span class="hljs-comment">// 读取超级块</span><br>            <span class="hljs-keyword">if</span> (sb) &#123;<br>                sb-&gt;s_flags = root_mountflags;<br>                current-&gt;fs-&gt;root = dget(sb-&gt;s_root);  <span class="hljs-comment">// 设置根目录</span><br>                current-&gt;fs-&gt;pwd = dget(sb-&gt;s_root);   <span class="hljs-comment">// 设置当前工作目录</span><br>                vfsmnt = add_vfsmnt(sb, <span class="hljs-string">"/dev/root"</span>, <span class="hljs-string">"/"</span>);<br>                <span class="hljs-keyword">if</span> (vfsmnt)<br>                    <span class="hljs-keyword">return</span>;<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>在上面的for循环中，遍历了所有已注册的文件系统，并且调用其 <code>read_super()</code> 接口来尝试读取超级块信息，如果成功表示磁盘所使用的文件系统就是当前文件系统。成功读取超级块信息后，会把根目录的 <code>dentry</code> 结构保存到当前进程的 <code>root</code> 和 <code>pwd</code> 字段中，<code>root</code> 表示根目录，<code>pwd</code> 表示当前工作目录。</p>
+<h3 id="打开文件"><a href="#打开文件" class="headerlink" title="打开文件"></a>打开文件</h3><p>要使用一个文件前必须打开文件，打开文件使用 <code>open()</code> 系统调用来实现，而 <code>open()</code> 系统调用最终会调用内核的 <code>sys_open()</code> 函数，<code>sys_open()</code> 函数实现如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs cpp"><span class="hljs-function">asmlinkage <span class="hljs-keyword">long</span> <span class="hljs-title">sys_open</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * filename, <span class="hljs-keyword">int</span> flags, <span class="hljs-keyword">int</span> mode)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">char</span> * tmp;<br>    <span class="hljs-keyword">int</span> fd, error;<br><br>    tmp = getname(filename);<br>    fd = PTR_ERR(tmp);<br>    <span class="hljs-keyword">if</span> (!IS_ERR(tmp)) &#123;<br>        fd = get_unused_fd();<br>        <span class="hljs-keyword">if</span> (fd &gt;= <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">file</span> * <span class="hljs-title">f</span>;</span><br>            lock_kernel();<br>            f = filp_open(tmp, flags, mode);<br>            unlock_kernel();<br>            error = PTR_ERR(f);<br>            <span class="hljs-keyword">if</span> (IS_ERR(f))<br>                <span class="hljs-keyword">goto</span> out_error;<br>            fd_install(fd, f);<br>        &#125;<br>out:<br>        putname(tmp);<br>    &#125;<br>    <span class="hljs-keyword">return</span> fd;<br><br>out_error:<br>    put_unused_fd(fd);<br>    fd = error;<br>    <span class="hljs-keyword">goto</span> out;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p><code>sys_open()</code> 函数的主要流程是：</p>
+<ul>
+<li>通过调用 <code>get_unused_fd()</code> 函数获取一个空闲的文件描述符。</li>
+<li>调用 <code>filp_open()</code> 函数打开文件，返回打开文件的file结构。</li>
+<li>调用 <code>fd_install()</code> 函数把文件描述符与file结构关联起来。</li>
+<li>返回文件描述符，也就是 <code>open()</code> 系统调用的返回值。</li>
+</ul>
+<p>在上面的过程中，最重要的是调用 <code>filp_open()</code> 函数打开文件，<code>filp_open()</code> 函数的实现如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs cpp"><span class="hljs-function">struct file *<span class="hljs-title">filp_open</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * filename, <span class="hljs-keyword">int</span> flags, <span class="hljs-keyword">int</span> mode)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">inode</span> * <span class="hljs-title">inode</span>;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">dentry</span> * <span class="hljs-title">dentry</span>;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">file</span> * <span class="hljs-title">f</span>;</span><br>    <span class="hljs-keyword">int</span> flag,error;<br><br>    error = -ENFILE;<br>    f = get_empty_filp(); <span class="hljs-comment">// 获取一个空闲的file结构</span><br>    ...<br>    dentry = open_namei(filename,flag,mode); <span class="hljs-comment">// 通过文件路径打开文件</span><br>    inode = dentry-&gt;d_inode;<br>    ...<br>    f-&gt;f_dentry = dentry; <span class="hljs-comment">// 设置file结构的f_dentry字段为打开文件的dentry结构</span><br>    f-&gt;f_pos = <span class="hljs-number">0</span>;<br>    f-&gt;f_reada = <span class="hljs-number">0</span>;<br>    f-&gt;f_op = <span class="hljs-literal">NULL</span>;<br>    <span class="hljs-keyword">if</span> (inode-&gt;i_op)<br>        f-&gt;f_op = inode-&gt;i_op-&gt;default_file_ops; <span class="hljs-comment">// 把文件的操作函数列表从inode结构复制到file结构中</span><br>    <span class="hljs-keyword">if</span> (inode-&gt;i_sb)<br>        file_move(f, &amp;inode-&gt;i_sb-&gt;s_files);<br>    <span class="hljs-keyword">if</span> (f-&gt;f_op &amp;&amp; f-&gt;f_op-&gt;open) &#123;<br>        error = f-&gt;f_op-&gt;open(inode,f);<br>        <span class="hljs-keyword">if</span> (error)<br>            <span class="hljs-keyword">goto</span> cleanup_all;<br>    &#125;<br>    f-&gt;f_flags &amp;= ~(O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC);<br><br>    <span class="hljs-keyword">return</span> f;<br>    ...<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p><code>filp_open()</code> 函数首先调用 <code>get_empty_filp()</code> 函数获取一个空闲的file结构，然后调用 <code>open_namei()</code> 函数来打开对应路径的文件。<code>open_namei()</code> 函数会返回一个 <code>dentry结构</code>，就是对应文件路径的 <code>dentry结构</code>。所以 <code>open_namei()</code> 函数才是打开文件的核心函数，其实现如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs cpp"><span class="hljs-function">struct dentry * <span class="hljs-title">open_namei</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * pathname, <span class="hljs-keyword">int</span> flag, <span class="hljs-keyword">int</span> mode)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> acc_mode, error;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">inode</span> *<span class="hljs-title">inode</span>;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">dentry</span> *<span class="hljs-title">dentry</span>;</span><br><br>    mode &amp;= S_IALLUGO &amp; ~current-&gt;fs-&gt;umask;<br>    mode |= S_IFREG;<br><br>    dentry = lookup_dentry(pathname, <span class="hljs-literal">NULL</span>, lookup_flags(flag)); <span class="hljs-comment">// 通过路径一级一级的查找对应的dentry</span><br>    <span class="hljs-keyword">if</span> (IS_ERR(dentry))<br>        <span class="hljs-keyword">return</span> dentry;<br><br>    acc_mode = ACC_MODE(flag);<br>    <span class="hljs-keyword">if</span> (flag &amp; O_CREAT) &#123;  <span class="hljs-comment">// 如果是创建文件</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">dentry</span> *<span class="hljs-title">dir</span>;</span><br><br>        <span class="hljs-keyword">if</span> (dentry-&gt;d_inode) &#123;<br>            <span class="hljs-keyword">if</span> (!(flag &amp; O_EXCL))<br>                <span class="hljs-keyword">goto</span> nocreate;<br>            error = -EEXIST;  <span class="hljs-comment">// 已经存在返回错误</span><br>            <span class="hljs-keyword">goto</span> <span class="hljs-built_in">exit</span>;<br>        &#125;<br><br>        ...<br><br>        <span class="hljs-keyword">if</span> (dentry-&gt;d_inode) &#123;<br>            error = <span class="hljs-number">0</span>;<br>            <span class="hljs-keyword">if</span> (flag &amp; O_EXCL)<br>                error = -EEXIST;<br>        &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// 如果文件不存在</span><br>            error = vfs_create(dir-&gt;d_inode, dentry,mode); <span class="hljs-comment">// 创建文件</span><br>            ...<br>        &#125;<br>        ...<br>    &#125;<br><br>    ...<br><br>    <span class="hljs-keyword">return</span> dentry;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>上面的代码去掉了很多权限验证的代码，<code>open_namei()</code> 函数首先会调用 <code>lookup_dentry()</code> 函数打开文件并获得文件打开后的 <code>dentry结构</code>，如果文件不存在并且打开文件的时候设置了 <code>O_CREAT</code> 标志位，那么就调用 <code>vfs_create()</code> 函数创建文件。我们先来看看 <code>vfs_create()</code> 函数的实现：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">vfs_create</span><span class="hljs-params">(struct inode *dir, struct dentry *dentry, <span class="hljs-keyword">int</span> mode)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> error;<br><br>    error = may_create(dir, dentry);<br>    <span class="hljs-keyword">if</span> (error)<br>        <span class="hljs-keyword">goto</span> exit_lock;<br><br>    error = -EACCES;    <span class="hljs-comment">/* shouldn't it be ENOSYS? */</span><br>    <span class="hljs-keyword">if</span> (!dir-&gt;i_op || !dir-&gt;i_op-&gt;create)<br>        <span class="hljs-keyword">goto</span> exit_lock;<br><br>    DQUOT_INIT(dir);<br>    error = dir-&gt;i_op-&gt;create(dir, dentry, mode);<br>exit_lock:<br>    <span class="hljs-keyword">return</span> error;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>从 <code>vfs_create()</code> 函数的实现可知，最终会调用 <code>inode结构</code> 的 <code>create()</code> 方法来创建文件。这个方法由真实的文件系统提供，所以真实文件系统只需要把创建文件的方法挂载到 <code>inode结构</code> 上即可，虚拟文件系统不需要知道真实文件系统的实现过程，这就是虚拟文件系统可以支持多种文件系统的真正原因。</p>
+<p>而 <code>lookup_dentry()</code> 函数最终会调用 <code>real_lookup()</code> 函数来逐级目录查找并打开。<code>real_lookup()</code> 函数代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">static</span> struct dentry * <span class="hljs-title">real_lookup</span><span class="hljs-params">(struct dentry * parent, struct qstr * name, <span class="hljs-keyword">int</span> flags)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">dentry</span> * <span class="hljs-title">result</span>;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">inode</span> *<span class="hljs-title">dir</span> = <span class="hljs-title">parent</span>-&gt;<span class="hljs-title">d_inode</span>;</span><br><br>    down(&amp;dir-&gt;i_sem);<br>    result = d_lookup(parent, name);<br>    <span class="hljs-keyword">if</span> (!result) &#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">dentry</span> * <span class="hljs-title">dentry</span> = <span class="hljs-title">d_alloc</span>(<span class="hljs-title">parent</span>, <span class="hljs-title">name</span>);</span><br>        result = ERR_PTR(-ENOMEM);<br>        <span class="hljs-keyword">if</span> (dentry) &#123;<br>            result = dir-&gt;i_op-&gt;lookup(dir, dentry);<br>            <span class="hljs-keyword">if</span> (result)<br>                dput(dentry);<br>            <span class="hljs-keyword">else</span><br>                result = dentry;<br>        &#125;<br>        up(&amp;dir-&gt;i_sem);<br>        <span class="hljs-keyword">return</span> result;<br>    &#125;<br>    up(&amp;dir-&gt;i_sem);<br>    <span class="hljs-keyword">if</span> (result-&gt;d_op &amp;&amp; result-&gt;d_op-&gt;d_revalidate)<br>        result-&gt;d_op-&gt;d_revalidate(result, flags);<br>    <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>参数 <code>parent</code> 是父目录的 <code>dentry结构</code>，而参数 <code>name</code> 是要打开的目录或者文件的名称。<code>real_lookup()</code> 函数最终也会调用父目录的 <code>inode结构</code> 的 <code>lookup()</code> 方法来查找并打开文件，然后返回打开后的子目录或者文件的 <code>dentry结构</code>。<code>lookup()</code> 方法需要把要打开的目录或者文件的 <code>inode结构</code> 从磁盘中读入到内存中（如果目录或者文件存在的话），并且把其 <code>inode结构</code> 保存到 <code>dentry结构</code> 的 <code>d_inode</code> 字段中。</p>
+<p><code>filp_open()</code> 函数会把 <code>inode结构</code> 的文件操作函数列表复制到 <code>file结构</code> 中，如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs cpp"><span class="hljs-function">struct file *<span class="hljs-title">filp_open</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * filename, <span class="hljs-keyword">int</span> flags, <span class="hljs-keyword">int</span> mode)</span></span><br><span class="hljs-function"></span>&#123;<br>    ...<br>    f-&gt;f_op = inode-&gt;i_op-&gt;default_file_ops;<br>    ...<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>这样，<code>file结构</code> 就有操作文件的函数列表。</p>
+<h3 id="读写文件"><a href="#读写文件" class="headerlink" title="读写文件"></a>读写文件</h3><p>读取文件内容通过 <code>read()</code> 系统调用完成，而 <code>read()</code> 系统调用最终会调用 <code>sys_read()</code> 内核函数，<code>sys_read()</code> 内核函数的实现如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs cpp"><span class="hljs-function">asmlinkage ssize_t <span class="hljs-title">sys_read</span><span class="hljs-params">(<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> fd, <span class="hljs-keyword">char</span> * buf, <span class="hljs-keyword">size_t</span> count)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">ssize_t</span> ret;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">file</span> * <span class="hljs-title">file</span>;</span><br><br>    ret = -EBADF;<br>    file = fget(fd);<br>    <span class="hljs-keyword">if</span> (file) &#123;<br>        <span class="hljs-keyword">if</span> (file-&gt;f_mode &amp; FMODE_READ) &#123;<br>            ret = locks_verify_area(FLOCK_VERIFY_READ, file-&gt;f_dentry-&gt;d_inode,<br>                        file, file-&gt;f_pos, count);<br>            <span class="hljs-keyword">if</span> (!ret) &#123;<br>                <span class="hljs-keyword">ssize_t</span> (*read)(struct file *, <span class="hljs-keyword">char</span> *, <span class="hljs-keyword">size_t</span>, <span class="hljs-keyword">loff_t</span> *);<br>                ret = -EINVAL;<br>                <span class="hljs-keyword">if</span> (file-&gt;f_op &amp;&amp; (read = file-&gt;f_op-&gt;read) != <span class="hljs-literal">NULL</span>)<br>                    ret = read(file, buf, count, &amp;file-&gt;f_pos);<br>            &#125;<br>        &#125;<br>        fput(file);<br>    &#125;<br>    <span class="hljs-keyword">return</span> ret;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p><code>sys_read()</code> 函数首先会调用 <code>fget()</code> 函数把文件描述符转换成 <code>file结构</code>，然后再通过调用 <code>file结构</code> 的 <code>read()</code> 方法来读取文件内容，<code>read()</code> 方法是由真实文件系统提供的，所以最终的过程会根据不同的文件系统而进行不同的操作，比如ext2文件系统最终会调用 <code>generic_file_read()</code> 函数来读取文件的内容。</p>
+<p>把内容写入到文件是通过调用 <code>write()</code> 系统调用实现，而 <code>write()</code> 系统调用最终会调用 <code>sys_write()</code> 内核函数，<code>sys_write()</code> 函数的实现如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs cpp"><span class="hljs-function">asmlinkage ssize_t <span class="hljs-title">sys_write</span><span class="hljs-params">(<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> fd, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * buf, <span class="hljs-keyword">size_t</span> count)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">ssize_t</span> ret;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">file</span> * <span class="hljs-title">file</span>;</span><br><br>    ret = -EBADF;<br>    file = fget(fd);<br>    <span class="hljs-keyword">if</span> (file) &#123;<br>        <span class="hljs-keyword">if</span> (file-&gt;f_mode &amp; FMODE_WRITE) &#123;<br>            <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">inode</span> *<span class="hljs-title">inode</span> = <span class="hljs-title">file</span>-&gt;<span class="hljs-title">f_dentry</span>-&gt;<span class="hljs-title">d_inode</span>;</span><br>            ret = locks_verify_area(FLOCK_VERIFY_WRITE, inode, file,<br>                file-&gt;f_pos, count);<br>            <span class="hljs-keyword">if</span> (!ret) &#123;<br>                <span class="hljs-keyword">ssize_t</span> (*write)(struct file *, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *, <span class="hljs-keyword">size_t</span>, <span class="hljs-keyword">loff_t</span> *);<br>                ret = -EINVAL;<br>                <span class="hljs-keyword">if</span> (file-&gt;f_op &amp;&amp; (write = file-&gt;f_op-&gt;write) != <span class="hljs-literal">NULL</span>)<br>                    ret = write(file, buf, count, &amp;file-&gt;f_pos);<br>            &#125;<br>        &#125;<br>        fput(file);<br>    &#125;<br>    <span class="hljs-keyword">return</span> ret;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p><code>sys_write()</code> 函数的实现与 <code>sys_read()</code> 类似，首先会调用 <code>fget()</code> 函数把文件描述符转换成 <code>file结构</code>，然后再通过调用 <code>file结构</code> 的 <code>write()</code> 方法来把内容写入到文件中，对于ext2文件系统，<code>write()</code> 方法对应的是 <code>ext2_file_write()</code> 函数。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/04/07/Linux%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%8E%9F%E7%90%86/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Linux系统调用原理</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/04/07/Linux-%E7%9B%B4%E6%8E%A5I-O-%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
+                        <span class="hidden-mobile">Linux 直接I/O 原理与实现</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.0/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>

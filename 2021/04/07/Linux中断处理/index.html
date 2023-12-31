@@ -1,0 +1,586 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;light&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="jame_xhs">
+  <meta name="keywords" content="">
+  <title>Linux中断处理 - jame_xhs&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.jxhs.me","root":"/","version":"1.8.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>jame_xhs blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/more-order/">
+                <i class="iconfont icon-slack-fill"></i>
+                越阶计划
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                书单
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2021/">
+                    
+                    2021
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2020/">
+                    
+                    2020
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Linux中断处理">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-04-07 16:37" pubdate>
+        2021年4月7日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      3.1k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      40
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Linux中断处理</h1>
+            
+            <div class="markdown-body">
+              <h2 id="中断处理-上半部（硬中断）"><a href="#中断处理-上半部（硬中断）" class="headerlink" title="中断处理 - 上半部（硬中断）"></a>中断处理 - 上半部（硬中断）</h2><p>由于 <code>APIC中断控制器</code> 有点小复杂，所以本文主要通过 <code>8259A中断控制器</code> 来介绍Linux对中断的处理过程。</p>
+<h3 id="中断处理相关结构"><a href="#中断处理相关结构" class="headerlink" title="中断处理相关结构"></a>中断处理相关结构</h3><p>前面说过，<code>8259A中断控制器</code> 由两片 8259A 风格的外部芯片以 <code>级联</code> 的方式连接在一起，每个芯片可处理多达 8 个不同的 IRQ（中断请求），所以可用 IRQ 线的个数达到 15 个。如下图：</p>
+<p><img src="/img/newimg/008eGmZEgy1gpb9pea1n8j30hj0emdix.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>在内核中每条IRQ线由结构体 <code>irq_desc_t</code> 来描述，<code>irq_desc_t</code> 定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> status;        <span class="hljs-comment">/* IRQ status */</span><br>    hw_irq_controller *handler;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">irqaction</span> *<span class="hljs-title">action</span>;</span>   <span class="hljs-comment">/* IRQ action list */</span><br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> depth;         <span class="hljs-comment">/* nested irq disables */</span><br>    <span class="hljs-keyword">spinlock_t</span> lock;<br>&#125; <span class="hljs-keyword">irq_desc_t</span>;<br></code></pre></div></td></tr></table></figure>
+<p>下面介绍一下 <code>irq_desc_t</code> 结构各个字段的作用：</p>
+<ul>
+<li><code>status</code>: IRQ线的状态。</li>
+<li><code>handler</code>: 类型为 <code>hw_interrupt_type</code> 结构，表示IRQ线对应的硬件相关处理函数，比如 <code>8259A中断控制器</code> 接收到一个中断信号时，需要发送一个确认信号才会继续接收中断信号的，发送确认信号的函数就是 <code>hw_interrupt_type</code> 中的 <code>ack</code> 函数。</li>
+<li><code>action</code>: 类型为 <code>irqaction</code> 结构，中断信号的处理入口。由于一条IRQ线可以被多个硬件共享，所以 <code>action</code> 是一个链表，每个 <code>action</code> 代表一个硬件的中断处理入口。</li>
+<li><code>depth</code>: 防止多次开启和关闭IRQ线。</li>
+<li><code>lock</code>: 防止多核CPU同时对IRQ进行操作的自旋锁。</li>
+</ul>
+<p><code>hw_interrupt_type</code> 这个结构与硬件相关，这里就不作介绍了，我们来看看 <code>irqaction</code> 这个结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">irqaction</span> &#123;</span><br>    <span class="hljs-keyword">void</span> (*handler)(<span class="hljs-keyword">int</span>, <span class="hljs-keyword">void</span> *, struct pt_regs *);<br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> flags;<br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> mask;<br>    <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *name;<br>    <span class="hljs-keyword">void</span> *dev_id;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">irqaction</span> *<span class="hljs-title">next</span>;</span><br>&#125;;<br></code></pre></div></td></tr></table></figure>
+<p>下面说说 <code>irqaction</code> 结构各个字段的作用：</p>
+<ul>
+<li><code>handler</code>: 中断处理的入口函数，<code>handler</code> 的第一个参数是中断号，第二个参数是设备对应的ID，第三个参数是中断发生时由内核保存的各个寄存器的值。</li>
+<li><code>flags</code>: 标志位，用于表示 <code>irqaction</code> 的一些行为，例如是否能够与其他硬件共享IRQ线。</li>
+<li><code>name</code>: 用于保存中断处理的名字。</li>
+<li><code>dev_id</code>: 设备ID。</li>
+<li><code>next</code>: 每个硬件的中断处理入口对应一个 <code>irqaction</code> 结构，由于多个硬件可以共享同一条IRQ线，所以这里通过 <code>next</code> 字段来连接不同的硬件中断处理入口。</li>
+</ul>
+<p><code>irq_desc_t</code> 结构关系如下图：</p>
+<p><img src="/img/newimg/008eGmZEgy1gpb9pnnj3uj30zo0ebgm5.jpg" srcset="/img/loading.gif" alt=""></p>
+<h3 id="注册中断处理入口"><a href="#注册中断处理入口" class="headerlink" title="注册中断处理入口"></a>注册中断处理入口</h3><p>在内核中，可以通过 <code>setup_irq()</code> 函数来注册一个中断处理入口。<code>setup_irq()</code> 函数代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">setup_irq</span><span class="hljs-params">(<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> irq, struct irqaction * <span class="hljs-keyword">new</span>)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> shared = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> flags;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">irqaction</span> *<span class="hljs-title">old</span>, **<span class="hljs-title">p</span>;</span><br>    <span class="hljs-keyword">irq_desc_t</span> *desc = irq_desc + irq;<br>    ...<br>    spin_lock_irqsave(&amp;desc-&gt;lock,flags);<br>    p = &amp;desc-&gt;action;<br>    <span class="hljs-keyword">if</span> ((old = *p) != <span class="hljs-literal">NULL</span>) &#123;<br>        <span class="hljs-keyword">if</span> (!(old-&gt;flags &amp; <span class="hljs-keyword">new</span>-&gt;flags &amp; SA_SHIRQ)) &#123;<br>            spin_unlock_irqrestore(&amp;desc-&gt;lock,flags);<br>            <span class="hljs-keyword">return</span> -EBUSY;<br>        &#125;<br><br>        <span class="hljs-keyword">do</span> &#123;<br>            p = &amp;old-&gt;next;<br>            old = *p;<br>        &#125; <span class="hljs-keyword">while</span> (old);<br>        shared = <span class="hljs-number">1</span>;<br>    &#125;<br><br>    *p = <span class="hljs-keyword">new</span>;<br><br>    <span class="hljs-keyword">if</span> (!shared) &#123;<br>        desc-&gt;depth = <span class="hljs-number">0</span>;<br>        desc-&gt;status &amp;= ~(IRQ_DISABLED | IRQ_AUTODETECT | IRQ_WAITING);<br>        desc-&gt;handler-&gt;startup(irq);<br>    &#125;<br>    spin_unlock_irqrestore(&amp;desc-&gt;lock,flags);<br><br>    register_irq_proc(irq); <span class="hljs-comment">// 注册proc文件系统</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p><code>setup_irq()</code> 函数比较简单，就是通过 <code>irq</code> 号来查找对应的 <code>irq_desc_t</code> 结构，并把新的 <code>irqaction</code> 连接到 <code>irq_desc_t</code> 结构的 <code>action</code> 链表中。要注意的是，如果设备不支持共享IRQ线（也即是 <code>flags</code> 字段没有设置 <code>SA_SHIRQ</code> 标志），那么就返回 <code>EBUSY</code> 错误。</p>
+<p>我们看看 <code>时钟中断处理入口</code> 的注册实例：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">irqaction</span> <span class="hljs-title">irq0</span>  = &#123;</span> timer_interrupt, SA_INTERRUPT, <span class="hljs-number">0</span>, <span class="hljs-string">"timer"</span>, <span class="hljs-literal">NULL</span>, <span class="hljs-literal">NULL</span>&#125;;<br><br><span class="hljs-keyword">void</span> __<span class="hljs-function">init <span class="hljs-title">time_init</span><span class="hljs-params">(<span class="hljs-keyword">void</span>)</span></span><br><span class="hljs-function"></span>&#123;<br>    ...<br>    setup_irq(<span class="hljs-number">0</span>, &amp;irq0);<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>可以看到，时钟中断处理入口的IRQ号为0，处理函数为 <code>timer_interrupt()</code>，并且不支持共享IRQ线（<code>flags</code> 字段没有设置 <code>SA_SHIRQ</code> 标志）。</p>
+<h3 id="处理中断请求"><a href="#处理中断请求" class="headerlink" title="处理中断请求"></a>处理中断请求</h3><p>当一个中断发生时，中断控制层会发送信号给CPU，CPU收到信号会中断当前的执行，转而执行中断处理过程。中断处理过程首先会保存寄存器的值到栈中，然后调用 <code>do_IRQ()</code> 函数进行进一步的处理，<code>do_IRQ()</code> 函数代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-function">asmlinkage <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> <span class="hljs-title">do_IRQ</span><span class="hljs-params">(struct pt_regs regs)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> irq = regs.orig_eax &amp; <span class="hljs-number">0xff</span>; <span class="hljs-comment">/* 获取IRQ号  */</span><br>    <span class="hljs-keyword">int</span> cpu = smp_processor_id();<br>    <span class="hljs-keyword">irq_desc_t</span> *desc = irq_desc + irq;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">irqaction</span> * <span class="hljs-title">action</span>;</span><br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> status;<br><br>    kstat.irqs[cpu][irq]++;<br>    spin_lock(&amp;desc-&gt;lock);<br>    desc-&gt;handler-&gt;ack(irq);<br><br>    status = desc-&gt;status &amp; ~(IRQ_REPLAY | IRQ_WAITING);<br>    status |= IRQ_PENDING; <span class="hljs-comment">/* we _want_ to handle it */</span><br><br>    action = <span class="hljs-literal">NULL</span>;<br>    <span class="hljs-keyword">if</span> (!(status &amp; (IRQ_DISABLED | IRQ_INPROGRESS))) &#123; <span class="hljs-comment">// 当前IRQ不在处理中</span><br>        action = desc-&gt;action;    <span class="hljs-comment">// 获取 action 链表</span><br>        status &amp;= ~IRQ_PENDING;   <span class="hljs-comment">// 去除IRQ_PENDING标志, 这个标志用于记录是否在处理IRQ请求的时候又发生了中断</span><br>        status |= IRQ_INPROGRESS; <span class="hljs-comment">// 设置IRQ_INPROGRESS标志, 表示正在处理IRQ</span><br>    &#125;<br>    desc-&gt;status = status;<br><br>    <span class="hljs-keyword">if</span> (!action)  <span class="hljs-comment">// 如果上一次IRQ还没完成, 直接退出</span><br>        <span class="hljs-keyword">goto</span> out;<br><br>    <span class="hljs-keyword">for</span> (;;) &#123;<br>        spin_unlock(&amp;desc-&gt;lock);<br>        handle_IRQ_event(irq, &amp;regs, action); <span class="hljs-comment">// 处理IRQ请求</span><br>        spin_lock(&amp;desc-&gt;lock);<br>        <br>        <span class="hljs-keyword">if</span> (!(desc-&gt;status &amp; IRQ_PENDING)) <span class="hljs-comment">// 如果在处理IRQ请求的时候又发生了中断, 继续处理IRQ请求</span><br>            <span class="hljs-keyword">break</span>;<br>        desc-&gt;status &amp;= ~IRQ_PENDING;<br>    &#125;<br>    desc-&gt;status &amp;= ~IRQ_INPROGRESS;<br>out:<br><br>    desc-&gt;handler-&gt;<span class="hljs-built_in">end</span>(irq);<br>    spin_unlock(&amp;desc-&gt;lock);<br><br>    <span class="hljs-keyword">if</span> (softirq_active(cpu) &amp; softirq_mask(cpu))<br>        do_softirq(); <span class="hljs-comment">// 中断下半部处理</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p><code>do_IRQ()</code> 函数首先通过IRQ号获取到其对应的 <code>irq_desc_t</code> 结构，注意的是同一个中断有可能发生多次，所以要判断当前IRQ是否正在被处理当中（判断 <code>irq_desc_t</code> 结构的 <code>status</code> 字段是否设置了 <code>IRQ_INPROGRESS</code> 标志），如果不是处理当前，那么就获取到 <code>action</code> 链表，然后通过调用 <code>handle_IRQ_event()</code> 函数来执行 action 链表中的中断处理函数。</p>
+<p>如果在处理中断的过程中又发生了相同的中断（<code>irq_desc_t</code> 结构的 <code>status</code> 字段被设置了 <code>IRQ_INPROGRESS</code> 标志），那么就继续对中断进行处理。处理完中断后，调用 <code>do_softirq()</code> 函数来对中断下半部进行处理（下面会说）。</p>
+<p>接下来看看 <code>handle_IRQ_event()</code> 函数的实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">handle_IRQ_event</span><span class="hljs-params">(<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> irq, struct pt_regs * regs, struct irqaction * action)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> status;<br>    <span class="hljs-keyword">int</span> cpu = smp_processor_id();<br><br>    irq_enter(cpu, irq);<br><br>    status = <span class="hljs-number">1</span>; <span class="hljs-comment">/* Force the "do bottom halves" bit */</span><br><br>    <span class="hljs-keyword">if</span> (!(action-&gt;flags &amp; SA_INTERRUPT)) <span class="hljs-comment">// 如果中断处理能够在打开中断的情况下执行, 那么就打开中断</span><br>        __sti();<br><br>    <span class="hljs-keyword">do</span> &#123;<br>        status |= action-&gt;flags;<br>        action-&gt;handler(irq, action-&gt;dev_id, regs);<br>        action = action-&gt;next;<br>    &#125; <span class="hljs-keyword">while</span> (action);<br>    <span class="hljs-keyword">if</span> (status &amp; SA_SAMPLE_RANDOM)<br>        add_interrupt_randomness(irq);<br>    __cli();<br><br>    irq_exit(cpu, irq);<br><br>    <span class="hljs-keyword">return</span> status;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p><code>handle_IRQ_event()</code> 函数非常简单，就是遍历 action 链表并且执行其中的处理函数，比如对于 <code>时钟中断</code> 就是调用 <code>timer_interrupt()</code> 函数。这里要注意的是，如果中断处理过程能够开启中断的，那么就把中断打开（因为CPU接收到中断信号时会关闭中断）。</p>
+<h2 id="中断处理-下半部（软中断）"><a href="#中断处理-下半部（软中断）" class="headerlink" title="中断处理 - 下半部（软中断）"></a>中断处理 - 下半部（软中断）</h2><p>由于中断处理一般在关闭中断的情况下执行，所以中断处理不能太耗时，否则后续发生的中断就不能实时地被处理。鉴于这个原因，Linux把中断处理分为两个部分，<code>上半部</code> 和 <code>下半部</code>，<code>上半部</code> 在前面已经介绍过，接下来就介绍一下 <code>下半部</code> 的执行。</p>
+<p>一般中断 <code>上半部</code> 只会做一些最基础的操作（比如从网卡中复制数据到缓存中），然后对要执行的中断 <code>下半部</code> 进行标识，标识完调用 <code>do_softirq()</code> 函数进行处理。 </p>
+<h3 id="softirq机制"><a href="#softirq机制" class="headerlink" title="softirq机制"></a>softirq机制</h3><p><code>中断下半部</code> 由 <code>softirq（软中断）</code> 机制来实现的，在Linux内核中，有一个名为 <code>softirq_vec</code> 的数组，如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">softirq_action</span> <span class="hljs-title">softirq_vec</span>[32];</span><br></code></pre></div></td></tr></table></figure>
+<p>其类型为 <code>softirq_action</code> 结构，定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">softirq_action</span></span><br><span class="hljs-class">&#123;</span><br>    <span class="hljs-keyword">void</span>    (*action)(struct softirq_action *);<br>    <span class="hljs-keyword">void</span>    *data;<br>&#125;;<br></code></pre></div></td></tr></table></figure>
+<p><code>softirq_vec</code> 数组是 <code>softirq</code> 机制的核心，<code>softirq_vec</code> 数组每个元素代表一种软中断。但在Linux中只定义了四种软中断，如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-keyword">enum</span><br>&#123;<br>    HI_SOFTIRQ=<span class="hljs-number">0</span>,<br>    NET_TX_SOFTIRQ,<br>    NET_RX_SOFTIRQ,<br>    TASKLET_SOFTIRQ<br>&#125;;<br></code></pre></div></td></tr></table></figure>
+<p><code>HI_SOFTIRQ</code> 是高优先级tasklet，而 <code>TASKLET_SOFTIRQ</code> 是普通tasklet，tasklet是基于softirq机制的一种任务队列（下面会介绍）。<code>NET_TX_SOFTIRQ</code> 和 <code>NET_RX_SOFTIRQ</code> 特定用于网络子模块的软中断（不作介绍）。</p>
+<h3 id="注册softirq处理函数"><a href="#注册softirq处理函数" class="headerlink" title="注册softirq处理函数"></a>注册softirq处理函数</h3><p>要注册一个softirq处理函数，可以通过 <code>open_softirq()</code> 函数来进行，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">open_softirq</span><span class="hljs-params">(<span class="hljs-keyword">int</span> nr, <span class="hljs-keyword">void</span> (*action)(struct softirq_action*), <span class="hljs-keyword">void</span> *data)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> flags;<br>    <span class="hljs-keyword">int</span> i;<br><br>    spin_lock_irqsave(&amp;softirq_mask_lock, flags);<br>    softirq_vec[nr].data = data;<br>    softirq_vec[nr].action = action;<br><br>    <span class="hljs-keyword">for</span> (i=<span class="hljs-number">0</span>; i&lt;NR_CPUS; i++)<br>        softirq_mask(i) |= (<span class="hljs-number">1</span>&lt;&lt;nr);<br>    spin_unlock_irqrestore(&amp;softirq_mask_lock, flags);<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p><code>open_softirq()</code> 函数的主要工作就是向 <code>softirq_vec</code> 数组添加一个softirq处理函数。</p>
+<p>Linux在系统初始化时注册了两种softirq处理函数，分别为 <code>TASKLET_SOFTIRQ</code> 和 <code>HI_SOFTIRQ</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-keyword">void</span> __<span class="hljs-function">init <span class="hljs-title">softirq_init</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    ...<br>    open_softirq(TASKLET_SOFTIRQ, tasklet_action, <span class="hljs-literal">NULL</span>);<br>    open_softirq(HI_SOFTIRQ, tasklet_hi_action, <span class="hljs-literal">NULL</span>);<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<h3 id="处理softirq"><a href="#处理softirq" class="headerlink" title="处理softirq"></a>处理softirq</h3><p>处理softirq是通过 <code>do_softirq()</code> 函数实现，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-function">asmlinkage <span class="hljs-keyword">void</span> <span class="hljs-title">do_softirq</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> cpu = smp_processor_id();<br>    __u32 active, mask;<br><br>    <span class="hljs-keyword">if</span> (in_interrupt())<br>        <span class="hljs-keyword">return</span>;<br><br>    local_bh_disable();<br><br>    local_irq_disable();<br>    mask = softirq_mask(cpu);<br>    active = softirq_active(cpu) &amp; mask;<br><br>    <span class="hljs-keyword">if</span> (active) &#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">softirq_action</span> *<span class="hljs-title">h</span>;</span><br><br>restart:<br>        softirq_active(cpu) &amp;= ~active;<br><br>        local_irq_enable();<br><br>        h = softirq_vec;<br>        mask &amp;= ~active;<br><br>        <span class="hljs-keyword">do</span> &#123;<br>            <span class="hljs-keyword">if</span> (active &amp; <span class="hljs-number">1</span>)<br>                h-&gt;action(h);<br>            h++;<br>            active &gt;&gt;= <span class="hljs-number">1</span>;<br>        &#125; <span class="hljs-keyword">while</span> (active);<br><br>        local_irq_disable();<br><br>        active = softirq_active(cpu);<br>        <span class="hljs-keyword">if</span> ((active &amp;= mask) != <span class="hljs-number">0</span>)<br>            <span class="hljs-keyword">goto</span> retry;<br>    &#125;<br><br>    local_bh_enable();<br><br>    <span class="hljs-keyword">return</span>;<br><br>retry:<br>    <span class="hljs-keyword">goto</span> restart;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>前面说了 <code>softirq_vec</code> 数组有32个元素，每个元素对应一种类型的softirq，那么Linux怎么知道哪种softirq需要被执行呢？在Linux中，每个CPU都有一个类型为 <code>irq_cpustat_t</code> 结构的变量，<code>irq_cpustat_t</code> 结构定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> __softirq_active;<br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> __softirq_mask;<br>    ...<br>&#125; <span class="hljs-keyword">irq_cpustat_t</span>;<br></code></pre></div></td></tr></table></figure>
+<p>其中 <code>__softirq_active</code> 字段表示有哪种softirq触发了（int类型有32个位，每一个位代表一种softirq），而 <code>__softirq_mask</code> 字段表示哪种softirq被屏蔽了。Linux通过 <code>__softirq_active</code> 这个字段得知哪种softirq需要执行（只需要把对应位设置为1）。</p>
+<p>所以，<code>do_softirq()</code> 函数首先通过 <code>softirq_mask(cpu)</code> 来获取当前CPU对应被屏蔽的softirq，而 <code>softirq_active(cpu) &amp; mask</code> 就是获取需要执行的softirq，然后就通过对比 <code>__softirq_active</code> 字段的各个位来判断是否要执行该类型的softirq。</p>
+<h3 id="tasklet机制"><a href="#tasklet机制" class="headerlink" title="tasklet机制"></a>tasklet机制</h3><p>前面说了，tasklet机制是基于softirq机制的，tasklet机制其实就是一个任务队列，然后通过softirq执行。在Linux内核中有两种tasklet，一种是高优先级tasklet，一种是普通tasklet。这两种tasklet的实现基本一致，唯一不同的就是执行的优先级，高优先级tasklet会先于普通tasklet执行。</p>
+<p>tasklet本质是一个队列，通过结构体 <code>tasklet_head</code> 存储，并且每个CPU有一个这样的队列，我们来看看结构体 <code>tasklet_head</code> 的定义：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">tasklet_head</span></span><br><span class="hljs-class">&#123;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">tasklet_struct</span> *<span class="hljs-title">list</span>;</span><br>&#125;;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">tasklet_struct</span></span><br><span class="hljs-class">&#123;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">tasklet_struct</span> *<span class="hljs-title">next</span>;</span><br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> state;<br>    <span class="hljs-keyword">atomic_t</span> count;<br>    <span class="hljs-keyword">void</span> (*func)(<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span>);<br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> data;<br>&#125;;<br></code></pre></div></td></tr></table></figure>
+<p>从 <code>tasklet_head</code> 的定义可以知道，<code>tasklet_head</code> 结构是 <code>tasklet_struct</code> 结构队列的头部，而 <code>tasklet_struct</code> 结构的 <code>func</code> 字段正式任务要执行的函数指针。Linux定义了两种的tasklet队列，分别为 <code>tasklet_vec</code> 和 <code>tasklet_hi_vec</code>，定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">tasklet_head</span> <span class="hljs-title">tasklet_vec</span>[<span class="hljs-title">NR_CPUS</span>];</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">tasklet_head</span> <span class="hljs-title">tasklet_hi_vec</span>[<span class="hljs-title">NR_CPUS</span>];</span><br></code></pre></div></td></tr></table></figure>
+<p>可以看出，<code>tasklet_vec</code> 和 <code>tasklet_hi_vec</code> 都是数组，数组的元素个数为CPU的核心数，也就是每个CPU核心都有一个高优先级tasklet队列和一个普通tasklet队列。</p>
+<h3 id="调度tasklet"><a href="#调度tasklet" class="headerlink" title="调度tasklet"></a>调度tasklet</h3><p>如果我们有一个tasklet需要执行，那么高优先级tasklet可以通过 <code>tasklet_hi_schedule()</code> 函数调度，而普通tasklet可以通过 <code>tasklet_schedule()</code> 调度。这两个函数基本一样，所以我们只分析其中一个：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">inline</span> <span class="hljs-keyword">void</span> <span class="hljs-title">tasklet_hi_schedule</span><span class="hljs-params">(struct tasklet_struct *t)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span> (!test_and_set_bit(TASKLET_STATE_SCHED, &amp;t-&gt;state)) &#123;<br>        <span class="hljs-keyword">int</span> cpu = smp_processor_id();<br>        <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> flags;<br><br>        local_irq_save(flags);<br>        t-&gt;next = tasklet_hi_vec[cpu].<span class="hljs-built_in">list</span>;<br>        tasklet_hi_vec[cpu].<span class="hljs-built_in">list</span> = t;<br>        __cpu_raise_softirq(cpu, HI_SOFTIRQ);<br>        local_irq_restore(flags);<br>    &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>函数参数的类型是 <code>tasklet_struct</code> 结构的指针，表示需要执行的tasklet结构。<code>tasklet_hi_schedule()</code> 函数首先判断这个tasklet是否已经被添加到队列中，如果不是就添加到 <code>tasklet_hi_vec</code> 队列中，并且通过调用 <code>__cpu_raise_softirq(cpu, HI_SOFTIRQ)</code> 来告诉softirq需要执行 <code>HI_SOFTIRQ</code> 类型的softirq，我们来看看 <code>__cpu_raise_softirq()</code> 函数的实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-keyword">static</span> <span class="hljs-keyword">inline</span> <span class="hljs-keyword">void</span> __cpu_raise_softirq(<span class="hljs-keyword">int</span> cpu, <span class="hljs-keyword">int</span> nr)<br>&#123;<br>    softirq_active(cpu) |= (<span class="hljs-number">1</span>&lt;&lt;nr);<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>可以看出，<code>__cpu_raise_softirq()</code> 函数就是把 <code>irq_cpustat_t</code> 结构的 <code>__softirq_active</code> 字段的 <code>nr位</code> 设置为1。对于 <code>tasklet_hi_schedule()</code> 函数就是把 <code>HI_SOFTIRQ</code> 位（0位）设置为1。</p>
+<p>前面我们也介绍过，Linux在初始化时会注册两种softirq，<code>TASKLET_SOFTIRQ</code> 和 <code>HI_SOFTIRQ</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-keyword">void</span> __<span class="hljs-function">init <span class="hljs-title">softirq_init</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    ...<br>    open_softirq(TASKLET_SOFTIRQ, tasklet_action, <span class="hljs-literal">NULL</span>);<br>    open_softirq(HI_SOFTIRQ, tasklet_hi_action, <span class="hljs-literal">NULL</span>);<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p>所以当把 <code>irq_cpustat_t</code> 结构的 <code>__softirq_active</code> 字段的 <code>HI_SOFTIRQ</code> 位（0位）设置为1时，softirq机制就会执行 <code>tasklet_hi_action()</code> 函数，我们来看看 <code>tasklet_hi_action()</code> 函数的实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">tasklet_hi_action</span><span class="hljs-params">(struct softirq_action *a)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> cpu = smp_processor_id();<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">tasklet_struct</span> *<span class="hljs-title">list</span>;</span><br><br>    local_irq_disable();<br>    <span class="hljs-built_in">list</span> = tasklet_hi_vec[cpu].<span class="hljs-built_in">list</span>;<br>    tasklet_hi_vec[cpu].<span class="hljs-built_in">list</span> = <span class="hljs-literal">NULL</span>;<br>    local_irq_enable();<br><br>    <span class="hljs-keyword">while</span> (<span class="hljs-built_in">list</span> != <span class="hljs-literal">NULL</span>) &#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">tasklet_struct</span> *<span class="hljs-title">t</span> = <span class="hljs-title">list</span>;</span><br><br>        <span class="hljs-built_in">list</span> = <span class="hljs-built_in">list</span>-&gt;next;<br><br>        <span class="hljs-keyword">if</span> (tasklet_trylock(t)) &#123;<br>            <span class="hljs-keyword">if</span> (atomic_read(&amp;t-&gt;count) == <span class="hljs-number">0</span>) &#123;<br>                clear_bit(TASKLET_STATE_SCHED, &amp;t-&gt;state);<br><br>                t-&gt;func(t-&gt;data);  <span class="hljs-comment">// 调用tasklet处理函数</span><br>                tasklet_unlock(t);<br>                <span class="hljs-keyword">continue</span>;<br>            &#125;<br>            tasklet_unlock(t);<br>        &#125;<br>        ...<br>    &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<p><code>tasklet_hi_action()</code> 函数非常简单，就是遍历 <code>tasklet_hi_vec</code> 队列并且执行其中tasklet的处理函数。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/04/07/Linux%E7%AD%89%E5%BE%85%E9%98%9F%E5%88%97%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Linux等待队列原理与实现</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/04/07/Linux%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%8E%9F%E7%90%86/">
+                        <span class="hidden-mobile">Linux系统调用原理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.0/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>

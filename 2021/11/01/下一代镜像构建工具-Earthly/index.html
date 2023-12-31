@@ -1,0 +1,563 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;light&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="jame_xhs">
+  <meta name="keywords" content="">
+  <title>下一代镜像构建工具 Earthly - jame_xhs&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.jxhs.me","root":"/","version":"1.8.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>jame_xhs blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/more-order/">
+                <i class="iconfont icon-slack-fill"></i>
+                越阶计划
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                书单
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2021/">
+                    
+                    2021
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2020/">
+                    
+                    2020
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="下一代镜像构建工具 Earthly">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-11-01 10:06" pubdate>
+        2021年11月1日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.2k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      27
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">下一代镜像构建工具 Earthly</h1>
+            
+            <div class="markdown-body">
+              <h3 id="一、Earthly-介绍"><a href="#一、Earthly-介绍" class="headerlink" title="一、Earthly 介绍"></a>一、Earthly 介绍</h3><p><img src="/img/newimg/008i3skNgy1gvzfb9c3jxj30u00fgq48.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>Earthly 是一个更加高级的 Docker 镜像构建工具，Earthly 通过自己定义的 Earthfile 来代替传统的 Dockerfile 完成镜像构建；Earthfile 就如同 Earthly 官方所描述:<br>Makefile + Dockerfile = Earthfile<br>在使用 Earthly 进行构建镜像时目前强依赖于 buildkit，Earthly 通过 buildkit 支持了一些 Dockerfile  的扩展语法，同时将 Dockerfile 与 Makefile 整合，使得多平台构建和代码化 Dockerfile 变得更加简单；使用  Earthly 可以更加方便的完成 Dockerfile 的代码复用以及更加友好的 CI 自动集成。</p>
+<h3 id="二、快速开始"><a href="#二、快速开始" class="headerlink" title="二、快速开始"></a>二、快速开始</h3><h4 id="安装依赖"><a href="#安装依赖" class="headerlink" title="安装依赖"></a>安装依赖</h4><p>Earthly 目前依赖于 Docker 和 Git，所以安装 Earthly 前请确保机器已经安装了 Docker 和 Git。</p>
+<h4 id="安装-Earthly"><a href="#安装-Earthly" class="headerlink" title="安装 Earthly"></a>安装 Earthly</h4><p>Earthly 采用 Go 编写，所以主要就一个二进制文件，Linux 下安装可以直接参考官方的安装脚本:</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs jboss-cli">$ sudo <span class="hljs-string">/bin/sh</span> -c 'wget https:<span class="hljs-string">//github.com/earthly/earthly/releases/latest/download/earthly-linux-amd64</span> -O <span class="hljs-string">/usr/local/bin/earthly</span> &amp;&amp; chmod +x <span class="hljs-string">/usr/local/bin/earthly</span> &amp;&amp; <span class="hljs-string">/usr/local/bin/earthly</span> bootstrap <span class="hljs-params">--with-autocomplete</span>'<br></code></pre></div></td></tr></table></figure>
+<p>安装完成后 Earthly 将会启动一个 buildkitd 容器: <code>earthly-buildkitd</code>。</p>
+<h4 id="语法高亮"><a href="#语法高亮" class="headerlink" title="语法高亮"></a>语法高亮</h4><p>目前 Earthly 官方支持 VS Code、VIM 以及 Sublime Text 三种编辑器的语法高亮，具体如何安装请参考 官方文档[1]。</p>
+<h4 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h4><p>本示例源于官方 Basic 教程，以下示例以编译 Go 项目为样例:<br>首先创建一个任意名称的目录，目录中存在项目源码文件以及一个 <code>Earthfile</code> 文件；<br><code>main.go</code></p>
+<figure class="highlight go"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> <span class="hljs-string">"fmt"</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    fmt.Println(<span class="hljs-string">"hello world"</span>)<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p><code>Earthfile</code></p>
+<figure class="highlight maxima"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs maxima">FROM golang:<span class="hljs-number">1.17</span>-alpine<br>WORKDIR /<span class="hljs-built_in">go</span>-<span class="hljs-built_in">example</span><br><br>build:<br>    COPY main.<span class="hljs-built_in">go</span> .<br>    RUN <span class="hljs-built_in">go</span> build -o build/<span class="hljs-built_in">go</span>-<span class="hljs-built_in">example</span> main.<span class="hljs-built_in">go</span><br>    SAVE ARTIFACT build/<span class="hljs-built_in">go</span>-<span class="hljs-built_in">example</span> /<span class="hljs-built_in">go</span>-<span class="hljs-built_in">example</span> AS LOCAL build/<span class="hljs-built_in">go</span>-<span class="hljs-built_in">example</span><br><br>docker:<br>    COPY +build/<span class="hljs-built_in">go</span>-<span class="hljs-built_in">example</span> .<br>    ENTRYPOINT [<span class="hljs-string">"/go-example/go-example"</span>]<br>    SAVE IMAGE <span class="hljs-built_in">go</span>-<span class="hljs-built_in">example</span>:latest<br></code></pre></div></td></tr></table></figure>
+
+<p>有了 <code>Earthfile</code> 以后我们就可以使用 <code>Earthly</code> 将其打包为镜像；</p>
+<figure class="highlight awk"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs awk"><span class="hljs-comment"># 目录结构</span><br>~<span class="hljs-regexp">/t/</span>earthlytest ❯❯❯ tree<br>.<br>├── Earthfile<br>└── main.go<br><br><span class="hljs-number">0</span> directories, <span class="hljs-number">2</span> files<br><br><span class="hljs-comment"># 通过 earthly 进行构建</span><br>~<span class="hljs-regexp">/t/</span>earthlytest ❯❯❯ earthly +docker<br></code></pre></div></td></tr></table></figure>
+<p><img src="/img/newimg/008i3skNgy1gvzfdth8m9j30u00j7dj3.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>构建完成后我们就可以直接从 docker 的 images 列表中查看刚刚构建的镜像，并运行:</p>
+<p><img src="/img/newimg/008i3skNgy1gvzfe16dhuj30u00b0wfu.jpg" srcset="/img/loading.gif" alt=""></p>
+<h3 id="三、进阶使用"><a href="#三、进阶使用" class="headerlink" title="三、进阶使用"></a>三、进阶使用</h3><h4 id="多阶段构建"><a href="#多阶段构建" class="headerlink" title="多阶段构建"></a>多阶段构建</h4><p>Earthfile 中包含类似 Makefile 一样的 target，不同的 target 之间还可以通过特定语法进行引用，每个 target 都可以被单独执行，执行过程中 earthly 会自动解析这些依赖关系。<br>这种多阶段构建时语法很弹性，我们可以在每个阶段运行独立的命令以及使用不同的基础镜像；从快速开始中可以看到，我们始终使用了一个基础镜像(golang:1.17-alpine)，对于 Go 这种编译后自带运行时不依赖其语言 SDK 的应用，我们事实上可以将 “发布物” 仅放在简单的运行时系统镜像内，从而减少最终镜像体积:<br><img src="/img/newimg/008i3skNgy1gvzfej5tooj30u00f1q3z.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>由于使用了多个 target，所以我们可以单独的运行 build 这个 target 来验证我们的编译流程，这种多 target 的设计方便我们构建应用时对编译、打包步骤的细化拆分，同时也方便我们进行单独的验证。 例如我们单独执行 build 这个 target 来验证我们的编译流程是否正确:</p>
+<p><img src="/img/newimg/008i3skNgy1gvzfeusb76j30u00jxgo6.jpg" srcset="/img/loading.gif" alt=""><br>在其他阶段验证完成后，我们可以直接运行最终的 target，earthly 会自动识别到这种依赖关系从而自动运行其依赖的 target:</p>
+<p><img src="/img/newimg/008i3skNgy1gvzff0xktxj30u00hkdio.jpg" srcset="/img/loading.gif" alt=""></p>
+<h4 id="扩展指令"><a href="#扩展指令" class="headerlink" title="扩展指令"></a>扩展指令</h4><h5 id="SAVE"><a href="#SAVE" class="headerlink" title="SAVE"></a>SAVE</h5><p>SAVE 指令是 Earthly 自己的一个扩展指令，实际上分为 SAVE ARTIFACT 和 SAVE IMAGE；其中 SAVE ARTIFACT 指令格式如下:</p>
+<figure class="highlight fsharp"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs fsharp">SAVE ARTIFACT [--keep-ts] [--keep-own] [--<span class="hljs-keyword">if</span>-exists] [--force] &lt;src&gt; <span class="hljs-meta">[&lt;artifact-dest-path&gt;]</span> [AS LOCAL &lt;local-path&gt;]<br></code></pre></div></td></tr></table></figure>
+
+<blockquote>
+<p>SAVE ARTIFACT 指令用于将文件或目录从 build 运行时环境保存到 target 的 artifact 环境；当保存到 artifact 环境后，可以通过 COPY 等命令在其他位置进行引用，类似于 Dockerfile 的 COPY –from… 语法；不同的是 SAVE ARTIFACT 支持 AS LOCAL <local-path> 附加参数，一但指定此参数后，earthly 会同时将文件或目录在宿主机复制一份，一般用于调试等目的。SAVE ARTIFACT 命令在上面的样例中已经展示了，在运行完 earthly +build 命令后实际上会在本地看到被 SAVE 出来的 ARTIFACT:</p>
+</blockquote>
+<p><img src="/img/newimg/008i3skNgy1gvzffup6pmj30u00g9wfr.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>而另一个 SAVE IMAGE 指令则主要用于将当前的 build 环境 SAVE 为一个 IMAGE，如果指定了 –push 选项，同时在执行 earthly +target 命令时也加入 –push 选项，该镜像将会自动被推送到目标 Registry 上。SAVE IMAGE 指令格式如下:</p>
+<figure class="highlight sqf"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs sqf">SAVE <span class="hljs-built_in">IMAGE</span> [--cache-<span class="hljs-keyword">from</span>=&lt;cache-<span class="hljs-built_in">image</span>&gt;] [--push] &lt;<span class="hljs-built_in">image</span>-<span class="hljs-built_in">name</span>&gt;...<br></code></pre></div></td></tr></table></figure>
+
+<p><img src="/img/newimg/008i3skNgy1gvzfg4swbxj30u00gr0um.jpg" srcset="/img/loading.gif" alt=""></p>
+<h5 id="GIT-CLONE"><a href="#GIT-CLONE" class="headerlink" title="GIT CLONE"></a>GIT CLONE</h5><p>GIT CLONE 指令用于将指定 git 仓库 clone 到 build 环境中；与 RUN git clone… 命令不同的是，GIT CLONE 通过宿主机的 git 命令运行，它不依赖于容器内的 git 命令，同时还可以直接为 earthly 配置 git 认证，从而避免将这些安全信息泄漏到 build 环境中； 关于如何配置 earthly 的 git 认证请参考 官方文档[2]；下面是 GIT CLONE 指令的样例:</p>
+<p><img src="/img/newimg/008i3skNgy1gvzfh5dcc9j30u00hs419.jpg" srcset="/img/loading.gif" alt=""></p>
+<h5 id="COPY"><a href="#COPY" class="headerlink" title="COPY"></a>COPY</h5><p>COPY 指令与标准的 Dockerfile COPY 指令类似，除了支持 Dockerfile 标准的 COPY 功能以外，earthly 中的 COPY 指令可以引用其他 target 环节产生的 artifact，在引用时会自动声明依赖关系；即当在 B target 中存在 COPY +A/xxxxx /path/to/copy 类似的指令时，如果只单纯的执行 earthly +B，那么 earthly 根据依赖分析会得出在 COPY 之前需要执行 target A。COPY 指令的语法格式如下:</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs dockerfile"><span class="hljs-comment"># 与 Dockerfile 相同的使用方式，从上下文复制</span><br><span class="hljs-keyword">COPY</span><span class="bash"> [options...] &lt;src&gt;... &lt;dest&gt;</span><br><br><span class="hljs-comment"># 扩展支持的从 target 复制方式</span><br><span class="hljs-keyword">COPY</span><span class="bash"> [options...] &lt;src-artifact&gt;... &lt;dest&gt;</span><br></code></pre></div></td></tr></table></figure>
+
+<h5 id="RUN"><a href="#RUN" class="headerlink" title="RUN"></a>RUN</h5><p>RUN 指令在标准使用上与 Dockerfile 里保持一致，除此之外增加了更多的扩展选项，其指令格式如下:</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs jboss-cli"><br><span class="hljs-comment"># shell 方式运行(/bin/sh -c)</span><br>RUN [<span class="hljs-params">--push</span>] [<span class="hljs-params">--entrypoint</span>] [<span class="hljs-params">--privileged</span>] [<span class="hljs-params">--secret</span> &lt;env-var&gt;=&lt;secret-ref&gt;] [<span class="hljs-params">--ssh</span>] [<span class="hljs-params">--mount</span> &lt;mount-spec&gt;] [--] &lt;<span class="hljs-keyword">command</span>&gt;<br><br><span class="hljs-comment"># exec 方式运行</span><br>RUN [[&lt;flags&gt;<span class="hljs-string">...</span>], <span class="hljs-string">"&lt;executable&gt;"</span>, <span class="hljs-string">"&lt;arg1&gt;"</span>, <span class="hljs-string">"&lt;arg2&gt;"</span>, <span class="hljs-string">...</span>]<br></code></pre></div></td></tr></table></figure>
+<p>其中 –privileged 选项允许运行的命令使用 privileged capabilities，但是需要 earthly 在运行 target 时增加 –allow-privileged 选项；–interactive / –interactive-keep 选项用于交互式执行一些命令，在完成交互后 build 继续进行，在交互过程中进行的操作都会被持久化到 镜像中:</p>
+<p><img src="/img/newimg/008i3skNgy1gvzfi2c9gnj30u00j2whc.jpg" srcset="/img/loading.gif" alt=""></p>
+<h5 id="UDCS"><a href="#UDCS" class="headerlink" title="UDCS"></a>UDCS</h5><p>UDCs 全称 “User-defined commands”，即用户定义指令；通过 UDCs 我们可以将 Earthfile 中特定的命令剥离出来，从而实现更加通用和统一的代码复用；下面是一个定义 UDCs 指令的样例:</p>
+<figure class="highlight routeros"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs routeros"><span class="hljs-comment"># 定义一个 Command</span><br><span class="hljs-comment"># ⚠️ 注意: 语法必须满足以下规则</span><br><span class="hljs-comment"># 1、名称全大写</span><br><span class="hljs-comment"># 2、名称下划线分割</span><br><span class="hljs-comment"># 3、首个命令必须为 COMMAND(后面没有冒号)</span><br>MY_COPY:<br>    COMMAND<br>    ARG src<br>    ARG <span class="hljs-attribute">dest</span>=./<br>    ARG <span class="hljs-attribute">recursive</span>=<span class="hljs-literal">false</span><br>    <span class="hljs-builtin-name">RUN</span> cp $(<span class="hljs-keyword">if</span> <span class="hljs-variable">$recursive</span> =  <span class="hljs-string">"true"</span>; then printf -- -r; fi) <span class="hljs-string">"<span class="hljs-variable">$src</span>"</span> <span class="hljs-string">"<span class="hljs-variable">$dest</span>"</span><br><br><span class="hljs-comment"># target 中引用</span><br>build:<br>    <span class="hljs-keyword">FROM</span> alpine:3.13<br>    WORKDIR /udc-example<br>    <span class="hljs-builtin-name">RUN</span> echo <span class="hljs-string">"hello"</span> &gt;./foo<br>    # 通过 <span class="hljs-keyword">DO</span> 关键字引用 UDCs<br>    <span class="hljs-keyword">DO</span> +MY_COPY <span class="hljs-attribute">--src</span>=./foo <span class="hljs-attribute">--dest</span>=./bar<br>    <span class="hljs-builtin-name">RUN</span> cat ./bar # prints <span class="hljs-string">"hello"</span><br></code></pre></div></td></tr></table></figure>
+
+<p>UDCs 不光可以定义在一个 Earthfile 中，UDCs 可以跨文件、跨目录引用:</p>
+<p><img src="/img/newimg/008i3skNgy1gvzfigy9x7j30u00ka0v0.jpg" srcset="/img/loading.gif" alt=""><br>有了 UDCs 以后，我们可以通过这种方式将对基础镜像的版本统一控制、对特殊镜像的通用处理等操作全部抽象出来，然后每个 Earthfile 根据需要进行引用；关于 UDCs 的使用样例可以参考我的 autobuild[4] 项目，其中的 udcs[5] 目录定义了大量的通用 UDCs，这些 UDCs 被其他目标镜的 Earthfile 批量引用。</p>
+<h4 id="多平台构建"><a href="#多平台构建" class="headerlink" title="多平台构建"></a>多平台构建</h4><p>在以前使用 Dockerfile 的时候，我们需要自己配置然后开启 buildkit 来实现多平台构建；在配置过程中可能会很繁琐，现在使用 earthly 可以默认帮我们实现多平台的交叉编译，我们需要做的仅仅是在 Earthfile 中声明需要支持哪些平台而已:</p>
+<p><img src="/img/newimg/008i3skNgy1gvzfj3fdekj30u00bnq3m.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>以上 Earthfile 在执行 earthly –push +all 构建时，将会自动构建四个平台的镜像，并保持单个 tag，同时由于使用了 –push 选项还会自动推送到 Docker Hub 上:</p>
+<p><img src="/img/newimg/008i3skNgy1gvzfj8slg2j30u00n80uc.jpg" srcset="/img/loading.gif" alt=""></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>Earthly 弥补了 Dockerfile 的很多不足，解决了很多痛点问题；但同样可能需要一些学习成本，但是如果已经熟悉了 Dockerfile  其实学习成本不高；所以目前还是比较推荐将 Dockerfile 切换为 Earthfile  进行统一和版本化管理的。本文由于篇幅所限(懒)很多地方没有讲，比如共享缓存等，所以关于 Earthly 更多的详细使用等最好还是仔细阅读一下官方文档[6]。</p>
+<h5 id="引用链接"><a href="#引用链接" class="headerlink" title="引用链接"></a>引用链接</h5><figure class="highlight groovy"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs groovy">官方文档: <span class="hljs-string">https:</span><span class="hljs-comment">//earthly.dev/get-earthly</span><br>官方文档: <span class="hljs-string">https:</span><span class="hljs-comment">//docs.earthly.dev/docs/guides/auth</span><br>Earthfile <span class="hljs-string">reference:</span> <span class="hljs-string">https:</span><span class="hljs-comment">//docs.earthly.dev/docs/earthfile</span><br><span class="hljs-string">autobuild:</span> <span class="hljs-string">https:</span><span class="hljs-comment">//github.com/mritd/autobuild</span><br><span class="hljs-string">udcs:</span> <span class="hljs-string">https:</span><span class="hljs-comment">//github.com/mritd/autobuild/tree/main/earthfiles/udcs</span><br>官方文档: <span class="hljs-string">https:</span><span class="hljs-comment">//docs.earthly.dev/docs/guides</span><br></code></pre></div></td></tr></table></figure>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/11/01/%E5%87%A1%E4%BA%8B%E5%85%88%E6%90%9E%E8%B5%B7%E6%9D%A5-%E8%83%BD%E8%A7%A3%E5%86%B380-%E9%97%AE%E9%A2%98/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">凡事先搞起来,能解决80%问题</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/10/31/%E9%99%90%E5%88%B6K8S-Pod-%E7%A3%81%E7%9B%98%E5%AE%B9%E9%87%8F%E4%BD%BF%E7%94%A8%E7%9A%84-3-%E7%A7%8D%E6%96%B9%E6%B3%95/">
+                        <span class="hidden-mobile">限制K8S Pod 磁盘容量使用的 3 种方法</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.0/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>

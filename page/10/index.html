@@ -1,0 +1,806 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;light&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="jame_xhs">
+  <meta name="keywords" content="">
+  <title>jame_xhs&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.jxhs.me","root":"/","version":"1.8.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 100vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>jame_xhs blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/more-order/">
+                <i class="iconfont icon-slack-fill"></i>
+                越阶计划
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                书单
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2021/">
+                    
+                    2021
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2020/">
+                    
+                    2020
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="韭菜的自我修养">
+              
+            </span>
+
+            
+          </div>
+
+          
+            <div class="scroll-down-bar">
+              <i class="iconfont icon-arrowdown"></i>
+            </div>
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div class="py-5" id="board"
+          style=margin-top:0>
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/01/24/ubuntu-server%E8%BF%9EWiFi/">ubuntu server连WiFi</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/01/24/ubuntu-server%E8%BF%9EWiFi/">
+          
+          
+            
+          
+          1、首先使用wpa_passphrase生成无线密钥
+12sudo -i wpa_passphrase 无线名称 密码 &gt; /etc/wpa_supplicant.conf
+
+2、接下来编辑 /etc/wpa_supplicant.conf
+1234567891011121314151617181920ctrl_interface=/var/run/wpa_supplicantctrl_in
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-01-24 16:53" pubdate>
+              2020-01-24
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/01/23/%E6%B0%B8%E7%94%9F%E7%9A%84%E4%BB%A3%E4%BB%B7/">永生的代价</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/01/23/%E6%B0%B8%E7%94%9F%E7%9A%84%E4%BB%A3%E4%BB%B7/">
+          
+          
+            
+          
+          永生，蝙蝠侠，冠状病毒公元一世纪的时候，希腊的普鲁塔克提出了一个问题：如果忒修斯船上的零件被逐渐替换，直到所有的零件都不是原来的零件，那么这艘船还是原来的那艘船吗？
+这就是人类历史上的忒修斯悖论，其实里面有一个隐藏的彩蛋，那是永生的秘密。
+天下武功唯快不破，一个人体内的衰老细胞只要更新的足够快，宛若新零件换旧零件一般，那么他就能躲过死神的杀猪刀，永远活下去。
+然而，地球上的碳基猴子有个小小的问题，
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-01-23 08:37" pubdate>
+              2020-01-23
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/01/20/%E7%A9%B7%E9%80%BCK8S%E7%94%A8%E6%88%B7%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1LB%E6%94%AF%E6%8C%81/">穷逼K8S用户的负载均衡LB支持</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/01/20/%E7%A9%B7%E9%80%BCK8S%E7%94%A8%E6%88%B7%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1LB%E6%94%AF%E6%8C%81/">
+          
+          
+            
+          
+          背景项目很多公司使用k8s都是私有云方式,在没钱玩NMB的社会.连k8s都会歧视你。 服务的暴露方式只有nodeport、ExternalIP(直接使用主机网络)和ingress。剥夺了LoadBalance模式的权利
+metallb 简介这里简单介绍下它的实现原理，具体可以参考metallb官网，文档非常简洁、清晰。目前有如下的使用限制：
+
+Kubernetes v1.9.0版本以上，暂不支持i
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-01-20 16:38" pubdate>
+              2020-01-20
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/01/20/kube-dns%E4%B8%8ECoreDNS%E6%9C%89%E4%BD%95%E5%B7%AE%E5%BC%82%EF%BC%9F/">kube-dns与CoreDNS有何差异？</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/01/20/kube-dns%E4%B8%8ECoreDNS%E6%9C%89%E4%BD%95%E5%B7%AE%E5%BC%82%EF%BC%9F/">
+          
+          
+            
+          
+          使用kube-dns集群插件，基于DNS的服务发现已成为Kubernetes的一部分。这通常很有效，但是对于实施的可靠性、灵活性和安全性存在一些担忧。
+CoreDNS是一个通用的、权威的DNS服务器，提供与Kubernetes后向兼容但可扩展的集成。它解决了kube-dns所遇到的问题，并提供了许多独特的功能，可以解决各种各样的用例。
+在本文中，你将了解kube-dns和CoreDNS的实施差异，
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-01-20 16:17" pubdate>
+              2020-01-20
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/01/20/coredns%E6%B7%BB%E5%8A%A0%E8%87%AA%E5%AE%9A%E4%B9%89DNS%E8%A7%A3%E6%9E%90%E8%AE%B0%E5%BD%95/">coredns添加自定义DNS解析记录</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/01/20/coredns%E6%B7%BB%E5%8A%A0%E8%87%AA%E5%AE%9A%E4%B9%89DNS%E8%A7%A3%E6%9E%90%E8%AE%B0%E5%BD%95/">
+          
+          
+            
+          
+          coredns 自带 hosts 插件， 允许像配置 hosts 一样配置自定义 DNS 解析，修改 kube-system 中 configMap 的 coredns 添加如下设置即可。
+123456hosts &#123;    172.21.91.28 cache.redis    172.21.91.28 persistent.redis          fallthrough&#125
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-01-20 15:44" pubdate>
+              2020-01-20
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/01/20/%E5%9B%BE%E8%A7%A3-kubernetes-scheduler-%E6%BA%90%E7%A0%81%E8%AE%BE%E8%AE%A1%E7%B3%BB%E5%88%97-%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/">图解 kubernetes scheduler 源码设计系列-初步了解</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/01/20/%E5%9B%BE%E8%A7%A3-kubernetes-scheduler-%E6%BA%90%E7%A0%81%E8%AE%BE%E8%AE%A1%E7%B3%BB%E5%88%97-%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/">
+          
+          
+            
+          
+          1.资源调度基础scheudler是kubernetes中的核心组件，负责为用户声明的pod资源选择合适的node,同时保证集群资源的最大化利用，这里先介绍下资源调度系统设计里面的一些基础概念
+1.1 基础任务资源调度基础的任务资源调度通常包括三部分：
+
+
+
+角色类型
+功能
+
+
+
+node
+node负责具体任务的执行,同时对包汇报自己拥有的资源
+
+
+resource manager
+汇总当前集群中
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-01-20 13:33" pubdate>
+              2020-01-20
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/kubernetes-k8s/">kubernetes,k8s</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/01/16/cenots7%E7%A6%BB%E7%BA%BF%E9%83%A8%E7%BD%B2k3s/">cenots7离线部署k3s</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/01/16/cenots7%E7%A6%BB%E7%BA%BF%E9%83%A8%E7%BD%B2k3s/">
+          
+          
+            
+          
+          K3S简介：
+https://k3s.io/https://github.com/rancher/k3shttps://github.com/rancher/k3s/releases      //版本及images
+
+总的来说就是轻量级k8s,master只要500M内存就能跑,一般场景是边缘计算或者本地测试k8s环境.
+部署环境123k3s      docker-cecentos7.6
+
+d
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-01-16 00:24" pubdate>
+              2020-01-16
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/01/03/kubernetes%E7%AC%94%E8%AE%B0-HostAliases/">kubernetes笔记: HostAliases</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/01/03/kubernetes%E7%AC%94%E8%AE%B0-HostAliases/">
+          
+          
+            
+          
+          k8s上不同服务之间可以通过service的域名来互相访问。域名的解析是一般是通过在集群中的kube-dns（主要是dnsmasq）或者coredns完成的。k8s的dns也可以向上级联dns服务器。
+有的时候，我们希望给运行在k8s上的Pod增加一些域名的解析（例如宿主机的主机名），但又不想对dns模块动太多，有没有什么比较方便的办法呢？方法如下:
+
+容器挂载宿主机/etc/hosts 并设置亲
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-01-03 18:07" pubdate>
+              2020-01-03
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/01/02/%E4%BA%91%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7-drone/">云原声的CICD工具-drone</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/01/02/%E4%BA%91%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7-drone/">
+          
+          
+            
+          
+          
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-01-02 22:28" pubdate>
+              2020-01-02
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2019/12/28/2019%E6%9C%80%E5%90%8E%E4%B8%80%E6%AC%A1%E5%87%BA%E6%B8%B8%E8%AE%B0%E5%BD%95/">2019最后一次出游记录</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2019/12/28/2019%E6%9C%80%E5%90%8E%E4%B8%80%E6%AC%A1%E5%87%BA%E6%B8%B8%E8%AE%B0%E5%BD%95/">
+          
+          
+            
+          
+          时间过得很快,转眼2019已经接近尾声.为了抓住今年的尾巴 跟小伙伴们一起自驾游。
+行程原计划的行程如下:
+1234567891011121314周五晚上:香楠小区宁国市政府青龙湖景区周六一天:红杉林景区六道湾观景台水墨汀溪风景区周日(预计)月亮湾生态旅游风景区敬亭山风景名胜区香楠小区
+总体来讲就是按照皖南川藏线的路线。主要是体验大自然,都基本是山路。理论路线如下:
+
+当然计划就是拿来执行的,执行
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-12-28 22:49" pubdate>
+              2019-12-28
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+
+
+  <nav aria-label="navigation">
+    <span class="pagination" id="pagination">
+      <a class="extend prev" rel="prev" href="/page/9/"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/11/"><i class="iconfont icon-arrowright"></i></a>
+    </span>
+  </nav>
+  
+  <script>
+    for (ele of document.getElementById("pagination").getElementsByTagName("a")) {
+      ele.href += '#board';
+    }
+  </script>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>

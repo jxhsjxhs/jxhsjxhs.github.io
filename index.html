@@ -234,6 +234,93 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/05/16/go%E4%B8%AD%E6%8E%A5%E5%8F%A3%E7%9A%84%E4%BD%BF%E7%94%A8%E6%A8%A1%E5%BC%8F/" target="_self">
+          <img src="/img/newimg/2f2580e785142bd448594fd8a0f95b5.png" srcset="/img/loading.gif" alt="go中接口的使用模式">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/05/16/go%E4%B8%AD%E6%8E%A5%E5%8F%A3%E7%9A%84%E4%BD%BF%E7%94%A8%E6%A8%A1%E5%BC%8F/">go中接口的使用模式</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2023/05/16/go%E4%B8%AD%E6%8E%A5%E5%8F%A3%E7%9A%84%E4%BD%BF%E7%94%A8%E6%A8%A1%E5%BC%8F/">
+          
+          
+            
+          
+          接口本质上是一种抽象，它的功能是解耦，是方法或者功能的解耦。但是不要为了解耦而解耦，会脱裤子放屁的感觉。
+比如 我现在有一个函数 是对两个int64 类型相加，本来可以这么实现
+123func Add(a int64,b int64) int64&#123;    return a+b&#125;
+但是我们如果非要解耦，使用接口的方式来实现，那就变成了这样
+1234567type Adder in
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-05-16 09:23" pubdate>
+              2023-05-16
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/05/11/go%E8%AF%BB%E5%8F%96ini%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" target="_self">
+          <img src="/img/newimg/72f21e37b858caac34d40731a3185b6.jpg" srcset="/img/loading.gif" alt="go读取ini配置文件">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/05/11/go%E8%AF%BB%E5%8F%96ini%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">go读取ini配置文件</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2023/05/11/go%E8%AF%BB%E5%8F%96ini%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
+          
+          
+            
+          
+          回顾一下go的知识，防止忘记。平时写项目都是习惯于将什么Mysql，Redis，Kafka等这些需要配置的配置信息单独用一个conf文件来进行存放，以便管理。本文主要输出go的ini配置文件的使用。主要库  gopkg.in/ini.v1
+使用方法：
+首先定义我们的配置文件，例如：
+12345678910111213141516cat  config.ini[database]Db = mysql
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-05-11 23:37" pubdate>
+              2023-05-11
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2022/12/26/prometheus%E8%BF%9C%E7%AB%AF%E5%AD%98%E5%82%A8%E6%94%B9%E7%94%A8Tdengin/" target="_self">
           <img src="/img/newimg/008vxvgGgy1h9h0g9mta2j30uw0cc757.jpg" srcset="/img/loading.gif" alt="prometheus远端存储改用Tdengin">
         </a>
@@ -563,75 +650,6 @@ kafka-server-start.sh -daemon /usr/local/kafka/config/server.properties
             <i class="iconfont icon-date"></i>
             <time datetime="2022-04-10 10:16" pubdate>
               2022-04-10
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/02/21/SOWT%E5%88%86%E6%9E%90%E6%A8%A1%E5%9E%8B/">SOWT模型</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2022/02/21/SOWT%E5%88%86%E6%9E%90%E6%A8%A1%E5%9E%8B/">
-          
-          
-            
-          
-          
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-02-21 11:29" pubdate>
-              2022-02-21
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/12/11/%E5%AF%B9%E5%90%8C%E8%A1%8C%E7%9A%84%E7%9C%8B%E6%B3%95/">对同行的看法</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/12/11/%E5%AF%B9%E5%90%8C%E8%A1%8C%E7%9A%84%E7%9C%8B%E6%B3%95/">
-          
-          
-            
-          
-          贸易在哪儿，炮弹就在哪儿。
-
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-12-11 14:37" pubdate>
-              2021-12-11
             </time>
           </div>
         

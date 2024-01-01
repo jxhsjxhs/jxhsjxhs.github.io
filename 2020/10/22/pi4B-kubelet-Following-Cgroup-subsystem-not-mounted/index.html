@@ -282,12 +282,12 @@
             <h1 style="display: none">pi4B  kubelet  Following Cgroup subsystem not mounted </h1>
             
             <div class="markdown-body">
-              <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><figure class="highlight angelscript"><table><tr><td class="gutter hljs hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs angelscript">在树莓派<span class="hljs-number">4</span>B中安装了ubuntu <span class="hljs-number">20.04</span><span class="hljs-number">.1</span> LTS 然后接入k8s(kubeedge)集群。<br></code></pre></div></td></tr></table></figure>
+              <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><figure class="highlight angelscript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs angelscript">在树莓派<span class="hljs-number">4</span>B中安装了ubuntu <span class="hljs-number">20.04</span><span class="hljs-number">.1</span> LTS 然后接入k8s(kubeedge)集群。<br></code></pre></div></td></tr></table></figure>
 
 <h3 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h3><p><img src="https://i.loli.net/2020/10/22/GhPvMuNeEfdtKF4.png" srcset="/img/loading.gif" alt="pi4.png"></p>
 <p>发现kubelet一直启动不起来,报错为 <code>Following Cgroup subsystem not mounted: [memory]</code><br>大概意思是主机没有挂载内存的Cgroup，但是kubelet是需要控制cpu以及内存的Cgroup。所以启动不起来</p>
 <h3 id="处理过程"><a href="#处理过程" class="headerlink" title="处理过程"></a>处理过程</h3><p>知道问题了,但是百度了半天大家都说是需要在<code>/boot/cmdline.txt</code> 中加入<code>cgroup_enable=memory cgroup_memory=1</code>然后重启即可。<br>但是重启问题依旧，然后查看引导</p>
-<figure class="highlight stata"><table><tr><td class="gutter hljs hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs stata"><span class="hljs-keyword">cat</span> /<span class="hljs-keyword">boot</span>/firmware/config.txt<br></code></pre></div></td></tr></table></figure>
+<figure class="highlight stata"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs stata"><span class="hljs-keyword">cat</span> /<span class="hljs-keyword">boot</span>/firmware/config.txt<br></code></pre></div></td></tr></table></figure>
 <p><img src="https://i.loli.net/2020/10/22/kXeqVdLz6iRJQgO.png" srcset="/img/loading.gif" alt="image.png"></p>
 <p>发现还是这个名字,最后实在没办法就吧<code>cmdline.txt</code>放到了<code>/boot/firmware/</code>下。然后就成功了 </p>
 <h3 id="心得"><a href="#心得" class="headerlink" title="心得"></a>心得</h3><p>只是记录一下坑，毫无卵用。</p>

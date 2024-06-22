@@ -236,6 +236,83 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2020/01/16/cenots7%E7%A6%BB%E7%BA%BF%E9%83%A8%E7%BD%B2k3s/">cenots7离线部署k3s</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/01/16/cenots7%E7%A6%BB%E7%BA%BF%E9%83%A8%E7%BD%B2k3s/">
+          
+          
+            
+          
+          K3S简介：
+https://k3s.io/https://github.com/rancher/k3shttps://github.com/rancher/k3s/releases      //版本及images
+
+总的来说就是轻量级k8s,master只要500M内存就能跑,一般场景是边缘计算或者本地测试k8s环境.
+部署环境123k3s      docker-cecentos7.6
+
+d
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-01-16 00:24" pubdate>
+              2020-01-16
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/01/03/kubernetes%E7%AC%94%E8%AE%B0-HostAliases/">kubernetes笔记: HostAliases</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/01/03/kubernetes%E7%AC%94%E8%AE%B0-HostAliases/">
+          
+          
+            
+          
+          k8s上不同服务之间可以通过service的域名来互相访问。域名的解析是一般是通过在集群中的kube-dns（主要是dnsmasq）或者coredns完成的。k8s的dns也可以向上级联dns服务器。
+有的时候，我们希望给运行在k8s上的Pod增加一些域名的解析（例如宿主机的主机名），但又不想对dns模块动太多，有没有什么比较方便的办法呢？方法如下:
+
+容器挂载宿主机/etc/hosts 并设置亲
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-01-03 18:07" pubdate>
+              2020-01-03
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2020/01/02/%E4%BA%91%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7-drone/">云原声的CICD工具-drone</a>
       </h1>
 
@@ -542,106 +619,6 @@ service: k8s 的 service 资源(服务)，关联一组 endpoint ，访问 servic
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/%E7%BD%91%E7%BB%9C/">网络</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2019/11/17/CKA%E9%A2%98%E5%BA%93/">CKA题库</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2019/11/17/CKA%E9%A2%98%E5%BA%93/">
-          
-          
-            
-          
-          题库一24 题，160 分钟。
-第一题 (5%) 日志监控 Pod bar 的日志，并提取与错误 file-not-found 相对应的日志行,将这些日志行写入 /opt/dir/bar
-1kubectl logs &lt;podname&gt; | grep Error &gt; /opt/KUCC000xxx/KUCC000xxx.txt
-
-考点：Monitor, Log, and Debug
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2019-11-17 18:34" pubdate>
-              2019-11-17
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E5%AE%B9%E5%99%A8/">容器</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/CKA/">CKA</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2019/11/15/%E6%A0%91%E8%8E%93%E6%B4%BEzerow%E4%BD%BF%E7%94%A8/">树莓派zerow使用</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2019/11/15/%E6%A0%91%E8%8E%93%E6%B4%BEzerow%E4%BD%BF%E7%94%A8/">
-          
-          
-            
-          
-          
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2019-11-15 16:53" pubdate>
-              2019-11-15
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E6%A0%91%E8%8E%93%E6%B4%BE/">树莓派</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/zero-w/">zero_w</a>
             
           </div>
         

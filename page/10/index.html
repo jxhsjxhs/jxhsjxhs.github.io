@@ -236,6 +236,78 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2020/02/20/tcp-ip%E4%B9%8BTCP-Fast-open/">tcp/ip之TCP Fast open</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/02/20/tcp-ip%E4%B9%8BTCP-Fast-open/">
+          
+          
+            
+          
+          产生背景Google研究发现TCP三次握手是页面延迟时间的重要组成部分，所以他们提出了TFO(TCP Fast Open)：在TCP握手期间交换数据，这样可以减少一次RTT。根据测试数据，TFO可以减少15%的HTTP传输延迟，全页面的下载时间平均节省10%，最高可达40%。
+(RTT指的是往返时延。在计算机网络中它是一个重要的性能指标，表示从发送端发送数据开始，到发送端收到来自接收端的确认（接收
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-02-20 12:08" pubdate>
+              2020-02-20
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/02/17/%E7%BD%91%E7%BB%9C%E6%8A%93%E5%8C%85%E7%A5%9E%E5%99%A8-Tcpdump-%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">网络抓包神器 Tcpdump 使用指南</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/02/17/%E7%BD%91%E7%BB%9C%E6%8A%93%E5%8C%85%E7%A5%9E%E5%99%A8-Tcpdump-%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">
+          
+          
+            
+          
+          
+本文主要内容摘抄自开米朗基杨
+
+tcpdump 是一款强大的网络抓包工具，它使用 libpcap 库来抓取网络数据包，这个库在几乎在所有的 Linux/Unix 中都有。熟悉 tcpdump 的使用能够帮助你分析调试网络数据，本文将通过一个个具体的示例来介绍它在不同场景下的使用方法。不管你是系统管理员，程序员，云原生工程师还是 yaml 工程师，掌握 tcpdump 的使用都能让你如虎添翼，升职
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-02-17 10:46" pubdate>
+              2020-02-17
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2020/02/05/%E4%BA%BA%E6%98%AF%E6%80%8E%E4%B9%88%E5%BA%9F%E6%8E%89%E7%9A%84/">人是怎么废掉的</a>
       </h1>
 
@@ -546,83 +618,6 @@ resource manager
               <a href="/tags/kubernetes-k8s/">kubernetes,k8s</a>
             
           </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/01/16/cenots7%E7%A6%BB%E7%BA%BF%E9%83%A8%E7%BD%B2k3s/">cenots7离线部署k3s</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/01/16/cenots7%E7%A6%BB%E7%BA%BF%E9%83%A8%E7%BD%B2k3s/">
-          
-          
-            
-          
-          K3S简介：
-https://k3s.io/https://github.com/rancher/k3shttps://github.com/rancher/k3s/releases      //版本及images
-
-总的来说就是轻量级k8s,master只要500M内存就能跑,一般场景是边缘计算或者本地测试k8s环境.
-部署环境123k3s      docker-cecentos7.6
-
-d
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-01-16 00:24" pubdate>
-              2020-01-16
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/01/03/kubernetes%E7%AC%94%E8%AE%B0-HostAliases/">kubernetes笔记: HostAliases</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/01/03/kubernetes%E7%AC%94%E8%AE%B0-HostAliases/">
-          
-          
-            
-          
-          k8s上不同服务之间可以通过service的域名来互相访问。域名的解析是一般是通过在集群中的kube-dns（主要是dnsmasq）或者coredns完成的。k8s的dns也可以向上级联dns服务器。
-有的时候，我们希望给运行在k8s上的Pod增加一些域名的解析（例如宿主机的主机名），但又不想对dns模块动太多，有没有什么比较方便的办法呢？方法如下:
-
-容器挂载宿主机/etc/hosts 并设置亲
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-01-03 18:07" pubdate>
-              2020-01-03
-            </time>
-          </div>
-        
-        
         
       </div>
     </article>

@@ -236,6 +236,82 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2022/04/18/%E5%94%AE%E5%89%8D%E9%92%88%E5%AF%B9%E4%B8%8D%E5%90%8C%E7%BA%A7%E5%88%AB%E5%AE%A2%E6%88%B7%E7%9A%84%E7%89%87%E5%AD%90%E9%80%BB%E8%BE%91/">售前针对不同级别客户的片子逻辑</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2022/04/18/%E5%94%AE%E5%89%8D%E9%92%88%E5%AF%B9%E4%B8%8D%E5%90%8C%E7%BA%A7%E5%88%AB%E5%AE%A2%E6%88%B7%E7%9A%84%E7%89%87%E5%AD%90%E9%80%BB%E8%BE%91/">
+          
+          
+            
+          
+          
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-04-18 10:10" pubdate>
+              2022-04-18
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2022/04/10/%E4%B8%80%E6%AC%A1%E7%9B%91%E6%8E%A7%E5%86%85%E5%AD%98%E7%9A%84%E7%8C%9C%E6%83%B3/" target="_self">
+          <img src="/img/newimg/e6c9d24egy1h15vdux66sj21bg0ryaeo.jpg" srcset="/img/loading.gif" alt="一次监控内存的猜想">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/04/10/%E4%B8%80%E6%AC%A1%E7%9B%91%E6%8E%A7%E5%86%85%E5%AD%98%E7%9A%84%E7%8C%9C%E6%83%B3/">一次监控内存的猜想</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2022/04/10/%E4%B8%80%E6%AC%A1%E7%9B%91%E6%8E%A7%E5%86%85%E5%AD%98%E7%9A%84%E7%8C%9C%E6%83%B3/">
+          
+          
+            
+          
+          一天一个客户问，他们现在用zabbix做的监控平台看到的内存，跟他们自己用算法算出来的看到的相差非常大，想问问我为啥会这样。
+看到图以后第一时间找客户要了一下现在zabbix计算内存的公式,以及现阶段用free -m显示情况
+第一时间能看出图中监控数据不一致的情况其实结论很清楚，就是zabbix的算法是1- available/total  客户是用1- free/total。替换成之前的就行。但
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-04-10 10:16" pubdate>
+              2022-04-10
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2022/02/21/SOWT%E5%88%86%E6%9E%90%E6%A8%A1%E5%9E%8B/">SOWT模型</a>
       </h1>
 
@@ -515,75 +591,6 @@ Earthly 是一个更加高级的 Docker 镜像构建工具，Earthly 通过自�
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
             <time datetime="2021-10-31 18:49" pubdate>
-              2021-10-31
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/10/31/containerd%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">containerd使用指南</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/10/31/containerd%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">
-          
-          
-            
-          
-          containerd 是一个高级容器运行时，又名 容器管理器。简单来说，它是一个守护进程，在单个主机上管理完整的容器生命周期：创建、启动、停止容器、拉取和存储镜像、配置挂载、网络等。containerd 旨在轻松嵌入到更大的系统中。Docker 在底层使用 containerd 来运行容器。Kubernetes 可以通过 CRI 使用 containerd 来管理单个节点上的容器。但是较小的项目也
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-10-31 18:40" pubdate>
-              2021-10-31
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/10/31/DNS-%E6%95%85%E9%9A%9C%E8%AF%8A%E6%96%AD%E5%8F%8A%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%E7%A4%BA%E4%BE%8B/">DNS 故障诊断及问题分析示例</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/10/31/DNS-%E6%95%85%E9%9A%9C%E8%AF%8A%E6%96%AD%E5%8F%8A%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%E7%A4%BA%E4%BE%8B/">
-          
-          
-            
-          
-          DNS 基础知识互联网基于 TCP/IP 协议。为了方便管理网络内的主机，整个互联网分为若干个域 （domain），每 个域又可以再分为若干个子域，例如，.com，.org，.edu 都是顶级域，而 google.com 是.com 下面的子域。
-网络中的任意一台主机（host）都会属于某个域，并且有自己的名字，称为主机名（ hostname）。例如 example.com 就是.com 域中一台
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-10-31 18:40" pubdate>
               2021-10-31
             </time>
           </div>

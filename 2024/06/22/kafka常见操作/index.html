@@ -1,0 +1,585 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;light&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="jame_xhs">
+  <meta name="keywords" content="">
+  <title>kafka常见操作 - jame_xhs&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"www.jxhs.me","root":"/","version":"1.8.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>jame_xhs blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/more-order/">
+                <i class="iconfont icon-slack-fill"></i>
+                越阶计划
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                书单
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2021/">
+                    
+                    2021
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/book-2020/">
+                    
+                    2020
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="kafka常见操作">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2024-06-22 17:12" pubdate>
+        2024年6月22日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.9k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      48
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">kafka常见操作</h1>
+            
+            <div class="markdown-body">
+              <p>日常操作命令<br>查看topic<br>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –list | grep test<br>查看某个topic详情<br>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –describe –topic test</p>
+<p>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –list | grep flink_risk_deposit_address_info<br>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –create –partitions 12 –replication-factor 3 –topic flink_risk_deposit_address_info<br>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –describe –topic flink_risk_deposit_address_info<br>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –create –topic test –partitions 3 –replication-factor 3 –config segment.bytes=1073741824 –config max.message.bytes=2097152 –config retention.bytes=1073741824</p>
+<p>删除消费组–delete<br>删除指定消费组–group，删除前后必须先查询消费组是否存在，再进行删除操作<br>bin/kafka-consumer-groups.sh –bootstrap-server 127.0.0.1:9092 –list | grep console-consumer-37605<br>bin/kafka-consumer-groups.sh –delete –bootstrap-server 127.0.0.1:9092 –group console-consumer-37605</p>
+<p>bin/kafka-console-consumer.sh –bootstrap-server 127.0.0.1:9092 –group test_group_v1 –topic spot_match<br>bin/kafka-consumer-groups.sh –bootstrap-server 127.0.0.1:9092 –list | grep test_group_v1<br>bin/kafka-consumer-groups.sh –bootstrap-server 127.0.0.1:9092 –delete –group test_group_v1</p>
+<p>查看kafka集群监控情况<br>./bin/zookeeper-shell.sh localhost:2181<br>ls /kafka/brokers/ids</p>
+<p>查看kafka集群监控qing<br>./bin/zookeeper-shell.sh localhost:2181<br>ls /kafka/brokers/ids</p>
+<p>查看kafka版本<br>cd /data/app/kafka_cluster<br>find ./libs/ -name *kafka_* | head -1 | grep -o ‘\kafka[^\n]*’<br>kafka_2.11-2.4.0-test-sources.jar<br>kafka_2.12-3.1.0.jar</p>
+<p>一、Kafka常用命令<br>1.1 topic相关</p>
+<h2 id="查看所有topic"><a href="#查看所有topic" class="headerlink" title="查看所有topic"></a>查看所有topic</h2><p>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –list<br>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –list –exclude-internal<br>bin/kafka-topics.sh –bootstrap-server <code>ip a|grep 10.10 |awk -F &#39; |/&#39; &#39;{print $6}&#39;</code>:9092 –list</p>
+<h2 id="查看所有topic详情（副本、分区、ISR等）"><a href="#查看所有topic详情（副本、分区、ISR等）" class="headerlink" title="查看所有topic详情（副本、分区、ISR等）"></a>查看所有topic详情（副本、分区、ISR等）</h2><p>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –describe<br>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –describe –exclude-internal</p>
+<h2 id="查看某个topic详情"><a href="#查看某个topic详情" class="headerlink" title="查看某个topic详情"></a>查看某个topic详情</h2><p>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –describe –topic test</p>
+<h3 id="合约集群端口特殊"><a href="#合约集群端口特殊" class="headerlink" title="合约集群端口特殊"></a>合约集群端口特殊</h3><p>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9072 –describe –topic test</p>
+<h2 id="创建topic-3副本-3分区"><a href="#创建topic-3副本-3分区" class="headerlink" title="创建topic,3副本 3分区"></a>创建topic,3副本 3分区</h2><p>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –create –topic test –replication-factor 3 –partitions 3<br>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –create –topic test –replication-factor 3 –partitions 1<br>bin/kafka-topics.sh –bootstrap-server localhost:9092 –create –topic test –partitions 3 –replication-factor 3 –config segment.bytes=1073741824 –config max.message.bytes=2097152 –config retention.bytes=1073741824<br>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –create –topic transfer_events –replication-factor 3 –partitions 6 –config retention.bytes=10737418240 –config retention.ms=86400000</p>
+<p>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –create –topic test –replication-factor 3 –partitions 128 –config segment.bytes=1073741824 –config retention.ms=172800000 –config max.message.bytes=52428800 –config retention.bytes=10737418240  </p>
+<p>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –create –topic test –replication-factor 3 –partitions 5 –config segment.bytes=1073741824 –config retention.ms=259200000 –config max.message.bytes=2097152 –config retention.bytes=10737418240 –config min.insync.replicas=2  </p>
+<p>##修改topic配置<br>bin/kafka-configs.sh  –zookeeper localhost:2181 –entity-type topics –entity-name push_spot –alter –add-config retention.bytes=1073741824</p>
+<h2 id="调整分区数量"><a href="#调整分区数量" class="headerlink" title="调整分区数量"></a>调整分区数量</h2><p>扩大分区后，不可再次调整缩减<br>bin/kafka-topics.sh –alter –bootstrap-server 127.0.0.1:9092 –topic test –partitions 3</p>
+<p>【慎重操作】</p>
+<h2 id="删除topic，需要将参数设置为delete-topic-enable-true，如果还是删不了则删除kafka中的所有分区log，及通过zk客户端删除"><a href="#删除topic，需要将参数设置为delete-topic-enable-true，如果还是删不了则删除kafka中的所有分区log，及通过zk客户端删除" class="headerlink" title="删除topic，需要将参数设置为delete.topic.enable=true，如果还是删不了则删除kafka中的所有分区log，及通过zk客户端删除"></a>删除topic，需要将参数设置为delete.topic.enable=true，如果还是删不了则删除kafka中的所有分区log，及通过zk客户端删除</h2><p>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –list  | grep list<br>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –delete –topic test</p>
+<h2 id="查看topic各个分区的消息数量"><a href="#查看topic各个分区的消息数量" class="headerlink" title="查看topic各个分区的消息数量"></a>查看topic各个分区的消息数量</h2><p>bin/kafka-run-class.sh  kafka.tools.GetOffsetShell –broker-list 127.0.0.1:9092 –time -1  –topic test</p>
+<h1 id="动态调整topic配置"><a href="#动态调整topic配置" class="headerlink" title="动态调整topic配置"></a>动态调整topic配置</h1><p>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –describe –topic test<br>bin/kafka-topics.sh –zookeeper 127.0.0.1:2181 –alter –config min.insync.replicas=2 –topic test</p>
+<h2 id="调整设置过期时间，注意zk的kafka路径"><a href="#调整设置过期时间，注意zk的kafka路径" class="headerlink" title="调整设置过期时间，注意zk的kafka路径"></a>调整设置过期时间，注意zk的kafka路径</h2><h3 id="查看当前topic额外配置"><a href="#查看当前topic额外配置" class="headerlink" title="查看当前topic额外配置"></a>查看当前topic额外配置</h3><p>bin/kafka-configs.sh –zookeeper 127.0.0.1:2181 –entity-type topics –entity-name test –describe<br>bin/kafka-configs.sh –zookeeper 127.0.0.1:2181/kafka –entity-type topics –entity-name test –describe</p>
+<h3 id="调整topic过期时间"><a href="#调整topic过期时间" class="headerlink" title="调整topic过期时间"></a>调整topic过期时间</h3><p>bin/kafka-configs.sh –zookeeper 127.0.0.1:2181 –entity-type topics –entity-name test –alter –add-config retention.ms=86400000<br>bin/kafka-configs.sh –zookeeper 127.0.0.1:2181/kafka –entity-type topics –entity-name test –alter –add-config retention.ms=86400000<br>bin/kafka-configs.sh –zookeeper 127.0.0.1:2181/kafka –entity-type topics –entity-name test-delete –alter –add-config retention.ms=1800000,retention.bytes=209715200</p>
+<p>bin/kafka-configs.sh  –zookeeper 127.0.0.1:2181 –entity-type topics –entity-name test –alter –add-config retention.ms=86400000</p>
+<h3 id="动态添加配置删除配置"><a href="#动态添加配置删除配置" class="headerlink" title="动态添加配置删除配置"></a>动态添加配置删除配置</h3><p>bin/kafka-topics.sh –zookeeper 127.0.0.1:2181 –alter –config retention.ms=172800000 –topic mxc_spot_match_result_usdt<br>bin/kafka-topics.sh –zookeeper 127.0.0.1:2181 –alter –delete-config retention.ms –topic mxc_spot_match_result_usdt</p>
+<h3 id="确认topic修改配置生效"><a href="#确认topic修改配置生效" class="headerlink" title="确认topic修改配置生效"></a>确认topic修改配置生效</h3><p>./bin/kafka-configs.sh –zookeeper 127.0.0.1:2181 –entity-type topics –entity-name test –describe<br>./bin/kafka-configs.sh –zookeeper 127.0.0.1:2181/kafka –entity-type topics –entity-name test –describe</p>
+<p>1.2 模拟kafka生产消费</p>
+<h2 id="生产"><a href="#生产" class="headerlink" title="生产"></a>生产</h2><p>bin/kafka-console-producer.sh –broker-list 127.0.0.1:9092 –topic test</p>
+<h2 id="消费，–from-beginning参数表示从头开始"><a href="#消费，–from-beginning参数表示从头开始" class="headerlink" title="消费，–from-beginning参数表示从头开始"></a>消费，–from-beginning参数表示从头开始</h2><p>bin/kafka-console-consumer.sh –bootstrap-server 127.0.0.1:9092 –topic test<br>bin/kafka-console-consumer.sh –bootstrap-server 127.0.0.1:9092 –topic test –from-beginning<br>此处需要注意，生产者和测试者指定的broker必须和配置文件中zookeeper.connect和listeners中的地址一至，如写127.0.0.1生产者会类似如下信息：<br>WARN [Producer clientId=console-producer] Connection to node -1 could not be established. Broker may not be available. (org.apache.kafka.clients.NetworkClient)<br>消费者会报错类似错误：<br>WARN [Consumer clientId=consumer-1, groupId=console-consumer-8350] Connection to node -1 could not be established. Broker may not be available. (org.apache.kafka.clients.NetworkClient)<br>1.3 消费者相关</p>
+<h2 id="显示消费者列表"><a href="#显示消费者列表" class="headerlink" title="显示消费者列表"></a>显示消费者列表</h2><p>bin/kafka-consumer-groups.sh –bootstrap-server 127.0.0.1:9092 –list<br>bin/kafka-consumer-groups.sh –bootstrap-server 127.0.0.1:9092 –list | grep test-consumer</p>
+<h2 id="查看所有消费组详情–all-groups"><a href="#查看所有消费组详情–all-groups" class="headerlink" title="查看所有消费组详情–all-groups"></a>查看所有消费组详情–all-groups</h2><p>bin/kafka-consumer-groups.sh –bootstrap-server 127.0.0.1:9092 –describe –all-groups</p>
+<h2 id="获取某消费者消费某个topic的offset-–group"><a href="#获取某消费者消费某个topic的offset-–group" class="headerlink" title="获取某消费者消费某个topic的offset,–group"></a>获取某消费者消费某个topic的offset,–group</h2><p>bin/kafka-consumer-groups.sh –bootstrap-server 127.0.0.1:9092 –describe –group test-consumer<br>bin/kafka-consumer-groups.sh –bootstrap-server 127.0.0.1:9092 –describe –group console-consumer-37605<br>bin/kafka-consumer-groups.sh –bootstrap-server 127.0.0.1:9092 –describe –group console-consumer-37605</p>
+<h2 id="查询消费者成员信息–members"><a href="#查询消费者成员信息–members" class="headerlink" title="查询消费者成员信息–members"></a>查询消费者成员信息–members</h2><p>所有消费组成员信息<br>bin/kafka-consumer-groups.sh –describe –all-groups –members –bootstrap-server 127.0.0.1:9092</p>
+<p>指定消费组成员信息<br>bin/kafka-consumer-groups.sh –describe –members –group console-consumer-37605 –bootstrap-server 127.0.0.1:9092<br>GROUP                  CONSUMER-ID                                           HOST            CLIENT-ID        #PARTITIONS<br>console-consumer-37605 console-consumer-9a4ad46f-8c66-40ed-b1a1-d1436ec52fd9 /172.18.0.1     console-consumer 1</p>
+<h2 id="查询消费者状态信息–state"><a href="#查询消费者状态信息–state" class="headerlink" title="查询消费者状态信息–state"></a>查询消费者状态信息–state</h2><p>所有消费组状态信息<br>bin/kafka-consumer-groups.sh –describe –all-groups –state –bootstrap-server 127.0.0.1:9092<br>指定消费组状态信息<br>bin/kafka-consumer-groups.sh –describe –state –group console-consumer-37605 –bootstrap-server 127.0.0.1:9092</p>
+<p>##查询消费者有多少数据没有被消费<br>./kafka-consumer-groups.sh  –bootstrap-server 10.10.10.158:9092 –describe  –group=planorder01</p>
+<p>【危险操作】</p>
+<h2 id="删除消费者组–delete"><a href="#删除消费者组–delete" class="headerlink" title="删除消费者组–delete"></a>删除消费者组–delete</h2><p>DeleteGroupsRequest</p>
+<p>删除消费组–delete<br>删除指定消费组–group，删除前后必须先查询消费组是否存在，再进行删除操作<br>bin/kafka-consumer-groups.sh –bootstrap-server 127.0.0.1:9092 –list | grep console-consumer-37605<br>bin/kafka-consumer-groups.sh –delete –bootstrap-server 127.0.0.1:9092 –group console-consumer-37605 </p>
+<p>【危险操作】<br>删除所有消费组–all-groups，生产环境禁止执行<br>bin/kafka-consumer-groups.sh –delete –all-groups –bootstrap-server 127.0.0.1:9092</p>
+<p>注意: 想要删除消费组前提是这个消费组的所有客户端都停止消费/不在线才能够成功删除;否则会报下面异常<br>Error: Deletion of some consumer groups failed:</p>
+<ul>
+<li>Group ‘console-consumer-37605’ could not be deleted due to: java.util.concurrent.ExecutionException: org.apache.kafka.common.errors.GroupNotEmptyException: The group is not empty.</li>
+</ul>
+<p> 【危险操作】</p>
+<h2 id="重置消费组的偏移量-–reset-offsets"><a href="#重置消费组的偏移量-–reset-offsets" class="headerlink" title="重置消费组的偏移量 –reset-offsets"></a>重置消费组的偏移量 –reset-offsets</h2><h1 id="AWS-MSK中时间为UTC时间"><a href="#AWS-MSK中时间为UTC时间" class="headerlink" title="AWS MSK中时间为UTC时间"></a>AWS MSK中时间为UTC时间</h1><p>bin/kafka-consumer-groups.sh –bootstrap-server 127.0.0.1:9092 –group test_group –reset-offsets –to-datetime 2023-09-21T10:35:00.000 –topic canal_spot –execute</p>
+<p>调整消费者对某个topic的offset，发生阻塞等情况时可使用<br>bin/kafka-consumer-groups.sh –bootstrap-server 127.0.0.1:9092 –group groupName –reset-offsets –to-offset 1000 –topic topicName –execute<br>bin/kafka-consumer-groups.sh –bootstrap-server 127.0.0.1:9092 –group console-consumer-37605 –reset-offsets –to-offset 10 –topic test –execute</p>
+<p>重置指定消费组的偏移量 –group<br>重置指定消费组的所有Topic的偏移量–all-topic<br>bin/kafka-consumer-groups.sh –reset-offsets –to-earliest –group console-consumer-37605 –bootstrap-server 127.0.0.1:9092 –dry-run –all-topics<br>重置指定消费组的指定Topic的偏移量–topic<br>bin/kafka-consumer-groups.sh –reset-offsets –to-earliest –group console-consumer-37605 –bootstrap-server 127.0.0.1:9092 –dry-run –topic test</p>
+<p>重置所有消费组的偏移量 –all-group<br>重置所有消费组的所有Topic的偏移量–all-topic<br>bin/kafka-consumer-groups.sh –reset-offsets –to-earliest –all-group –bootstrap-server 127.0.0.1:9092 –dry-run –all-topic<br>重置所有消费组中指定Topic的偏移量–topic<br>bin/kafka-consumer-groups.sh –reset-offsets –to-earliest –all-group –bootstrap-server 127.0.0.1:9092 –dry-run –topic test2</p>
+<p>删除偏移量delete-offsets<br>能够执行成功的一个前提是 消费组这会是不可用状态;<br>偏移量被删除了之后,Consumer Group下次启动的时候,会从头消费;<br>sh bin/kafka-consumer-groups.sh –delete-offsets –group console-consumer-37605 –bootstrap-server 127.0.0.1:9092 –topic test</p>
+<p>重置消费组时间<br>bin/kafka-consumer-groups.sh –bootstrap-server 127.0.0.1:9092  –delete –group test_group_v1</p>
+<p>bin/kafka-consumer-groups.sh –bootstrap-server 127.0.0.1:9092 –group test_group_v1 –reset-offsets –to-datetime 2024-03-10T13:00:00.000 –topic canal_spot –execute</p>
+<p>压测数据<br>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –create –topic benchmark-test-2 –replication-factor 3 –partitions 3</p>
+<p>bin/kafka-producer-perf-test.sh –topic benchmark-test-2 –num-records 100000 –record-size 1000  –throughput 2000 –producer-props bootstrap.servers=127.0.0.1:9092</p>
+<p>bin/kafka-consumer-perf-test.sh –bootstrap-server 127.0.0.1:9092 –topic benchmark-test –fetch-size 1048576 –messages 100000 –threads 1</p>
+<p>1.4 调整默认分区副本数</p>
+<h2 id="配置文件中指定默认分区-副本数"><a href="#配置文件中指定默认分区-副本数" class="headerlink" title="配置文件中指定默认分区 副本数"></a>配置文件中指定默认分区 副本数</h2><p>num.partitions=3; 当topic不存在系统自动创建时的分区数<br>default.replication.factor=3 ;当topic不存在系统自动创建时的副本数<br>offsets.topic.replication.factor=3 ；表示kafka的内部topic consumer_offsets副本数，默认为1</p>
+<p>调整topic分区副本数<br>目前 test 的topic副本和分区都为1</p>
+<p>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –describe –topic test<br>Topic:test PartitionCount:1  ReplicationFactor:1 Configs:<br>  Topic: test  Partition: 0  Leader: 1 Replicas: 1 Isr: 1</p>
+<p>将分区数调整为3</p>
+<h2 id="扩容"><a href="#扩容" class="headerlink" title="扩容"></a>扩容</h2><p>bin/kafka-topics.sh –alter –bootstrap-server 127.0.0.1:9092 –topic test –partitions 3<br>WARNING: If partitions are increased for a topic that has a key, the partition logic or ordering of the messages will be affected<br>Adding partitions succeeded!</p>
+<h2 id="检查"><a href="#检查" class="headerlink" title="检查"></a>检查</h2><p>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –describe –topic test<br>Topic:test PartitionCount:3  ReplicationFactor:1 Configs:<br>  Topic: test  Partition: 0  Leader: 1 Replicas: 1 Isr: 1<br>  Topic: test  Partition: 1  Leader: 2 Replicas: 2 Isr: 2<br>  Topic: test  Partition: 2  Leader: 3 Replicas: 3 Isr: 3</p>
+<blockquote>
+<p>注意：分区数只能增加，不能减少</p>
+</blockquote>
+<p>将副本数调整为3，首先准备json文件，格式如下：vim test.json<br>{<br>    “version”: 1,<br>    “partitions”: [<br>        {<br>            “topic”: “test”,<br>            “partition”: 0,<br>            “replicas”: [<br>                1,<br>                2,<br>                3<br>            ]<br>        },<br>        {<br>            “topic”: “test”,<br>            “partition”: 1,<br>            “replicas”: [<br>                2,<br>                1,<br>                3<br>            ]<br>        },<br>        {<br>            “topic”: “test”,<br>            “partition”: 2,<br>            “replicas”: [<br>                3,<br>                2,<br>                1<br>            ]<br>        }<br>    ]<br>}</p>
+<p>执行调整命令<br>bin/kafka-reassign-partitions.sh –bootstrap-server 127.0.0.1:9092 –reassignment-json-file /tmp/test.json –execute<br>Current partition replica assignment</p>
+<p>{“version”:1,”partitions”:[{“topic”:”test”,”partition”:0,”replicas”:[1],”log_dirs”:[“any”]},{“topic”:”test”,”partition”:2,”replicas”:[3],”log_dirs”:[“any”]},{“topic”:”test”,”partition”:1,”replicas”:[2],”log_dirs”:[“any”]}]}</p>
+<p>Save this to use as the –reassignment-json-file option during rollback<br>Successfully started reassignment of partitions.<br>检查调整进度<br>bin/kafka-reassign-partitions.sh –bootstrap-server 127.0.0.1:9092 –reassignment-json-file /tmp/test.json –verify<br>Status of partition reassignment:<br>Reassignment of partition test-0 completed successfully<br>Reassignment of partition test-1 completed successfully<br>Reassignment of partition test-2 completed successfully</p>
+<p>检查调整后的状态<br>bin/kafka-topics.sh –bootstrap-server 127.0.0.1:9092 –describe –topic test<br>Topic:test PartitionCount:3  ReplicationFactor:3 Configs:<br>  Topic: test  Partition: 0  Leader: 1 Replicas: 1,2,3 Isr: 1,2,3<br>  Topic: test  Partition: 1  Leader: 2 Replicas: 2,1,3 Isr: 2,1,3<br>  Topic: test  Partition: 2  Leader: 3 Replicas: 3,2,1 Isr: 3,2,1</p>
+<p>1.5 kafka集群状态检测<br>1.5.1 检查集群内kafka服务及集群是否正常。（3分钟）</p>
+<h1 id="检查是否正常启动，这里以127-0-0-1-IP为例，实际情况，需要修改为实际broker节点IP地址。"><a href="#检查是否正常启动，这里以127-0-0-1-IP为例，实际情况，需要修改为实际broker节点IP地址。" class="headerlink" title="检查是否正常启动，这里以127.0.0.1 IP为例，实际情况，需要修改为实际broker节点IP地址。"></a>检查是否正常启动，这里以127.0.0.1 IP为例，实际情况，需要修改为实际broker节点IP地址。</h1><p>1 在Kafka集群其他正常节点执行端口检测命令如下命令，如果端口不通，则节点尚未恢复。<br>nc -v 127.0.0.1 9092<br>nc -v 127.0.0.1 2181</p>
+<p>2 执行jps -l如果看到返回[PID] kafka.Kafka和[PID] org.apache.zookeeper.server.quorum.QuorumPeerMain，说明集群进程正常<br>3 执行如下命令，查看到kafka启动日志如下，说明节点启动正常。<br>journalctl -u kafka -f<br>或<br>cd /data/app/kafka_cluster<br>tail -f logs/server.log<br>INFO [KafkaServer id=[xx]] started (kafka.server.KafkaServer)</p>
+<p>4 查看kafka集群有[1, 2, 3]三个注册节点存活。<br>bin/zookeeper-shell.sh localhost:2181<br>ls /brokers/ids<br>[1, 2, 3]<br>查看kafka broker节点日志无报错。<br>tail -f logs/server.log<br>确认当前kafka集群状态健康正常，即可进行下一步操作。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/06/22/kafka-topic%E6%8C%87%E5%AE%9A%E8%8A%82%E7%82%B9%E9%87%8D%E5%B9%B3%E8%A1%A1/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">kafka topic指定节点重平衡</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/05/22/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85openresty/">
+                        <span class="hidden-mobile">编译安装openresty</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.0/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>

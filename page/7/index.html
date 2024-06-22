@@ -236,6 +236,76 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2020/07/22/Proxmox%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/">Proxmox介绍以及安装使用</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/07/22/Proxmox%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/">
+          
+          
+            
+          
+          
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-07-22 09:49" pubdate>
+              2020-07-22
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/07/15/%E4%BD%BF%E7%94%A8-skopeo-%E6%93%8D%E4%BD%9C%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F/">使用 skopeo 操作容器镜像</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/07/15/%E4%BD%BF%E7%94%A8-skopeo-%E6%93%8D%E4%BD%9C%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F/">
+          
+          
+            
+          
+          背景今天项目组突然提出一个需求,跟其他应用放对接的时候提供一个镜像仓库。对接放把应用上传完以后。我们需要将这些镜像都打成tar包存到oss中。
+1234问题如下:  镜像仓库每个都很大(内部是数据模型以及算法)怎么能保证完整下下来不影响业务网络  镜像都得打tar包，但是本地存储限制 没那么大  并且耗时  后续扩展跟其他库同步麻烦。需要一个个load进去然后倒入
+根据以上的需求进行分析,目的很明
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-07-15 13:28" pubdate>
+              2020-07-15
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2020/07/14/JWT%E7%9A%84%E5%8E%9F%E7%90%86%E5%92%8C%E7%94%A8%E6%B3%95/">JWT的原理和用法</a>
       </h1>
 
@@ -518,91 +588,6 @@ SQLite是一种嵌入式数据库，它的数据库就是一个文件，SQLite�
           </div>
         
         
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/06/02/%E5%86%85%E5%AD%98%E7%A2%8E%E7%89%87%E5%8C%96/">内存碎片化</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/06/02/%E5%86%85%E5%AD%98%E7%A2%8E%E7%89%87%E5%8C%96/">
-          
-          
-            
-          
-          判断是否内存碎片化严重内存页分配失败，内核日志报类似下面的错：
-1mysqld: page allocation failure. order:4, mode:0x10c0d0
-
-mysqld 是被分配的内存的程序order 表示需要分配连续页的数量(2^order)，这里 4 表示 2^4=16 个连续的页mode 是内存分配模式的标识，定义在内核源码文件 include/linux/gfp.h
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-06-02 14:38" pubdate>
-              2020-06-02
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/k8s/">k8s</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/06/02/%E5%AE%B9%E5%99%A8%E5%86%85%E6%8A%93%E5%8C%85%E5%AE%9A%E4%BD%8D%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98/">容器内抓包定位网络问题</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/06/02/%E5%AE%B9%E5%99%A8%E5%86%85%E6%8A%93%E5%8C%85%E5%AE%9A%E4%BD%8D%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98/">
-          
-          
-            
-          
-          在使用 kubernetes 跑应用的时候，可能会遇到一些网络问题，比较常见的是服务端无响应(超时)或回包内容不正常，如果没找出各种配置上有问题，这时我们需要确认数据包到底有没有最终被路由到容器里，或者报文到达容器的内容和出容器的内容符不符合预期，通过分析报文可以进一步缩小问题范围。那么如何在容器内抓包呢？本文提供实用的脚本一键进入容器网络命名空间(netns)，使用宿主机上的tcpdump进行抓
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-06-02 09:56" pubdate>
-              2020-06-02
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E7%BD%91%E7%BB%9C/">网络</a>
-            
-          </div>
         
       </div>
     </article>
